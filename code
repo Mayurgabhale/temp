@@ -1,4 +1,23 @@
- #region-title.dashboard-header {
+ #region-title {
+  text-align: center;
+  margin: 40px auto 30px;
+  padding: 24px;
+  background: linear-gradient(135deg, #1e1e2f, #2c2f33);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 173, 181, 0.25);
+  max-width: 700px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fbc531;
+  letter-spacing: 1px;
+}
+
+
+
+
+
+
+#region-title.dashboard-header {
   text-align: center;
   margin: 40px auto 30px;
   padding: 20px 30px;
