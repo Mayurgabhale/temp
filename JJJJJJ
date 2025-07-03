@@ -1,3 +1,48 @@
+/* Device name (top heading) */
+.device-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #2c3e50; /* dark slate gray */
+}
+
+/* Device type label */
+.device-type-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Icon colors per device type */
+.device-type-label.cameras i {
+  color: #1e88e5; /* Blue */
+}
+
+.device-type-label.controllers i {
+  color: #8e24aa; /* Purple */
+}
+
+.device-type-label.archivers i {
+  color: #fb8c00; /* Orange */
+}
+
+.device-type-label.servers i {
+  color: #43a047; /* Green */
+}
+
+/* IP, location, city labels */
+.device-card p {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* Icons inside paragraphs (IP, location, etc.) */
+.device-card p i {
+  color: #6c757d; /* muted gray */
+  margin-right: 5px;
+}
+
+
+
+.....
  card.innerHTML = `
                         <h3 class="device-name">
                              ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
