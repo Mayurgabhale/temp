@@ -1,3 +1,19 @@
+card.innerHTML = `
+    <h3 class="device-name">
+        <i class="fas fa-microchip"></i> ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+    </h3>
+    <p><strong><i class="fas fa-microchip"></i> Type:</strong> ${deviceType.toUpperCase()}</p>
+    <p><strong><i class="fas fa-network-wired"></i> IP:</strong> <span class="device-ip">${deviceIP}</span></p>
+    <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> ${device.location || "N/A"}</p>
+    <p><strong><i class="fas fa-city"></i> City:</strong> ${city}</p>
+`;
+
+
+
+
+
+
+.....
 const card = document.createElement("div");
 card.className = "device-card";
 card.dataset.type = deviceType;
