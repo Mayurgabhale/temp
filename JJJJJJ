@@ -1,3 +1,17 @@
+<p class="device-type-label ${deviceType}">
+    <strong>
+        <i class="${getDeviceIcon(deviceType)}"></i> ${deviceType.toUpperCase()}
+    </strong>
+</p>
+
+
+
+
+
+
+
+......................
+
 for (const [key, devices] of Object.entries(data.details)) {
                 if (!Array.isArray(devices) || devices.length === 0) continue;
                 const deviceType = key.toLowerCase();
