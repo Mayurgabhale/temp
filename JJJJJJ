@@ -1,3 +1,25 @@
+// Icon utility based on device type
+function getDeviceIcon(type) {
+    switch (type.toLowerCase()) {
+        case "camera":
+            return "fas fa-video";
+        case "controller":
+            return "fas fa-cogs";
+        case "archiver":
+            return "fas fa-hdd";
+        case "server":
+            return "fas fa-server";
+        default:
+            return "fas fa-microchip"; // fallback icon
+    }
+}
+
+
+
+
+
+
+......
 function getDeviceIcon(type) {
     switch (type.toLowerCase()) {
         case "camera":
