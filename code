@@ -1,3 +1,23 @@
+<div class="card-status status-total">
+  Total
+  <span id="total-devices">Loading...</span>
+</div>
+<div class="card-status status-online">
+  Online
+  <span id="online-devices">Loading...</span>
+</div>
+<div class="card-status status-offline">
+  Offline
+  <span id="offline-devices">Loading...</span>
+</div>
+
+
+
+
+
+
+
+
 
 
 
