@@ -1,3 +1,39 @@
+.card p {
+  font-size: 14px;
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card p span {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.card p:nth-child(2) span {  /* Total */
+  background-color: #fbc53133;
+  color: #fbc531;
+}
+
+.card p:nth-child(3) span {  /* Online */
+  background-color: #44bd3233;
+  color: #44bd32;
+}
+
+.card p:nth-child(4) span {  /* Offline */
+  background-color: #e8411833;
+  color: #e84118;
+}
+
+
+........
+
+
+
+
 .summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
