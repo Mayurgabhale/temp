@@ -1,3 +1,10 @@
+ <div id="region-title"  class="dashboard-header">
+                <p>📊 Device Health Status Dashboard</p>
+            </div>
+
+
+
+
 .dashboard-header {
   text-align: center;
   margin-bottom: 40px;
