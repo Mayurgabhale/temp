@@ -1,4 +1,8 @@
-
+if (statusDot) {
+    statusDot.style.backgroundColor = (newStatus === "online") ? "green" : "red";
+    statusDot.classList.remove("online-dot", "offline-dot");
+    statusDot.classList.add(newStatus === "online" ? "online-dot" : "offline-dot");
+}
 
 
 
