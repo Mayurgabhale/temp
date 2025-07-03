@@ -1,3 +1,46 @@
+/* Background color based on status */
+.device-card.online {
+  background-color: #e8f5e9; /* light green */
+  border-left: 4px solid #2e7d32;
+}
+
+.device-card.offline {
+  background-color: #ffebee; /* light red */
+  border-left: 4px solid #c62828;
+}
+
+/* Different color header based on device type */
+.device-card.cameras .device-name {
+  color: #1976d2; /* Blue */
+}
+
+.device-card.controllers .device-name {
+  color: #9c27b0; /* Purple */
+}
+
+.device-card.archivers .device-name {
+  color: #f57c00; /* Orange */
+}
+
+.device-card.servers .device-name {
+  color: #2e7d32; /* Green */
+}
+
+/* Optional: add border/shadow for card aesthetics */
+.device-card {
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.device-card:hover {
+  transform: scale(1.02);
+}
+
+.........
+
 card.innerHTML = `
   <h3 class="device-name">
     ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
