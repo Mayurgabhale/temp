@@ -1,8 +1,133 @@
+HTML .....
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Device Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">Regions</h2>
+      <div class="region-buttons">
+        <button class="btn region-btn" data-region="global">Global</button>
+        <button class="btn region-btn" data-region="apac">APAC</button>
+        <button class="btn region-btn" data-region="emea">EMEA</button>
+        <button class="btn region-btn" data-region="laca">LACA</button>
+        <button class="btn region-btn" data-region="namer">NAMER</button>
+      </div>
+
+      <div class="nav-links">
+        <button class="btn primary-btn" onclick="window.location.href='trend.html'">View Trend Analysis</button>
+        <button class="btn primary-btn" onclick="window.location.href='summary.html'">View Devices Summary</button>
+      </div>
+
+      <div class="countdown" id="countdown"></div>
+
+      <div class="filter-section">
+        <button class="btn filter-btn active" id="filter-all" data-status="all">All Devices</button>
+        <button class="btn filter-btn online" id="filter-online" data-status="online">Online Devices</button>
+        <button class="btn filter-btn offline" id="filter-offline" data-status="offline">Offline Devices</button>
+      </div>
+
+      <div class="dropdowns">
+        <label for="device-filter">Device Type:</label>
+        <select id="device-filter">
+          <option value="all">All</option>
+          <option value="cameras">Cameras</option>
+          <option value="archivers">Archivers</option>
+          <option value="controllers">Controllers</option>
+          <option value="servers">Servers</option>
+        </select>
+
+        <label for="city-filter">Location:</label>
+        <select id="city-filter">
+          <option value="all">All Cities</option>
+        </select>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <h1 class="page-title">Global Summary</h1>
+
+      <section class="summary">
+        <div id="city-summary"></div>
+
+        <div class="card">
+          <h3>Total Devices</h3>
+          <p>Total: <span id="total-devices">Loading...</span></p>
+          <p>Online: <span id="online-devices">Loading...</span></p>
+          <p>Offline: <span id="offline-devices">Loading...</span></p>
+        </div>
+
+        <div class="card">
+          <h3>Cameras</h3>
+          <p>Total: <span id="camera-total">Loading...</span></p>
+          <p>Online: <span id="camera-online">Loading...</span></p>
+          <p>Offline: <span id="camera-offline">Loading...</span></p>
+        </div>
+
+        <div class="card">
+          <h3>Archivers</h3>
+          <p>Total: <span id="archiver-total">Loading...</span></p>
+          <p>Online: <span id="archiver-online">Loading...</span></p>
+          <p>Offline: <span id="archiver-offline">Loading...</span></p>
+        </div>
+
+        <div class="card">
+          <h3>Controllers</h3>
+          <p>Total: <span id="controller-total">Loading...</span></p>
+          <p>Online: <span id="controller-online">Loading...</span></p>
+          <p>Offline: <span id="controller-offline">Loading...</span></p>
+        </div>
+
+        <div class="card">
+          <h3>Servers</h3>
+          <p>Total: <span id="server-total">Loading...</span></p>
+          <p>Online: <span id="server-online">Loading...</span></p>
+          <p>Offline: <span id="server-offline">Loading...</span></p>
+        </div>
+      </section>
+
+      <section id="details-section">
+        <h2>Device Details</h2>
+        <div id="device-details">Loading...</div>
+        <div id="details-container"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="close-modal" class="close-btn">&times;</span>
+      <h3 id="modal-title">Device Details</h3>
+      <ul id="modal-body"></ul>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo" />
+    <p>&copy; 2025 VisionWatch | Powered by <strong>Western Union Services India Pvt Ltd.</strong></p>
+    <p>
+      Contact:
+      <a href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">
+        gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com
+      </a>
+      |
+      <a href="tel:+91 20 67632394">+91 2067632394</a>
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
 
 
-
-
+............
 CSS .....  
 :root {
   --primary-color: #dfcd26;
