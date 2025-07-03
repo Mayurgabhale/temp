@@ -1,3 +1,80 @@
+.device-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-left: 6px solid #007BFF;
+    padding: 16px;
+    border-radius: 10px;
+    margin: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.device-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.device-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.device-ip {
+    font-weight: bold;
+    color: #333;
+}
+
+.device-status {
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    background-color: #f0f0f0;
+    font-size: 0.95rem;
+}
+
+.device-status.online {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.device-status.offline {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-dot {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.details-button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.details-button:hover {
+    background-color: #0056b3;
+}
+
+
+
+
+
+
+
+
+
 /* ===== Reset & Base Styles ===== */
 * {
   margin: 0;
