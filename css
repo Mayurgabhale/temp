@@ -1,5 +1,101 @@
 /* Main container (card) */
 .device-card {
+  background-color: #1e293b; /* dark slate background */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 15px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #334155;
+}
+
+/* Hover effect */
+.device-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Header: Name and status */
+.device-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 10px;
+}
+
+/* Status pill */
+.device-card .status {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 12px;
+}
+
+.device-card[data-status="online"] .status {
+  background-color: #0f766e33; /* soft green tint */
+  color: #34d399;
+}
+
+.device-card[data-status="offline"] .status {
+  background-color: #7f1d1d33; /* soft red tint */
+  color: #f87171;
+}
+
+/* Device details */
+.device-card p {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+/* Details button */
+.device-card button {
+  margin-top: 15px;
+  padding: 10px 14px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.device-card button:hover {
+  background-color: #2563eb;
+}
+
+/* Grid layout for cards */
+#device-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background-color: #0f172a; /* overall dashboard background */
+  min-height: 100vh;
+}
+
+
+
+
+
+
+
+
+
+............
+
+/* Main container (card) */
+.device-card {
   background-color: #ffffff;
   border-radius: 12px;
   padding: 20px;
