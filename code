@@ -1,3 +1,92 @@
+
+
+
+/* ===== Summary Cards ===== */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: linear-gradient(135deg, #1e1e2f, #2c2f33);
+  padding: 24px 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #333;
+  overflow: hidden;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(255, 204, 0, 0.25);
+  border-color: #00adb5;
+}
+
+.card h3 {
+  color: #fbc531;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.card i {
+  color: #00adb5;
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* Centered blocks */
+.card-status {
+  text-align: center;
+  padding: 14px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #fff;
+}
+
+.status-total {
+  background-color: #fbc53122;
+  color: #fbc531;
+}
+
+.status-online {
+  background-color: #44bd3222;
+  color: #44bd32;
+}
+
+.status-offline {
+  background-color: #e8411822;
+  color: #e84118;
+}
+
+.card-status span {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+................
+
 /* ===== Summary Cards ===== */
 .summary {
   display: grid;
