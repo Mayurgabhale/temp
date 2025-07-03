@@ -1,3 +1,16 @@
+
+card.innerHTML = `
+    <h3>${deviceName}</h3>
+    <p><i class="fas ${getDeviceTypeIcon(deviceType)}"></i> ${deviceType.toUpperCase()}</p>
+    <p><i class="fas fa-network-wired"></i> IP: ${deviceIP}</p>
+    <p><i class="fas fa-map-marker-alt"></i> Location: ${device.location || "N/A"}</p>
+    <p><i class="fas fa-city"></i> City: ${city}</p>
+`;
+
+
+
+
+......
 function getDeviceTypeIcon(type) {
     switch (type) {
         case 'cameras': return 'fa-camera';
