@@ -1,21 +1,3 @@
-if (statusDot) {
-    statusDot.style.backgroundColor = (newStatus === "online") ? "green" : "red";
-    statusDot.classList.remove("online-dot", "offline-dot");
-    statusDot.classList.add(newStatus === "online" ? "online-dot" : "offline-dot");
-}
-
-
-
-
-
-
-.......<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-papNM3f0ItdRkaBnPtG8a1UxLgMGxMi64lHJdp8W4KKC+hA6S+/EnUEoymJTDsFVx6fw52y9y2GK6zjqNREf4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-
-
-
-
-........
 // C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
 
 const baseUrl = "http://localhost:80/api/regions";
@@ -141,7 +123,10 @@ function pingAllDevices(regionName) {
                     const statusText = card.querySelector(".status-text");
                     if (statusDot) {
                         statusDot.style.backgroundColor = (newStatus === "online") ? "green" : "red";
-                    } else {
+                        statusDot.classList.remove("online-dot", "offline-dot");
+                        statusDot.classList.add(newStatus === "online" ? "online-dot" : "offline-dot");
+                    }
+                    else {
                         console.warn(`Status dot element not found for IP: ${ip}`);
                     }
                     if (statusText) {
@@ -209,21 +194,21 @@ function updateDetails(data) {
     let combinedDevices = [];
     let citySet = new Set();
 
-// Icon utility based on device type
-function getDeviceIcon(type) {
-    switch (type.toLowerCase()) {
-        case "camera":
-            return "fas fa-video";
-        case "controller":
-            return "fas fa-cogs";
-        case "archiver":
-            return "fas fa-hdd";
-        case "server":
-            return "fas fa-server";
-        default:
-            return "fas fa-microchip"; // fallback icon
+    // Icon utility based on device type
+    function getDeviceIcon(type) {
+        switch (type.toLowerCase()) {
+            case "camera":
+                return "fas fa-video";
+            case "controller":
+                return "fas fa-cogs";
+            case "archiver":
+                return "fas fa-hdd";
+            case "server":
+                return "fas fa-server";
+            default:
+                return "fas fa-microchip"; // fallback icon
+        }
     }
-}
 
 
     // Fetch real-time status if available.
@@ -274,7 +259,7 @@ function getDeviceIcon(type) {
                     statusContainer.appendChild(statusText);
                     statusContainer.appendChild(statusDot);
 
-                    
+
 
                     card.innerHTML = `
                         <h3 class="device-name">
