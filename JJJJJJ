@@ -1,3 +1,54 @@
+/* Device name */
+.device-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Device type label */
+.device-type-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Device type icons by type */
+.device-type-label.cameras i {
+  color: #1e88e5; /* Blue */
+}
+.device-type-label.controllers i {
+  color: #8e24aa; /* Purple */
+}
+.device-type-label.archivers i {
+  color: #fb8c00; /* Orange */
+}
+.device-type-label.servers i {
+  color: #43a047; /* Green */
+}
+
+/* Paragraph text (IP, location, city) */
+.device-card p {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* Specific icon styles inside <p> blocks */
+.device-card p i.fa-network-wired {
+  color: #007bff; /* Blue for IP */
+}
+
+.device-card p i.fa-map-marker-alt {
+  color: #e74c3c; /* Red for Location */
+}
+
+.device-card p i.fa-city {
+  color: #9b59b6; /* Purple for City */
+}
+
+
+
+
+......
+
 /* Device name (top heading) */
 .device-name {
   font-size: 1.4rem;
