@@ -1,5 +1,22 @@
 
-card.innerHTML = `
+[ContentMain]
+ContentMain.js:18 [ContentService] document.readyState: loading
+index.html:10 Failed to find a valid digest in the 'integrity' attribute for resource 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' with computed SHA-512 integrity 'iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=='. The resource has been blocked.Understand this error
+ContentMain.js:5 [ContentService.SetContentInitData] target: { TabId: 1454083896, FrameId: 0}
+script.js:87 Summary Data: Object
+script.js:88 Details Data: Object
+script.js:87 Summary Data: Object
+script.js:88 Details Data: Object
+script.js:234 Live Status Data: Object
+script.js:423 Error fetching real-time device status: ReferenceError: deviceName is not defined
+    at script.js:281:11
+    at Array.forEach (<anonymous>)
+    at script.js:240:25
+(anonymous) @ script.js:423Understand this error
+
+
+
+****************************************card.innerHTML = `
     <h3>${deviceName}</h3>
     <p><i class="fas ${getDeviceTypeIcon(deviceType)}"></i> ${deviceType.toUpperCase()}</p>
     <p><i class="fas fa-network-wired"></i> IP: ${deviceIP}</p>
