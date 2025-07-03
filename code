@@ -1,4 +1,30 @@
-  <h1 id="region-title">🌐 Global Summary</h1>
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: linear-gradient(to right, #1e1e2f, #2c2f33);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 173, 181, 0.2);
+}
+
+.dashboard-header p {
+  font-size: 22px;
+  color: #fbc531;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+
+
+<div class="dashboard-header">
+  <p>📊 Device Health Status Dashboard</p>
+</div>
+
+
+
+......
+
+ <h1 id="region-title">🌐 Global Summary</h1>
 
             <p>Device Helth Status Dashboard</p>
 
