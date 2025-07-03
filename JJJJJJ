@@ -1,12 +1,9 @@
-const deviceIcons = {
-    cameras: '<i class="fas fa-video" style="color:#4b7bec;"></i>',
-    archivers: '<i class="fas fa-archive" style="color:#a55eea;"></i>',
-    controllers: '<i class="fas fa-microchip" style="color:#26de81;"></i>',
-    servers: '<i class="fas fa-server" style="color:#fd9644;"></i>',
-    default: '<i class="fas fa-question-circle" style="color:#778ca3;"></i>'
-};
-
-const statusColors = {
-    online: 'green',
-    offline: 'red'
-};
+function getDeviceTypeIcon(type) {
+    switch (type) {
+        case 'cameras': return 'fa-camera';
+        case 'controllers': return 'fa-microchip';
+        case 'archivers': return 'fa-database';
+        case 'servers': return 'fa-server';
+        default: return 'fa-box'; // default icon
+    }
+}
