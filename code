@@ -1,4 +1,29 @@
- <div id="region-title"  class="dashboard-header">
+ #region-title.dashboard-header {
+  text-align: center;
+  margin: 40px auto 30px;
+  padding: 20px 30px;
+  background: linear-gradient(135deg, #1e1e2f, #2c2f33);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 173, 181, 0.2);
+  max-width: 600px;
+}
+
+#region-title.dashboard-header p {
+  font-size: 24px;
+  color: #fbc531;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+
+
+
+
+
+
+
+<div id="region-title"  class="dashboard-header">
                 <p>📊 Device Health Status Dashboard</p>
             </div>
 
