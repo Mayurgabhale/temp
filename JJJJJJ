@@ -1,3 +1,8 @@
+statusDot.classList.add(currentStatus === "online" ? "online-dot" : "offline-dot");
+
+
+....
+
 // Icon utility based on device type
 function getDeviceIcon(type) {
     switch (type.toLowerCase()) {
