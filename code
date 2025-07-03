@@ -1,3 +1,14 @@
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Forces 3 columns */
+  gap: 20px;
+}
+
+
+
+
+
+
 <!-- Device Details -->
       <section id="details-section">
         <h2>📟 Device Details</h2>
