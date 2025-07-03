@@ -1,3 +1,22 @@
+  <h1 id="region-title">🌐 Global Summary</h1>
+
+            <p>Device Helth Status Dashboard</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="summary">
   <div class="card">
     <h3><i class="fas fa-microchip"></i> Total Devices</h3>
