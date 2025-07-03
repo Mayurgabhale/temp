@@ -1,3 +1,17 @@
+
+
+
+
+
+
+
+.......<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-papNM3f0ItdRkaBnPtG8a1UxLgMGxMi64lHJdp8W4KKC+hA6S+/EnUEoymJTDsFVx6fw52y9y2GK6zjqNREf4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+........
 // C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
 
 const baseUrl = "http://localhost:80/api/regions";
