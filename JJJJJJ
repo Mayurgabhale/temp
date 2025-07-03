@@ -1,3 +1,24 @@
+function getDeviceIcon(type) {
+    switch (type.toLowerCase()) {
+        case "camera":
+            return "fas fa-video";
+        case "controller":
+            return "fas fa-cogs";
+        case "archiver":
+            return "fas fa-hdd";
+        case "server":
+            return "fas fa-server";
+        default:
+            return "fas fa-microchip";
+    }
+}
+
+
+
+
+
+..........
+
 // C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
 
 const baseUrl = "http://localhost:80/api/regions";
