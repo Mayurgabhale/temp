@@ -1,4 +1,15 @@
- <!-- Device Details -->
+
+
+
+
+
+                    card.style.backgroundColor = currentStatus === "online" ? "#e6ffed" : "#ffe6e6";
+
+
+
+
+
+<!-- Device Details -->
             <section id="details-section">
                 <h2>📟 Device Details</h2>
                 <div id="device-details" class="device-grid">Loading...</div>
