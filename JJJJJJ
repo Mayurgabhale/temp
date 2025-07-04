@@ -1,4 +1,64 @@
 
+
+
+const card = document.createElement("div");
+card.className = "device-card";
+card.dataset.type = deviceType;
+card.dataset.status = currentStatus;
+card.dataset.city = city;
+card.setAttribute("data-ip", deviceIP);
+
+// Apply background color based on online/offline status
+card.style.backgroundColor = currentStatus === "online" ? "#e6ffed" : "#ffe6e6";
+
+// Create a container for status
+const statusContainer = document.createElement("p");
+statusContainer.className = "device-status";
+statusContainer.textContent = "Status: ";
+
+// Status text
+const statusText = document.createElement("span");
+statusText.className = "status-text";
+statusText.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+statusText.style.color = currentStatus === "online" ? "green" : "red";
+
+// Status dot
+const statusDot = document.createElement("span");
+statusDot.classList.add(currentStatus === "online" ? "online-dot" : "offline-dot");
+statusDot.style.backgroundColor = (currentStatus === "online") ? "green" : "red";
+statusDot.style.display = "inline-block";
+statusDot.style.width = "10px";
+statusDot.style.height = "10px";
+statusDot.style.marginLeft = "5px";
+statusDot.style.borderRadius = "50%";
+
+// Combine status parts
+statusContainer.appendChild(statusText);
+statusContainer.appendChild(statusDot);
+
+// Use insertAdjacentHTML to avoid overwriting statusContainer
+card.insertAdjacentHTML("beforeend", `
+  <h3 class="device-name">
+      ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+  </h3>
+  <p class="device-type-label ${deviceType}">
+      <strong><i class="${getDeviceIcon(deviceType)}"></i> ${deviceType.toUpperCase()}</strong>
+  </p>
+  <p><strong><i class="fas fa-network-wired"></i> IP:</strong> <span class="device-ip">${deviceIP}</span></p>
+  <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> ${device.location || "N/A"}</p>
+  <p><strong><i class="fas fa-city"></i> City:</strong> ${city}</p>
+`);
+
+card.appendChild(statusContainer);
+
+card.insertAdjacentHTML("beforeend", `
+  <button class="details-button" onclick="showModal('${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}', '${deviceIP}', '${device.location || "N/A"}', '${currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}', '${city}')">Details</button>
+`);
+
+
+
+
+.......
 const card = document.createElement("div");
 card.className = "device-card";
 card.innerHTML = `
