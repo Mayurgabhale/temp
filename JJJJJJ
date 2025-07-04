@@ -1,49 +1,54 @@
-/* Global */
-.region-button[data-region="global"] i {
-  color: #00adb5; /* Teal */
+
+/* 💡 Table Styling Improved */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px var(--shadow);
+  margin-top: 10px;
 }
 
-/* APAC */
-.region-button[data-region="apac"] i {
-  color: #f39c12; /* Orange */
+thead {
+  background-color: var(--primary);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* EMEA */
-.region-button[data-region="emea"] i {
-  color: #e67e22; /* Deep Orange */
+th, td {
+  padding: 14px 12px;
+  text-align: center;
+  font-size: 15px;
 }
 
-/* LACA */
-.region-button[data-region="laca"] i {
-  color: #9b59b6; /* Purple */
+tbody tr:nth-child(even) {
+  background-color: #2f2f2f;
 }
 
-/* NAMER */
-.region-button[data-region="namer"] i {
-  color: #2980b9; /* Blue */
+tbody tr:nth-child(odd) {
+  background-color: #252525;
 }
 
-/* Trend Analysis */
-.nav-button i.fas.fa-chart-line {
-  color: #1abc9c; /* Green Cyan */
+tbody tr:hover {
+  background-color: var(--hover-bg);
+  cursor: pointer;
 }
 
-/* Summary */
-.nav-button i.fas.fa-table {
-  color: #d35400; /* Rust Orange */
+/* 🎨 Remark Color Coding */
+td:nth-child(9) {
+  font-weight: bold;
 }
 
-/* All Devices */
-.status-filter[data-status="all"] i {
-  color: #bdc3c7; /* Silver */
+td:contains("Online") {
+  color: var(--success);
 }
 
-/* Online Devices */
-.status-filter[data-status="online"] i {
-  color: #2ecc71; /* Green */
+td:contains("Offline") {
+  color: var(--danger);
 }
 
-/* Offline Devices */
-.status-filter[data-status="offline"] i {
-  color: #e74c3c; /* Red */
+td:contains("repair") {
+  color: var(--warning);
 }
