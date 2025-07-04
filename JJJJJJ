@@ -1,3 +1,19 @@
+
+const card = document.createElement("div");
+card.className = "device-card";
+card.innerHTML = `
+  <h3>...</h3>
+  <p class="device-type-label">...</p>
+  <p>IP: ...</p>
+  <p>Location: ...</p>
+  <p>City: ...</p>
+  <p>Status: <span class="status-text">...</span></p>
+  <button class="details-button" onclick="showModal(...)">Details</button>
+`;
+
+
+
+
 if (statusText) {
     const bgColor = newStatus === "online" ? "#d4f7d4" : "#f8d7da"; // light green/red background
     const textColor = newStatus === "online" ? "green" : "red";
