@@ -1,3 +1,16 @@
+
+
+
+
+
+
+
+statusText.style.backgroundColor = "transparent";
+statusText.style.padding = "0";
+statusText.style.borderRadius = "0";
+
+.....
+
 if (statusText) {
     const textColor = newStatus === "online" ? "green" : "red";
 
