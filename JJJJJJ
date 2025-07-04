@@ -1,3 +1,22 @@
+
+<div class="device-summary">
+  <div class="device-card">
+    <i class="fas fa-clock icon"></i>
+    <span class="label">Downtime &gt; 15 min:</span>
+    <p class="value" id="count-downtime-over-15">0</p>
+  </div>
+  <div class="device-card">
+    <i class="fas fa-power-off icon"></i>
+    <span class="label">Currently Offline:</span>
+    <p class="value offline" id="count-currently-offline">0</p>
+  </div>
+</div>
+
+
+
+.
+..........
+
 <div class="summary-container">
                 <div class="summary-card">
                     <i class="fas fa-clock"></i>
