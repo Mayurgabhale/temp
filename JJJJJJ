@@ -1,3 +1,379 @@
+ <!-- Device Details -->
+            <section id="details-section">
+                <h2>📟 Device Details</h2>
+                <div id="device-details" class="device-grid">Loading...</div>
+                <div id="details-container" class="device-grid"></div>
+            </section>
+
+...................
+
+
+/* Background color based on status */
+.device-card.online {
+  background-color: #e8f5e9; /* light green */
+  border-left: 4px solid #2e7d32;
+}
+
+.device-card.offline {
+  background-color: #ffebee; /* light red */
+  border-left: 4px solid #c62828;
+}
+
+/* Different color header based on device type */
+
+.device-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+status-text {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+.status-text.online {
+    color: green;
+}
+.status-text.offline {
+    color: red;
+}
+.device-card.cameras .device-name {
+  color: #1976d2; /* Blue */
+}
+
+.device-card.controllers .device-name {
+  color: #9c27b0; /* Purple */
+}
+
+.device-card.archivers .device-name {
+  color: #f57c00; /* Orange */
+}
+
+.device-card.servers .device-name {
+  color: #2e7d32; /* Green */
+}
+
+/* Optional: add border/shadow for card aesthetics */
+/* .device-card {
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  /* transition: transform 0.2s ease; 
+} */
+
+.device-card:hover {
+  transform: scale(1.02);
+}
+
+
+
+
+/* ===== Device Grid ===== */
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+
+/* .device-card {
+  background-color: #2c2f33;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: 0.3s ease;
+} */
+
+#device-details.device-grid {
+  display: grid;
+  grid-template-rows: repeat(3, 2fr); /* 3 per row */
+  gap: 10px;
+  margin-top: 20px;
+}
+
+
+/* Main container (card) */
+.device-card {
+  background-color: #fff;
+  /* background-color: #2c2f33; */
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.device-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Header: Name and status */
+.device-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 10px;
+}
+
+/* Status pill */
+.device-card .status {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 12px;
+}
+
+/* .............. */
+
+/* Device name */
+.device-name {
+  font-size: 1.7 rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Device type label */
+.device-type-label {
+ font-weight: bold;
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.device-type-label i{
+    color: yellow;
+}
+/* Device type icons by type */
+.device-type-label.cameras i {
+  color: #1e88e5; /* Blue */
+}
+.device-type-label.controllers i {
+  color: #8e24aa; /* Purple */
+}
+.device-type-label.archivers i {
+  color: #fb8c00; /* Orange */
+}
+.device-type-label.servers i {
+  color: #43a047; /* Green */
+}
+
+/* Paragraph text (IP, location, city) */
+.device-card p {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* Specific icon styles inside <p> blocks */
+.device-card p i.fa-network-wired {
+  color: #007bff; /* Blue for IP */
+}
+
+.device-card p i.fa-map-marker-alt {
+  color: #e74c3c; /* Red for Location */
+}
+
+.device-card p i.fa-city {
+  color: #9b59b6; /* Purple for City */
+}
+
+
+/* ............. */
+
+
+
+.device-card[data-status="online"] .status {
+  background-color: #0f766e33; /* soft green tint */
+  color: #34d399;
+}
+
+.device-card[data-status="offline"] .status {
+  background-color: #7f1d1d33; /* soft red tint */
+  color: #f87171;
+}
+
+/* Device details */
+.device-card p {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+/* Details button */
+.device-card button {
+  margin-top: 15px;
+  padding: 10px 14px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.device-card button:hover {
+  background-color: #2563eb;
+}
+
+/* Grid layout for cards */
+#device-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background-color: #0f172a; /* overall dashboard background */
+  min-height: 100vh;
+}
+
+
+
+
+
+
+/* .device-card {
+  background-color: #2c2f33;
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.device-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(255, 204, 0, 0.3);
+}
+
+.device-card h3 {
+  font-size: 16px;
+  color: #00adb5;
+  margin-bottom: 8px;
+}
+
+.device-card p {
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+.details-button {
+  display: inline-block;
+  background-color: #00adb5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.details-button:hover {
+  background-color: #008c90;
+} */
+
+/* ===== Modal ===== */
+#modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #1e1e2f;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  color: #f1f1f1;
+}
+
+#close-modal {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #fbc531;
+}
+
+#modal-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+#modal-body li {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* ===== Countdown Timer ===== */
+.countdown-timer {
+  font-size: 14px;
+  color: #f1f1f1;
+  margin-top: 15px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  background-color: #1e1e2f;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  border-top: 1px solid #2c2c3e;
+  color: #aaa;
+}
+
+.footer-logo {
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #2c2c3e;
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ................ */
+
+/* ,,,,,,,,,, */
+
+
+
+
+..............
 for (const [key, devices] of Object.entries(data.details)) {
                 if (!Array.isArray(devices) || devices.length === 0) continue;
                 const deviceType = key.toLowerCase();
