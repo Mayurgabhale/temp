@@ -1,3 +1,13 @@
+                <td><button onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+
+
+
+
+
+
+
+
+
 if (remarkElement) {
     if (lastStatus === "Offline") {
         remarkElement.innerText = needsRepair ? "Device is Offline, needs repair." : "Device is Offline.";
