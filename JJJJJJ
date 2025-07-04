@@ -1,9 +1,28 @@
-in this i am  click on ip addres ip can copy
-
-
 <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
-    <strong style="color: #d7d9de;"><i class="fas fa-network-wired" style="margin-right: 6px;"></i>IP:</strong>
-    <span class="device-ip" style="font-weight: bold; color: #00adb5; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);">
+    <strong style="color: #d7d9de;">
+        <i class="fas fa-network-wired" style="margin-right: 6px;"></i>IP:
+    </strong>
+    <span 
+        class="device-ip" 
+        style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
+        onclick="copyToClipboard('${deviceIP}')"
+        title="Click to copy IP"
+    >
         ${deviceIP}
     </span>
 </p>
+
+
+
+......
+
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("IP copied: " + text);
+    }).catch(err => {
+        console.error("Copy failed", err);
+    });
+}
+
+
