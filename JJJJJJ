@@ -1,17 +1,15 @@
-/* 🌟 Table Container */
 table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
+  background-color: var(--card);
   border-radius: 10px;
   overflow: hidden;
-  background-color: var(--card);
   box-shadow: 0 0 15px var(--shadow);
   margin-top: 10px;
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🧠 Header Styling */
+/* Header */
 thead {
   background-color: var(--primary);
   color: #fff;
@@ -23,10 +21,17 @@ th, td {
   padding: 14px 12px;
   text-align: center;
   font-size: 15px;
-  border-bottom: 1px solid #3a3a3a;
+  border-right: 1px solid #3a3a3a;  /* 💡 Vertical column lines */
+  border-bottom: 1px solid #3a3a3a; /* 💡 Horizontal row lines */
 }
 
-/* ✨ Alternate Row Backgrounds */
+/* Remove right border from last column */
+th:last-child,
+td:last-child {
+  border-right: none;
+}
+
+/* Zebra Stripes */
 tbody tr:nth-child(even) {
   background-color: #2f2f2f;
 }
@@ -35,42 +40,25 @@ tbody tr:nth-child(odd) {
   background-color: #252525;
 }
 
-/* 🖱️ Row Hover */
+/* Hover Effect */
 tbody tr:hover {
   background-color: #3a3a3a;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-/* 💬 Status Coloring (using class or JS addClass) */
+/* Status Coloring via class */
 .status-online {
-  color: #2ecc71; /* Green */
+  color: #2ecc71;
   font-weight: bold;
 }
 
 .status-offline {
-  color: #e74c3c; /* Red */
+  color: #e74c3c;
   font-weight: bold;
 }
 
 .status-repair {
-  color: #f39c12; /* Orange */
+  color: #f39c12;
   font-weight: bold;
-}
-
-/* Optional: Rounded top corners */
-thead th:first-child {
-  border-top-left-radius: 10px;
-}
-
-thead th:last-child {
-  border-top-right-radius: 10px;
-}
-
-/* Optional: Rounded bottom corners on last row */
-tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 10px;
-}
-tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 10px;
 }
