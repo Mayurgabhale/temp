@@ -1,1 +1,11 @@
+<p class="device-type-label ${deviceType}" style="font-size: 1.05rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; margin-bottom: 10px;">
+    Device Type:
+    <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
+</p>
 
+<p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
+    <strong style="color: #d7d9de;"><i class="fas fa-network-wired" style="margin-right: 6px;"></i>IP:</strong>
+    <span class="device-ip" style="font-weight: bold; color: #00adb5; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);">
+        ${deviceIP}
+    </span>
+</p>
