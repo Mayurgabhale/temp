@@ -1,5 +1,20 @@
 
 
+
+
+
+
+
+
+
+
+
+
+                    card.style.backgroundColor = currentStatus === "online" ? "#e6ffed" : "#ffe6e6";
+
+
+\\\\\\\\\\\\\
+
 .status-text {
     font-weight: 600;
     font-size: 14px;
