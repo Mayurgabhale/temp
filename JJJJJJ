@@ -1,3 +1,16 @@
+if (statusDot) {
+    statusDot.style.backgroundColor = newStatus === "online" ? "green" : "red";
+    statusDot.classList.remove("online-dot", "offline-dot");
+    statusDot.classList.add(newStatus === "online" ? "online-dot" : "offline-dot");
+}
+if (statusText) {
+    statusText.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+    statusText.style.color = newStatus === "online" ? "green" : "red"; // ← Add this line
+}
+
+
+.,...
+
 .device-type-label {
     font-weight: bold;
     font-size: 14px;
