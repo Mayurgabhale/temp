@@ -1,3 +1,12 @@
+
+statusText.style.backgroundColor = "transparent";
+statusText.style.padding = "0";
+statusText.style.borderRadius = "0";
+
+
+....
+
+
 // C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
 
 const baseUrl = "http://localhost:80/api/regions";
