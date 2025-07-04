@@ -1,12 +1,118 @@
+.device-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.6s ease-in-out;
+}
 
-card.style.borderColor = currentStatus === "online"
-  ? "rgba(16, 185, 129, 0.4)"
-  : "rgba(239, 68, 68, 0.4)";
+.device-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 173, 181, 0.15) 0%, transparent 70%);
+  transform: rotate(25deg);
+  pointer-events: none;
+  z-index: 0;
+}
 
+.device-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 173, 181, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}
 
+.device-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--accent-yellow);
+  margin-bottom: 12px;
+  z-index: 1;
+  position: relative;
+}
 
-......
+.device-card .status {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
 
-card.style.backgroundColor = currentStatus === "online"
-  ? "rgba(16, 185, 129, 0.12)"  // Tailwind's emerald-500 with 12% opacity
-  : "rgba(239, 68, 68, 0.12)";  // Tailwind's red-500 with 12% opacity
+.device-card[data-status="online"] .status {
+  background-color: #0f766e33;
+  color: #34d399;
+}
+
+.device-card[data-status="offline"] .status {
+  background-color: #7f1d1d33;
+  color: #f87171;
+}
+
+.device-type-label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 1;
+  position: relative;
+}
+
+.device-type-label i {
+  color: var(--accent-yellow);
+}
+
+.device-card p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 6px 0;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.device-card button {
+  margin-top: 15px;
+  padding: 10px 14px;
+  background-color: var(--accent-blue);
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  z-index: 1;
+  position: relative;
+}
+
+.device-card button:hover {
+  background-color: #019ca3;
+  transform: scale(1.05);
+}
+
+/* ===== Fade In Animation ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
