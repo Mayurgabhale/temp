@@ -1,3 +1,9 @@
+.text-green {
+    color: #28a745; /* Bootstrap green */
+    font-weight: bold;
+}
+
+......
 setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total);
 setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online, "text-green");
 setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0);
