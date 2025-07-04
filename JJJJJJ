@@ -1,3 +1,11 @@
+<button onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Back to Dashboard</button>
+<button onclick="window.location.href='summary.html'"><i class="fas fa-table"></i> View Summary</button>
+<button onclick="exportDeviceTableToExcel()"><i class="fas fa-file-export"></i> Export Device Table</button>
+
+
+
+....
+
 <h1><i class="fas fa-chart-line"></i> Devices Trend Details</h1>
 
 
