@@ -1,4 +1,33 @@
 .history-btn {
+    background-color: #007bff; /* Bootstrap blue */
+    color: white;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.history-btn:hover {
+    background-color: #0056b3; /* Darker blue */
+    border-color: #0056b3;
+}
+
+.history-btn:active {
+    background-color: #004494;
+    border-color: #004494;
+}
+
+
+
+mmmmmmmm
+
+
+
+.history-btn {
     background: linear-gradient(to right, #4facfe, #00f2fe);
     border: none;
     border-radius: 8px;
