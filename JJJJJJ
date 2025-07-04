@@ -1,1 +1,19 @@
+.device-type-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 
+.device-type-label i {
+    color: #007bff; /* Default icon color (blue) */
+    font-size: 16px;
+}
+.device-card[data-status="online"] .device-type-label i {
+    color: green;
+}
+.device-card[data-status="offline"] .device-type-label i {
+    color: red;
+}
