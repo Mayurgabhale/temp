@@ -1,3 +1,9 @@
+<td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+
+
+
+
+,..........
                 <td><button onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
 
 
