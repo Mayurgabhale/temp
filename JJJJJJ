@@ -1,3 +1,61 @@
+
+<style>
+    #device-table {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+    }
+
+    #device-table thead {
+        background-color: #f4f4f4;
+        color: #333;
+    }
+
+    #device-table tbody tr {
+        transition: background-color 0.3s;
+    }
+
+    #device-table tbody tr:hover {
+        background-color: #f1f9ff;
+    }
+
+    .status-online {
+        color: #2e7d32; /* Deep Green */
+        font-weight: 600;
+    }
+
+    .status-offline {
+        color: #c62828; /* Rich Red */
+        font-weight: 600;
+    }
+
+    .status-unknown {
+        color: #6d6d6d; /* Gray for unknown */
+        font-style: italic;
+    }
+
+    td {
+        padding: 6px 8px;
+        border: 1px solid #ddd;
+    }
+
+    #remark-filter, #device-type, #region {
+        font-family: inherit;
+        font-size: 14px;
+        padding: 4px 6px;
+    }
+
+    #remark-filter:focus, #device-type:focus, #region:focus {
+        outline: none;
+        border-color: #0077cc;
+        box-shadow: 0 0 4px rgba(0, 119, 204, 0.3);
+    }
+</style>
+
+
+
+
+
+
 .........
 
 
