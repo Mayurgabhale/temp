@@ -1,4 +1,16 @@
+.....
 
+.online-row {
+  border-left: 4px solid #28a745;
+}
+
+.offline-row {
+  border-left: 4px solid #dc3545;
+}
+
+
+
+....
 row.classList.add(dev.current === "Online" ? "online-row" : "offline-row");
 
 
