@@ -1,50 +1,43 @@
-<button id="scrollToTopBtn" title="Go to top">
-    <i class="fas fa-arrow-up"></i>
-</button>
 
+    // compute our two new summary counts:
+    const downtimeOver15Count = list.filter(d => d.downCount > 15).length;
+    const currentlyOfflineCount = list.filter(d => d.current === 'Offline').length;
+    const setIf = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
+    setIf('count-downtime-over-15', `Devices with >15 downtimes: ${downtimeOver15Count}`);
+    setIf('count-currently-offline', `Devices currently Offline: ${currentlyOfflineCount}`);
 
-.....
-
-
-#scrollToTopBtn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 100;
-  background-color: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 15px;
-  font-size: 18px;
-  cursor: pointer;
-  display: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-#scrollToTopBtn:hover {
-  background-color: #0b5ed7;
-  transform: scale(1.1);
-}
-
-
-
-......
-
-
-// Show/hide button on scroll
-window.addEventListener("scroll", () => {
-    const btn = document.getElementById("scrollToTopBtn");
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        btn.style.display = "block";
-    } else {
-        btn.style.display = "none";
+    if (!list.length) {
+        const row = tbody.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 10;
+        cell.textContent = "No devices found";
+        cell.style.textAlign = "center";
+        cell.style.fontWeight = "bold";
+        updateDisplayedDeviceCount(0);
+        return;
     }
-});
 
-// Scroll to top on click
-document.getElementById("scrollToTopBtn").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
+    list.forEach((dev, idx) => {
+        const row = tbody.insertRow();
+        row.style.border = "1px solid black";
+        row.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${dev.ip}</td>
+            <td>${dev.name}</td>
+            <td>${dev.category}</td>
+            <td>${dev.region}</td>
+            <td id="uptime-${dev.safe}">0h/0m/0s</td>
+            <td id="downtime-count-${dev.safe}">${dev.downCount}</td>
+            <td id="downtime-${dev.safe}">0h/0m/0s</td>
+            <td><button onclick="openDeviceHistory('${dev.ip}','${dev.name}','${dev.category}')">View History</button></td>
+            <td id="remark-${dev.safe}">Device working properly</td>
+        `;
+        row.style.color = dev.current === "Online" ? "green" : "red";
 
+        if (dev.current === "Online") {
+            startUptime(dev.ip, dev.hist);
+        } else {
+            startDowntime(dev.ip, dev.hist, dev.category);
+        }
+        updateRemarks(dev.ip, dev.hist, dev.category);
+    });
