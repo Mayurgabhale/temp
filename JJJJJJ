@@ -1,4 +1,89 @@
 
+
+
+/* Container */
+.container {
+  overflow-x: auto;
+  margin: 20px auto;
+  padding: 10px;
+  max-width: 95%;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+/* Table Header */
+table thead th {
+  background-color: #292929;
+  color: #ffffff;
+  padding: 14px 10px;
+  border-bottom: 2px solid #444;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Table Body */
+table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #333;
+  text-align: center;
+  color: #e0e0e0;
+}
+
+/* Row Hover */
+table tbody tr:hover {
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Uptime / Downtime Color */
+td.online {
+  color: #28a745;
+  font-weight: bold;
+}
+
+td.offline {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Remark styling */
+td#remark {
+  font-style: italic;
+  color: #ccc;
+}
+
+/* View History Button */
+table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+table button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
+.........
     // compute our two new summary counts:
     const downtimeOver15Count = list.filter(d => d.downCount > 15).length;
     const currentlyOfflineCount = list.filter(d => d.current === 'Offline').length;
