@@ -1,29 +1,33 @@
-<label for="region">Select Region:</label>
-            <select id="region" onchange="fetchDeviceData()">
-                <option value="global">Global</option>
-                <option value="apac">APAC</option>
-                <option value="emea">EMEA</option>
-                <option value="laca">LACA</option>
-                <option value="namer">NAMER</option>
-            </select>
+<div class="filter-panel">
+  <div>
+    <label for="region">Select Region:</label>
+    <select id="region" onchange="fetchDeviceData()">
+      <option value="global">Global</option>
+      <option value="apac">APAC</option>
+      <option value="emea">EMEA</option>
+      <option value="laca">LACA</option>
+      <option value="namer">NAMER</option>
+    </select>
+  </div>
 
-            <label for="device-type">Filter by Device Type:</label>
-            <select id="device-type" onchange="filterData()">
-                <option value="ALL">All</option>
-                <option value="CONTROLLER">Controller</option>
+  <div>
+    <label for="device-type">Filter by Device Type:</label>
+    <select id="device-type" onchange="filterData()">
+      <option value="ALL">All</option>
+      <option value="CONTROLLER">Controller</option>
+      <option value="ARCHIVER">Archiver</option>
+      <option value="CAMERA">Camera</option>
+      <option value="SERVER">Server</option>
+    </select>
+  </div>
 
-                <option value="ARCHIVER">Archiver</option>
-
-                <option value="CAMERA">Camera</option>
-
-                <option value="SERVER">Server</option>
-
-            </select>
-
-            <label for="remark-filter">Filter by Remark:</label>
-            <select id="remark-filter" onchange="filterData()">
-                <option value="ALL">All</option>
-                <option value="Device needs repair">Device needs repair</option>
-                <option value="Device is Online">Device is Online</option>
-                <option value="Device is Offline">Device is Offline</option>
-            </select>
+  <div>
+    <label for="remark-filter">Filter by Remark:</label>
+    <select id="remark-filter" onchange="filterData()">
+      <option value="ALL">All</option>
+      <option value="Device needs repair">Device needs repair</option>
+      <option value="Device is Online">Device is Online</option>
+      <option value="Device is Offline">Device is Offline</option>
+    </select>
+  </div>
+</div>
