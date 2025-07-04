@@ -1,9 +1,21 @@
 
 
+.status-text {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+.status-text.online {
+    color: green;
+}
+.status-text.offline {
+    color: red;
+}
 
 
-
-
+......
 
 statusText.style.backgroundColor = "transparent";
 statusText.style.padding = "0";
