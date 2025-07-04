@@ -1,3 +1,25 @@
+
+const setWithIcon = (id, iconClass, label, value) => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.innerHTML = `<i class="${iconClass}"></i> ${label}: <span>${value}</span>`;
+    }
+};
+
+setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total);
+setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online);
+setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0);
+setWithIcon("total-controllers", "fas fa-microchip", "Total Controllers", d.controllers?.length || 0);
+setWithIcon("total-archivers", "fas fa-archive", "Total Archivers", d.archivers?.length || 0);
+setWithIcon("total-servers", "fas fa-server", "Total Servers", d.servers?.length || 0);
+
+
+
+
+..........
+
+
+
      .filter(dev => dev.status==="Online").length);
                 const setIf = (id,txt)=>{const el=document.getElementById(id); if(el) el.innerText=txt;};
                 setIf("total-devices", `Total Devices: ${total}`);
