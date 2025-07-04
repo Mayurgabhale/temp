@@ -1,182 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Device Dashboard</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<button id="scrollToTopBtn" title="Go to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
 
 
-</head>
+.....
 
-<body>
-    <div class="container">
-        <!-- Sidebar -->
-        <aside id="sidebar">
-            <h2><i class="fas fa-globe"></i> Regions</h2>
-            <button class="region-button" data-region="global"><i class="fas fa-globe"></i> Global</button>
-            <button class="region-button" data-region="apac"><i class="fas fa-map-marker-alt"></i> APAC</button>
-            <button class="region-button" data-region="emea"><i class="fas fa-map-marker-alt"></i> EMEA</button>
-            <button class="region-button" data-region="laca"><i class="fas fa-map-marker-alt"></i> LACA</button>
-            <button class="region-button" data-region="namer"><i class="fas fa-map-marker-alt"></i> NAMER</button>
 
-            <button class="nav-button" onclick="location.href='trend.html'"><i class="fas fa-chart-line"></i> View Trend
-                Analysis</button>
-            <button class="nav-button" onclick="location.href='summary.html'"><i class="fas fa-table"></i> View Devices
-                Summary</button>
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 15px;
+  font-size: 18px;
+  cursor: pointer;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
 
-            <div id="countdown" class="countdown-timer">Loading Timer...</div>
-
-            <div class="filter-buttons">
-                <button id="filter-all" class="status-filter active" data-status="all"><i
-                        class="fas fa-layer-group"></i> All Devices</button>
-                <button id="filter-online" class="status-filter" data-status="online"><i class="fas fa-wifi"></i> Online
-                    Devices</button>
-                <button id="filter-offline" class="status-filter" data-status="offline"><i
-                        class="fas fa-plug-circle-xmark"></i> Offline Devices</button>
-            </div>
-
-            <label for="device-filter">Filter by Device Type:</label>
-            <select id="device-filter">
-                <option value="all">All</option>
-                <option value="cameras">Cameras</option>
-                <option value="archivers">Archivers</option>
-                <option value="controllers">Controllers</option>
-                <option value="servers">Servers</option>
-            </select>
-
-            <label for="city-filter">Filter by Location:</label>
-            <select id="city-filter">
-                <option value="all">All Cities</option>
-            </select>
-        </aside>
-
-        <!-- Main Content -->
-        <main id="content">
-
-            <div id="region-title" class="dashboard-header">
-                <p>📊 Device Health Status Dashboard</p>
-            </div>
-            <!-- <h1 id="region-title">🌐 Global Summary</h1> -->
+#scrollToTopBtn:hover {
+  background-color: #0b5ed7;
+  transform: scale(1.1);
+}
 
 
 
-            <div class="summary">
-                <div class="card">
-                    <h3><i class="fas fa-microchip"></i> Total Devices</h3>
-                    <div class="card-status status-total">
-                        Total
-                        <span id="total-devices">Loading...</span>
-                    </div>
-                    <div class="card-status status-online">
-                        Online
-                        <span id="online-devices">Loading...</span>
-                    </div>
-                    <div class="card-status status-offline">
-                        Offline
-                        <span id="offline-devices">Loading...</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-video"></i> Cameras</h3>
-                    <div class="card-status status-total">
-                        Total
-                        <span id="camera-total">Loading...</span>
-                    </div>
-                    <div class="card-status status-online">
-                        Online
-                        <span id="camera-online">Loading...</span>
-                    </div>
-                    <div class="card-status status-offline">
-                        Offline
-                        <span id="camera-offline">Loading...</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-database"></i> Archivers</h3>
-                    <div class="card-status status-total">
-                        Total
-                        <span id="archiver-total">Loading...</span>
-                    </div>
-                    <div class="card-status status-online">
-                        Online
-                        <span id="archiver-online">Loading...</span>
-                    </div>
-                    <div class="card-status status-offline">
-                        Offline
-                        <span id="archiver-offline">Loading...</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-id-card"></i> Controllers</h3>
-                    <div class="card-status status-total">
-                        Total
-                        <span id="controller-total">Loading...</span>
-                    </div>
-                    <div class="card-status status-online">
-                        Online
-                        <span id="controller-online">Loading...</span>
-                    </div>
-                    <div class="card-status status-offline">
-                        Offline
-                        <span id="controller-offline">Loading...</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-server"></i> Servers</h3>
-                    <div class="card-status status-total">
-                        Total
-                        <span id="server-total">Loading...</span>
-                    </div>
-                    <div class="card-status status-online">
-                        Online
-                        <span id="server-online">Loading...</span>
-                    </div>
-                    <div class="card-status status-offline">
-                        Offline
-                        <span id="server-offline">Loading...</span>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="section-divider">
-
-            <!-- Device Details -->
-            <section id="details-section">
-                <h2>📟 Device Details</h2>
-                <div id="device-details" class="device-grid">Loading...</div>
-                <div id="details-container" class="device-grid"></div>
-            </section>
-        </main>
-    </div>
+......
 
 
-    <!-- Modal -->
-    <div id="modal">
-        <div class="modal-content">
-            <span id="close-modal">&times;</span>
-            <h3 id="modal-title">Device Details</h3>
-            <ul id="modal-body"></ul>
-        </div>
-    </div>
+// Show/hide button on scroll
+window.addEventListener("scroll", () => {
+    const btn = document.getElementById("scrollToTopBtn");
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        btn.style.display = "block";
+    } else {
+        btn.style.display = "none";
+    }
+});
 
-    <!-- Footer -->
-    <footer class="footer">
-        <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo" />
-        <p>&copy; 2025 VisionWatch | Powered by <strong>Western Union Services India Pvt Ltd.</strong></p>
-        <p>Contact:
-            <a href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">Email</a> |
-            <a href="tel:+912067632394">+91 20 67632394</a>
-        </p>
-    </footer>
+// Scroll to top on click
+document.getElementById("scrollToTopBtn").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
 
-    <script src="script.js"></script>
-</body>
-
-</html>
