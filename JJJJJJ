@@ -1,64 +1,102 @@
+ <div class="container">
+                <table id="device-table">
+                    <thead>
+                        <tr>
+                            <th>Sr . No</th>
+                            <th>Device IP</th>
+                            <th>Device Name</th>
+                            <th>Device Type</th>
+                            <th>Device Region</th>
+                            <!-- <th>Device Status</th> -->
+                            <th>Uptime Duration</th>
+                            <th>Downtime Count</th>
+                            <th>Downtime Duration</th>
+                            <th>Details</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+
+
+
+/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--card);
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 0 15px var(--shadow);
-  margin-top: 10px;
-  font-family: 'Segoe UI', sans-serif;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
 }
 
-/* Header */
-thead {
-  background-color: var(--primary);
-  color: #fff;
+/* Table Header */
+table thead th {
+  background-color: #292929;
+  color: #ffffff;
+  padding: 14px 10px;
+  border-bottom: 2px solid #444;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.5px;
 }
 
-th, td {
-  padding: 14px 12px;
+/* Table Body */
+table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #333;
   text-align: center;
-  font-size: 15px;
-  border-right: 1px solid #3a3a3a;  /* 💡 Vertical column lines */
-  border-bottom: 1px solid #3a3a3a; /* 💡 Horizontal row lines */
+  color: #e0e0e0;
 }
 
-/* Remove right border from last column */
-th:last-child,
-td:last-child {
-  border-right: none;
+/* Row Hover */
+table tbody tr:hover {
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease-in-out;
 }
 
-/* Zebra Stripes */
-tbody tr:nth-child(even) {
-  background-color: #2f2f2f;
+/* Uptime / Downtime Color */
+td.online {
+  color: #28a745;
+  font-weight: bold;
 }
 
-tbody tr:nth-child(odd) {
-  background-color: #252525;
+td.offline {
+  color: #dc3545;
+  font-weight: bold;
 }
 
-/* Hover Effect */
-tbody tr:hover {
-  background-color: #3a3a3a;
+/* Remark styling */
+td#remark {
+  font-style: italic;
+  color: #ccc;
+}
+
+/* View History Button */
+table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
   cursor: pointer;
+  font-size: 13px;
   transition: background-color 0.3s ease;
 }
 
-/* Status Coloring via class */
-.status-online {
-  color: #2ecc71;
-  font-weight: bold;
+table button:hover {
+  background-color: #0056b3;
 }
 
-.status-offline {
-  color: #e74c3c;
-  font-weight: bold;
+.online-row {
+  border-left: 4px solid #28a745;
 }
 
-.status-repair {
-  color: #f39c12;
-  font-weight: bold;
+.offline-row {
+  border-left: 4px solid #dc3545;
 }
+
