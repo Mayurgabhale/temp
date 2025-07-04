@@ -1,12 +1,15 @@
-C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\trend.css
 :root {
   --bg: #1a1a1a;
-  --text: #f5f5f5;
-  --card: #2a2a2a;
-  --primary: #1e90ff;
-  --accent: #ffc107;
+  --text: #e0e0e0;
+  --card: #262626;
+  --primary: #00bcd4;
+  --secondary: #ff9800;
+  --success: #4caf50;
+  --danger: #f44336;
+  --warning: #ffc107;
   --hover-bg: #333;
   --shadow: rgba(0, 0, 0, 0.4);
+  --font: "Segoe UI", sans-serif;
 }
 
 * {
@@ -16,24 +19,24 @@ C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\trend.css
 }
 
 body {
-  font-family: "Segoe UI", sans-serif;
+  font-family: var(--font);
   background-color: var(--bg);
   color: var(--text);
-  line-height: 1.6;
 }
 
 header {
   background: #000;
-  color: var(--accent);
   padding: 20px;
   text-align: center;
   font-size: 36px;
   box-shadow: 0 4px 6px var(--shadow);
   border-radius: 0 0 10px 10px;
+  color: var(--warning);
 }
 
 h1 i {
   margin-right: 10px;
+  color: var(--secondary);
 }
 
 #sidebar-content {
@@ -43,73 +46,103 @@ h1 i {
   gap: 1rem;
   padding: 15px 20px;
   background-color: #111;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #333;
 }
 
-#sidebar-content label,
+#sidebar-content label {
+  color: var(--text);
+  font-weight: 500;
+}
+
 #sidebar-content select,
 #sidebar-content button {
   margin: 5px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #2e2e2e;
+  color: var(--text);
 }
 
-button {
+#sidebar-content button {
   background-color: var(--primary);
   color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
   font-weight: 600;
+  border: none;
   transition: background 0.3s;
 }
 
-button:hover {
-  background-color: #0b6bc7;
-}
-
-select {
-  background-color: #2e2e2e;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 6px;
-  padding: 8px;
+#sidebar-content button:hover {
+  background-color: #008ba3;
 }
 
 .container {
-  margin: 20px;
+  margin: 30px auto;
+  max-width: 96%;
   overflow-x: auto;
 }
 
+/* 💡 Table Styling Improved */
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: var(--card);
-  border-radius: 8px;
-  box-shadow: 0 0 10px var(--shadow);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px var(--shadow);
+  margin-top: 10px;
 }
 
-table thead {
+thead {
   background-color: var(--primary);
-  color: white;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-table th,
-table td {
-  padding: 12px;
+th, td {
+  padding: 14px 12px;
   text-align: center;
-  border-bottom: 1px solid #444;
+  font-size: 15px;
 }
 
-table tr:hover {
+tbody tr:nth-child(even) {
+  background-color: #2f2f2f;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #252525;
+}
+
+tbody tr:hover {
   background-color: var(--hover-bg);
+  cursor: pointer;
 }
 
+/* 🎨 Remark Color Coding */
+td:nth-child(9) {
+  font-weight: bold;
+}
+
+td:contains("Online") {
+  color: var(--success);
+}
+
+td:contains("Offline") {
+  color: var(--danger);
+}
+
+td:contains("repair") {
+  color: var(--warning);
+}
+
+/* 🪟 Modal Styling */
 .modal {
   display: none;
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.85);
   z-index: 1000;
 }
 
@@ -119,9 +152,10 @@ table tr:hover {
   padding: 20px;
   width: 90%;
   max-width: 800px;
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--text);
   position: relative;
+  box-shadow: 0 0 20px var(--shadow);
 }
 
 .close {
@@ -129,17 +163,17 @@ table tr:hover {
   top: 10px;
   right: 16px;
   font-size: 28px;
-  cursor: pointer;
   color: white;
+  cursor: pointer;
 }
 
 footer {
   text-align: center;
-  background-color: #000;
-  color: #aaa;
-  padding: 20px;
+  background-color: #111;
+  color: #bbb;
+  padding: 25px;
   margin-top: 40px;
-  border-top: 1px solid #444;
+  border-top: 1px solid #333;
 }
 
 .footer-logo {
@@ -147,163 +181,6 @@ footer {
   margin-bottom: 10px;
 }
 
-/* Icon Buttons */
 button i {
   margin-right: 6px;
 }
-
-
-
-C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\trend.html
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devices Trend Details</title>
-    <link rel="stylesheet" href="trend.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-
-<body>
-
-
-    <header>
-        <h1 style=" text-align: center;
-    padding: 20px;
-   background-color: hsla(62, 67%, 48%, 0);
-   background-color:black;
-   border-radius: 8px;
-   box-shadow: 0px 4px 6px rgba(178, 190, 11, 0.296);
-   transition: transform 0.3s ease-in-out;
-   color: rgb(198, 210, 18);
-   font-size: 36px;
-   margin: 0;
-   transition: color 0.3s ease;""><i class=" fas fa-chart-line"></i> Devices Trend Details</h1>
-
-    </header>
-
-
-    <!-- Sidebar -->
-    <!-- <div id="sidebar">
-       button id="menu-btn" onclick="toggleSidebar()">☰</button>< -->
-    <div id="sidebar-content">
-        <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Back to Dashboard</button>
-        <button onclick="window.location.href='summary.html'"><i class="fas fa-table"></i> View Summary</button>
-        <button onclick="exportDeviceTableToExcel()"><i class="fas fa-file-export"></i> Export Device Table</button>
-
-
-
-
-
-
-        <label for="region">Select Region:</label>
-        <select id="region" onchange="fetchDeviceData()">
-            <option value="apac">APAC</option>
-            <option value="emea">EMEA</option>
-            <option value="laca">LACA</option>
-            <option value="namer">NAMER</option>
-        </select>
-
-        <label for="device-type">Filter by Device Type:</label>
-        <select id="device-type" onchange="filterData()">
-            <option value="ALL">All</option>
-            <option value="CONTROLLER">Controller</option>
-
-            <option value="ARCHIVER">Archiver</option>
-
-            <option value="CAMERA">Camera</option>
-
-            <option value="SERVER">Server</option>
-
-        </select>
-
-        <label for="remark-filter">Filter by Remark:</label>
-        <select id="remark-filter" onchange="filterData()">
-            <option value="ALL">All</option>
-            <option value="Device needs repair">Device needs repair</option>
-            <option value="Device is Online">Device is Online</option>
-            <option value="Device is Offline">Device is Offline</option>
-        </select>
-
-    </div>
-    </div>
-
-
-
-
-    <div class="container">
-        <table id="device-table">
-            <thead>
-                <tr>
-                    <th>Sr. No</th>
-                    <th>Device IP</th>
-                    <th>Device Name</th>
-                    <th>Device Type</th>
-                    <th>Uptime Duration</th>
-                    <th>Downtime Count</th>
-                    <th>Downtime Duration</th>
-                    <th>Details</th>
-                    <th>Remark</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <!-- Device History Modal -->
-    <div id="device-history-modal" class="modal">
-
-        <div class="modal-content">
-
-
-            <div id="device-history-header"></div> <!-- Header for Device Name and IP -->
-
-            <div id="device-history"></div>
-            <!-- <<span class="close" onclick="closeHistoryModal()">&times;</span> -->
-
-            <span class="close" onclick="closeHistoryModal()">&times;</span>
-            <div id="device-history"></div>
-
-           
-             <button onclick="exportDeviceHistoryToExcel()"><i class="fas fa-download"></i> Export Device History</button>
-
-        </div>
-    </div>
-
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetchDeviceData();
-        });
-    </script>
-    <script src="trend.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-</body>
-
-</html>
-
-
-
-<!-- Footer -->
-<footer style="padding: 20px;
-   margin-top: 20px;
-
-   " class="footer">
-    <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo">
-    <p>&copy;2025 VisionWatch | Powered by <strong>Western Union Services India Pvt Ltd.</strong></p>
-    <p>Contact:
-        <a
-            href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com</a>
-        |
-        <a href="tel:+91 20 67632394">+91 2067632394</a>
-    </p>
-</footer>
-
-</body>
-
-</html>
