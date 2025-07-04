@@ -1,3 +1,12 @@
+
+card.style.borderColor = currentStatus === "online"
+  ? "rgba(16, 185, 129, 0.4)"
+  : "rgba(239, 68, 68, 0.4)";
+
+
+
+......
+
 card.style.backgroundColor = currentStatus === "online"
   ? "rgba(16, 185, 129, 0.12)"  // Tailwind's emerald-500 with 12% opacity
   : "rgba(239, 68, 68, 0.12)";  // Tailwind's red-500 with 12% opacity
