@@ -1,4 +1,35 @@
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fas fa-clock"></i>
+    </div>
+    <div class="summary-content">
+      <p class="summary-label">Downtime &gt; 15 min</p>
+      <p class="summary-value" id="count-downtime-over-15">0</p>
+    </div>
+  </div>
 
+  <div class="summary-card">
+    <div class="summary-icon offline">
+      <i class="fas fa-power-off"></i>
+    </div>
+    <div class="summary-content">
+      <p class="summary-label">Currently Offline</p>
+      <p class="summary-value offline" id="count-currently-offline">0</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+.......
 .device-summary {
   display: flex;
   flex-wrap: wrap;
