@@ -1,4 +1,10 @@
 
+row.classList.add(dev.current === "Online" ? "online-row" : "offline-row");
+
+
+
+
+.....
 
 
 /* Container */
