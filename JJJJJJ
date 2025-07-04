@@ -1,3 +1,8 @@
+<h1><i class="fas fa-chart-line"></i> Devices Trend Details</h1>
+
+
+...
+
 :root {
   --bg: #1a1a1a;
   --text: #f5f5f5;
