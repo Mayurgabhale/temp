@@ -1,3 +1,22 @@
+     .filter(dev => dev.status==="Online").length);
+                const setIf = (id,txt)=>{const el=document.getElementById(id); if(el) el.innerText=txt;};
+                setIf("total-devices", `Total Devices: ${total}`);
+                setIf("total-online", `Total Online Devices: ${online}`);
+                setIf("total-cameras", `Total Cameras: ${d.cameras?.length||0}`);
+                setIf("total-controllers", `Total Controllers: ${d.controllers?.length||0}`);
+                setIf("total-archivers", `Total Archivers: ${d.archivers?.length||0}`);
+                setIf("total-servers", `Total Servers: ${d.servers?.length||0}`);
+                fetchDeviceHistory(d);
+            })
+
+
+
+
+
+
+
+
+.................
 else {
         fetch(`http://localhost/api/regions/details/${selectedRegion}`)
             .then(res => res.json())
