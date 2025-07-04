@@ -1,3 +1,8 @@
+<button onclick="exportDeviceHistoryToExcel()"><i class="fas fa-download"></i> Export Device History</button>
+
+
+
+....
 <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Back to Dashboard</button>
 <button onclick="window.location.href='summary.html'"><i class="fas fa-table"></i> View Summary</button>
 <button onclick="exportDeviceTableToExcel()"><i class="fas fa-file-export"></i> Export Device Table</button>
