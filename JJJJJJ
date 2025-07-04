@@ -1,7 +1,5 @@
-<p class="device-type-label ${deviceType}" style="font-size: 1.05rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; margin-bottom: 10px;">
-    Device Type:
-    <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
-</p>
+in this i am  click on ip addres ip can copy
+
 
 <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
     <strong style="color: #d7d9de;"><i class="fas fa-network-wired" style="margin-right: 6px;"></i>IP:</strong>
