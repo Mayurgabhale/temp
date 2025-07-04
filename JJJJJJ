@@ -1,3 +1,31 @@
+if (remarkElement) {
+    if (lastStatus === "Offline") {
+        remarkElement.innerText = needsRepair ? "Device is Offline, needs repair." : "Device is Offline.";
+        remarkElement.style.color = needsRepair ? "#c62828" : "#e65100";
+    } else if (lastStatus === "Online") {
+        if (needsRepair) {
+            remarkElement.innerText = "Device is Online, needs repair.";
+            remarkElement.style.color = "#e65100";
+        } else if (downtimeCount > 0) {
+            remarkElement.innerText = `Device is Online, it had ${downtimeCount} downtime occurrences.`;
+            remarkElement.style.color = "#f9a825";
+        } else {
+            remarkElement.innerText = "Device is Online.";
+            remarkElement.style.color = "#2e7d32";
+        }
+    } else {
+        remarkElement.innerText = "Device status unknown.";
+        remarkElement.style.color = "#6d6d6d";
+    }
+}
+
+
+
+
+
+
+
+.........
 
 <style>
     #device-table {
