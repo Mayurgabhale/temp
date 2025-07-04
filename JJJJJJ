@@ -1,3 +1,13 @@
+setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total);
+setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online, "text-green");
+setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0);
+setWithIcon("total-controllers", "fas fa-microchip", "Total Controllers", d.controllers?.length || 0);
+setWithIcon("total-archivers", "fas fa-archive", "Total Archivers", d.archivers?.length || 0);
+setWithIcon("total-servers", "fas fa-server", "Total Servers", d.servers?.length || 0);
+
+
+
+......
 const setWithIcon = (id, iconClass, label, value, colorClass = "") => {
     const el = document.getElementById(id);
     if (el) {
