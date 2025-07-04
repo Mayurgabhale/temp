@@ -1,3 +1,15 @@
+
+<div style="text-align: center;">
+    <button onclick="window.location.href='index.html'">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </button>
+    <button onclick="exportDeviceTableToExcel()">
+        <i class="fas fa-file-excel"></i> Export Device Table
+    </button>
+</div>
+
+
+.....
 <div class="summary-container">
     <div class="summary-card" id="total-devices">
         <i class="fas fa-network-wired"></i>
