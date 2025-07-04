@@ -1,3 +1,19 @@
+if (statusText) {
+    const bgColor = newStatus === "online" ? "#d4f7d4" : "#f8d7da"; // light green/red background
+    const textColor = newStatus === "online" ? "green" : "red";
+
+    statusText.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+    statusText.style.color = textColor;
+    statusText.style.backgroundColor = bgColor;
+    statusText.style.padding = "2px 6px";
+    statusText.style.borderRadius = "4px";
+}
+
+
+
+....
+
+
 function getDeviceIcon(type = "") {
     type = type.toLowerCase();
     if (type.includes("camera")) return "fas fa-video";
