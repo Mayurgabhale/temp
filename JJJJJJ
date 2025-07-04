@@ -1,18 +1,56 @@
-  
-                    card.insertAdjacentHTML("beforeend", `
-                        <h3 class="device-name">
-                            ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-                        </h3>
-                        <p class="device-type-label ${deviceType}">Device Type:
-                            <strong><i class="${getDeviceIcon(deviceType)}"></i> ${deviceType.toUpperCase()}</strong>
-                        </p>
-                        <p><strong><i class="fas fa-network-wired"></i> IP:</strong> <span class="device-ip">${deviceIP}</span></p>
-                        <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> ${device.location || "N/A"}</p>
-                        <p><strong><i class="fas fa-city"></i> City:</strong> ${city}</p>
-                        `);
+card.insertAdjacentHTML("beforeend", `
+    <div class="device-header">
+        <h3 class="device-name" style="font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-bottom: 12px;">
+            ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+        </h3>
+    </div>
 
-                    card.appendChild(statusContainer);
+    <div class="device-info">
+        <p class="device-type-label ${deviceType}" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 10px; color: #334155;">
+            <strong><i class="${getDeviceIcon(deviceType)}" style="color: #facc15; margin-right: 6px;"></i>${deviceType.toUpperCase()}</strong>
+        </p>
 
-                    card.insertAdjacentHTML("beforeend", `
-  <button class="details-button" onclick="showModal('${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}', '${deviceIP}', '${device.location || "N/A"}', '${currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}', '${city}')">Details</button>
+        <p style="margin-bottom: 6px; font-weight: 500; color: #475569;">
+            <strong><i class="fas fa-network-wired" style="margin-right: 6px;"></i>IP:</strong>
+            <span class="device-ip" style="font-family: monospace; color: #0f172a;">${deviceIP}</span>
+        </p>
+
+        <p style="margin-bottom: 6px; font-weight: 500; color: #475569;">
+            <strong><i class="fas fa-map-marker-alt" style="margin-right: 6px;"></i>Location:</strong>
+            ${device.location || "N/A"}
+        </p>
+
+        <p style="margin-bottom: 14px; font-weight: 500; color: #475569;">
+            <strong><i class="fas fa-city" style="margin-right: 6px;"></i>City:</strong> ${city}
+        </p>
+    </div>
+`);
+
+card.appendChild(statusContainer);
+
+card.insertAdjacentHTML("beforeend", `
+    <button class="details-button" 
+        onclick="showModal(
+            '${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}',
+            '${deviceIP}', 
+            '${device.location || "N/A"}',
+            '${currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}',
+            '${city}')"
+        style="
+            margin-top: 16px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: transform 0.2s ease;
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
+    >
+        <i class="fas fa-info-circle" style="margin-right: 6px;"></i> Details
+    </button>
 `);
