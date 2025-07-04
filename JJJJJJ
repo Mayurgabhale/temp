@@ -1,4 +1,71 @@
- <div style="text-align: center;">
+ .button-container {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.action-button {
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #f0f0f0;
+  padding: 12px 20px;
+  font-size: 15px;
+  border-radius: 8px;
+  margin: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.05);
+}
+
+.action-button:hover {
+  background-color: #333;
+  color: #fff;
+  border-color: #666;
+  transform: translateY(-2px);
+}
+
+.action-button.back {
+  background-color: #343a40;
+}
+
+.action-button.back:hover {
+  background-color: #495057;
+}
+
+.action-button.export {
+  background-color: #198754; /* Bootstrap green */
+  color: #fff;
+}
+
+.action-button.export:hover {
+  background-color: #157347;
+}
+
+
+
+
+
+
+
+
+......
+
+<div class="button-container">
+    <button class="action-button back" onclick="window.location.href='index.html'">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </button>
+    <button class="action-button export" onclick="exportDeviceTableToExcel()">
+        <i class="fas fa-file-excel"></i> Export Device Table
+    </button>
+</div>
+
+
+.......
+
+
+<div style="text-align: center;">
                 <button onclick="window.location.href='index.html'">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
                 </button>
