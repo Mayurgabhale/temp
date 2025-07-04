@@ -1,4 +1,16 @@
+.........
 
+
+row.classList.remove('status-online', 'status-offline', 'status-unknown');
+if (currentStatus === "Online") {
+    row.classList.add('status-online');
+} else if (currentStatus === "Offline") {
+    row.classList.add('status-offline');
+} else {
+    row.classList.add('status-unknown');
+}
+
+......
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
