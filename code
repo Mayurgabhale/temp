@@ -63,3 +63,38 @@ export default function EmployeeCard({ emp }) {
     </div>
   );
 }
+
+
+
+......  
+
+
+/* Terminated Card Styling */
+.employee-card.terminated {
+  background-color: #8b0000;
+  color: #fff;
+  border-left: 6px solid #ff0000;
+}
+
+/* Colored Icons */
+.card-info label .id-icon {
+  color: #1abc9c; /* teal */
+}
+.card-info label .type-icon {
+  color: #3498db; /* blue */
+}
+.card-info label .manager-icon {
+  color: #9b59b6; /* purple */
+}
+.card-info label .wu-icon {
+  color: #f39c12; /* orange */
+}
+.card-info label .status-icon {
+  color: #e74c3c; /* red */
+}
+.card-info label .card-icon {
+  color: #00b894; /* green-blue */
+}
+.card-info label .active-icon {
+  color: #2ecc71; /* green */
+}
