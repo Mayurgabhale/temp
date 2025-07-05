@@ -1,1 +1,11 @@
+
+if (device.city) {
+    citySet.add(device.city);
+}
+
+
+
+
+
+....
 let citySet = new Set(); // collect unique cities
