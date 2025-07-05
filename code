@@ -1,4 +1,23 @@
 
+<div className="card-photo-section">
+  <div className="photo-wrapper">
+    <img
+      src={`http://localhost:5001${emp.imageUrl}`}
+      alt={emp.EmpName}
+      onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = '/images/no-photo.jpg';
+      }}
+    />
+    <span className={`status-badge ${emp.Employee_Status === 'Active' ? 'active' : 'deactive'}`}>
+      {emp.Employee_Status}
+    </span>
+  </div>
+</div>
+
+
+
+....
 .employee-card {
   background-color: #000;
   color: #FFC72C;
