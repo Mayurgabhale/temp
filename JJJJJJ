@@ -1,4 +1,33 @@
 
+
+
+
+{stats && (
+  <div className="stats-grid">
+    {[
+      ['Total Profiles', stats.TotalProfiles],
+      ['Active Profiles', stats.ActiveProfiles],
+      ['Active Employees', stats.ActiveEmployees],
+      ['Active Contractors', stats.ActiveContractors],
+      ['Terminated Profiles', stats.TerminatedProfiles],
+      ['Terminated Employees', stats.TerminatedEmployees],
+      ['Terminated Contractors', stats.TerminatedContractors],
+    ].map(([label, val]) => (
+      <div key={label} className="stat-box">
+        <h3>{label}</h3>
+        <p>{val}</p>
+      </div>
+    ))}
+  </div>
+)}
+
+
+
+
+....
+
+
+
 const [stats, setStats] = useState(null);
 // ...
 useEffect(() => {
