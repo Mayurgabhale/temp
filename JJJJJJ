@@ -1,3 +1,4 @@
+l// New sorting logic
 deviceList.sort((a, b) => {
     const now = Date.now();
 
@@ -16,6 +17,5 @@ deviceList.sort((a, b) => {
     if (aShouldPrioritize && !bShouldPrioritize) return -1;
     if (!aShouldPrioritize && bShouldPrioritize) return 1;
 
-    // Fallback: more downtime count goes up
     return b.downtimeCount - a.downtimeCount;
 });
