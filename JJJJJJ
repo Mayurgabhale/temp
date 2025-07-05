@@ -1,3 +1,20 @@
+
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert(`Copied: ${text}`);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+
+
+
+
+
+....
+
 row.innerHTML = `
     <td>${index + 1}</td>
     <td>
