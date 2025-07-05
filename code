@@ -1,3 +1,24 @@
+
+Module not found: Error: Can't resolve 'src/assets/img/wulogo.png' in 'C:\Users\W0024618\Desktop\employee-verification\frontend\src'
+ERROR in ./src/App.js 11:0-47
+Module not found: Error: Can't resolve 'src/assets/img/wulogo.png' in 'C:\Users\W0024618\Desktop\employee-verification\frontend\src'
+
+webpack compiled with 1 error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import wuLogo from '../assets/img/wulogo.png';
 
 
