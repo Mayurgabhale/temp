@@ -1,5 +1,42 @@
 
 
+function filterData() {
+    const selectedType = document.getElementById('device-type').value.toUpperCase();
+    const selectedRemark = document.getElementById('remark-filter').value.toUpperCase();
+    const searchText = document.getElementById('search-input').value.toUpperCase().trim();
+
+    const table = document.getElementById('device-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let row of rows) {
+        const type = row.cells[3].textContent.toUpperCase(); // Device type
+        const remark = row.cells[8].textContent.toUpperCase(); // Remark
+        const ip = row.cells[1].textContent.toUpperCase(); // IP
+        const name = row.cells[2].textContent.toUpperCase(); // Device name (location)
+        const city = name.split(',').pop().trim(); // Optional: parse city if included in name
+
+        const matchesType = selectedType === "ALL" || type === selectedType;
+        const matchesRemark = selectedRemark === "ALL" || remark.includes(selectedRemark);
+
+        const matchesSearch = (
+            ip.includes(searchText) ||
+            name.includes(searchText) ||
+            city.includes(searchText)
+        );
+
+        row.style.display = (matchesType && matchesRemark && matchesSearch) ? "" : "none";
+    }
+}
+
+
+
+
+.....
+
+
+
+
+
 document.getElementById('search-input').addEventListener('input', filterData);
 
 
