@@ -1,48 +1,30 @@
 
-
-function filterData() {
-    const selectedType = document.getElementById('device-type').value.toUpperCase();
-    const selectedRemark = document.getElementById('remark-filter').value.toUpperCase();
-    const searchText = document.getElementById('search-input').value.toUpperCase().trim();
-
-    const table = document.getElementById('device-table');
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-    for (let row of rows) {
-        const type = row.cells[3].textContent.toUpperCase(); // Device type
-        const remark = row.cells[8].textContent.toUpperCase(); // Remark
-        const ip = row.cells[1].textContent.toUpperCase(); // IP
-        const name = row.cells[2].textContent.toUpperCase(); // Device name (location)
-        const city = name.split(',').pop().trim(); // Optional: parse city if included in name
-
-        const matchesType = selectedType === "ALL" || type === selectedType;
-        const matchesRemark = selectedRemark === "ALL" || remark.includes(selectedRemark);
-
-        const matchesSearch = (
-            ip.includes(searchText) ||
-            name.includes(searchText) ||
-            city.includes(searchText)
-        );
-
-        row.style.display = (matchesType && matchesRemark && matchesSearch) ? "" : "none";
-    }
-}
+       
 
 
+        deviceList.forEach(({ deviceIp, safeIp, deviceName, deviceCategory, currentStatus, deviceHistory, downtimeCount }, index) => {
+            const row = tableBody.insertRow();
+            row.style.border = "1px solid black";
+
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${deviceIp}</td>
+                <td>${deviceName}</td>
+                <td>${deviceCategory}</td>
+                <td id="uptime-${safeIp}">0h/0m/0s</td>
+                <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+                <td id="downtime-${safeIp}">0h/0m/0s</td>
+                <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+                <td id="remark-${safeIp}">Device working properly</td>
+            `;
 
 
-.....
-
-
-
-
-
-document.getElementById('search-input').addEventListener('input', filterData);
-
-
-
-
-......
-<div>
-  <input type="text" id="search-input" placeholder="🔍 Search by IP, Location, City" />
-</div>
+        
+            row.classList.remove('status-online', 'status-offline', 'status-unknown');
+            if (currentStatus === "Online") {
+                row.classList.add('status-online');
+            } else if (currentStatus === "Offline") {
+                row.classList.add('status-offline');
+            } else {
+                row.classList.add('status-unknown');
+            }
