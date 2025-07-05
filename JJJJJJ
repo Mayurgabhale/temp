@@ -1,3 +1,43 @@
+
+
+#device-search {
+    padding: 12px 40px 12px 16px; /* extra right padding for icon */
+    font-size: 1rem;
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg fill="gray" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 004.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C8.01 14 6 11.99 6 9.5S8.01 5 10.5 5 15 7.01 15 9.5 12.99 14 10.5 14z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px 18px;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+#device-search::placeholder {
+    color: #aaa;
+    font-style: normal;
+    letter-spacing: 0.3px;
+}
+
+#device-search:focus {
+    background-color: #fff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+
+
+
+
+.....
+
+
  <!-- Device Details -->
             <section id="details-section" class="details-section">
                 <div class="details-header">
