@@ -1,3 +1,101 @@
+
+.employee-card {
+  background-color: #000;
+  color: #FFC72C;
+  border: 2px solid #FFC72C;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  max-width: 100%;
+  margin-top: 20px;
+  transition: transform 0.2s ease;
+}
+
+.employee-card:hover {
+  transform: scale(1.01);
+}
+
+.card-image {
+  flex: 1;
+  min-width: 150px;
+  max-width: 250px;
+  height: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-right: 2px solid #FFC72C;
+}
+
+/* Details panel */
+.card-details {
+  flex: 2;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-details .emp-name {
+  font-size: 1.6rem;
+  margin: 0 0 8px;
+  font-weight: bold;
+  border-bottom: 1px solid #FFC72C;
+  padding-bottom: 4px;
+}
+
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  padding: 6px 0;
+  border-bottom: 1px dashed #444;
+}
+.card-info label {
+  color: #FFD700;
+  font-weight: 500;
+}
+.card-info span {
+  color: #FFF;
+  font-weight: 600;
+}
+
+/* Status-based border left */
+.employee-card[data-status="Active"] {
+  border-left: 6px solid #28a745;
+}
+.employee-card[data-status="Deactive"] {
+  border-left: 6px solid #dc3545;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .employee-card {
+    flex-direction: column;
+  }
+  .card-image {
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #FFC72C;
+  }
+  .card-details {
+    padding: 12px;
+  }
+}
+
+
+
+
+
+
+.....
+
 import React from 'react';
 
 export default function EmployeeCard({ emp }) {
