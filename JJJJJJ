@@ -8,6 +8,20 @@ historyContainer.innerHTML = `
 
 
 
+.scrollable-history-table {
+  max-height: 400px; /* Adjust height as needed */
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.scrollable-history-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+
+
 
 
 
