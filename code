@@ -1,10 +1,9 @@
+Read below file carefully and solve the issue carefullly.
+C:\Users\W0024618\Desktop\employee-verification\frontend\src\assets\img
 
-Module not found: Error: Can't resolve 'src/assets/img/wulogo.png' in 'C:\Users\W0024618\Desktop\employee-verification\frontend\src'
-ERROR in ./src/App.js 11:0-47
-Module not found: Error: Can't resolve 'src/assets/img/wulogo.png' in 'C:\Users\W0024618\Desktop\employee-verification\frontend\src'
+C:\Users\W0024618\Desktop\employee-verification\frontend\src\assets\img\WU-logo.png
 
-webpack compiled with 1 error
-
+as per path update above file carefully
 
 // src/App.js
 import React, { useState, useEffect } from 'react';
@@ -12,7 +11,7 @@ import axios from 'axios';
 import SearchBar from './components/SearchBar';
 import EmployeeCard from './components/EmployeeCard';
 import './App.css';
-import wulogo from 'src/assets/img/wulogo.png';
+import logo from './assets/img/wulogo.png';
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [allEmployees, setAllEmployees] = useState([]);
@@ -206,15 +205,5 @@ function App() {
   );
 }
 export default App;
-
-
-
-
-
-
-
-...........
-
-
 
 
