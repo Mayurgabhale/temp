@@ -1,4 +1,1 @@
- <label for="city-filter">Filter by Location:</label>
-            <select id="city-filter">
-                <option value="all">All Cities</option>
-            </select>
+let citySet = new Set(); // collect unique cities
