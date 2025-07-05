@@ -1,23 +1,57 @@
+/* ==========================
+   Employee Card - Combined CSS
+   ========================== */
 
-/* ........................... */
+/* --- Card Container --- */
+.employee-card {
+  background-color: #000;
+  color: #FFC72C;
+  border: 2px solid #FFC72C;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  max-width: 100%;
+  margin-top: 20px;
+  transition: transform 0.3s ease;
+}
+
+.employee-card:hover {
+  transform: scale(1.01);
+}
+
+/* Border Left Based on Status */
+.employee-card[data-status="Active"] {
+  border-left: 6px solid #28a745;
+}
+
+.employee-card[data-status="Deactive"] {
+  border-left: 6px solid #dc3545;
+}
+
+/* --- Photo Section --- */
 .card-photo-section {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
-  background: linear-gradient(145deg, #111, #000);
+  padding: 24px;
+  background: radial-gradient(circle, #1a1a1a, #000000);
+  flex: 1;
+  min-width: 260px;
+  max-width: 300px;
 }
 
 .photo-wrapper {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
+  background: #000;
   overflow: hidden;
-  border: 4px solid #FFC72C;
-  box-shadow: 0 0 20px rgba(255, 199, 44, 0.6);
-  background: #111;
-  transition: transform 0.3s ease;
+  border: 5px solid #FFC72C;
+  box-shadow: 0 0 25px rgba(255, 199, 44, 0.5), 0 0 5px rgba(255, 255, 255, 0.1);
+  transition: transform 0.4s ease;
 }
 
 .photo-wrapper:hover {
@@ -27,83 +61,35 @@
 .photo-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Ensures full image is shown */
   border-radius: 50%;
+  background-color: #111;
 }
 
-/* Status badge */
+/* --- Status Badge --- */
 .status-badge {
   position: absolute;
-  bottom: -1px;
+  bottom: -12px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 4px 12px;
-  font-size: 0.75rem;
+  padding: 6px 16px;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #000;
-  background-color: #FFC72C;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 10;
 }
 
 .status-badge.active {
   background-color: #28a745;
-  color: #fff;
 }
 
 .status-badge.deactive {
   background-color: #dc3545;
-  color: #fff;
 }
 
-/* Responsive tweak */
-@media (max-width: 768px) {
-  .photo-wrapper {
-    width: 120px;
-    height: 120px;
-  }
-}
-
-
-
-
-/*  */
-
-.employee-card {
-  background-color: #000;
-  color: #FFC72C;
-  border: 2px solid #FFC72C;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  max-width: 100%;
-  margin-top: 20px;
-  transition: transform 0.2s ease;
-}
-
-.employee-card:hover {
-  transform: scale(1.01);
-}
-
-.card-image {
-  flex: 1;
-  min-width: 200px;
-  max-width: 250px;
-  height: auto;
-  overflow: hidden;
-  position: relative;
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-right: 2px solid #FFC72C;
-}
-
-/* Details panel */
+/* --- Card Details Section --- */
 .card-details {
   flex: 2;
   padding: 16px;
@@ -120,6 +106,7 @@
   padding-bottom: 4px;
 }
 
+/* --- Info Rows --- */
 .card-info {
   display: flex;
   justify-content: space-between;
@@ -127,97 +114,34 @@
   padding: 6px 0;
   border-bottom: 1px dashed #444;
 }
+
 .card-info label {
   color: #FFD700;
   font-weight: 500;
 }
+
 .card-info span {
   color: #FFF;
   font-weight: 600;
 }
 
-/* Status-based border left */
-.employee-card[data-status="Active"] {
-  border-left: 6px solid #28a745;
-}
-.employee-card[data-status="Deactive"] {
-  border-left: 6px solid #dc3545;
-}
-
-/* Mobile Responsive */
+/* --- Mobile Responsive --- */
 @media (max-width: 768px) {
   .employee-card {
     flex-direction: column;
   }
-  .card-image {
+
+  .card-photo-section {
     max-width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #FFC72C;
+    padding: 16px;
   }
+
+  .photo-wrapper {
+    width: 160px;
+    height: 160px;
+  }
+
   .card-details {
     padding: 12px;
   }
-}
-import React from 'react';
-
-export default function EmployeeCard({ emp }) {
-  if (!emp) return null;
-
-  return (
-    <div
-      className="employee-card"
-      data-status={emp.Employee_Status || 'Deactive'}
-    >
-      {/* Profile Image */}
-      <div className="card-photo-section">
-        <div className="photo-wrapper">
-          <img
-            src={`http://localhost:5001${emp.imageUrl}`}
-            alt={emp.EmpName}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = '/images/no-photo.jpg';
-            }}
-          />
-          <span className={`status-badge ${emp.Employee_Status === 'Active' ? 'active' : 'deactive'}`}>
-            {emp.Employee_Status}
-          </span>
-        </div>
-      </div>
-
-      {/* Employee Info */}
-      <div className="card-details">
-        <h2 className="emp-name">{emp.EmpName}</h2>
-
-        <div className="card-info">
-          <label>👤 Employee ID</label>
-          <span>{emp.EmployeeID || '—'}</span>
-        </div>
-        <div className="card-info">
-          <label>🗂️ Personnel Type</label>
-          <span>{emp.PersonnelType}</span>
-        </div>
-        <div className="card-info">
-          <label>👥 Manager</label>
-          <span>{emp.Manager_Name || '—'}</span>
-        </div>
-        <div className="card-info">
-          <label>🆔 Manager WU ID</label>
-          <span>{emp.Manager_WU_ID || '—'}</span>
-        </div>
-        <div className="card-info">
-          <label>⚡ Status</label>
-          <span>{emp.Employee_Status}</span>
-        </div>
-        <div className="card-info">
-          <label>💳 Total Cards</label>
-          <span>{emp.Total_Cards}</span>
-        </div>
-        <div className="card-info">
-          <label>✅ Active Cards</label>
-          <span>{emp.Active_Cards}</span>
-        </div>
-      </div>
-    </div>
-  );
 }
