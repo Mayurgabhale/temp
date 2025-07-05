@@ -1,71 +1,15 @@
-C:\Users\W0024618\Desktop\employee-verification\frontend\src\assets\img\wulogo.png
+import wuLogo from '../assets/img/wulogo.png';
 
-          <img src="../assets/img/wulogo.png" alt="WU Logo" className="logo" />
+
+<img src={wuLogo} alt="WU Logo" className="logo" /
+
 
 <header className="header">
   <div className="header-content">
-    <h1>Associate Verification Tool</h1>
-    <p>Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
+    <img src={wuLogo} alt="WU Logo" className="logo" />
+    <div>
+      <h1>Associate Verification Tool</h1>
+      <p>Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
+    </div>
   </div>
 </header>
-.....
-
-/* Header */
-.header {
-  background-color: var(--wu-black);
-  color: var(--wu-yellow);
-  padding: 1.5rem 1rem;
-  text-align: center;
-  border-bottom: 4px solid var(--wu-yellow);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-/* Flex container to adjust layout for larger screens */
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.header h1 {
-  font-size: 2rem;
-  margin: 0;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.header p {
-  font-size: 1rem;
-  margin: 0;
-  opacity: 0.9;
-}
-
-/* RESPONSIVE */
-@media screen and (min-width: 768px) {
-  .header-content {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .header h1 {
-    font-size: 2.2rem;
-  }
-
-  .header p {
-    font-size: 1.1rem;
-  }
-}
-
-....
-<img src="/logo.svg" alt="WU Logo" className="logo" />
-...
-.logo {
-  height: 40px;
-  margin-right: 1rem;
-}
