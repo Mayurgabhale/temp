@@ -1,3 +1,38 @@
+function filterDevices() {
+    const selectedType = deviceFilter.value;
+    const selectedStatus = statusFilter.value;
+    const selectedCity = cityFilter.value;
+    const searchTerm = document.getElementById("device-search").value.toLowerCase();
+
+    const filteredDevices = allDevices.filter((device) => {
+        const typeMatches = selectedType === "all" || device.dataset.type === selectedType;
+        const statusMatches = selectedStatus === "all" || device.dataset.status === selectedStatus;
+        const cityMatches = selectedCity === "all" || device.dataset.city === selectedCity;
+
+        // 🔍 Specific fields for search
+        const ip = device.querySelector(".device-ip")?.textContent.toLowerCase() || "";
+        const location = device.dataset.location?.toLowerCase() || "";
+        const city = device.dataset.city?.toLowerCase() || "";
+        const door = device.dataset.door?.toLowerCase() || ""; // optional, if you add door info
+        const matchesSearch =
+            !searchTerm ||
+            ip.includes(searchTerm) ||
+            location.includes(searchTerm) ||
+            city.includes(searchTerm) ||
+            door.includes(searchTerm);
+
+        return typeMatches && statusMatches && cityMatches && matchesSearch;
+    });
+
+    deviceDetails.innerHTML = "";
+    filteredDevices.forEach((device) => deviceDetails.appendChild(device));
+}
+
+
+
+
+......
+
 const ip = device.querySelector(".device-ip")?.textContent.toLowerCase() || "";
 const location = device.dataset.location?.toLowerCase() || "";
 const city = device.dataset.city?.toLowerCase() || "";
