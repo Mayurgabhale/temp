@@ -1,30 +1,32 @@
-
-       
-
-
-        deviceList.forEach(({ deviceIp, safeIp, deviceName, deviceCategory, currentStatus, deviceHistory, downtimeCount }, index) => {
-            const row = tableBody.insertRow();
-            row.style.border = "1px solid black";
-
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${deviceIp}</td>
-                <td>${deviceName}</td>
-                <td>${deviceCategory}</td>
-                <td id="uptime-${safeIp}">0h/0m/0s</td>
-                <td id="downtime-count-${safeIp}">${downtimeCount}</td>
-                <td id="downtime-${safeIp}">0h/0m/0s</td>
-                <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
-                <td id="remark-${safeIp}">Device working properly</td>
-            `;
+row.innerHTML = `
+    <td>${index + 1}</td>
+    <td>
+        <span id="ip-${safeIp}">${deviceIp}</span>
+        <button onclick="copyToClipboard('ip-${safeIp}')">📋</button>
+    </td>
+    <td>
+        <span id="name-${safeIp}">${deviceName}</span>
+        <button onclick="copyToClipboard('name-${safeIp}')">📋</button>
+    </td>
+    <td>${deviceCategory}</td>
+    <td id="uptime-${safeIp}">0h/0m/0s</td>
+    <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+    <td id="downtime-${safeIp}">0h/0m/0s</td>
+    <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+    <td id="remark-${safeIp}">Device working properly</td>
+`;
 
 
-        
-            row.classList.remove('status-online', 'status-offline', 'status-unknown');
-            if (currentStatus === "Online") {
-                row.classList.add('status-online');
-            } else if (currentStatus === "Offline") {
-                row.classList.add('status-offline');
-            } else {
-                row.classList.add('status-unknown');
-            }
+
+
+.....
+
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert(`Copied: ${text}`);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
