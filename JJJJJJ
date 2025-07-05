@@ -1,8 +1,6 @@
-
 #region-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* pushes image to the right */
+  text-align: center;
+  margin: 0 auto 20px;
   padding: 24px;
   background: linear-gradient(135deg, #1e1e2f, #2c2f33);
   border-radius: 16px;
@@ -11,10 +9,8 @@
   font-weight: 600;
   color: #fbc531;
   letter-spacing: 1px;
-  z-index: 10; /* ensures it's above other overlapping elements */
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
+
 
 #region-title img {
   height: 40px; /* adjust as needed */
@@ -23,23 +19,6 @@
   z-index: 11;
 }
 
-
-.....
 <div id="region-title" class="dashboard-header">
                <img src="images/FooterLogo.png" alt="">
             </div>
-
-
- #region-title {
-  text-align: center;
-  margin: 0 auto 20px;
-  padding: 24px;
-  background: linear-gradient(135deg, #1e1e2f, #2c2f33);
-  border-radius: 16px;
-  /* border: white 1px solid; */
-  max-width: 100%;
-  font-size: 24px;
-  font-weight: 600;
-  color: #fbc531;
-  letter-spacing: 1px;
-}
