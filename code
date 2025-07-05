@@ -1,53 +1,35 @@
-.search-bar input {
-  padding: 10px;
-  border: 2px solid #000;
-  border-radius: 6px;
+<header className="header">
+        <h1>Associate Verification Tool — Western Union</h1>
+        <p>Welcome to Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
+      </header>
+
+
+
+
+/* Header */
+.header {
+  background-color: var(--wu-black);
+  color: var(--wu-yellow);
+  padding: 20px 0;
+  text-align: center;
+  position: relative;
+}
+.header::after {
+  content: '';
+  display: block;
+  height: 4px;
+  background: var(--wu-yellow);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+.header p {
+  margin: 4px 0 0;
   font-size: 1rem;
-  background-color: #fff;
-}
-
-.search-bar button {
-  background-color: #000;
-  color: #FFC72C;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.search-bar button:hover {
-  background-color: #222;
-}
-
-
-
-......
-
-@media screen and (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
-  }
-
-  .left-panel, .right-panel {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .employee-card, .history-list {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .search-bar {
-    flex-direction: column;
-  }
-
-  .search-bar input,
-  .search-bar button {
-    width: 100%;
-    margin: 4px 0;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  }
+  opacity: 0.85;
 }
