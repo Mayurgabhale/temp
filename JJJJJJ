@@ -1,4 +1,10 @@
 
+const searchTerm = document.getElementById("device-search").value.toLowerCase();
+
+
+
+
+....
 // Search bar input
 document.getElementById("device-search").addEventListener("input", filterDevices);
 
