@@ -1,5 +1,4 @@
 
-
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
 
