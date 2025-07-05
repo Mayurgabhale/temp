@@ -1,3 +1,436 @@
+import React from 'react';
+
+export default function EmployeeCard({ emp }) {
+  if (!emp) return null;
+
+  return (
+    <div
+      className="employee-infographic"
+      data-status={emp.Employee_Status || 'Deactive'}
+    >
+      {/* Photo with colored border via data-status */}
+      <div className="infographic-image">
+        <img
+          src={`http://localhost:5001${emp.imageUrl}`}
+          alt={emp.EmpName}
+          onError={e => {
+            e.target.onerror = null;
+            e.target.src = '/images/no-photo.jpg';
+          }}
+        />
+      </div>
+
+      {/* Details */}
+      <div className="infographic-details">
+        <h2>{emp.EmpName}</h2>
+
+        <div className="info-block">
+          <span className="info-label employee-id">Employee ID</span>
+          <span className="info-value">{emp.EmployeeID || '—'}</span>
+        </div>
+
+        <div className="info-block">
+          <span className="info-label personnel-type">Personnel Type</span>
+          <span className="info-value">{emp.PersonnelType}</span>
+        </div>
+
+        <div className="info-block">
+          <span className="info-label manager">Manager</span>
+          <span className="info-value">{emp.Manager_Name || '—'}</span>
+        </div>
+
+        <div className="info-block">
+          <span className="info-label manager-wu-id"> Manager WU ID</span>
+          <span className="info-value">{emp.Manager_WU_ID || '—'}</span>
+        </div>
+
+        <div className="info-block">
+          <span className="info-label employee-status">Status</span>
+          <span className="info-value">{emp.Employee_Status}</span>
+        </div>
+
+        {/* <div className="info-block">
+          <span className="info-label profile-disabled">Disabled</span>
+          <span className="info-value">{emp.Profile_Disabled}</span>
+        </div> */}
+
+        <div className="info-block">
+          <span className="info-label total-cards">Total Cards</span>
+          <span className="info-value">{emp.Total_Cards}</span>
+        </div>
+
+        <div className="info-block">
+          <span className="info-label active-cards">Active Cards</span>
+          <span className="info-value">{emp.Active_Cards}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+css
+
+/* App.css */
+
+/* Western Union palette */
+:root {
+  --wu-yellow: #FFCC00;
+  --wu-black:  #000000;
+  --wu-gray:   #f5f5f5;
+}
+
+/* Reset & base */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--wu-gray);
+  color: var(--wu-black);
+}
+
+/* Header */
+.header {
+  background-color: var(--wu-black);
+  color: var(--wu-yellow);
+  padding: 20px 0;
+  text-align: center;
+  position: relative;
+}
+.header::after {
+  content: '';
+  display: block;
+  height: 4px;
+  background: var(--wu-yellow);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+.header p {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* Main split container */
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: calc(95vh - 160px); /* header + footer */
+}
+
+/* Left panel */
+.left-panel {
+  flex: 1 1 400px;
+  background: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Right panel */
+.right-panel {
+  flex: 1 1 400px;
+  background-color: var(--wu-yellow);
+  padding: 0;
+   /* background-image: url('/images/u-shape.png');  */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* SearchBar centered */
+.search-bar {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.search-bar input {
+  flex: 1;
+  border: 2px solid var(--wu-black);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 1rem;
+}
+.search-bar button {
+  background-color: var(--wu-yellow);
+  border: none;
+  padding: 8px 12px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.search-bar button:hover {
+  background-color: #e6b800;
+}
+
+/* Infographic Employee Panel */
+.employee-infographic {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 100%;
+  margin-top: 20px;
+}
+.employee-infographic .infographic-image {
+  position: relative;
+}
+.employee-infographic .infographic-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.employee-infographic .infographic-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 8px;
+  background-color: var(--wu-yellow);
+}
+.employee-infographic .infographic-details {
+  display: grid;
+  grid-template-rows: auto repeat(4, 1fr);
+}
+.employee-infographic .infographic-details h2 {
+  margin: 16px;
+  text-align: center;
+  font-size: 1.6rem;
+}
+.employee-infographic .infographic-details .info-block {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid #eee;
+}
+.employee-infographic .infographic-details .info-block:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--wu-black);
+  color: var(--wu-yellow);
+  padding: 10px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  position: relative;
+}
+.footer::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: var(--wu-yellow);
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+
+
+/* ---- Conditional Photo Border ---- */
+.employee-infographic .infographic-image {
+  border: 4px solid transparent; /* default */
+}
+.employee-infographic[data-status="Active"] .infographic-image {
+  border-color: #28a745; /* green */
+}
+.employee-infographic[data-status="Deactive"] .infographic-image {
+  border-color: #dc3545; /* red */
+}
+
+
+
+/* ---- Conditional Details-Side Gradient ---- */
+.employee-infographic .infographic-details {
+  /* ensure default stays white */
+  background-color: #fff;
+  position: relative; /* for pseudo-element overlay */
+  overflow: hidden;
+}
+
+/* Active = green gradient on details side */
+.employee-infographic[data-status="Active"] .infographic-details::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(40, 167, 69, 1) 0%,
+    rgba(40, 167, 69, 0.1) 100%
+  );
+  z-index: 0;
+}
+
+/* Deactive = red gradient on details side */
+.employee-infographic[data-status="Deactive"] .infographic-details::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(220, 53, 69, 1) 0%,
+    rgba(220, 53, 69, 0.1) 100%
+  );
+  z-index: 0;
+}
+
+/* Keep all your inner text & blocks on top of the gradient */
+.employee-infographic .infographic-details > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ---- Icons in info-block ---- */
+.info-label::before {
+  display: inline-block;
+  width: 1em;
+  margin-right: 0.5em;
+  text-align: center;
+}
+/* Use emojis or replace with real icons */
+.info-label.employee-id::before       { content: "👤"; }
+.info-label.personnel-type::before    { content: "🗂️"; }
+.info-label.manager::before           { content: "👥"; }
+.info-label.manager-wu-id::before     { content: "🆔"; }
+.info-label.employee-status::before   { content: "⚡"; }
+.info-label.profile-disabled::before  { content: "🚫"; }
+.info-label.total-cards::before       { content: "💳"; }
+.info-label.active-cards::before      { content: "✅"; }
+
+/* ---- Search History List ---- */
+.history-list {
+  width: 100%;
+  max-width: 300px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin: 20px;
+  padding: 10px;
+}
+.history-list h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  text-align: center;
+}
+.history-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.history-list li {
+  padding: 0px 0px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+.history-list li:last-child {
+  border-bottom: none;
+}
+.history-list li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Suggestions / Related Results */
+.history-list {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1px;
+  max-width: 400px;
+  margin: 0px auto;
+}
+.history-list h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: var(--wu-black);
+}
+.history-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.history-list li {
+  padding: 6px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+.history-list li:last-child {
+  border-bottom: none;
+}
+.history-list li:hover {
+  background-color: #f0f0f0;
+}
+
+
+
+/* Right-panel lists wrapper (updated) */
+.lists-container {
+  display: flex;
+  /* gap: 10px;           reduced gap */
+  padding: 10px;       /* reduced padding */
+}
+
+.lists-container {
+  gap: 15px;    /* tighter gap */
+}
+
+
+/* Each list takes half the width */
+.lists-container .history-list {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  margin: 0;
+  margin-top: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Headings */
+.lists-container .history-list h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* List items */
+.lists-container .history-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lists-container .history-list li {
+  padding: 6px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+.lists-container .history-list li:last-child {
+  border-bottom: none;
+}
+.lists-container .history-list li:hover {
+  background-color: #f0f0f0;
+}
+
+
+/* ............... */
+
 
 .stats-grid {
   display: grid;
@@ -22,81 +455,3 @@
   font-size: 1.5rem;
   font-weight: bold;
 }
-
-
-
-
-
-....
-
-{stats && (
-  <div className="stats-grid">
-    {[
-      ['Total Profiles', stats.TotalProfiles],
-      ['Active Profiles', stats.ActiveProfiles],
-      ['Active Employees', stats.ActiveEmployees],
-      ['Active Contractors', stats.ActiveContractors],
-      ['Terminated Profiles', stats.TerminatedProfiles],
-      ['Terminated Employees', stats.TerminatedEmployees],
-      ['Terminated Contractors', stats.TerminatedContractors],
-    ].map(([label, val]) => (
-      <div key={label} className="stat-box">
-        <h3>{label}</h3>
-        <p>{val}</p>
-      </div>
-    ))}
-  </div>
-)}
-
-
-
-
-....
-
-
-
-const [stats, setStats] = useState(null);
-// ...
-useEffect(() => {
-  axios.get('http://localhost:5001/api/stats')
-    .then(res => setStats(res.data))
-    .catch(err => console.error('❌ Stats load failed', err));
-}, []);
-
-
-
-
-.....
-const { getEmployeeStats } = require('../controllers/employeeController');
-// ... other routes
-router.get('/stats', getEmployeeStats);
-
-
-
-
-
-....
-// At the end of controllers/employeeController.js
-const getEmployeeStats = async (req, res) => {
-  try {
-    const pool = await getPool();
-    const result = await pool.request().query(`
-      SELECT
-        COUNT(*) AS TotalProfiles,
-        SUM(CASE WHEN AP.Disabled = 0 THEN 1 ELSE 0 END) AS ActiveProfiles,
-        SUM(CASE WHEN AP.Disabled = 0 AND PT.Name = 'Employee' THEN 1 ELSE 0 END) AS ActiveEmployees,
-        SUM(CASE WHEN AP.Disabled = 0 AND PT.Name = 'Contractor' THEN 1 ELSE 0 END) AS ActiveContractors,
-        SUM(CASE WHEN AP.Disabled = 1 THEN 1 ELSE 0 END) AS TerminatedProfiles,
-        SUM(CASE WHEN AP.Disabled = 1 AND PT.Name = 'Employee' THEN 1 ELSE 0 END) AS TerminatedEmployees,
-        SUM(CASE WHEN AP.Disabled = 1 AND PT.Name = 'Contractor' THEN 1 ELSE 0 END) AS TerminatedContractors
-      FROM ACVSCore.Access.Personnel AP
-      INNER JOIN ACVSCore.Access.PersonnelType PT ON PT.ObjectID = AP.PersonnelTypeID
-    `);
-    res.json(result.recordset[0]);
-  } catch (err) {
-    console.error('❌ getEmployeeStats error', err.stack || err);
-    res.status(500).json({ error: 'Failed to get stats' });
-  }
-};
-
-module.exports.getEmployeeStats = getEmployeeStats;
