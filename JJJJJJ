@@ -1,3 +1,13 @@
+
+const { getEmployeeStats } = require('../controllers/employeeController');
+// ... other routes
+router.get('/stats', getEmployeeStats);
+
+
+
+
+
+....
 // At the end of controllers/employeeController.js
 const getEmployeeStats = async (req, res) => {
   try {
