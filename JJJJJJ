@@ -1,6 +1,20 @@
 
 
 
+function populateCityFilter(cities) {
+    const cityFilter = document.getElementById('city-filter');
+    cityFilter.innerHTML = `<option value="all">All Cities</option>`;
+    cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        cityFilter.appendChild(option);
+    });
+}
+
+.......
+
+
 populateCityFilter(Array.from(citySet));
 
 ....
