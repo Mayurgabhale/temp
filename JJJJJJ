@@ -1,4 +1,11 @@
+const ip = device.querySelector(".device-ip")?.textContent.toLowerCase() || "";
+const location = device.dataset.location?.toLowerCase() || "";
+const city = device.dataset.city?.toLowerCase() || "";
+const matchesSearch = ip.includes(searchTerm) || location.includes(searchTerm) || city.includes(searchTerm);
 
+
+
+...
 const filteredDevices = allDevices.filter((device) =>
     (selectedType === "all" || device.dataset.type === selectedType) &&
     (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
