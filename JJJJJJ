@@ -1,4 +1,16 @@
 
+const [stats, setStats] = useState(null);
+// ...
+useEffect(() => {
+  axios.get('http://localhost:5001/api/stats')
+    .then(res => setStats(res.data))
+    .catch(err => console.error('❌ Stats load failed', err));
+}, []);
+
+
+
+
+.....
 const { getEmployeeStats } = require('../controllers/employeeController');
 // ... other routes
 router.get('/stats', getEmployeeStats);
