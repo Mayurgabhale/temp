@@ -1,3 +1,5 @@
+
+/* ........................... */
 .card-photo-section {
   display: flex;
   justify-content: center;
@@ -8,8 +10,8 @@
 
 .photo-wrapper {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   overflow: hidden;
   border: 4px solid #FFC72C;
@@ -32,7 +34,7 @@
 /* Status badge */
 .status-badge {
   position: absolute;
-  bottom: -8px;
+  bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
   padding: 4px 12px;
@@ -65,28 +67,8 @@
 
 
 
+/*  */
 
-....
-
-<div className="card-photo-section">
-  <div className="photo-wrapper">
-    <img
-      src={`http://localhost:5001${emp.imageUrl}`}
-      alt={emp.EmpName}
-      onError={(e) => {
-        e.target.onerror = null;
-        e.target.src = '/images/no-photo.jpg';
-      }}
-    />
-    <span className={`status-badge ${emp.Employee_Status === 'Active' ? 'active' : 'deactive'}`}>
-      {emp.Employee_Status}
-    </span>
-  </div>
-</div>
-
-
-
-....
 .employee-card {
   background-color: #000;
   color: #FFC72C;
@@ -107,7 +89,7 @@
 
 .card-image {
   flex: 1;
-  min-width: 150px;
+  min-width: 200px;
   max-width: 250px;
   height: auto;
   overflow: hidden;
@@ -176,14 +158,6 @@
     padding: 12px;
   }
 }
-
-
-
-
-
-
-.....
-
 import React from 'react';
 
 export default function EmployeeCard({ emp }) {
@@ -195,15 +169,20 @@ export default function EmployeeCard({ emp }) {
       data-status={emp.Employee_Status || 'Deactive'}
     >
       {/* Profile Image */}
-      <div className="card-image">
-        <img
-          src={`http://localhost:5001${emp.imageUrl}`}
-          alt={emp.EmpName}
-          onError={e => {
-            e.target.onerror = null;
-            e.target.src = '/images/no-photo.jpg';
-          }}
-        />
+      <div className="card-photo-section">
+        <div className="photo-wrapper">
+          <img
+            src={`http://localhost:5001${emp.imageUrl}`}
+            alt={emp.EmpName}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/images/no-photo.jpg';
+            }}
+          />
+          <span className={`status-badge ${emp.Employee_Status === 'Active' ? 'active' : 'deactive'}`}>
+            {emp.Employee_Status}
+          </span>
+        </div>
       </div>
 
       {/* Employee Info */}
