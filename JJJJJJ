@@ -1,4 +1,9 @@
 
+
+
+populateCityFilter(Array.from(citySet));
+
+....
 if (device.city) {
     citySet.add(device.city);
 }
