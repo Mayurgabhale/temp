@@ -1,4 +1,21 @@
 
+historyContainer.innerHTML = `
+    <div class="scrollable-history-table">
+        ${tableHTML}
+    </div>
+`;
+
+
+
+
+
+
+
+
+
+
+.....
+
 function displayDeviceHistory(deviceIp, deviceName, history) {
     const modalHeader = document.getElementById('device-history-header');
     const historyContainer = document.getElementById('device-history');
