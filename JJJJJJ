@@ -1,3 +1,7 @@
+deviceCard.dataset.door = door.toLowerCase(); // Add this line
+
+
+....
 function filterDevices() {
     const selectedType = deviceFilter.value;
     const selectedStatus = statusFilter.value;
