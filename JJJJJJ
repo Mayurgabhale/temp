@@ -1,4 +1,11 @@
 
+
+document.getElementById('search-input').addEventListener('input', filterData);
+
+
+
+
+......
 <div>
   <input type="text" id="search-input" placeholder="🔍 Search by IP, Location, City" />
 </div>
