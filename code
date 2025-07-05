@@ -1,35 +1,67 @@
 <header className="header">
-        <h1>Associate Verification Tool — Western Union</h1>
-        <p>Welcome to Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
-      </header>
-
-
-
+  <div className="header-content">
+    <h1>Associate Verification Tool</h1>
+    <p>Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
+  </div>
+</header>
+.....
 
 /* Header */
 .header {
   background-color: var(--wu-black);
   color: var(--wu-yellow);
-  padding: 20px 0;
+  padding: 1.5rem 1rem;
   text-align: center;
-  position: relative;
+  border-bottom: 4px solid var(--wu-yellow);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
-.header::after {
-  content: '';
-  display: block;
-  height: 4px;
-  background: var(--wu-yellow);
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
+
+/* Flex container to adjust layout for larger screens */
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
 .header h1 {
-  margin: 0;
   font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
+
 .header p {
-  margin: 4px 0 0;
   font-size: 1rem;
-  opacity: 0.85;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* RESPONSIVE */
+@media screen and (min-width: 768px) {
+  .header-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+  }
+
+  .header p {
+    font-size: 1.1rem;
+  }
+}
+
+....
+<img src="/logo.svg" alt="WU Logo" className="logo" />
+...
+.logo {
+  height: 40px;
+  margin-right: 1rem;
 }
