@@ -1,4 +1,17 @@
 
+const filteredDevices = allDevices.filter((device) =>
+    (selectedType === "all" || device.dataset.type === selectedType) &&
+    (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
+    (selectedCity === "all" || device.dataset.city === selectedCity) &&
+    (
+        !searchTerm || 
+        device.innerText.toLowerCase().includes(searchTerm)
+    )
+);
+
+
+
+....
 const searchTerm = document.getElementById("device-search").value.toLowerCase();
 
 
