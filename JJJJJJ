@@ -1,32 +1,47 @@
-row.innerHTML = `
-    <td>${index + 1}</td>
-    <td>
-        <span id="ip-${safeIp}">${deviceIp}</span>
-        <button onclick="copyToClipboard('ip-${safeIp}')">📋</button>
-    </td>
-    <td>
-        <span id="name-${safeIp}">${deviceName}</span>
-        <button onclick="copyToClipboard('name-${safeIp}')">📋</button>
-    </td>
-    <td>${deviceCategory}</td>
-    <td id="uptime-${safeIp}">0h/0m/0s</td>
-    <td id="downtime-count-${safeIp}">${downtimeCount}</td>
-    <td id="downtime-${safeIp}">0h/0m/0s</td>
-    <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
-    <td id="remark-${safeIp}">Device working properly</td>
-`;
-
-
-
-
-.....
-
-
-function copyToClipboard(elementId) {
-    const text = document.getElementById(elementId).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        alert(`Copied: ${text}`);
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
+ let lastOfflineTimestamp = null;
+    history.forEach((entry, index) => {
+        let entryDate = new Date(entry.timestamp);
+        let formattedDate = entryDate.toLocaleDateString();
+        let formattedTime = entryDate.toLocaleTimeString();
+        let formattedDay = entryDate.toLocaleString('en-US', { weekday: 'long' });
+        let downtimeDuration = "-";
+        if (entry.status === "Offline") {
+            lastOfflineTimestamp = entry.timestamp;
+        } else if (entry.status === "Online" && lastOfflineTimestamp) {
+            downtimeDuration = calculateDowntimeDuration(lastOfflineTimestamp, history);
+            lastOfflineTimestamp = null;
+        }
+        tableHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${formattedDate}</td>
+                <td>${formattedDay}</td>
+                <td>${formattedTime}</td>
+                <td style="color: ${entry.status === "Online" ? 'green' : 'red'};">${entry.status}</td>
+                <td>${downtimeDuration}</td>
+            </tr>
+        `;
     });
+    tableHTML += `</tbody></table>`;
+    historyContainer.innerHTML = tableHTML;
+}
+
+function closeHistoryModal() {
+    document.getElementById('device-history-modal').style.display = 'none';
+}
+
+function exportDeviceTableToExcel() {
+    const table = document.getElementById("device-table");
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Device Table" });
+    XLSX.writeFile(workbook, "Device_Table.xlsx");
+}
+
+function exportDeviceHistoryToExcel() {
+    const historyTable = document.querySelector("#device-history-modal table");
+    if (!historyTable) {
+        alert("Please open a device's history first.");
+        return;
+    }
+    const workbook = XLSX.utils.table_to_book(historyTable, { sheet: "Device History" });
+    XLSX.writeFile(workbook, "Device_History.xlsx");
 }
