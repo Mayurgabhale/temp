@@ -255,3 +255,150 @@ function App() {
 export default App;
 
 
+backend code
+C:\Users\W0024618\Desktop\employee-verification\controllers\employeeController.js
+// controllers/employeeController.js
+const { getPool } = require('../config/db');
+
+const getEmployees = async (req, res) => {
+  console.log('🎯 [GET] /api/employees called');
+  try {
+    const pool = await getPool();
+    console.log('✅ DB pool acquired');
+    const result = await pool.request().query(`
+      SELECT DISTINCT
+        AP.ObjectID           AS EmployeeObjID,     
+        AP.Name               AS "Emp Name",
+        CASE AP.Int1
+          WHEN 0 THEN AP.Text12
+          ELSE CAST(AP.Int1 AS NVARCHAR)
+        END                    AS "EmployeeID",
+        PT.Name               AS "PersonnelType",
+        AP.Text10             AS "Manager Name",
+        AP.Int4               AS Manager_WU_ID,
+        AI.Image              AS Image,
+        AP.Disabled           AS Profile_Disabled,
+        COUNT(ACR.Name)       AS Total_Cards,
+        SUM(
+          CASE
+            WHEN (ACR.ExpirationDateTime IS NULL OR ACR.ExpirationDateTime >= GETDATE())
+              AND (ACR.Disabled IS NULL OR ACR.Disabled = 0)
+              AND (ACR.Lost IS NULL OR ACR.Lost = 0)
+              AND (ACR.Stolen IS NULL OR ACR.Stolen = 0)
+            THEN 1 ELSE 0
+          END
+        )                      AS Active_Cards,
+        SUM(
+          CASE
+            WHEN ACR.ExpirationDateTime IS NOT NULL AND ACR.ExpirationDateTime < GETDATE()
+            THEN 1 ELSE 0
+          END
+        )                      AS Expired_Cards,
+        CASE
+          WHEN AP.Disabled = 1 THEN 'Deactive'
+          WHEN AP.Disabled = 0 THEN
+            CASE
+              WHEN SUM(
+                CASE
+                  WHEN (ACR.ExpirationDateTime IS NULL OR ACR.ExpirationDateTime >= GETDATE())
+                    AND (ACR.Disabled IS NULL OR ACR.Disabled = 0)
+                    AND (ACR.Lost IS NULL OR ACR.Lost = 0)
+                    AND (ACR.Stolen IS NULL OR ACR.Stolen = 0)
+                  THEN 1 ELSE 0
+                END
+              ) > 0 THEN 'Active'
+              ELSE 'Deactive'
+            END
+          ELSE 'Deactive'
+        END                    AS "Employee_Status"
+      FROM ACVSCore.Access.Personnel AP
+      INNER JOIN ACVSCore.Access.Credential    ACR ON AP.Name = ACR.Name
+      INNER JOIN ACVSCore.Access.PersonnelType PT  ON PT.ObjectID = AP.PersonnelTypeID
+      INNER JOIN ACVSCore.Access.Images        AI  ON AI.ParentId = AP.ObjectID
+      GROUP BY
+        AP.ObjectID,
+        AP.Name,
+        AP.Int1,
+        AP.Text12,
+        PT.Name,
+        AP.Text10,
+        AP.Int4,
+        AI.Image,
+        AP.Disabled
+      ORDER BY AP.Name
+    `);
+    console.log('✅ Query executed, rows:', result.recordset.length);
+
+    const employees = result.recordset.map(emp => ({
+      id:               emp.EmployeeObjID,
+      EmpName:          emp["Emp Name"],
+      EmployeeID:       emp.EmployeeID,
+      PersonnelType:    emp.PersonnelType,
+      Manager_Name:     emp["Manager Name"],
+      Manager_WU_ID:    emp.Manager_WU_ID,
+      Profile_Disabled: emp.Profile_Disabled,
+      Total_Cards:      emp.Total_Cards,
+      Active_Cards:     emp.Active_Cards,
+      Employee_Status:  emp.Employee_Status,
+      imageUrl:         `/api/employees/${emp.EmployeeObjID}/image`
+    }));
+
+    return res.json(employees);
+  } catch (err) {
+    console.error('❌ Error in getEmployees:', err.stack || err);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: err.message
+    });
+  }
+};
+
+module.exports = { getEmployees };
+
+C:\Users\W0024618\Desktop\employee-verification\controllers\employeeImageController.js
+// controllers/employeeImageController.js
+const sql       = require('mssql');
+const { getPool } = require('../config/db');
+
+async function getEmployeeImage(req, res) {
+  console.log(`🎯 [GET] /api/employees/${req.params.id}/image called`);
+  try {
+    const pool = await getPool();
+    console.log('✅ DB pool acquired for image');
+    const result = await pool.request()
+      .input('id', sql.BigInt, req.params.id)
+      .query(`
+        SELECT AI.Image AS ImageBuffer
+        FROM ACVSCore.Access.Images AI
+        WHERE AI.ParentId = @id
+      `);
+    console.log('✅ Image query rows:', result.recordset.length);
+
+    if (!result.recordset.length || !result.recordset[0].ImageBuffer) {
+      console.warn('⚠️ No image found for ID', req.params.id);
+      return res.status(404).send('Image not found');
+    }
+
+    const buf = result.recordset[0].ImageBuffer;
+    const header = buf.toString('hex', 0, 4).toLowerCase();
+    let contentType = 'application/octet-stream';
+    if (header.startsWith('ffd8')) contentType = 'image/jpeg';
+    else if (header.startsWith('89504e47')) contentType = 'image/png';
+    else if (header.startsWith('47494638')) contentType = 'image/gif';
+
+    console.log('✅ Serving image, type:', contentType, 'size:', buf.length);
+    res.setHeader('Content-Type', contentType);
+    return res.send(buf);
+
+  } catch (err) {
+    console.error('❌ Error in getEmployeeImage:', err.stack || err);
+    return res.status(500).send('Internal Server Error');
+  }
+}
+
+module.exports = { getEmployeeImage };
+
+
+
+
+
