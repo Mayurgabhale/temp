@@ -1,11 +1,92 @@
-const seatCapacities = {
-  Dubai: 53,
-  Dublin: 78,
-  Rome: 39,
-  London: 41,
-  Moscow: 108,
-  Casablanca: 55,
-  Madrid: 65,
-};
+import React from 'react';
+import seatCapacities from '../data/buildingCapacities'; // adjust path if needed
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
-export default seatCapacities;
+const colors = [
+  '#FFC72C', '#FF8C00', '#FF6384', '#36A2EB', '#4BC0C0', '#9966FF', '#00C49F'
+];
+
+export default function PieChartCard({
+  title = 'Seat Capacities',
+  innerRadius = 40,
+  height = 300,
+  showZeroSlice = false,
+  animationDuration = 1500
+}) {
+  const data = Object.entries(seatCapacities).map(([name, value]) => ({ name, value }));
+  const filtered = showZeroSlice ? data : data.filter(d => d.value > 0);
+
+  if (filtered.length === 0) {
+    return (
+      <Card sx={{ border: '2px solid #FFD666', bgcolor: 'rgba(0,0,0,0.6)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No data to display
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      sx={{
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.6)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" gutterBottom color="text.primary">
+          {title}
+        </Typography>
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={filtered}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={innerRadius}
+                outerRadius="80%"
+                isAnimationActive
+                animationDuration={animationDuration}
+                labelLine={false}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              >
+                {filtered.map((entry, idx) => (
+                  <Cell key={`slice-${idx}`} fill={colors[idx % colors.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: '#000' }}
+                formatter={(value, name) => [value, name]}
+              />
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                wrapperStyle={{ color: '#fff' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
