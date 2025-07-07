@@ -1,14 +1,21 @@
- <Box sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 1.5,
-          alignItems: 'center',
-          mb: 1,
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: 16
-        }}>
-          <div>Total Headcount: {totalHeadcount}</div>
-          <div>Total Seats: {totalCapacity}</div>
-          <div>Usage: {avgUsage}%</div>
-        </Box>
+<Box
+  sx={{
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 4,
+    alignItems: 'center',
+    mb: 1,
+    fontWeight: 'bold',
+    fontSize: 16
+  }}
+>
+  <Box sx={{ color: '#FFD700' /* Yellow */ }}>
+    Total Headcount: {totalHeadcount}
+  </Box>
+  <Box sx={{ color: '#4CAF50' /* Green */ }}>
+    Total Seats: {totalCapacity}
+  </Box>
+  <Box sx={{ color: '#FF4C4C' /* Red */ }}>
+    Usage: {avgUsage}%
+  </Box>
+</Box>
