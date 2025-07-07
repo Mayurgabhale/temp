@@ -1,4 +1,8 @@
-
+function copyText(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => showToast(`Copied: ${text}`))
+        .catch(err => console.error("Copy failed: ", err));
+}
 
 
 row.innerHTML = `
