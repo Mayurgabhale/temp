@@ -1,3 +1,30 @@
+
+
+<Bar
+  yAxisId="left"
+  dataKey="headcount"
+  name="Headcount"
+  isAnimationActive
+  animationDuration={animationDuration}
+  animationEasing={animationEasing}
+>
+  {enriched.map((entry, idx) => (
+    <Cell key={`cell-${idx}`} fill={entry._color} />
+  ))}
+  <LabelList
+    dataKey="percentage"
+    position="top"
+    formatter={(val) => `${val}%`}
+    style={{ fill: '#fff', fontSize: 14, fontWeight: 700 }}
+  />
+</Bar>
+
+
+
+
+....
+
+
 <XAxis
   dataKey="name"
   stroke="rgba(255,255,255,0.6)"
