@@ -1,3 +1,18 @@
+<CompositeChartCard
+  title="Vilnius by Floor"
+  data={vilniusFloors}
+  barColor="#4CAF50"
+  lineColor="#FFEB3B"
+  height={350}
+  animationDuration={1500}
+  animationEasing="ease-in-out"
+/>
+
+
+
+
+m....
+
 // Vilnius → GAMA building only (by floor)
 const allFloors = data?.realtime?.['LT.Vilnius']?.floors || {};
 const vilniusFloors = Object.entries(allFloors)
