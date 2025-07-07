@@ -1,29 +1,514 @@
-Vilnius by Floor
-No realtime employee data
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\CompositeChartCard.jsx
 
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+  LabelList,
+  Cell
+} from 'recharts';
 
+const DARK_TO_LIGHT = [
+  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
+  '#FFD666', '#FFEE8C', '#F8DE7E', '#FBEC5D', '#F0E1DC',
+  '#FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
+  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
+];
 
-<CompositeChartCard
-  title="Vilnius by Floor"
-  data={vilniusFloors}
-  barColor="#4CAF50"
-  lineColor="#FFEB3B"
-  height={350}
-  animationDuration={1500}
-  animationEasing="ease-in-out"
-/>
+export default function CompositeChartCard({
+  title,
+  data,
+  barColor = '#4CAF50',
+  lineColor = '#FFEB3B',
+  height = 300,
+  animationDuration = 1500,
+  animationEasing = 'ease-in-out'
+}) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card sx={{ border: `2px solid ${lineColor}`, bgcolor: 'rgba(0,0,0,0.6)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No realtime employee data
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
 
-
-
-
-m....
-
-// Vilnius → GAMA building only (by floor)
-const allFloors = data?.realtime?.['LT.Vilnius']?.floors || {};
-const vilniusFloors = Object.entries(allFloors)
-  .filter(([name]) => name.toUpperCase().includes('GAMA'))  // 🧠 Keep only GAMA
-  .map(([name, headcount]) => ({
-    name: name.replace('GAMA - ', ''), // Optional: cleaner label
-    headcount,
-    capacity: 50  // Optional: set real capacity per floor if you have it
+  const enriched = data.map((d, i) => ({
+    ...d,
+    percentage: d.capacity ? Math.round((d.headcount / d.capacity) * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
   }));
+
+  return (
+    <Card
+      sx={{
+        border: `2px solid ${lineColor}`,
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.6)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" gutterBottom color="text.primary">
+          {title}
+        </Typography>
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <ComposedChart
+              data={enriched}
+              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
+
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                tickFormatter={label =>
+                  typeof label === 'string'
+                    ? label.replace(/^[^\s]*\s*/, '')
+                    : label
+                }
+              />
+
+              <YAxis
+                yAxisId="left"
+                axisLine={false}
+                tickLine={false}
+                stroke="rgba(255,255,255,0.6)"
+              />
+
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                axisLine={false}
+                tickLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                domain={[0, 100]}
+                tickFormatter={val => `${val}%`}
+              />
+
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
+                formatter={(value, name) =>
+                  name === 'percentage' ? `${value}%` : value
+                }
+              />
+
+              <Legend verticalAlign="top" wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }} />
+
+              <Bar
+                yAxisId="left"
+                dataKey="headcount"
+                name="Headcount"
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              >
+                {enriched.map((entry, idx) => (
+                  <Cell key={`cell-${idx}`} fill={entry._color} />
+                ))}
+                <LabelList
+                  dataKey="headcount"
+                  position="top"
+                  formatter={val => `${val}`}
+                  style={{ fill: '#fff', fontSize: 14, fontWeight: 700 }}
+                />
+              </Bar>
+
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="percentage"
+                name="Usage %"
+                stroke={lineColor}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="capacity"
+                name="Seat Capacity"
+                stroke="#81C784"
+                strokeDasharray="5 5"
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\DataTable.jsx
+// //C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\DataTable.jsx
+// import React from 'react';
+// import {
+//   Table, TableHead, TableBody, TableRow,
+//   TableCell, Paper, TableContainer
+// } from '@mui/material';
+
+// export default function DataTable({ columns, rows }) {
+//   return (
+//     <TableContainer component={Paper} sx={{ mb:2 }}>
+//       <Table size="small">
+//         <TableHead>
+//           <TableRow>
+//             {columns.map(c => (
+//               <TableCell key={c.field} sx={{ fontWeight:'bold' }}>
+//                 {c.headerName}
+//               </TableCell>
+//             ))}
+//           </TableRow>
+//         </TableHead>
+//         <TableBody>
+//           {rows.map((r,i)=>(
+//             <TableRow key={i}>
+//               {columns.map(c=>(
+//                 <TableCell key={c.field}>
+//                   {r[c.field]}
+//                 </TableCell>
+//               ))}
+//             </TableRow>
+//           ))}
+//         </TableBody>
+//       </Table>
+//     </TableContainer>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react';
+import {
+  Table, TableHead, TableBody, TableRow, TableCell,
+  TableContainer, Paper
+} from '@mui/material';
+
+export default function DataTable({ columns, rows }) {
+  return (
+    <TableContainer component={Paper} sx={{ mb:2 }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            {columns.map(c => (
+              <TableCell key={c.field} sx={{ fontWeight:'bold', borderBottom:'2px solid #000' }}>
+                {c.headerName}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((r,i)=>(
+            <TableRow key={i}>
+              {columns.map(c=>(
+                <TableCell key={c.field} sx={{ py:0.5, borderBottom:'1px solid #ccc' }}>
+                  {r[c.field]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
+//C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
+
+
+// src/pages/Dashboard.jsx
+
+import React, { useEffect, useState } from 'react';
+import { Container, Box, Typography, Skeleton } from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import PeopleIcon from '@mui/icons-material/People';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SummaryCard from '../components/SummaryCard';
+import CompositeChartCard from '../components/CompositeChartCard';
+import PieChartCard from '../components/PieChartCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+import doorMapRaw from '../utils/doorMap';
+
+// Flags
+import austriaFlag from '../assets/flags/austria.png';
+import uaeFlag from '../assets/flags/uae.png';
+import irelandFlag from '../assets/flags/ireland.png';
+import italyFlag from '../assets/flags/italy.png';
+import lithuaniaFlag from '../assets/flags/lithuania.png';
+import moroccoFlag from '../assets/flags/morocco.png';
+import russiaFlag from '../assets/flags/russia.png';
+import ukFlag from '../assets/flags/uk.png';
+import spainFlag from '../assets/flags/spain.png';
+
+const partitions = [
+  'AUT.Vienna', 'DU.Abu Dhab', 'IE.Dublin', 'IT.Rome',
+  'LT.Vilnius', 'MA.Casablanca', 'RU.Moscow', 'UK.London', 'ES.Madrid'
+];
+const displayName = {
+  'AUT.Vienna': 'Vienna',
+  'DU.Abu Dhab': 'Abu Dhabi',
+  'IE.Dublin': 'Dublin',
+  'IT.Rome': 'Rome',
+  'LT.Vilnius': 'Vilnius',
+  'MA.Casablanca': 'Casablanca',
+  'RU.Moscow': 'Moscow',
+  'UK.London': 'London',
+  'ES.Madrid': 'Madrid'
+};
+const flagMap = {
+  'AUT.Vienna': austriaFlag,
+  'DU.Abu Dhab': uaeFlag,
+  'IE.Dublin': irelandFlag,
+  'IT.Rome': italyFlag,
+  'LT.Vilnius': lithuaniaFlag,
+  'MA.Casablanca': moroccoFlag,
+  'RU.Moscow': russiaFlag,
+  'UK.London': ukFlag,
+  'ES.Madrid': spainFlag
+};
+const colorsMap = {
+  'AUT.Vienna': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'DU.Abu Dhab': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'IE.Dublin': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'IT.Rome': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'LT.Vilnius': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'MA.Casablanca': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'RU.Moscow': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'UK.London': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'ES.Madrid': ['#FFC0CB', '#fcf3cf', '#2ecc71', '#ec7063']
+};
+
+// Vilnius door → building
+const vilniusMap = doorMapRaw.reduce((acc, { partition, door }) => {
+  if (partition === 'LT.Vilnius') {
+    acc[door] = door.toUpperCase().includes('GAMA') ? 'GAMA' : 'Delta';
+  }
+  return acc;
+}, {});
+
+
+export default function Dashboard() {
+  const { data, loading, error } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  if (error) {
+    return <Box py={4}><Typography color="error" align="center">Error loading live data</Typography></Box>;
+  }
+
+  // Vilnius breakdown
+  const counts = { GAMA: 0, Delta: 0 };
+  (data?.details || []).forEach(r => {
+    if (r.PartitionName2 === 'LT.Vilnius' && r.Direction === 'InDirection') {
+      const b = vilniusMap[r.Door];
+      if (b) counts[b]++;
+    }
+  });
+  // const vilniusFloors = Object.entries(counts).map(([name, headcount]) => ({ name, headcount, capacity: 0 }));
+  // Vilnius → GAMA building only (by floor)
+  const allFloors = data?.realtime?.['LT.Vilnius']?.floors || {};
+  const vilniusFloors = Object.entries(allFloors)
+    .filter(([name]) => name.toUpperCase().includes('GAMA'))  // 🧠 Keep only GAMA
+    .map(([name, headcount]) => ({
+      name: name.replace('GAMA - ', ''), // Optional: cleaner label
+      headcount,
+      capacity: 50  // Optional: set real capacity per floor if you have it
+    }));
+
+  // Donut slices
+  const slice1 = partitions.slice(0, 4).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
+  const slice2 = partitions.slice(5).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
+
+  // Summary cards
+  const todayTot = data?.today.total || 0;
+  const todayEmp = data?.today.Employee || 0;
+  const todayCon = data?.today.Contractor || 0;
+  const realtimeTot = Object.values(data?.realtime || {}).reduce((s, x) => s + (x.total || 0), 0);
+  const realtimeEmp = Object.values(data?.realtime || {}).reduce((s, x) => s + (x.Employee || 0), 0);
+  const realtimeCon = Object.values(data?.realtime || {}).reduce((s, x) => s + (x.Contractor || 0), 0);
+
+  // Build per-site items
+  const summaryItems = [];
+  summaryItems.push({
+    label: 'Vilnius',
+    total: data?.realtime['LT.Vilnius']?.total || 0,
+    emp: data?.realtime['LT.Vilnius']?.Employee || 0,
+    cont: data?.realtime['LT.Vilnius']?.Contractor || 0,
+    flag: flagMap['LT.Vilnius'], colors: colorsMap['LT.Vilnius']
+  });
+  partitions.filter(k => k !== 'LT.Vilnius').forEach(k => {
+    const x = data?.realtime[k] || {};
+    summaryItems.push({ label: displayName[k], total: x.total || 0, emp: x.Employee || 0, cont: x.Contractor || 0, flag: flagMap[k], colors: colorsMap[k] });
+  });
+
+  return (
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 1 }}>
+
+        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+            { title: "Today's Total Headcount", value: todayTot, icon: <GroupIcon sx={{ color: '#E57373', fontSize: 36 }} />, border: '#FFD666' },
+            { title: "Today's Employees Count", value: todayEmp, icon: <PeopleIcon sx={{ color: '#81C784', fontSize: 36 }} />, border: '#81C784' },
+            { title: "Today's Contractors Count", value: todayCon, icon: <BusinessCenterIcon sx={{ color: '#64B5F6', fontSize: 36 }} />, border: '#FFE599' },
+            { title: "Realtime Headcount", value: realtimeTot, icon: <TrackChangesIcon sx={{ color: '#BA68C8', fontSize: 36 }} />, border: '#FFF2CC' },
+            { title: "Realtime Employees Count", value: realtimeEmp, icon: <PeopleIcon sx={{ color: '#FFB74D', fontSize: 36 }} />, border: '#FFD666' },
+            { title: "Realtime Contractors Count", value: realtimeCon, icon: <BusinessCenterIcon sx={{ color: '#4DB6AC', fontSize: 36 }} />, border: '#FFE599' }
+          ].map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard title={c.title} total={c.value} stats={[]} icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }} />
+            </Box>
+          ))}
+        </Box>
+
+
+
+        <Box display="flex" flexWrap="wrap" gap={1} mb={4}>
+          {loading ? <LoadingSpinner />
+            : summaryItems.map(item => {
+              const [tc, totc, ec, cc] = item.colors;
+              return (
+                <Box key={item.label} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+                  <SummaryCard
+                    title={item.label}
+                    total={item.total}
+                    stats={[{ label: 'Employees', value: item.emp }, { label: 'Contractors', value: item.cont }]}
+                    icon={item.flag && <Box component="img" src={item.flag} alt={item.label} sx={{ width: 50, height: 30, border: '1px solid #fff' }} />}
+                    titleColor={tc} totalColor={totc} statColors={[ec, cc]}
+                    sx={{
+                      height: 170,
+                      border: `2px solid ${tc}`,
+                      '& .MuiTypography-subtitle1': { fontSize: '1.3rem' },
+                      '& .MuiTypography-h4': { fontSize: '1.7rem' },
+                      '& .MuiTypography-caption': { fontSize: '0.875rem' }
+                    }}
+                  />
+                </Box>
+              )
+            })
+          }
+        </Box>
+
+
+
+        {/* Live charts row */}
+        <Box display="flex" gap={2} mb={4} flexWrap="wrap">
+
+          {/* 1) Vilnius composite */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+            <Typography variant="h6" gutterBottom>
+              Vilnius Floor Usage
+            </Typography>
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <CompositeChartCard
+                title="Vilnius by Floor"
+                data={vilniusFloors}
+                barColor="#4CAF50"
+                lineColor="#FFEB3B"
+                height={350}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            )}
+          </Box>
+
+          {/* 2) Top regions donut */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+            <Typography variant="h6" gutterBottom>
+              Top Region Totals
+            </Typography>
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <PieChartCard
+                title="Vienna • Abu Dhabi • Dublin • Rome"
+                data={slice1}
+                colors={['#FFD666', '#FFE599', '#FFF2CC', '#FFD666']}
+                innerRadius={60}
+                height={350}
+                showZeroSlice
+                animationDuration={1500}
+              />
+            )}
+          </Box>
+
+          {/* 3) Other regions donut */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+            <Typography variant="h6" gutterBottom>
+              Other Region Totals
+            </Typography>
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <PieChartCard
+                title="Casablanca • Moscow • London • Madrid"
+                data={slice2}
+                colors={['#FFF2CC', '#FFD666', '#FFE599', '#FFC0CB']}
+                innerRadius={60}
+                height={350}
+                showZeroSlice
+                animationDuration={1500}
+              />
+            )}
+          </Box>
+
+        </Box>
+      </Container>
+      <Footer />
+    </>
+  );
+}
+
+
