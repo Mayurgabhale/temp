@@ -1,32 +1,26 @@
-
-http://localhost:3000/partition/LT.Vilnius/details
-
-
-
-
-
 <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-          </Typography>
+  <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+  <Typography variant="h6" sx={{ flexGrow: 1 }}>
+    EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+  </Typography>
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
-          {isPart && (
-            <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-              <ListAltIcon />
-            </IconButton>
-          )}
+  <IconButton color="inherit" onClick={() => navigate('/')}>
+    <HomeIcon />
+  </IconButton>
+  <IconButton color="inherit" onClick={() => navigate('/history')}>
+    <HistoryIcon />
+  </IconButton>
 
-          {/* <Typography variant="caption" sx={{
-            ml:2, color:'#FFC72C',
-            opacity: data?1:0, transition:'opacity 0.6s'
-          }}>
-            {lastUpdate}
-          </Typography> */}
-        </Box>
+  {/* 👇 Always visible default partition path */}
+  <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
+    <ListAltIcon />
+  </IconButton>
+
+  {/* Optional: Keep dynamic version if needed */}
+  {/* {isPart && (
+    <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+      <ListAltIcon />
+    </IconButton>
+  )} */}
+
+</Box>
