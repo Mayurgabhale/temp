@@ -1,9 +1,15 @@
-<PieChartCard
-  title="Casablanca • Moscow • London • Madrid"
-  data={slice2}
-  colors={['#59A14F', '#EDC948', '#AF7AA1', '#FF9DA7']}
-  innerRadius={60}
-  height={350}
-  showZeroSlice
-  animationDuration={1500}
-/>
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+
+export default function Footer() {
+  return (
+    <Box component="footer" sx={{
+      py:2, textAlign:'center', bgcolor:'rgba(0,0,0,0.6)',
+      color:'#FFC107'
+    }}>
+      <Typography variant="body2">
+        © {new Date().getFullYear()} Western Union. All rights reserved.
+      </Typography>
+    </Box>
+  );
+}
