@@ -82,11 +82,15 @@ export default function CompositeChartCard({
                 axisLine={false}
                 tickLine={false}
                 stroke="rgba(255,255,255,0.6)"
-                tickFormatter={label =>
-                  typeof label === 'string'
-                    ? label.replace(/^[^\s]*\s*/, '')
-                    : label
-                }
+                // tickFormatter={label =>
+                //   typeof label === 'string'
+                //     ? label.replace(/^[^\s]*\s*/, '')
+                //     : label
+                // }
+                angle={-35}
+                textAnchor='end'
+                height={60}
+                
               />
 
               <YAxis
