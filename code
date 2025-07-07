@@ -1,4 +1,22 @@
-import React from 'react';
+<Line
+  yAxisId="left"
+  type="monotone"
+  dataKey="capacity"
+  name="Seat Capacity"
+  stroke="#81C784"
+  strokeDasharray="5 5"
+  dot={false}
+  isAnimationActive
+  animationDuration={animationDuration}
+  animationEasing={animationEasing}
+/>
+
+
+
+
+
+
+.....import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
   ComposedChart,
