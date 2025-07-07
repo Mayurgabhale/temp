@@ -1,3 +1,20 @@
+
+
+// Vilnius door → building
+const vilniusMap = doorMapRaw.reduce((acc, { partition, door }) => {
+  if (partition === 'LT.Vilnius') {
+    acc[door] = door.toUpperCase().includes('GAMA') ? 'GAMA' : 'Delta';
+  }
+  return acc;
+}, {});
+
+
+
+
+
+
+
+....
 // Vilnius door → building
 const vilniusMap = doorMapRaw.reduce((acc, { partition, door }) => {
   if (partition === 'LT.Vilnius') {
