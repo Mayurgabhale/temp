@@ -1,26 +1,104 @@
-<Box display="flex" alignItems="center">
-  <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-  <Typography variant="h6" sx={{ flexGrow: 1 }}>
-    EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-  </Typography>
+src\data\buildingCapacities.js
 
-  <IconButton color="inherit" onClick={() => navigate('/')}>
-    <HomeIcon />
-  </IconButton>
-  <IconButton color="inherit" onClick={() => navigate('/history')}>
-    <HistoryIcon />
-  </IconButton>
 
-  {/* 👇 Always visible default partition path */}
-  <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-    <ListAltIcon />
-  </IconButton>
+const seatCapacities = {
+  Dubai - 53
+Dublin - 78
+Rome - 39
+London - 41
+Moscow - 108
+Casablanca - 55
+Madrid - 65
+};
+export default seatCapacities;
+UPDATE PIECHART AS PER SEATCAPACITIES 
 
-  {/* Optional: Keep dynamic version if needed */}
-  {/* {isPart && (
-    <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-      <ListAltIcon />
-    </IconButton>
-  )} */}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\PieChartCard.jsx
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
-</Box>
+export default function PieChartCard({
+  title,
+  data,
+  colors = [],
+  innerRadius = 40,
+  height = 300,
+  showZeroSlice = false,
+  animationDuration = 1500
+}) {
+  const filtered = showZeroSlice ? data : data.filter(d => d.value > 0);
+  if (filtered.length === 0) {
+    return (
+      <Card sx={{ border: '2px solid #FFD666', bgcolor: 'rgba(0,0,0,0.6)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No data to display
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      sx={{
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.6)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" gutterBottom color="text.primary">
+          {title}
+        </Typography>
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={filtered}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={innerRadius}
+                outerRadius="80%"
+                isAnimationActive
+                animationDuration={animationDuration}
+                labelLine={false}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              >
+                {filtered.map((entry, idx) => (
+                  <Cell key={`slice-${idx}`} fill={colors[idx % colors.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: '#000' }}
+                formatter={(value, name) => [value, name]}
+              />
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                wrapperStyle={{ color: '#fff' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
