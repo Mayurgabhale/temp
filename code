@@ -1,5 +1,78 @@
+<!-- Toast container -->
+<div id="toast" class="toast"></
 
-            row.innerHTML = `
+
+
+
+
+
+
+
+....
+
+.toast {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 12px 20px;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10000;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.copy-text {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}
+
+
+
+......
+
+
+
+
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 2500);
+}
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId)?.innerText;
+    if (text) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast(`Copied: ${text}`))
+            .catch(err => console.error("Failed to copy:", err));
+    }
+}
+
+
+
+
+...
+
+
+
+
+row.innerHTML = `
     <td>${index + 1}</td>
     <td>
         <span id="ip-${safeIp}" class="copy-text" onclick="copyToClipboard('ip-${safeIp}')">${deviceIp}</span>
@@ -14,22 +87,3 @@
     <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
     <td id="remark-${safeIp}">Device working properly</td>
 `;
-
-    <div class="container">
-        <table id="device-table">
-            <thead>
-                <tr>
-                    <th>Sr. No</th>
-                    <th>Device IP</th>
-                    <th>Device Name</th>
-                    <th>Device Type</th>
-                    <th>Uptime Duration</th>
-                    <th>Downtime Count</th>
-                    <th>Downtime Duration</th>
-                    <th>Details</th>
-                    <th>Remark</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
