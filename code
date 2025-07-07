@@ -9,17 +9,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  Legend,
-  LabelList,
-  Cell
+  Legend
 } from 'recharts';
 
-const DARK_TO_LIGHT = [
-  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
-  '#FFD666', '#FFEE8C', '#F8DE7E', '#FBEC5D', '#F0E1DC',
-  '#FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
-  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
-];
+const DARK_TO_LIGHT = [ /* your colors here */ ];
 
 export default function CompositeChartCard({
   title,
@@ -76,66 +69,21 @@ export default function CompositeChartCard({
               margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
-
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                stroke="rgba(255,255,255,0.6)"
-                tickFormatter={label =>
-                  typeof label === 'string'
-                    ? label.replace(/^[^\s]*\s*/, '')
-                    : label
-                }
-              />
-
-              <YAxis
-                yAxisId="left"
-                axisLine={false}
-                tickLine={false}
-                stroke="rgba(255,255,255,0.6)"
-              />
-
+              <XAxis dataKey="name" stroke="rgba(255,255,255,0.6)" />
+              <YAxis yAxisId="left" stroke="rgba(255,255,255,0.6)" />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                axisLine={false}
-                tickLine={false}
                 stroke="rgba(255,255,255,0.6)"
                 domain={[0, 100]}
                 tickFormatter={val => `${val}%`}
               />
-
               <Tooltip
                 contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
-                formatter={(value, name) => {
-                  if (name === 'percentage') return [`${value}%`, 'Usage %'];
-                  if (name === 'capacity') return [value, 'Seat Capacity'];
-                  return [value, name];
-                }}
+                formatter={(value, name) => name === 'percentage' ? [`${value}%`, 'Usage %'] : [value, name]}
               />
-
               <Legend verticalAlign="top" wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }} />
-
-              <Bar
-                yAxisId="left"
-                dataKey="headcount"
-                name="Headcount"
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              >
-                {enriched.map((entry, idx) => (
-                  <Cell key={`cell-${idx}`} fill={entry._color} />
-                ))}
-                <LabelList
-                  dataKey="headcount"
-                  position="top"
-                  formatter={val => `${val}`}
-                  style={{ fill: '#fff', fontSize: 14, fontWeight: 700 }}
-                />
-              </Bar>
-
+              <Bar yAxisId="left" dataKey="headcount" name="Headcount" fill={barColor} />
               <Line
                 yAxisId="right"
                 type="monotone"
@@ -144,22 +92,6 @@ export default function CompositeChartCard({
                 stroke={lineColor}
                 strokeWidth={2}
                 dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
-
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="capacity"
-                name="Seat Capacity"
-                stroke="#81C784"
-                strokeDasharray="5 5"
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
               />
             </ComposedChart>
           </ResponsiveContainer>
@@ -168,23 +100,3 @@ export default function CompositeChartCard({
     </Card>
   );
 }
-
-Uncaught runtime errors:
-×
-ERROR
-Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `CompositeChartCard`.
-Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `CompositeChartCard`.
-    at createFiberFromTypeAndProps (http://localhost:3000/static/js/bundle.js:17111:24)
-    at createFiberFromElement (http://localhost:3000/static/js/bundle.js:17122:12)
-    at createChild (http://localhost:3000/static/js/bundle.js:19025:28)
-    at reconcileChildrenArray (http://localhost:3000/static/js/bundle.js:19138:66)
-    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:19245:109)
-    at http://localhost:3000/static/js/bundle.js:19272:31
-    at reconcileChildren (http://localhost:3000/static/js/bundle.js:19534:115)
-    at beginWork (http://localhost:3000/static/js/bundle.js:20289:1565)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15715:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22296:93)
