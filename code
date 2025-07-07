@@ -1,3 +1,18 @@
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 2500); // Hide after 2.5 seconds
+}
+
+
+
+...
+
+
 <!-- Toast Container -->
 <div id="toast" class="toast"></d
 
