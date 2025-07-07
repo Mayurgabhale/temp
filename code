@@ -1,9 +1,23 @@
-import React from 'react';
 import React, { useRef, useEffect } from 'react';
 
 export default function SearchBar({ value, onChange, onSearch, suggestions, onSelectSuggestion }) {
+  const wrapperRef = useRef();
+
+  // Close suggestions dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        onSelectSuggestion(null); // Clear suggestions
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onSelectSuggestion]);
+
   return (
-    <div className="search-bar-container">
+    <div className="search-bar-container" ref={wrapperRef}>
       <form
         onSubmit={e => {
           e.preventDefault();
@@ -20,7 +34,7 @@ export default function SearchBar({ value, onChange, onSearch, suggestions, onSe
         <button type="submit">Search</button>
       </form>
 
-      {suggestions.length > 0 && (
+      {suggestions?.length > 0 && (
         <ul className="suggestions-dropdown">
           {suggestions.map(emp => (
             <li key={emp.id} onClick={() => onSelectSuggestion(emp)}>
@@ -31,84 +45,4 @@ export default function SearchBar({ value, onChange, onSearch, suggestions, onSe
       )}
     </div>
   );
-
-  
 }
-
-const wrapperRef = useRef();
-
-useEffect(() => {
-  function handleClickOutside(event) {
-    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-      onSelectSuggestion(null); // pass null to clear suggestions
-    }
-  }
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [onSelectSuggestion]);
-
-
-
-
-
-
-....
-import React, { useRef, useEffect } from 'react';
-
-
-
-
-
-
-.....
-
-.search-bar-container form {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.search-bar-container input {
-  flex: 1;
-  padding: 10px;
-  border: 2px solid #FFC72C;
-  border-radius: 6px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.search-bar-container button {
-  padding: 10px 18px;
-  background-color: #FFC72C;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  height: 100%; /* align with input height */
-}
-
-...
-
-const handleSearch = () => {
-  setError('');
-  const term = searchTerm.trim().toLowerCase();
-  if (!term) return setError('Please enter name or ID');
-
-  const found = allEmployees.find(emp =>
-    (emp.EmployeeID || '').toLowerCase() === term ||
-    (emp.EmpName || '').toLowerCase().includes(term)
-  );
-
-  setSuggestions([]); // ⬅️ Clear suggestions here
-
-  if (!found) {
-    setSelected(null);
-    setError('No matching employee');
-  } else {
-    selectEmployee(found);
-  }
-};
