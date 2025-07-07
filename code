@@ -1,4 +1,16 @@
 
+
+
+row.innerHTML = `
+    <td>${idx + 1}</td>
+    <td><span onclick="copyText('${dev.ip}')" style="cursor:pointer; color:blue;">${dev.ip}</span></td>
+    <td><span onclick="copyText('${dev.name}')" style="cursor:pointer; color:blue;">${dev.name}</span></td>
+    ...
+`;
+
+
+
+...
 function showToast(message) {
     const toast = document.getElementById("toast");
     toast.textContent = message;
