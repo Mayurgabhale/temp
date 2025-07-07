@@ -1,19 +1,5 @@
-l// Vilnius floor-wise breakdown from realtime data
-const vilniusRealtimeFloors = data?.realtime?.['LT.Vilnius']?.floors || {};
-
-const floorCapacities = {
-  '1st Floor': 60,
-  '3rd Floor': 60,
-  '4th Floor': 40,
-  '7th Floor': 40,
-  '8th Floor': 80,
-  '9th Floor': 80,
-  '10th Floor': 80,
-  // Add/adjust these based on real capacity per floor
-};
-
-const vilniusFloors = Object.entries(vilniusRealtimeFloors).map(([floor, headcount]) => ({
-  name: floor,
-  headcount,
-  capacity: floorCapacities[floor] || 0
-}));
+formatter={(value, name) => {
+  if (name === 'percentage') return [`${value}%`, 'Usage %'];
+  if (name === 'capacity') return [value, 'Seat Capacity'];
+  return [value, name];
+}}
