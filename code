@@ -1,3 +1,14 @@
+<SearchBar
+  value={searchTerm}
+  onChange={setSearchTerm}
+  onSearch={handleSearch}
+  suggestions={suggestions}
+  onSelectSuggestion={pickSuggestion}
+/>
+
+
+....
+
 import React from 'react';
 import './SearchBar.css'; // We'll style it next
 
