@@ -1,12 +1,24 @@
-<Line
-  yAxisId="left"
-  type="monotone"
-  dataKey="capacity"  // ✅ connect to actual capacity numbers
-  name="Seat Capacity"
-  stroke="#81C784"
-  strokeDasharray="5 5"
-  dot={false}
-  isAnimationActive
-  animationDuration={animationDuration}
-  animationEasing={animationEasing}
+<XAxis
+  dataKey="name"
+  stroke="rgba(255,255,255,0.6)"
+  textAnchor="end"
+  angle={-35}
+  height={60}
+  tickFormatter={(label, index) => {
+    const strLabel = String(label);
+    const match = strLabel.match(/\d+/);
+    const floorNum = parseInt(match?.[0] ?? index + 1, 10);
+
+    const suffix = (n) => {
+      if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+      switch (n % 10) {
+        case 1: return `${n}st`;
+        case 2: return `${n}nd`;
+        case 3: return `${n}rd`;
+        default: return `${n}th`;
+      }
+    };
+
+    return suffix(floorNum);
+  }}
 />
