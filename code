@@ -1,3 +1,20 @@
+<Box sx={{
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+  mb: 1,
+  color: 'white',
+  fontWeight: 'bold',
+  fontSize: 16
+}}>
+  <div>Total Headcount: {totalHeadcount}</div>
+  <div>Total Seats: {totalCapacity}</div>
+  <div>Usage: {avgUsage}%</div>
+</Box>
+
+
+...
+
 const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
 const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
 const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
