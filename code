@@ -1,2 +1,27 @@
 <!-- Toast Container -->
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast"></d
+
+
+.....
+
+.toast {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 12px 20px;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10000;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
