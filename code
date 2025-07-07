@@ -1,3 +1,12 @@
+const vilniusFloors = Object.entries(vilniusRealtimeFloors).map(([floor, headcount]) => ({
+  name: floor,
+  headcount,
+  capacity: floorCapacities[floor] || 0
+}));
+
+...
+
+
 
 
 // Vilnius door → building
