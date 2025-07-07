@@ -1,4 +1,24 @@
+// Building-wise headcount for Vilnius using doorMap
+const vilniusBuildings = { GAMA: 0, Delta: 0 };
 
+(data?.details || []).forEach(r => {
+  if (r.PartitionName2 === 'LT.Vilnius' && r.Direction === 'InDirection') {
+    const building = vilniusMap[r.Door];
+    if (building) vilniusBuildings[building]++;
+  }
+});
+
+const vilniusFloors = Object.entries(vilniusBuildings).map(([name, headcount]) => ({
+  name,
+  headcount,
+  capacity: name === 'GAMA' ? 500 : 600  // update as needed
+}));
+
+
+
+
+
+....
 
 
 const vilniusBuildings = { GAMA: 0, Delta: 0 };
