@@ -1,9 +1,9 @@
-<PieChartCard
-  title="Vienna • Abu Dhabi • Dublin • Rome"
-  data={slice1}
-  colors={['#4E79A7', '#F28E2B', '#E15759', '#76B7B2']}
-  innerRadius={60}
-  height={350}
-  showZeroSlice
-  animationDuration={1500}
-/>
+ <PieChartCard
+                title="Casablanca • Moscow • London • Madrid"
+                data={slice2}
+                colors={['#FFF2CC', '#FFD666', '#FFE599', '#FFC0CB']}
+                innerRadius={60}
+                height={350}
+                showZeroSlice
+                animationDuration={1500}
+              />
