@@ -219,4 +219,19 @@ export default function CompositeChartCard({
     </Card>
   );
 }
- 
+
+Uncaught runtime errors:
+×
+ERROR
+label.replace is not a function
+TypeError: label.replace is not a function
+    at tickFormatter (http://localhost:3000/static/js/src_pages_Dashboard_jsx.chunk.js:150:21)
+    at getTickSize (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:20510:55)
+    at getSize (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:20397:16)
+    at _loop (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:20402:51)
+    at getTicksEnd (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:20420:5)
+    at getTicks (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:20528:18)
+    at CartesianAxis.renderTicks (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:19183:73)
+    at CartesianAxis.render (http://localhost:3000/static/js/vendors-node_modules_recharts_es6_cartesian_CartesianGrid_js-node_modules_recharts_es6_cartes-ba3606.chunk.js:19262:48)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27746:27)
+    at updateClassComponent (http://localhost:3000/static/js/bundle.js:19802:21)
