@@ -1,3 +1,25 @@
+
+
+const vilniusBuildings = { GAMA: 0, Delta: 0 };
+
+(data?.details || []).forEach(r => {
+  if (r.PartitionName2 === 'LT.Vilnius' && r.Direction === 'InDirection') {
+    const building = vilniusMap[r.Door];
+    if (building) vilniusBuildings[building]++;
+  }
+});
+
+const vilniusFloors = Object.entries(vilniusBuildings).map(([name, headcount]) => ({
+  name,
+  headcount,
+  capacity: name === 'GAMA' ? 500 : 600  // update with real values
+}));
+
+
+
+
+......
+
 const vilniusFloors = Object.entries(vilniusRealtimeFloors).map(([floor, headcount]) => ({
   name: floor,
   headcount,
