@@ -1,27 +1,27 @@
 <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-          </Typography>
+  <Toolbar sx={{ justifyContent: 'space-between' }}>
+    <Box display="flex" alignItems="center">
+      <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
-          {isPart && (
-            <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-              <ListAltIcon />
-            </IconButton>
-          )}
+      <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        EMEA Occupancy{(current || 'let.vilnius.details') && ` • ${(current || 'let.vilnius.details').split('.').pop()}`}
+      </Typography>
 
-          {/* <Typography variant="caption" sx={{
-            ml:2, color:'#FFC72C',
-            opacity: data?1:0, transition:'opacity 0.6s'
-          }}>
-            {lastUpdate}
-          </Typography> */}
-        </Box>
+      <IconButton color="inherit" onClick={() => navigate('/')}>
+        <HomeIcon />
+      </IconButton>
+
+      <IconButton color="inherit" onClick={() => navigate('/history')}>
+        <HistoryIcon />
+      </IconButton>
+
+      {/* Always show Partition icon with default fallback */}
+      <IconButton
+        color="inherit"
+        onClick={() => navigate(`/partition/${encodeURIComponent(current || 'let.vilnius.details')}/details`)}
+      >
+        <ListAltIcon />
+      </IconButton>
+    </Box>
+  </Toolbar>
+</AppBar>
