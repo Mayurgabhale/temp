@@ -1,25 +1,19 @@
-<XAxis
-  dataKey="name"
-  tickLine={false}
-  axisLine={false}
-  stroke="rgba(255,255,255,0.6)"
-  tickFormatter={(label, index) => {
-    const strLabel = String(label);
-    const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
-    const floorNum = parseInt(match?.[0], 10);
-
-    if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
-
-    const suffix = (n) => {
-      if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
-      switch (n % 10) {
-        case 1: return `${n}st`;
-        case 2: return `${n}nd`;
-        case 3: return `${n}rd`;
-        default: return `${n}th`;
-      }
-    };
-
-    return suffix(floorNum);
-  }}
-/>
+<Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+            <Typography variant="h6" gutterBottom>
+              Vilnius Floor Usage
+            </Typography>
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <CompositeChartCard
+                title="Vilnius by Building"
+                data={vilniusFloors}
+                barColor="#4CAF50"
+                lineColor="#FF0000"
+                height={350}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            )}
+          </Box>
+          
