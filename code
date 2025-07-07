@@ -188,3 +188,29 @@ export default function CompositeChartCard({
     </Card>
   );
 }
+
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
+
+{/* Live charts row */}
+        <Box display="flex" gap={2} mb={4} flexWrap="wrap">
+          
+          {/* 1) Vilnius composite */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+            <Typography variant="h6" gutterBottom>
+              Vilnius Floor Usage
+            </Typography>
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <CompositeChartCard
+                title="Vilnius by Building"
+                data={vilniusFloors}
+                barColor="#4CAF50"
+                lineColor="#FFEB3B"
+                height={350}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            )}
+          </Box>
