@@ -1,4 +1,9 @@
 
+http://localhost:3000/partition/LT.Vilnius/details
+
+
+
+
 in the dashboard i want ot add by defaults LT.Vilnius detaisl page i give all files alos route file
 import React, { useEffect, useState } from 'react';
 import {
