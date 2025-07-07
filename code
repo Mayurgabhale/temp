@@ -1,13 +1,18 @@
-
 .search-bar-container {
   position: relative;
   width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
+
 .search-bar-container form {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
+
 .search-bar-container input {
   flex: 1;
   padding: 10px;
@@ -15,7 +20,9 @@
   border-radius: 6px;
   font-size: 1rem;
   outline: none;
+  min-width: 0;
 }
+
 .search-bar-container button {
   padding: 10px 18px;
   background-color: #FFC72C;
@@ -25,7 +32,8 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  height: 100%; /* align with input height */
+  height: 100%;
+  white-space: nowrap;
 }
 
 .search-bar-container button:hover {
@@ -58,4 +66,43 @@
 
 .suggestions-dropdown li:hover {
   background-color: #333;
+}
+
+/* 🔽 Responsive Styles */
+
+@media (max-width: 768px) {
+  .search-bar-container form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar-container input,
+  .search-bar-container button {
+    width: 100%;
+  }
+
+  .search-bar-container button {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar-container {
+    padding: 0 0.5rem;
+  }
+
+  .search-bar-container input {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .search-bar-container button {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+  }
+
+  .suggestions-dropdown li {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
 }
