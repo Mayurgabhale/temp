@@ -1,19 +1,50 @@
- <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-          {[
-            { title: "Today's Total Headcount", value: todayTot, icon: <GroupIcon sx={{ color: '#E57373', fontSize: 36 }} />, border: '#FFD666' },
-            { title: "Today's Employees Count", value: todayEmp, icon: <PeopleIcon sx={{ color: '#81C784', fontSize: 36 }} />, border: '#81C784' },
-            { title: "Today's Contractors Count", value: todayCon, icon: <BusinessCenterIcon sx={{ color: '#64B5F6', fontSize: 36 }} />, border: '#FFE599' },
-            { title: "Realtime Headcount", value: realtimeTot, icon: <TrackChangesIcon sx={{ color: '#BA68C8', fontSize: 36 }} />, border: '#FFF2CC' },
-            { title: "Realtime Employees Count", value: realtimeEmp, icon: <PeopleIcon sx={{ color: '#FFB74D', fontSize: 36 }} />, border: '#FFD666' },
-            { title: "Realtime Contractors Count", value: realtimeCon, icon: <BusinessCenterIcon sx={{ color: '#4DB6AC', fontSize: 36 }} />, border: '#FFE599' }
-          ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard title={c.title} total={c.value} stats={[]} icon={c.icon}
-                sx={{ height: 140, border: `2px solid ${c.border}` }} />
-            </Box>
-          ))}
-        </Box>
-
-GroupIcon -- <i class="fa-solid fa-users"></i>
-Today's Employees Count   --- <i class="fa-solid fa-circle-user"></i>
-Realtime Headcount  --<i class="fa-solid fa-hourglass-end"></i>
+<Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+  {[
+    {
+      title: "Today's Total Headcount",
+      value: todayTot,
+      icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 36 }} />,
+      border: '#FFD666'
+    },
+    {
+      title: "Today's Employees Count",
+      value: todayEmp,
+      icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 36 }} />,
+      border: '#81C784'
+    },
+    {
+      title: "Today's Contractors Count",
+      value: todayCon,
+      icon: <BusinessCenterIcon sx={{ color: '#64B5F6', fontSize: 36 }} />, // Keep this or change as needed
+      border: '#FFE599'
+    },
+    {
+      title: "Realtime Headcount",
+      value: realtimeTot,
+      icon: <i className="fa-solid fa-hourglass-end" style={{ color: '#BA68C8', fontSize: 36 }} />,
+      border: '#FFF2CC'
+    },
+    {
+      title: "Realtime Employees Count",
+      value: realtimeEmp,
+      icon: <PeopleIcon sx={{ color: '#FFB74D', fontSize: 36 }} />, // You can replace this too
+      border: '#FFD666'
+    },
+    {
+      title: "Realtime Contractors Count",
+      value: realtimeCon,
+      icon: <BusinessCenterIcon sx={{ color: '#4DB6AC', fontSize: 36 }} />,
+      border: '#FFE599'
+    }
+  ].map(c => (
+    <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+      <SummaryCard
+        title={c.title}
+        total={c.value}
+        stats={[]}
+        icon={c.icon}
+        sx={{ height: 140, border: `2px solid ${c.border}` }}
+      />
+    </Box>
+  ))}
+</Box>
