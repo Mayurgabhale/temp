@@ -1,3 +1,26 @@
+C:\Users\W0024618\Desktop\employee-verification\frontend\src\components\SearchBar.jsx
+
+import React from 'react';
+
+export default function SearchBar({ value, onChange, onSearch }) {
+  return (
+    <form onSubmit={e => { e.preventDefault(); onSearch(); }}>
+      <input
+        type="text"
+        placeholder="Search by Name or EmpID"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+      />
+      <button type="submit">Search</button>
+    </form>
+  );
+}
+
+
+
+
+C:\Users\W0024618\Desktop\employee-verification\frontend\src\App.js
+
 // src/App.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
