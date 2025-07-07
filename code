@@ -1,21 +1,27 @@
-<Box
-  sx={{
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 4,
-    alignItems: 'center',
-    mb: 1,
-    fontWeight: 'bold',
-    fontSize: 16
-  }}
->
-  <Box sx={{ color: '#FFD700' /* Yellow */ }}>
-    Total Headcount: {totalHeadcount}
-  </Box>
-  <Box sx={{ color: '#4CAF50' /* Green */ }}>
-    Total Seats: {totalCapacity}
-  </Box>
-  <Box sx={{ color: '#FF4C4C' /* Red */ }}>
-    Usage: {avgUsage}%
-  </Box>
-</Box>
+<AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+          {isPart && (
+            <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* <Typography variant="caption" sx={{
+            ml:2, color:'#FFC72C',
+            opacity: data?1:0, transition:'opacity 0.6s'
+          }}>
+            {lastUpdate}
+          </Typography> */}
+        </Box>
