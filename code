@@ -1,4 +1,25 @@
 
+
+const wrapperRef = useRef();
+
+useEffect(() => {
+  function handleClickOutside(event) {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      onSelectSuggestion(null); // pass null to clear suggestions
+    }
+  }
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [onSelectSuggestion]);
+
+
+
+
+
+
+....
 import React, { useRef, useEffect } from 'react';
 
 
