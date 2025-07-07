@@ -1,9 +1,9 @@
- <PieChartCard
-                title="Casablanca • Moscow • London • Madrid"
-                data={slice2}
-                colors={['#FFF2CC', '#FFD666', '#FFE599', '#FFC0CB']}
-                innerRadius={60}
-                height={350}
-                showZeroSlice
-                animationDuration={1500}
-              />
+<PieChartCard
+  title="Casablanca • Moscow • London • Madrid"
+  data={slice2}
+  colors={['#59A14F', '#EDC948', '#AF7AA1', '#FF9DA7']}
+  innerRadius={60}
+  height={350}
+  showZeroSlice
+  animationDuration={1500}
+/>
