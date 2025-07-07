@@ -1,19 +1,12 @@
-
-.employee-card[data-status="deactive"] {
-  background-color: #EE4B2B; /* dark red for deactive */
-  border-left: 6px solid #dc3545;
-  color: #fff;
-}
-
 .employee-card {
-  background-color: #000;
-  color: #FFC72C;
-  border: 2px solid #FFC72C;
+  background-color: #1e1e2f;
+  color: #f1f1f1;
+  border: 2px solid #3f51b5;
   border-radius: 16px;
   overflow: hidden;
   display: flex;
   flex-direction: row;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
   max-width: 100%;
   margin-top: 20px;
   transition: transform 0.3s ease;
@@ -23,44 +16,37 @@
   transform: scale(1.01);
 }
 
-/* Border Left Based on Status */
 .employee-card[data-status="active"] {
-  border-left: 6px solid #28a745;
+  border-left: 6px solid #4caf50;
 }
 
 .employee-card[data-status="deactive"] {
-  border-left: 6px solid #040404;
+  border-left: 6px solid #e53935;
 }
 
-/* Terminated Card Styling */
 .employee-card.terminated {
-  background-color: #8b0000;
+  background-color: #5c1a1a;
   color: #fff;
-  /* border-left: 6px solid #ff0000; */
 }
 
-/* --- Photo Section --- */
 .card-photo-section {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 24px;
-  /* background: radial-gradient(circle, #1a1a1a, #000000); */
   flex: 1;
   min-width: 280px;
   max-width: 320px;
 }
 
 .photo-wrapper {
-  position: relative;
   width: 290px;
   height: 290px;
   border-radius: 50%;
-  /* background: #000; */
   overflow: hidden;
-  border: 5px solid #FFC72C;
-  box-shadow: 0 0 25px rgba(255, 199, 44, 0.5), 0 0 5px rgba(255, 255, 255, 0.1);
-  transition: transform 0.4s ease;
+  border: 4px solid #3f51b5;
+  box-shadow: 0 0 16px rgba(63, 81, 181, 0.5);
+  transition: transform 0.3s ease;
 }
 
 .photo-wrapper:hover {
@@ -72,10 +58,9 @@
   height: 100%;
   object-fit: contain;
   border-radius: 50%;
-  background-color: #111;
+  background-color: #222;
 }
 
-/* --- Status Badge --- */
 .status-badge {
   position: absolute;
   bottom: -2px;
@@ -91,14 +76,13 @@
 }
 
 .status-badge.active {
-  background-color: #28a745;
+  background-color: #43a047;
 }
 
 .status-badge.deactive {
-  background-color: #dc3545;
+  background-color: #d32f2f;
 }
 
-/* --- Card Details Section --- */
 .card-details {
   flex: 2;
   padding: 16px;
@@ -109,65 +93,37 @@
 
 .card-details .emp-name {
   font-size: 1.6rem;
-  margin: 0 0 8px;
+  margin-bottom: 8px;
   font-weight: bold;
-  border-bottom: 1px solid #FFC72C;
+  border-bottom: 1px solid #3f51b5;
   padding-bottom: 4px;
 }
 
-/* --- Info Rows --- */
 .card-info {
   display: flex;
   justify-content: space-between;
   font-size: 1rem;
   padding: 6px 0;
-  border-bottom: 1px dashed #444;
+  border-bottom: 1px dashed #333;
 }
 
 .card-info label {
-  color: #FFD700;
+  color: #90caf9;
   font-weight: 500;
   display: flex;
   align-items: center;
 }
 
 .card-info span {
-  color: #FFF;
+  color: #f1f1f1;
   font-weight: 600;
 }
 
-/* --- Colored Icons --- */
-.card-info label .id-icon {
-  color: #1abc9c;
-  margin-right: 8px;
-}
-
-.card-info label .type-icon {
-  color: #3498db;
-  margin-right: 8px;
-}
-
-.card-info label .manager-icon {
-  color: #9b59b6;
-  margin-right: 8px;
-}
-
-.card-info label .wu-icon {
-  color: #f39c12;
-  margin-right: 8px;
-}
-
-.card-info label .status-icon {
-  color: #e74c3c;
-  margin-right: 8px;
-}
-
-.card-info label .card-icon {
-  color: #00b894;
-  margin-right: 8px;
-}
-
-.card-info label .active-icon {
-  color: #2ecc71;
-  margin-right: 8px;
-}
+/* --- Icon Colors (Material Inspired) --- */
+.card-info label .id-icon { color: #00bcd4; }
+.card-info label .type-icon { color: #64b5f6; }
+.card-info label .manager-icon { color: #ba68c8; }
+.card-info label .wu-icon { color: #ffb300; }
+.card-info label .status-icon { color: #ef5350; }
+.card-info label .card-icon { color: #26a69a; }
+.card-info label .active-icon { color: #66bb6a; }
