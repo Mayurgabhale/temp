@@ -1,5 +1,1 @@
-occupancy.service.js:36 Error fetching occupancy data: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-getCurrentOccupancy	@	occupancy.service.js:36
-
-occupancy.service.js:36 Error fetching occupancy data: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-getCurrentOccupancy	@	occupancy.service.js:36
+http://localhost:3000/api/occupancy?partition=IN.Pune
