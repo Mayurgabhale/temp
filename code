@@ -1,57 +1,460 @@
-import React, { useEffect } from 'react';
-import { Box, Typography, Link } from '@mui/material';
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\config\db.js
+// src/config/db.js
+require('dotenv').config();
+const sql = require('mssql');
 
-export default function Footer() {
-  useEffect(() => {
-    const root = document.getElementById('root');
-    if (root) {
-      root.style.display = 'flex';
-      root.style.flexDirection = 'column';
-      root.style.minHeight = '100vh';
-    }
-  }, []);
+// Pull in and trim env-vars
+const DB_USER     = (process.env.DB_USER     || '').trim();
+const DB_PASSWORD = (process.env.DB_PASSWORD || '').trim();
+const DB_SERVER   = (process.env.DB_SERVER   || '').trim();
+const DB_DATABASE = (process.env.DB_DATABASE || '').trim();
+const DB_PORT     = parseInt((process.env.DB_PORT || '').trim(), 10);
 
-  return (
-    <Box
-      component="footer"
-      sx={{
-        mt: 'auto', // Push footer to bottom when used inside flex container
-        backgroundColor: '#000',
-        color: '#FFC72C',
-        py: 2,
-        px: 2,
-        textAlign: 'center',
-        borderTop: '2px solid #FFC72C',
-        fontSize: '0.9rem',
-        lineHeight: 1.5,
-      }}
-    >
-      <Typography variant="subtitle2" fontWeight="bold">
-        Global Security Operations Center (GSOC)
-      </Typography>
+const dbConfig = {
+  user:     DB_USER,
+  password: DB_PASSWORD,
+  server:   DB_SERVER,
+  port:     DB_PORT,
+  database: DB_DATABASE,
+  options: { encrypt:false, trustServerCertificate:true, enableArithAbort:true },
+  pool: { max:10, min:0, idleTimeoutMillis:30000 }
+};
 
-      <Typography variant="body2">
-        Live Occupancy dashboard for EMEA — Real-time occupancy and personnel insights.
-      </Typography>
+const poolPromise = sql.connect(dbConfig)
+  .then(pool => {
+    console.log('✅ MSSQL (APAC) connected');
+    return pool;
+  })
+  .catch(err => {
+    console.error('❌ MSSQL (APAC) connection failed', err);
+    process.exit(1);
+  });
 
-      <Typography variant="body2" sx={{ mt: 1 }}>
-        Contact us:{' '}
-        <Link
-          href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
-          underline="hover"
-          sx={{ color: '#FFC72C' }}
-        >
-          gsoc@westernunion.com
-        </Link>{' '}
-        | Landline:{' '}
-        <Box component="span" sx={{ color: '#FFC72C' }}>
-          +91-020-67632394
-        </Box>
-      </Typography>
+module.exports = { sql, poolPromise };
 
-      <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-        © {new Date().getFullYear()} Western Union. All rights reserved.
-      </Typography>
-    </Box>
-  );
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\controllers\occupancy.controller.js
+// src/controllers/occupancy.controller.js
+const service = require('../services/occupancy.service');
+// const doorMap = require('../utils/doorMap');
+// const doorZoneMap = require('../utils/doorMap'); 
+//  const { doorMap, doorZoneMap } = require('../utils/doorMap');
+//  const { doorMap, doorZoneMap, zoneFloorMap } = require('../utils/doorMap');
+
+const {
+  doorMap,
+  normalizedDoorZoneMap,
+  doorZoneMap,
+  zoneFloorMap,
+  normalizeDoorName
+} = require('../utils/doorMap');
+
+
+
+
+function isEmployeeType(pt) {
+  return ['Employee','Terminated Employee','Terminated Personnel'].includes(pt);
 }
+
+function lookupFloor(partition, rawDoor, direction, unmapped) {
+  const norm = normalizeDoorName(rawDoor);
+  const key  = `${norm}___${direction}`;
+
+  // 1) Try normalized lookup
+  const zone = normalizedDoorZoneMap[key];
+  if (zone) {
+    const f = zoneFloorMap[zone];
+    if (f) return f;
+  }
+
+  // 2) Fallback to per-partition doorMap
+  const entry = doorMap.find(d =>
+    d.normalizedDoor === norm && d.partition === partition
+  );
+  if (entry) {
+    const fl = direction === 'InDirection'
+      ? entry.inDirectionFloor
+      : entry.outDirectionFloor;
+    if (fl) return fl;
+  }
+
+  // 3) Nothing matched → record & return Unknown
+  unmapped.add(`${partition}|${rawDoor}`);
+  return 'Unknown';
+}
+
+
+exports.getLiveOccupancy = async (req,res) => {
+  try {
+    const data = await service.fetchLiveOccupancy();
+    res.json({ success:true, count:data.length, data });
+  } catch(e) {
+    console.error(e);
+    res.status(500).json({ success:false, message:'Live fetch failed' });
+  }
+};
+
+exports.getLiveSummary = async (req,res) => {
+  try {
+    const swipes = await service.fetchLiveOccupancy();
+
+    // first swipe per person = TODAY
+    const first = {};
+    swipes.forEach(r => {
+      const t = new Date(r.LocaleMessageTime).getTime();
+      if (!first[r.PersonGUID] || t < new Date(first[r.PersonGUID].LocaleMessageTime).getTime()) {
+        first[r.PersonGUID] = r;
+      }
+    });
+    const today = { total:0, Employee:0, Contractor:0 };
+    Object.values(first).forEach(r => {
+      today.total++;
+      if (isEmployeeType(r.PersonnelType)) today.Employee++;
+      else today.Contractor++;
+    });
+
+    // last swipe per person for realtime
+    const last = {};
+    swipes.forEach(r => {
+      const t = new Date(r.LocaleMessageTime).getTime();
+      if (!last[r.PersonGUID] || t > new Date(last[r.PersonGUID].LocaleMessageTime).getTime()) {
+        last[r.PersonGUID] = r;
+      }
+    });
+
+    const realtime = {};
+    const unmapped = new Set();
+
+
+
+    // now update here logic as per doormap.js
+       Object.values(last).forEach(r => {
+      //   // **only** evict when zone is _exactly_ "Out of office"
+      //   if (r.Direction === 'OutDirection') {
+      //     const key  = normalizeDoorName(r.Door) + '___' + r.Direction;
+      //     const zone = doorZoneMap[key];
+      //     if (zone === 'Out of office') {
+      //       return;  // true exit → skip this person
+      //       // console.log('doorKey')
+      //     }
+      //     // otherwise (outer area, turnstile, etc.) we still count them
+//  }  
+ 
+     // 1) Evict any swipe whose door+direction maps to "Out of office"
+    const normKey = normalizeDoorName(r.Door) + '___' + r.Direction;
+    const zone    = normalizedDoorZoneMap[normKey];
+    if (zone === 'Out of office') {
+      return;        // never count them—in totals or floors
+    }
+
+
+
+      const p    = r.PartitionName2;
+      const doorField = r.Door;  // now defined by service
+
+      if (!realtime[p]) {
+        realtime[p] = { total:0, Employee:0, Contractor:0, floors:{} };
+      }
+      // realtime[p].total++;
+      // if (isEmployeeType(r.PersonnelType)) realtime[p].Employee++;
+      // else realtime[p].Contractor++;
+
+
+    // 2) Now that it's not a true exit, count them in the headcount
+    realtime[p].total++;
+    if (isEmployeeType(r.PersonnelType)) realtime[p].Employee++;
+    else realtime[p].Contractor++;
+
+ 
+
+    // 3) Bucket them into floors as before
+    const fl = lookupFloor(p, doorField, r.Direction, unmapped);
+    if (fl !== 'Unknown') {
+      realtime[p].floors[fl] = (realtime[p].floors[fl]||0) + 1;
+    }
+ });
+
+
+
+
+    // Log to server console for quick dev feedback:
+    if (unmapped.size) console.warn('Unmapped doors:', Array.from(unmapped));
+
+    res.json({
+      success:    true,
+      today,
+      realtime,
+      // expose the raw list of partition|door keys that had no mapping:
+      unmapped:   Array.from(unmapped),
+      details:    Object.values(last)
+    });
+
+
+
+
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ success:false, message:'Summary failed' });
+  }
+};
+
+exports.getHistoricalOccupancy = async (req,res) => {
+  const location = req.params.location || null;
+  try {
+    const raw = await service.fetchHistoricalOccupancy(location);
+    // dedupe first swipe per person per day
+    const byDate = raw.reduce((acc,r) => {
+      const date = new Date(r.LocaleMessageTime).toISOString().slice(0,10);
+      acc[date] = acc[date]||{};
+      if (!acc[date][r.PersonGUID] ||
+          new Date(r.LocaleMessageTime) < new Date(acc[date][r.PersonGUID].LocaleMessageTime)
+      ) {
+        acc[date][r.PersonGUID] = { ...r, LocaleMessageTime: r.LocaleMessageTime };
+      }
+      return acc;
+    }, {});
+
+    const summaryByDate = [], details = [];
+    Object.keys(byDate).sort().forEach(date => {
+      const recs = Object.values(byDate[date]);
+      details.push(...recs);
+      const region = { total:0, Employee:0, Contractor:0 };
+      const partitions = {};
+      recs.forEach(r => {
+        region.total++;
+        if (isEmployeeType(r.PersonnelType)) region.Employee++;
+        else region.Contractor++;
+        if (!location) {
+          partitions[r.PartitionName2] = partitions[r.PartitionName2]||{ total:0,Employee:0,Contractor:0 };
+          partitions[r.PartitionName2].total++;
+          if (isEmployeeType(r.PersonnelType)) partitions[r.PartitionName2].Employee++;
+          else partitions[r.PartitionName2].Contractor++;
+        }
+      });
+      summaryByDate.push({
+        date,
+        day: new Date(date).toLocaleDateString('en-US',{ weekday:'long' }),
+        region: location ? { name:location, ...region } : { name:'APAC', ...region },
+        partitions: location ? undefined : partitions
+      });
+    });
+
+    res.json({ success:true, summaryByDate, details });
+  } catch(e) {
+    console.error(e);
+    res.status(500).json({ success:false, message:'Historical failed' });
+  }
+};
+
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\routes\occupancy.routes.js
+// src/routes/occupancy.routes.js
+const express    = require('express');
+const controller = require('../controllers/occupancy.controller');
+const router     = express.Router();
+
+router.get('/live',         controller.getLiveOccupancy);
+router.get('/live-summary', controller.getLiveSummary);
+router.get('/history',           controller.getHistoricalOccupancy);
+router.get('/history/:location', controller.getHistoricalOccupancy);
+
+module.exports = router;
+
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\services\occupancy.service.js
+// src/services/occupancy.service.js
+const { poolPromise, sql } = require('../config/db');
+
+const partitionList = [
+  'APAC.Default',
+  'CN.Beijing',
+  'JP.Tokyo',
+  'PH.Manila',
+  'MY.Kuala Lumpur',
+  'IN.Pune'
+];
+
+/**
+ * Live occupancy (today) for APAC
+ */
+
+
+exports.fetchLiveOccupancy = async () => {
+  const pool = await poolPromise;
+  const parts = partitionList.map(p => `'${p.replace("'", "''")}'`).join(',');
+
+  const query = `
+    WITH CombinedEmployeeData AS (
+      SELECT
+        t1.ObjectName1,
+        t1.ObjectName2            AS Door,               -- <— include Door here
+        CASE WHEN t2.Int1 = 0 THEN t2.Text12 ELSE CAST(t2.Int1 AS NVARCHAR) END AS EmployeeID,
+        t3.Name                   AS PersonnelType,
+        t1.ObjectIdentity1        AS PersonGUID,
+        CASE
+          WHEN t1.ObjectName2 LIKE 'APAC_PI%' THEN 'Taguig City'
+          WHEN t1.ObjectName2 LIKE 'APAC_PH%' THEN 'Quezon City'
+          WHEN t1.ObjectName2 LIKE '%PUN%'   THEN 'Pune'
+          WHEN t1.ObjectName2 LIKE 'APAC_JPN%' THEN 'JP.Tokyo'
+          WHEN t1.ObjectName2 LIKE 'APAC_MY%'  THEN 'MY.Kuala Lumpur'
+          ELSE t1.PartitionName2
+        END                        AS PartitionName2,
+        DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC) AS LocaleMessageTime,
+        t5d.value                 AS Direction
+      FROM ACVSUJournal_00010028.dbo.ACVSUJournalLog t1
+      JOIN ACVSCore.Access.Personnel      t2 ON t1.ObjectIdentity1 = t2.GUID
+      JOIN ACVSCore.Access.PersonnelType  t3 ON t2.PersonnelTypeID = t3.ObjectID
+      LEFT JOIN ACVSUJournal_00010028.dbo.ACVSUJournalLogxmlShred t5d
+        ON t1.XmlGUID = t5d.GUID AND t5d.Value IN ('InDirection','OutDirection')
+      WHERE
+        t1.MessageType = 'CardAdmitted'
+        AND t1.PartitionName2 IN (${parts})
+        AND CONVERT(DATE, DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC))
+            = CONVERT(DATE, GETDATE())
+    ), Ranked AS (
+      SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY PersonGUID ORDER BY LocaleMessageTime DESC) AS rn
+      FROM CombinedEmployeeData
+    )
+    SELECT
+      ObjectName1,
+      Door,                            -- <— door is now returned
+      PersonnelType,
+      EmployeeID,
+      PartitionName2,
+      LocaleMessageTime,
+      Direction,
+      PersonGUID
+    FROM Ranked
+    WHERE rn = 1;
+  `;
+
+  const result = await pool.request().query(query);
+  return result.recordset;
+};
+
+/**
+ * Historical raw‐data fetch for the past N days, all or by location.
+ */
+exports.fetchHistoricalData = async ({ days = 7, location = null }) => {
+  const pool = await poolPromise;
+  const parts = partitionList.map(p => `'${p.replace("'", "''")}'`).join(',');
+  const locFilter = location
+    ? `AND PartitionName2 = @location`
+    : `AND PartitionName2 IN (${parts})`;
+
+  const query = `
+    WITH Hist AS (
+      SELECT
+        DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC) AS LocaleMessageTime,
+        t1.ObjectName1,
+        t1.ObjectName2 AS Door,
+        CASE WHEN t2.Int1 = 0 THEN t2.Text12 ELSE CAST(t2.Int1 AS NVARCHAR) END AS EmployeeID,
+        t3.Name AS PersonnelType,
+        t1.ObjectIdentity1 AS PersonGUID,
+        t1.PartitionName2,
+        t5d.value AS Direction
+      FROM ACVSUJournal_00010028.dbo.ACVSUJournalLog t1
+      JOIN ACVSCore.Access.Personnel      t2 ON t1.ObjectIdentity1 = t2.GUID
+      JOIN ACVSCore.Access.PersonnelType  t3 ON t2.PersonnelTypeID = t3.ObjectID
+      LEFT JOIN ACVSUJournal_00010028.dbo.ACVSUJournalLogxmlShred t5d
+        ON t1.XmlGUID = t5d.GUID AND t5d.Value IN ('InDirection','OutDirection')
+      WHERE
+        t1.MessageType = 'CardAdmitted'
+        ${locFilter}
+        AND CONVERT(DATE, DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC))
+            >= DATEADD(DAY, -${days}, CONVERT(DATE, GETDATE()))
+    )
+    SELECT *
+    FROM Hist
+    ORDER BY LocaleMessageTime ASC;
+  `;
+
+  const req = pool.request();
+  if (location) req.input('location', sql.NVarChar, location);
+  const result = await req.query(query);
+  return result.recordset;
+};
+
+exports.fetchHistoricalOccupancy = async (location) =>
+  exports.fetchHistoricalData({ days:7, location: location||null });
+
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\utils\doorMap.js
+
+const doorZoneMap = {
+  // Podium / Red
+  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection":                 "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection":                               "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___OutDirection":                              "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___InDirection":               "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___OutDirection":              "Out of office",
+  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___InDirection":                              "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___OutDirection":                             "Red Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___InDirection":           "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___OutDirection":          "Reception Area",
+  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___InDirection":       "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___OutDirection":      "Yellow Zone - Outer Area",
+
+  // Podium / Yellow
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_MDF RESTRICTED DOOR___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_IT STORE ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_REPRO STORE-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_CONTROL PANEL ROOM-DOOR RESTRICTED DOOR___InDirection": "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_PREACTION ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_TESTING LAB-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___OutDirection":                    "Reception Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___InDirection":                 "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___OutDirection":                "Out of office",
+  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___OutDirection":                    "Yellow Zone - Outer Area",
+
+  // Podium / Green
+
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\utils\timezones.js
+// src/utils/timezones.js
+
+module.exports = {
+  'APAC.Default':       'Asia/Kolkata',
+  'CN.Beijing':         'Asia/Shanghai',
+  'JP.Tokyo':           'Asia/Tokyo',
+  'PH.Manila':          'Asia/Manila',
+  'MY.Kuala Lumpur':    'Asia/Kuala_Lumpur',
+  'IN.Pune':            'Asia/Kolkata',
+};
+C:\Users\W0024618\Desktop\apac-occupancy-backend\src\app.js
+// src/app.js
+const express           = require('express');
+const cors              = require('cors');
+const occupancyRoutes   = require('./routes/occupancy.routes');
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// Health check
+app.get('/', (_req,res) => res.send('🌏 APAC Occupancy API Running'));
+
+// Mount occupancy
+app.use('/api/occupancy', occupancyRoutes);
+
+module.exports = app;
+C:\Users\W0024618\Desktop\apac-occupancy-backend\.env
+
+# APAC DB
+DB_USER=GSOC_Test
+DB_PASSWORD=Westernuniongsoc@2025
+DB_SERVER=SRVWUPNQ0986V
+DB_DATABASE=ACVSUJournal_00010028
+DB_PORT=1433
+
+PORT=3007
+C:\Users\W0024618\Desktop\apac-occupancy-backend\server.js
+// server.js
+require('dotenv').config();
+const app = require('./src/app');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 APAC server listening on port ${PORT}`);
+});
