@@ -1,112 +1,71 @@
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-
-import wuLogo from '../assets/wu-logo.png';
-import austriaFlag from '../assets/flags/austria.png';
-import uaeFlag from '../assets/flags/uae.png';
-import irelandFlag from '../assets/flags/ireland.png';
-import italyFlag from '../assets/flags/italy.png';
-import lithuaniaFlag from '../assets/flags/lithuania.png';
-import moroccoFlag from '../assets/flags/morocco.png';
-import russiaFlag from '../assets/flags/russia.png';
-import ukFlag from '../assets/flags/uk.png';
-import spainFlag from '../assets/flags/spain.png';
-
-import { partitionList } from '../api/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-export default function Header() {
-  const navigate = useNavigate();
-  const loc = useLocation(); // ✅ correct hook usage
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
-
-  const parts = loc.pathname.split('/').filter(Boolean);
-  const isPart = parts[0] === 'partition' && parts[1];
-  const current = isPart ? decodeURIComponent(parts[1]) : '';
-  const isHome = loc.pathname === '/'; // ✅ fixed: use loc
-
-  const flagMap = {
-    'AUT.Vienna': austriaFlag,
-    'DU.Abu Dhab': uaeFlag,
-    'IE.Dublin': irelandFlag,
-    'IT.Rome': italyFlag,
-    'LT.Vilnius': lithuaniaFlag,
-    'MA.Casablanca': moroccoFlag,
-    'RU.Moscow': russiaFlag,
-    'UK.London': ukFlag,
-    'ES.Madrid': spainFlag
-  };
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-          </Typography>
-
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
-
-          {/* ✅ Static Vilnius button shown only on main dashboard */}
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-
-          {/* ✅ Dynamic partition button shown when inside any partition */}
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
-
-        <Box display="flex" alignItems="center">
-          <Select
+<Container maxWidth={false} disableGutters sx={{ px:2, py:2 }}>
+        <Box mb={1}><Button size="small" onClick={()=>navigate(-1)}>← Back to Overview</Button></Box>
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <Typography variant="h6" sx={{ flexGrow:1 }}>Floor Details</Typography>
+          <Typography variant="body2" color="textSecondary">Last updated: {lastUpdate}</Typography>
+          <TextField
             size="small"
-            value={current}
-            displayEmpty
-            onChange={e => navigate(e.target.value || '/')}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
-          >
-            <MenuItem value="">— Select Site —</MenuItem>
-            {partitionList.map(p => (
-              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
-                <Box
-                  component="img"
-                  src={flagMap[p]}
-                  alt={p}
-                  sx={{ width: 24, height: 16, mr: 1 }}
-                />
-                {p.split('.').pop()}
-              </MenuItem>
-            ))}
-          </Select>
+            placeholder="Search floor / emp…"
+            value={search}
+            onChange={e=>setSearch(e.target.value)}
+          />
         </Box>
-      </Toolbar>
-    </AppBar>
-  );
-}
+
+        <Box display="flex" flexWrap="wrap" gap={1}>
+          {displayed.map(([floor, emps]) => (
+            <Box key={floor} sx={{ width:'50%', p:1 }}>
+              <Paper sx={{ border:'2px solid #FFC107', p:2 }}>
+                <Typography variant="subtitle1" gutterBottom>{floor} (Total {emps.length})</Typography>
+                <TableContainer component={Paper} variant="outlined">
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        {['ID','Name','Time','Type','Card','Door'].map(h=>(
+                          <TableCell key={h} sx={{ fontWeight:'bold', py:0.5 }}>{h}</TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {emps.slice(0,10).map((r,i)=>(
+                        <TableRow key={i}>
+                          <TableCell sx={{ py:0.5 }}>{r.EmployeeID}</TableCell>
+                          <TableCell sx={{ py:0.5 }}>{r.ObjectName1}</TableCell>
+                          <TableCell sx={{ py:0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+                          <TableCell sx={{ py:0.5 }}>{r.PersonnelType}</TableCell>
+                          <TableCell sx={{ py:0.5 }}>{r.CardNumber}</TableCell>
+                          <TableCell sx={{ py:0.5 }}>{r.Door}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <Box textAlign="right" mt={1}>
+                  <Button size="small" onClick={() => setExpanded(expanded===floor?null:floor)}>
+                    {expanded===floor? 'Hide':'See more…'}
+                  </Button>
+                </Box>
+              </Paper>
+            </Box>
+          ))}
+        </Box>
+
+        {expanded && (
+          <Box mt={2}>
+            <Typography variant="h6" gutterBottom>{expanded} — All Entries</Typography>
+            <DataTable
+              columns={[
+                { field:'EmployeeID', headerName:'ID' },
+                { field:'ObjectName1', headerName:'Name' },
+                { field:'LocaleMessageTime', headerName:'Time' },
+                { field:'PersonnelType', headerName:'Type' },
+                { field:'CardNumber', headerName:'Card' },
+                { field:'Door', headerName:'Door' }
+              ]}
+              rows={floorMap[expanded].map(r=>({
+                ...r,
+                LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+              }))}
+            />
+          </Box>
+        )}
+      </Container>
