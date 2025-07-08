@@ -1,39 +1,34 @@
-// src/api/occupancy.service.js
+// src/hooks/useLiveOccupancy.js
+import { useEffect, useState } from 'react';
+import { getCurrentOccupancy } from '../api/occupancy.service'; // ✅ FIXED PATH
 
-export const getCurrentOccupancy = async (partitionNames) => {
-  try {
-    if (!Array.isArray(partitionNames)) {
-      console.error('getCurrentOccupancy: Expected partitionNames to be an array but received:', partitionNames);
-      return { today: {}, realtime: {} };
-    }
+const useLiveOccupancy = (partitionNames = []) => {
+  const [data, setData] = useState({ today: {}, realtime: {} });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const requests = partitionNames.map(partition =>
-      fetch(`/api/occupancy?partition=${encodeURIComponent(partition)}`).then(res => {
-        if (!res.ok) {
-          throw new Error(`Failed to fetch data for partition: ${partition}`);
-        }
-        return res.json();
-      })
-    );
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
 
-    const results = await Promise.all(requests);
+      try {
+        const occupancyData = await getCurrentOccupancy(partitionNames);
+        setData(occupancyData);
+      } catch (err) {
+        console.error('Error fetching occupancy:', err);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Assuming API returns an object for each partition with today/realtime breakdowns
-    const realtime = {};
-    let today = { total: 0, Employee: 0, Contractor: 0 };
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [partitionNames]);
 
-    results.forEach((res, idx) => {
-      const partition = partitionNames[idx];
-      realtime[partition] = res.realtime || { total: 0, Employee: 0, Contractor: 0 };
-      today.total += res.today?.total || 0;
-      today.Employee += res.today?.Employee || 0;
-      today.Contractor += res.today?.Contractor || 0;
-    });
-
-    return { today, realtime };
-
-  } catch (error) {
-    console.error('Error fetching occupancy data:', error);
-    return { today: {}, realtime: {} };
-  }
+  return { data, loading, error };
 };
+
+export default useLiveOccupancy;
