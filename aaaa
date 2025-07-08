@@ -1,3 +1,8 @@
+
+const { data, loading, error } = useLiveOccupancy(partitions);
+
+
+
 // src/hooks/useLiveOccupancy.js
 import { useEffect, useState } from 'react';
 import { getCurrentOccupancy } from '../services/occupancy.service'; // FIXED path
