@@ -1,13 +1,40 @@
-const displayed = useMemo(() => {
-  const term = search.toLowerCase();
-  return Object.entries(floorMap)
-    .map(([floor, emps]) => {
-      const filteredEmps = emps.filter(e =>
-        floor.toLowerCase().includes(term) ||
-        e.ObjectName1?.toLowerCase().includes(term) ||
-        e.EmployeeID?.toString().toLowerCase().includes(term)
-      );
-      return [floor, filteredEmps];
-    })
-    .filter(([, filteredEmps]) => filteredEmps.length > 0);
-}, [floorMap, search]);
+ {/* Footer */}
+      <footer
+        style={{
+          backgroundColor: '#000',
+          color: '#FFC72C',
+          padding: '1.5rem 0',
+          textAlign: 'center',
+          marginTop: '2rem',
+          borderTop: '2px solid #FFC72C',
+          fontSize: '0.95rem',
+          lineHeight: '1.6'
+        }}
+      >
+        <div>
+          <strong>Global Security Operations Center (GSOC)</strong>
+
+          Live Occupancy dashboard for Western Union Denver — Real-time occupancy, floor activity, and personnel insights.
+        </div>
+        <div style={{ marginTop: '0.75rem' }}>
+          Contact us: <a href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com" style={{ color: '#FFC72C', textDecoration: 'underline' }}>gsoc@westernunion.com</a> |
+          Landline: '#FFC72C' }}>+91-020-67632394</span>
+        </div>
+      </footer> add this footer in this 
+
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+
+export default function Footer() {
+  return (
+    <Box component="footer" sx={{
+      py:2, textAlign:'center', bgcolor:'rgba(0,0,0,0.6)',
+      color:'#FFC107',
+      mt:'auto'
+    }}>
+      <Typography variant="body2">
+        © {new Date().getFullYear()} Western Union. All rights reserved.
+      </Typography>
+    </Box>
+  );
+}
