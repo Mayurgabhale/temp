@@ -1,11 +1,38 @@
- {/* 👇 Always visible default partition path */}
-          <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-            <ListAltIcon />
-          </IconButton>
+import { useNavigate, useLocation } from 'react-router-dom';
 
-          {/* Optional: Keep dynamic version if needed */}
-          {isPart && (
-    <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+const navigate = useNavigate();
+const location = useLocation();
+
+const isHome = location.pathname === '/'; // Only show Vilnius icon on homepage
+
+<Box display="flex" alignItems="center">
+  <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+  <Typography variant="h6" sx={{ flexGrow: 1 }}>
+    EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+  </Typography>
+
+  <IconButton color="inherit" onClick={() => navigate('/')}>
+    <HomeIcon />
+  </IconButton>
+
+  <IconButton color="inherit" onClick={() => navigate('/history')}>
+    <HistoryIcon />
+  </IconButton>
+
+  {/* ✅ Show static Vilnius only on homepage */}
+  {isHome && (
+    <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
       <ListAltIcon />
     </IconButton>
   )}
+
+  {/* ✅ Show dynamic partition button when applicable (e.g. in sidebar) */}
+  {isPart && (
+    <IconButton
+      color="inherit"
+      onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+      <ListAltIcon />
+    </IconButton>
+  )}
+</Box>
