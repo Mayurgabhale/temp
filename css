@@ -1,1 +1,52 @@
-C:\Users\W0024618\Desktop\apac-occupancy-frontend
+{
+  "success": true,
+  "today": {
+    "total": 1298,
+    "Employee": 1133,
+    "Contractor": 165
+  },
+  "realtime": {
+    "Quezon City": {
+      "total": 156,
+      "Employee": 144,
+      "Contractor": 12,
+      "floors": {
+        "7th Floor": 85,
+        "6th Floor": 71
+      }
+    },
+    "Pune": {
+      "total": 550,
+      "Employee": 479,
+      "Contractor": 71,
+      "floors": {
+        "Podium Floor": 404,
+        "Tower B": 109,
+        "2nd Floor": 36
+      }
+    },
+    "JP.Tokyo": {
+      "total": 10,
+      "Employee": 9,
+      "Contractor": 1,
+      "floors": {
+        "Tokyo": 10
+      }
+    },
+    "MY.Kuala Lumpur": {
+      "total": 6,
+      "Employee": 5,
+      "Contractor": 1,
+      "floors": {
+        "Kuala Lumpur": 6
+      }
+    },
+    "Taguig City": {
+      "total": 19,
+      "Employee": 16,
+      "Contractor": 3,
+      "floors": {
+        "Taguig": 19
+      }
+    }
+  },
