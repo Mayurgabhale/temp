@@ -1,42 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { fetchLiveSummary } from '../api/occupancy.service';
-import ChartCard from '../components/ChartCard';
-import DataTable from '../components/DataTable';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
-const Dashboard = () => {
-  const [data, setData] = useState(null);
+const App = () => (
+  <Router>
+    <Header />
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+    </Routes>
+    <Footer />
+  </Router>
+);
 
-  useEffect(() => {
-    fetchLiveSummary().then(setData);
-  }, []);
-
-  if (!data) return <p>Loading...</p>;
-
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Today’s Summary</h2>
-      <ChartCard
-        title="APAC Total"
-        total={data.today.total}
-        employee={data.today.Employee}
-        contractor={data.today.Contractor}
-      />
-
-      <h2>Live Realtime Headcount</h2>
-      {Object.entries(data.realtime).map(([region, regionData]) => (
-        <ChartCard
-          key={region}
-          title={region}
-          total={regionData.total}
-          employee={regionData.Employee}
-          contractor={regionData.Contractor}
-        />
-      ))}
-
-      <h2>Live Entry Logs</h2>
-      <DataTable data={data.details} />
-    </div>
-  );
-};
-
-export default Dashboard;
+export default App;
