@@ -1,17 +1,18 @@
-<Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" mb={2}>
-  {/* Left side: Title */}
+<Box display="flex" alignItems="center" flexWrap="wrap" gap={0.5} mb={2}>
+  {/* Title */}
   <Typography variant="h6">Floor Details</Typography>
 
-  {/* Right side: Last updated and search */}
-  <Box display="flex" alignItems="center" gap={2}>
-    <Typography variant="body2" color="textSecondary">
-      Last updated: {lastUpdate}
-    </Typography>
-    <TextField
-      size="small"
-      placeholder="Search floor / emp…"
-      value={search}
-      onChange={e => setSearch(e.target.value)}
-    />
-  </Box>
+  {/* Last updated text */}
+  <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+    Last updated: {lastUpdate}
+  </Typography>
+
+  {/* Search field */}
+  <TextField
+    size="small"
+    placeholder="Search floor / emp…"
+    value={search}
+    onChange={e => setSearch(e.target.value)}
+    sx={{ ml: 1 }}
+  />
 </Box>
