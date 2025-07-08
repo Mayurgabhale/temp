@@ -50,3 +50,135 @@
       }
     }
   },
+  "unmapped": [],
+  "details": [
+    {
+      "ObjectName1": "Sarkaniya, Harish",
+      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-OUT DOOR",
+      "PersonnelType": "Contractor",
+      "EmployeeID": "W0024571",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T17:33:51.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "51A95852-C14E-4BB4-8F31-0057A87F67C7"
+    },
+    {
+      "ObjectName1": "Panda, Rajat Bhusan",
+      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-OUT DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "321041",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T17:10:02.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "F4F643ED-3E96-4457-8AE9-0086CFF50225"
+    },
+    {
+      "ObjectName1": "Verma, Rahul",
+      "Door": "APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "305126",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:16:19.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "21B47951-6549-442B-87ED-008A7D523F7B"
+    },
+    {
+      "ObjectName1": "Consencino, Geraldine",
+      "Door": "APAC_PH_Manila_7th Floor_Recption Door 2-701",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-08T17:56:28.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "EC54EA4C-EE1A-43FD-A59D-00F410DBB11D"
+    },
+    {
+      "ObjectName1": "Tewari, Puja",
+      "Door": "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "310108",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:05:03.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "49A9FFA2-8593-4AB8-AFEC-0113835A5BF4"
+    },
+    {
+      "ObjectName1": "Pune, VIS_PUN_142",
+      "Door": "APAC_IN_PUN_PODIUM_ST4 DOOR 1 (ORANGE)",
+      "PersonnelType": "Visitor",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:48:19.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "D9756B1C-8C3F-45DE-96BF-01388189B31E"
+    },
+    {
+      "ObjectName1": "Minekar, Kisan",
+      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2 -OUT DOOR",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:21:11.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "A5D41905-C5E0-4A75-A0B6-013D84B71A44"
+    },
+    {
+      "ObjectName1": "Gavle, Pravin",
+      "Door": "APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T17:36:18.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "B355CB5B-BE42-4071-85BA-01438F3E4CC7"
+    },
+    {
+      "ObjectName1": "Vitan, Mary Jane",
+      "Door": "APAC_PH_Manila_6th Floor_Print Area",
+      "PersonnelType": "Employee",
+      "EmployeeID": "241437",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-08T18:54:44.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "C8B879CD-44CE-4415-9BA2-0146A69C2012"
+    },
+    {
+      "ObjectName1": "Jain, Adish",
+      "Door": "APAC_IN_PUN-PODIUM_P-1 TURNSTILE 3 -OUT DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "325756",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:37:40.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "6796770B-8BE5-4200-8B32-014F1A100BF4"
+    },
+    {
+      "ObjectName1": "Inot, Joseph Kenneth Oliveros",
+      "Door": "APAC_PH_Manila_7th Floor_Recption Door 1-701",
+      "PersonnelType": "Employee",
+      "EmployeeID": "311954",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-08T15:04:53.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "86CCC53D-EFC3-4FFA-B9E0-0172C795F05A"
+    },
+    {
+      "ObjectName1": "Pandri, Babu",
+      "Door": "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:56:13.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "58BE6F78-276B-47BF-AB50-01AAEC126EA7"
+    },
+    {
+      "ObjectName1": "Mendoza, Jiyan Frances Ocampo",
+      "Door": "APAC_PH_Manila_7th Floor_Recption Door 1-701",
+      "PersonnelType": "Employee",
+      "EmployeeID": "323311",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-08T20:05:23.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "6F4924DA-1F56-42F0-8EDC-01E4DC37A8AC"
+    }
