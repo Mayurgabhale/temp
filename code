@@ -1,78 +1,193 @@
-{displayed.map(([floor, emps]) => {
-  // Optionally split emps array into two parts for two tables
-  const mid = Math.ceil(emps.length / 2);
-  const firstHalf = emps.slice(0, mid);
-  const secondHalf = emps.slice(mid, mid + 10); // show up to 10 in second table
+
+
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  Container, Box, Typography, Button, TextField,
+  TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
+} from '@mui/material';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import DataTable from '../components/DataTable';
+import { fetchLiveSummary } from '../api/occupancy.service';
+import { lookupFloor } from '../utils/floorLookup';
+
+export default function PartitionDetailDetails() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
+
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState('');
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(null);
+
+  // Load & refresh
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!active) return;
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === 'InDirection')
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction)
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+      setLoading(false);
+    };
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { active = false; clearInterval(iv); };
+  }, [partition]);
+
+  const floorMap = useMemo(() => {
+    return details.reduce((m, r) => {
+      m[r.floor] = m[r.floor] || [];
+      m[r.floor].push(r);
+      return m;
+    }, {});
+  }, [details]);
+
+  const displayed = useMemo(() => {
+    const term = search.toLowerCase();
+    return Object.entries(floorMap)
+      .filter(([floor, emps]) =>
+        floor.toLowerCase().includes(term) ||
+        emps.some(e => e.ObjectName1.toLowerCase().includes(term))
+      );
+  }, [floorMap, search]);
+
+  if (loading) {
+    return <>
+      <Header />
+      <Box p={4}><LoadingSpinner /></Box>
+      <Footer />
+    </>;
+  }
 
   return (
-    <Box key={floor} sx={{ width: '100%', p: 1 }}>
-      <Typography variant="subtitle1" gutterBottom>
-        {floor} (Total {emps.length})
-      </Typography>
-      <Box display="flex" gap={2} flexWrap="wrap">
-        {/* First Table */}
-        <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
-          <Typography variant="body2" gutterBottom>Group A</Typography>
-          <TableContainer component={Paper} variant="outlined">
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {['ID','Name','Time','Type','Card','Door'].map(h => (
-                    <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {firstHalf.map((r, i) => (
-                  <TableRow key={i}>
-                    <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 2 }}>
+        <Box mb={1}><Button size="small" onClick={() => navigate(-1)}>← Back to Overview</Button></Box>
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Floor Details</Typography>
+          <Typography variant="body2" color="textSecondary">Last updated: {lastUpdate}</Typography>
+          <TextField
+            size="small"
+            placeholder="Search floor / emp…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </Box>
 
-        {/* Second Table */}
-        <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
-          <Typography variant="body2" gutterBottom>Group B</Typography>
-          <TableContainer component={Paper} variant="outlined">
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {['ID','Name','Time','Type','Card','Door'].map(h => (
-                    <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {secondHalf.map((r, i) => (
-                  <TableRow key={i}>
-                    <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
-                    <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Box>
+        <Box display="flex" flexWrap="wrap" >
+          {displayed.map(([floor, emps]) => {
+            // Optionally split emps array into two parts for two tables
+            const mid = Math.ceil(emps.length / 2);
+            const firstHalf = emps.slice(0, mid);
+            const secondHalf = emps.slice(mid, mid + 10); // show up to 10 in second table
 
-      {/* See more button */}
-      <Box textAlign="right" mt={1}>
-        <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
-          {expanded === floor ? 'Hide' : 'See more…'}
-        </Button>
-      </Box>
-    </Box>
+            return (
+              <Box key={floor} sx={{ width: '100%', p: 1 }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  {floor} (Total {emps.length})
+                </Typography>
+                <Box display="flex" gap={2} flexWrap="wrap">
+                  {/* First Table */}
+                  <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
+                    <Typography variant="body2" gutterBottom>Group A</Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
+                              <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {firstHalf.map((r, i) => (
+                            <TableRow key={i}>
+                              <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Paper>
+
+                  {/* Second Table */}
+                  <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
+                    <Typography variant="body2" gutterBottom>Group B</Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
+                              <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {secondHalf.map((r, i) => (
+                            <TableRow key={i}>
+                              <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Paper>
+                </Box>
+
+                {/* See more button */}
+                <Box textAlign="right" >
+                  <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
+                    {expanded === floor ? 'Hide' : 'See more…'}
+                  </Button>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+
+        {expanded && (
+          <Box mt={2}>
+            <Typography variant="h6" gutterBottom>{expanded} — All Entries</Typography>
+            <DataTable
+              columns={[
+                { field: 'EmployeeID', headerName: 'ID' },
+                { field: 'ObjectName1', headerName: 'Name' },
+                { field: 'LocaleMessageTime', headerName: 'Time' },
+                { field: 'PersonnelType', headerName: 'Type' },
+                { field: 'CardNumber', headerName: 'Card' },
+                { field: 'Door', headerName: 'Door' }
+              ]}
+              rows={floorMap[expanded].map(r => ({
+                ...r,
+                LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+              }))}
+            />
+          </Box>
+        )}
+      </Container>
+      <Footer />
+    </>
   );
-})}
+}
