@@ -1,1 +1,27 @@
+ <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+          
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+          </Typography>
 
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* 👇 Always visible default partition path */}
+          <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
+            <ListAltIcon />
+          </IconButton>
+
+          {/* Optional: Keep dynamic version if needed */}
+          {/* {isPart && (
+    <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+      <ListAltIcon />
+    </IconButton>
+  )} */}
+
+        </Box>
