@@ -1,12 +1,10 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
-const Header = () => (
-  <AppBar position="static">
-    <Toolbar>
-      <Typography variant="h6">APAC Occupancy Dashboard</Typography>
-    </Toolbar>
-  </AppBar>
+const Footer = () => (
+  <Box mt={4} textAlign="center">
+    <Typography variant="caption">© 2025 APAC Real-Time Headcount Dashboard</Typography>
+  </Box>
 );
 
-export default Header;
+export default Footer;
