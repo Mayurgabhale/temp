@@ -1,11 +1,1 @@
-mkdir -p src/api \
-         src/services \
-         src/components \
-         src/hooks \
-         src/pages \
-         src/routes \
-         src/data \
-         src/assets/flags \
-         src/assets/images \
-         src/theme \
-         src/utils
+npm install @emotion/react @emotion/styled
