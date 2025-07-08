@@ -1,35 +1,3 @@
-ailed to load resource: the server responded with a status of 404 (Not Found)Understand this error
-occupancy.service.js:28 Error fetching occupancy data: Error: Error 404: <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Error</title>
-</head>
-<body>
-<pre>Cannot POST /api/occupancy/live-summary</pre>
-</body>
-</html>
-
-    at getCurrentOccupancy (occupancy.service.js:22:1)
-    at async fetchData (useLiveOccupancy.js:16:1)
-getCurrentOccupancy @ occupancy.service.js:28Understand this error
-:3007/api/occupancy/live-summary:1  Failed to load resource: the server responded with a status of 404 (Not Found)Understand this error
-occupancy.service.js:28 Error fetching occupancy data: Error: Error 404: <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Error</title>
-</head>
-<body>
-<pre>Cannot POST /api/occupancy/live-summary</pre>
-</body>
-</html>
-
-    at getCurrentOccupancy (occupancy.service.js:22:1)
-    at async fetchData (useLiveOccupancy.js:16:1)
-
-
-
 // occupancy.service.js
 
 const API_BASE_URL = 'http://localhost:3007/api/occupancy';
@@ -41,13 +9,8 @@ export const getCurrentOccupancy = async (partitionNames) => {
       return [];
     }
 
-    const response = await fetch(`${API_BASE_URL}/live-summary`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ partitions: partitionNames })
-    });
+    const query = partitionNames.map(p => `partition=${encodeURIComponent(p)}`).join('&');
+    const response = await fetch(`${API_BASE_URL}/live-summary?${query}`);
 
     if (!response.ok) {
       const errorText = await response.text();
