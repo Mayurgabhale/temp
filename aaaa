@@ -1,1 +1,85 @@
-npm install @mui/material @mui/icons-material recharts dayjs react-router-dom
+{
+  "success": true,
+  "today": {
+    "total": 1275,
+    "Employee": 1113,
+    "Contractor": 162
+  },
+  "realtime": {
+    "Pune": {
+      "total": 883,
+      "Employee": 785,
+      "Contractor": 98,
+      "floors": {
+        "Podium Floor": 601,
+        "Tower B": 167,
+        "2nd Floor": 112
+      }
+    },
+    "Quezon City": {
+      "total": 168,
+      "Employee": 155,
+      "Contractor": 13,
+      "floors": {
+        "7th Floor": 108,
+        "6th Floor": 60
+      }
+    },
+    "JP.Tokyo": {
+      "total": 10,
+      "Employee": 9,
+      "Contractor": 1,
+      "floors": {
+        "Tokyo": 10
+      }
+    },
+    "MY.Kuala Lumpur": {
+      "total": 6,
+      "Employee": 5,
+      "Contractor": 1,
+      "floors": {
+        "Kuala Lumpur": 6
+      }
+    },
+    "Taguig City": {
+      "total": 19,
+      "Employee": 16,
+      "Contractor": 3,
+      "floors": {
+        "Taguig": 19
+      }
+    }
+  },
+  "unmapped": [],
+  "details": [
+    {
+      "ObjectName1": "Sarkaniya, Harish",
+      "Door": "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)",
+      "PersonnelType": "Contractor",
+      "EmployeeID": "W0024571",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T12:25:37.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "51A95852-C14E-4BB4-8F31-0057A87F67C7"
+    },
+    {
+      "ObjectName1": "Panda, Rajat Bhusan",
+      "Door": "APAC_IN_PUN_PODIUM_GREEN_RECEPTION ENTRY-DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "321041",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T10:51:03.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "F4F643ED-3E96-4457-8AE9-0086CFF50225"
+    },
+    {
+      "ObjectName1": "Verma, Rahul",
+      "Door": "APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "305126",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T15:07:57.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "21B47951-6549-442B-87ED-008A7D523F7B"
+    },
+    {
