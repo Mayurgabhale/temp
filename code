@@ -1,6 +1,6 @@
 <Box display="flex" flexWrap="wrap">
   {[...displayed]
-    .sort((a, b) => (a[1].length <= 10 ? -1 : 1)) // Show 10-row floors first
+    .sort((a, b) => b[1].length - a[1].length) // High priority (more rows) first
     .map(([floor, emps]) => {
       const isExpanded = expanded === floor;
       const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
@@ -12,7 +12,7 @@
             width: { xs: '100%', sm: '50%' },
             p: 1,
             boxSizing: 'border-box',
-            mb: 3, // spacing between rows
+            my: 2, // Equal top and bottom margin (vertical gap)
           }}
         >
           <Typography
