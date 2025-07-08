@@ -1,58 +1,26 @@
-const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3005';
+// src/utils/doorMap.js
+const doorMap = [];
+export default doorMap;
 
-// In-memory cache
-const cache = {
-  liveSummary: null,
-  history: new Map(),
-};
 
-/**
- * Fetch live summary, caching for session.
- */
-export async function fetchLiveSummary() {
-  if (cache.liveSummary) {
-    return cache.liveSummary;
-  }
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.liveSummary = json;
-  return json;
+...
+
+
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import History from './pages/History';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/history/:partition" element={<History />} />
+      </Routes>
+    </Router>
+  );
 }
 
-/**
- * Fetch history (global or per-partition), caching for session.
- * @param {string} [location] — e.g. 'PH.Quezon City'
- */
-export async function fetchHistory(location) {
-  const key = location || 'global';
-  if (cache.history.has(key)) {
-    return cache.history.get(key);
-  }
-  const url = location
-    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
-    : `${BASE}/api/occupancy/history`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.history.set(key, json);
-  return json;
-}
-
-/**
- * Clear all cached data.
- */
-export function clearCache() {
-  cache.liveSummary = null;
-  cache.history.clear();
-}
-
-// --- APAC partitions for Dashboard
-export const partitionList = [
-  'PH.Quezon City',
-  'IN.Pune',
-  'JP.Tokyo',
-  'MY.Kuala Lumpur',
-  'PH.Taguig City'
-];
+export default App;
