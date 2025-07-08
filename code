@@ -1,362 +1,128 @@
- <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        {/* DatePicker + Summary */}
-        {pickedDate && summaryEntry ? (
-          <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
-            {/* Date picker */}
-            <Box sx={{ flex: '0 0 200px' }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Select date"
-                  value={pickedDate}
-                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                  renderInput={params => <TextField fullWidth {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
+<Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+  {/* Flex row: DatePicker + Summary Table */}
+  <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
+    
+    {/* Left: Date Picker */}
+    <Box sx={{ flex: '0 0 200px' }}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
+          label="Select date"
+          value={date}
+          onChange={d => { setDate(d); setShowDetails(false); }}
+          renderInput={params => <TextField fullWidth {...params} />}
+        />
+      </LocalizationProvider>
+    </Box>
 
-            {/* Summary & Toggle */}
-            <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* Summary table */}
-              <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
-                <Table sx={{ border: '2px solid #000' }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell
-                        colSpan={isCostaRica ? 6 : 5}
-                        align="center"
-                        sx={{
-                          fontWeight: 'bold',
-                          fontSize: 16,
-                          bgcolor: '#000',
-                          color: '#fff',
-                          border: '2px solid #000'
-                        }}
-                      >
-                        {format(pickedDate, 'EEEE, d MMMM, yyyy')}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow sx={{ bgcolor: '#FFC107' }}>
-                      {[
-                        'Country', 'City', 'Employee', 'Contractors',
-                        ...(isCostaRica ? ['Temp Badge'] : []),
-                        'Total'
-                      ].map(h => (
-                        <TableCell
-                          key={h}
-                          align={['Country', 'City'].includes(h) ? 'left' : 'right'}
-                          sx={{
-                            color: '#000',
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            border: '2px solid #000'
-                          }}
-                        >
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
+    {/* Right: Summary table */}
+    {date && summary && (
+      <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
+          <Table sx={{ border: '2px solid #000' }}>
+            <TableHead>
+              <TableRow>
+                <TableCell colSpan={5} align="center"
+                  sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
+                  {format(date, 'EEEE, d MMMM, yyyy')}
+                </TableCell>
+              </TableRow>
+              <TableRow sx={{ bgcolor: '#FFC107' }}>
+                {['Country', 'Site', 'Employees', 'Contractors', 'Total'].map(h => (
+                  <TableCell key={h} align={['Country', 'Site'].includes(h) ? 'left' : 'right'}
+                    sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                    {h}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((r, i) => (
+                <TableRow key={i}>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.country}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.site}</TableCell>
+                  <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.employee}</TableCell>
+                  <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.contractor}</TableCell>
+                  <TableCell align="right" sx={{ backgroundColor: '#FFC107', fontWeight: 'bold', border: '2px solid #000' }}>{r.total}</TableCell>
+                </TableRow>
+              ))}
+              <TableRow sx={{ bgcolor: '#666' }}>
+                <TableCell colSpan={2} align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                  Total
+                </TableCell>
+                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                  {rows.reduce((s, r) => s + r.employee, 0)}
+                </TableCell>
+                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                  {rows.reduce((s, r) => s + r.contractor, 0)}
+                </TableCell>
+                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
+                  {rows.reduce((s, r) => s + r.total, 0)}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
 
-                  <TableBody>
-                    {partitionRows.map((row, i) => (
-                      <TableRow key={i}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{row.country}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{row.city}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.employee}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.contractor}</TableCell>
-                        {isCostaRica && (
-                          <TableCell align="right" sx={{ border: '2px solid #000' }}>
-                            {row.tempBadge}
-                          </TableCell>
-                        )}
-                        <TableCell
-                          align="right"
-                          sx={{
-                            backgroundColor: '#FFC107',
-                            fontWeight: 'bold',
-                            border: '2px solid #000'
-                          }}
-                        >
-                          {row.total}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-
-                    {/* Grand total row */}
-                    <TableRow sx={{ bgcolor: '#666' }}>
-                      <TableCell colSpan={2} align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        Total
-                      </TableCell>
-                      <TableCell align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.employee, 0)}
-                      </TableCell>
-                      <TableCell align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.contractor, 0)}
-                      </TableCell>
-                      {isCostaRica && (
-                        <TableCell align="right"
-                          sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                          {partitionRows.reduce((s, r) => s + r.tempBadge, 0)}
-                        </TableCell>
-                      )}
-                      <TableCell align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.total, 0)}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Paper>
-
-              {/* See/Hide Details & Export */}
-              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
-                <Button
-                  variant="contained"
-                  sx={{ bgcolor: '#FFC107', color: '#000' }}
-                  onClick={() => setShowDetails(v => !v)}
-                >
-                  {showDetails ? 'Hide Details' : 'See Details'}
-                </Button>
-                {showDetails && (
-                  <Button
-                    variant="outlined"
-                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-                    onClick={handleExport}
-                  >
-                    Export to Excel
-                  </Button>
-                )}
-              </Box>
-            </Box>
-            
-          </Box>
-        ) : (
-          // Only date picker
-          <Box sx={{ px: '20px', mb: 3 }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Select date"
-                value={pickedDate}
-                onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                renderInput={params => <TextField fullWidth {...params} />}
-              />
-            </LocalizationProvider>
-            {!pickedDate && (
-              <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
-                Please pick a date to view region summary.
-              </Typography>
-            )}
-          </Box>
-        )}
-
-        {/* Details table */}
-        {showDetails && (
-          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
-            <Paper
-              elevation={1}
-              sx={{
-                px: '40px',
-                py: 1,
-                width: '100%',
-                border: '3px solid #000',
-                borderRadius: 2,
-              }}
+        {/* Buttons */}
+        <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
+          <Button
+            variant="contained"
+            sx={{ bgcolor: '#FFC107', color: '#000' }}
+            onClick={() => setShowDetails(v => !v)}
+          >
+            {showDetails ? 'Hide Details' : 'See Details'}
+          </Button>
+          {showDetails && (
+            <Button
+              variant="outlined"
+              sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
+              onClick={exportExcel}
             >
-              {detailRows.length > 0 ? (
-                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: '#000' }}>
-                      {[
-                        'Sr', 'Date', 'Time',
-                        'Employee ID', 'Name', 'Personnel Type',
-                        'Door', 'Partition'
-                      ].map(h => (
-                        <TableCell
-                          key={h}
-                          align="center"
-                          sx={{
-                            color: '#FFC107',
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            border: '2px solid #000',
-                          }}
-                        >
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {detailRows.map((r, i) => (
-                      <TableRow key={`${r.PersonGUID}-${i}`}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>
-                          {format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}
-                        </TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>
-                          {format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}
-                        </TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: '#666',
-                    textAlign: 'center',
-                    mt: 2,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  No swipe records found for this date.
-                </Typography>
-              )}
-            </Paper>
-          </Box>
-        )}
-      </Container>
-
-
-like laca container i want 
-emea container 
-measn select date right side show emea table ok not a select date botton right now table are show in bottom side for select date but i want right side for select date ok
-
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
-
-          <Box sx={{ flex: '0 0 200px' }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Select date"
-                value={date}
-                onChange={d => { setDate(d); setShowDetails(false); }}
-                renderInput={params => <TextField fullWidth {...params} />}
-              />
-            </LocalizationProvider>
-          </Box>
+              Export to Excel
+            </Button>
+          )}
         </Box>
+      </Box>
+    )}
+  </Box>
 
-        {date && summary && (
-          <>
-            <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ flex: 1, maxWidth: 900 }}>
-                <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
-                  <Table sx={{ border: '2px solid #000' }}>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell colSpan={5} align="center"
-                          sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
-                          {format(date, 'EEEE, d MMMM, yyyy')}
-                        </TableCell>
-                      </TableRow>
-                      <TableRow sx={{ bgcolor: '#FFC107' }}>
-                        {['Country', 'Site', 'Employees', 'Contractors', 'Total'].map(h => (
-                          <TableCell key={h} align={['Country', 'Site'].includes(h) ? 'left' : 'right'}
-                            sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
-                            {h}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows.map((r, i) => (
-                        <TableRow key={i}>
-                          <TableCell sx={{ border: '2px solid #000' }}>{r.country}</TableCell>
-                          <TableCell sx={{ border: '2px solid #000' }}>{r.site}</TableCell>
-                          <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.employee}</TableCell>
-                          <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.contractor}</TableCell>
-                          <TableCell align="right" sx={{ backgroundColor: '#FFC107', fontWeight: 'bold', border: '2px solid #000' }}>{r.total}</TableCell>
-                        </TableRow>
-                      ))}
-                      <TableRow sx={{ bgcolor: '#666' }}>
-                        <TableCell colSpan={2} align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                          Total
-                        </TableCell>
-                        <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                          {rows.reduce((s, r) => s + r.employee, 0)}
-                        </TableCell>
-                        <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                          {rows.reduce((s, r) => s + r.contractor, 0)}
-                        </TableCell>
-                        <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
-                          {rows.reduce((s, r) => s + r.total, 0)}
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </Paper>
-
-                <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: '#FFC107', color: '#000' }}
-                    onClick={() => setShowDetails(v => !v)}
-                  >
-                    {showDetails ? 'Hide Details' : 'See Details'}
-                  </Button>
-                  {showDetails && (
-                    <Button
-                      variant="outlined"
-                      sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-                      onClick={exportExcel}
-                    >
-                      Export to Excel
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-            </Box>
-            
-          </>
+  {/* Details Table: Still below, only if toggled */}
+  {showDetails && (
+    <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
+      <Paper elevation={1} sx={{ px: '40px', py: 1, width: '100%', border: '3px solid #000', borderRadius: 2 }}>
+        {details.length > 0 ? (
+          <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
+            <TableHead>
+              <TableRow sx={{ bgcolor: '#000' }}>
+                {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
+                  <TableCell key={h} align="center"
+                    sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                    {h}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {details.map((r, i) => (
+                <TableRow key={`${r.PersonGUID}-${i}`}>
+                  <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.SwipeDate.slice(0, 10)}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.LocaleMessageTime.slice(11, 19)}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
+                  <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <Typography variant="body2" sx={{ color: '#666', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
+            No swipe records found for this date.
+          </Typography>
         )}
-
-        {/* Details Table */}
-        {showDetails && (
-          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
-            <Paper elevation={1} sx={{ px: '40px', py: 1, width: '100%', border: '3px solid #000', borderRadius: 2 }}>
-              {details.length > 0 ? (
-                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: '#000' }}>
-                      {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
-                        <TableCell key={h} align="center"
-                          sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {details.map((r, i) => (
-                      <TableRow key={`${r.PersonGUID}-${i}`}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.SwipeDate.slice(0, 10)}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.LocaleMessageTime.slice(11, 19)}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <Typography variant="body2" sx={{ color: '#666', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
-                  No swipe records found for this date.
-                </Typography>
-              )}
-            </Paper>
-          </Box>
-        )}
-      </Container>
+      </Paper>
+    </Box>
+  )}
+</Container>
