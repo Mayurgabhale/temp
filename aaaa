@@ -1,17 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import { AppBar, Toolbar, Typography } from '@mui/material';
 
-const App = () => (
-  <Router>
-    <Header />
-    <Routes>
-      <Route path="/" element={<Dashboard />} />
-    </Routes>
-    <Footer />
-  </Router>
+const Header = () => (
+  <AppBar position="static">
+    <Toolbar>
+      <Typography variant="h6">APAC Occupancy Dashboard</Typography>
+    </Toolbar>
+  </AppBar>
 );
 
-export default App;
+export default Header;
