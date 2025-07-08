@@ -1,1 +1,26 @@
-mkdir src/api, src/services, src/components, src/hooks, src/pages, src/routes, src/data, src/assets/flags, src/assets/images, src/theme, src/utils
+apac-occupancy-frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── api/
+│   │   └── occupancy.service.js   ✅ same file as EMEA but for APAC
+│   ├── assets/
+│   │   ├── flags/
+│   │   │   └── [regional flags here]
+│   │   └── images/
+│   ├── components/
+│   │   ├── ChartCard.jsx
+│   │   ├── CompositeChartCard.jsx
+│   │   ├── DataTable.jsx
+│   │   ├── Footer.jsx
+│   │   └── Header.jsx
+│   ├── pages/
+│   │   ├── Dashboard.jsx
+│   │   ├── History.jsx
+│   │   └── Summary.jsx
+│   ├── App.jsx
+│   ├── index.js
+│   └── theme.js (optional, if EMEA used one)
+├── .env
+├── package.json
+└── README.md
