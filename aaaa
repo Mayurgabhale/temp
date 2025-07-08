@@ -1,0 +1,99 @@
+ mkdir -p src/api \
+>>          src/services \
+>>          src/components \
+>>          src/hooks \
+>>          src/pages \
+>>          src/routes \
+>>          src/data \
+>>          src/assets/flags \
+>>          src/assets/images \
+>>          src/theme \
+>>          src/utils
+mkdir : A positional parameter cannot be found that accepts argument '\'.
+At line:1 char:1
++ mkdir -p src/api \
++ ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [mkdir], ParameterBindingException
+    + FullyQualifiedErrorId : PositionalParameterNotFound,mkdir
+
+src/services : The term 'src/services' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+or if a path was included, verify that the path is correct and try again.
+At line:2 char:10
++          src/services \
++          ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/services:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/components : The term 'src/components' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the 
+name, or if a path was included, verify that the path is correct and try again.
+At line:3 char:10
++          src/components \
++          ~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/components:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/hooks : The term 'src/hooks' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:4 char:10
++          src/hooks \
++          ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/hooks:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/pages : The term 'src/pages' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:5 char:10
++          src/pages \
++          ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/pages:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/routes : The term 'src/routes' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if 
+a path was included, verify that the path is correct and try again.
+At line:6 char:10
++          src/routes \
++          ~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/routes:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/data : The term 'src/data' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:7 char:10
++          src/data \
++          ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/data:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/assets/flags : The term 'src/assets/flags' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the 
+name, or if a path was included, verify that the path is correct and try again.
+At line:8 char:10
++          src/assets/flags \
++          ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/assets/flags:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/assets/images : The term 'src/assets/images' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of 
+the name, or if a path was included, verify that the path is correct and try again.
+At line:9 char:10
++          src/assets/images \
++          ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/assets/images:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/theme : The term 'src/theme' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:10 char:10
++          src/theme \
++          ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/theme:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+src/utils : The term 'src/utils' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:11 char:10
++          src/utils
++          ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (src/utils:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\Users\W0024618\Desktop\apac-occupancy-frontend\apac-headcount> 
