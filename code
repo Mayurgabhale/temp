@@ -1,128 +1,49 @@
-<Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-  {/* Flex row: DatePicker + Summary Table */}
-  <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
-    
-    {/* Left: Date Picker */}
-    <Box sx={{ flex: '0 0 200px' }}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DatePicker
-          label="Select date"
-          value={date}
-          onChange={d => { setDate(d); setShowDetails(false); }}
-          renderInput={params => <TextField fullWidth {...params} />}
-        />
-      </LocalizationProvider>
-    </Box>
 
-    {/* Right: Summary table */}
-    {date && summary && (
-      <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
-          <Table sx={{ border: '2px solid #000' }}>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={5} align="center"
-                  sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
-                  {format(date, 'EEEE, d MMMM, yyyy')}
-                </TableCell>
-              </TableRow>
-              <TableRow sx={{ bgcolor: '#FFC107' }}>
-                {['Country', 'Site', 'Employees', 'Contractors', 'Total'].map(h => (
-                  <TableCell key={h} align={['Country', 'Site'].includes(h) ? 'left' : 'right'}
-                    sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
-                    {h}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((r, i) => (
-                <TableRow key={i}>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.country}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.site}</TableCell>
-                  <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.employee}</TableCell>
-                  <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.contractor}</TableCell>
-                  <TableCell align="right" sx={{ backgroundColor: '#FFC107', fontWeight: 'bold', border: '2px solid #000' }}>{r.total}</TableCell>
-                </TableRow>
-              ))}
-              <TableRow sx={{ bgcolor: '#666' }}>
-                <TableCell colSpan={2} align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                  Total
-                </TableCell>
-                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                  {rows.reduce((s, r) => s + r.employee, 0)}
-                </TableCell>
-                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                  {rows.reduce((s, r) => s + r.contractor, 0)}
-                </TableCell>
-                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
-                  {rows.reduce((s, r) => s + r.total, 0)}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </Paper>
+import React from 'react';
+import { Box, Typography, Link } from '@mui/material';
 
-        {/* Buttons */}
-        <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
-          <Button
-            variant="contained"
-            sx={{ bgcolor: '#FFC107', color: '#000' }}
-            onClick={() => setShowDetails(v => !v)}
-          >
-            {showDetails ? 'Hide Details' : 'See Details'}
-          </Button>
-          {showDetails && (
-            <Button
-              variant="outlined"
-              sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-              onClick={exportExcel}
-            >
-              Export to Excel
-            </Button>
-          )}
+export default function Footer() {
+  return (
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: '#000',
+        color: '#FFC72C',
+        py: 3,
+        textAlign: 'center',
+        mt: 4,
+        borderTop: '2px solid #FFC72C',
+        fontSize: '0.95rem',
+        lineHeight: 1.6,
+      }}
+    >
+      <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+        Global Security Operations Center (GSOC)
+      </Typography>
+
+      <Typography variant="body2">
+        Live Occupancy dashboard for Europe, the Middle East, and Africa — Real-time occupancy,
+        floor activity, and personnel insights.
+      </Typography>
+
+      <Typography variant="body2" mt={2}>
+        Contact us:{' '}
+        <Link
+          href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
+          underline="hover"
+          sx={{ color: '#FFC72C' }}
+        >
+          gsoc@westernunion.com
+        </Link>{' '}
+        | Landline:{' '}
+        <Box component="span" sx={{ color: '#FFC72C' }}>
+          +91-020-67632394
         </Box>
-      </Box>
-    )}
-  </Box>
+      </Typography>
 
-  {/* Details Table: Still below, only if toggled */}
-  {showDetails && (
-    <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
-      <Paper elevation={1} sx={{ px: '40px', py: 1, width: '100%', border: '3px solid #000', borderRadius: 2 }}>
-        {details.length > 0 ? (
-          <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
-            <TableHead>
-              <TableRow sx={{ bgcolor: '#000' }}>
-                {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
-                  <TableCell key={h} align="center"
-                    sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
-                    {h}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {details.map((r, i) => (
-                <TableRow key={`${r.PersonGUID}-${i}`}>
-                  <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.SwipeDate.slice(0, 10)}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.LocaleMessageTime.slice(11, 19)}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
-                  <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <Typography variant="body2" sx={{ color: '#666', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
-            No swipe records found for this date.
-          </Typography>
-        )}
-      </Paper>
+      <Typography variant="caption" display="block" mt={2}>
+        © {new Date().getFullYear()} Western Union. All rights reserved.
+      </Typography>
     </Box>
-  )}
-</Container>
+  );
+}
