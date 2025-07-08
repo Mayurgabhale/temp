@@ -1,27 +1,42 @@
-import React from 'react';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { fetchLiveSummary } from '../api/occupancy.service';
+import ChartCard from '../components/ChartCard';
+import DataTable from '../components/DataTable';
 
-const DataTable = ({ data }) => (
-  <Table size="small">
-    <TableHead>
-      <TableRow>
-        <TableCell>Name</TableCell>
-        <TableCell>Type</TableCell>
-        <TableCell>Location</TableCell>
-        <TableCell>Time</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {data.map((row, idx) => (
-        <TableRow key={idx}>
-          <TableCell>{row.ObjectName1}</TableCell>
-          <TableCell>{row.PersonnelType}</TableCell>
-          <TableCell>{row.PartitionName2}</TableCell>
-          <TableCell>{new Date(row.LocaleMessageTime).toLocaleTimeString()}</TableCell>
-        </TableRow>
+const Dashboard = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetchLiveSummary().then(setData);
+  }, []);
+
+  if (!data) return <p>Loading...</p>;
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>Today’s Summary</h2>
+      <ChartCard
+        title="APAC Total"
+        total={data.today.total}
+        employee={data.today.Employee}
+        contractor={data.today.Contractor}
+      />
+
+      <h2>Live Realtime Headcount</h2>
+      {Object.entries(data.realtime).map(([region, regionData]) => (
+        <ChartCard
+          key={region}
+          title={region}
+          total={regionData.total}
+          employee={regionData.Employee}
+          contractor={regionData.Contractor}
+        />
       ))}
-    </TableBody>
-  </Table>
-);
 
-export default DataTable;
+      <h2>Live Entry Logs</h2>
+      <DataTable data={data.details} />
+    </div>
+  );
+};
+
+export default Dashboard;
