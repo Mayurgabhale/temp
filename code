@@ -1,6 +1,6 @@
 <Box display="flex" flexWrap="wrap">
   {[...displayed]
-    .sort((a, b) => b[1].length - a[1].length) // Sort by priority
+    .sort((a, b) => b[1].length - a[1].length) // Priority: most rows first
     .map(([floor, emps]) => {
       const isExpanded = expanded === floor;
       const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
@@ -12,7 +12,7 @@
             width: { xs: '100%', sm: '50%' },
             p: 1,
             boxSizing: 'border-box',
-            my: 2, // Vertical gap
+            my: 2, // Equal vertical gap
           }}
         >
           <Typography
@@ -23,19 +23,26 @@
             {floor} (Total {emps.length})
           </Typography>
 
-          {/* Outer border and fixed size */}
+          {/* Smart height layout */}
           <Box
             sx={{
               border: '2px solid #FFC107',
               borderRadius: 1,
-              height: 360, // fixed height
+              p: 2,
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between',
-              p: 2,
+              minHeight: 200,
+              maxHeight: isExpanded ? 600 : 'auto', // Expand gracefully
             }}
           >
-            <TableContainer component={Paper} variant="outlined" sx={{ flexGrow: 1, overflowY: 'auto' }}>
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{
+                overflowY: 'auto',
+                flexGrow: 1,
+              }}
+            >
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
