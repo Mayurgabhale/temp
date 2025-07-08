@@ -1,67 +1,80 @@
-<Box key={floor} sx={{ width: '100%', p: 1 }}>
-  <Typography variant="subtitle1" gutterBottom>
-    {floor} (Total {emps.length})
-  </Typography>
-  <Box display="flex" gap={2} flexWrap="wrap">
-    {/* First Table */}
-    <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
-      <TableContainer component={Paper} variant="outlined">
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
-                <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {firstHalf.map((r, i) => (
-              <TableRow key={i}>
-                <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+   <Box display="flex" flexWrap="wrap" >
+          {displayed.map(([floor, emps]) => {
+            // Optionally split emps array into two parts for two tables
+            const mid = Math.ceil(emps.length / 2);
+            const firstHalf = emps.slice(0, mid);
+            const secondHalf = emps.slice(mid, mid + 10); // show up to 10 in second table
 
-    {/* Second Table */}
-    <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
-      <TableContainer component={Paper} variant="outlined">
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
-                <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {secondHalf.map((r, i) => (
-              <TableRow key={i}>
-                <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
-                <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
-  </Box>
+            return (
+              <Box key={floor} sx={{ width: '100%', p: 1 }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  {floor} (Total {emps.length})
+                </Typography>
+                <Box display="flex" gap={2} flexWrap="wrap">
+                  {/* First Table */}
+                  <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
+                    <Typography variant="body2" gutterBottom>Group A</Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
+                              <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {firstHalf.map((r, i) => (
+                            <TableRow key={i}>
+                              <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Paper>
 
-  {/* See more button */}
-  <Box textAlign="right">
-    <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
-      {expanded === floor ? 'Hide' : 'See more…'}
-    </Button>
-  </Box>
-</Box>
+                  {/* Second Table */}
+                  <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
+                    <Typography variant="body2" gutterBottom>Group B</Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
+                              <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>{h}</TableCell>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {secondHalf.map((r, i) => (
+                            <TableRow key={i}>
+                              <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
+                              <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Paper>
+                </Box>
+
+                {/* See more button */}
+                <Box textAlign="right" >
+                  <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
+                    {expanded === floor ? 'Hide' : 'See more…'}
+                  </Button>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
