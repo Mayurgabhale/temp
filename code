@@ -1,462 +1,2021 @@
-Rwead this only below backend 
 
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\config\db.js
-// src/config/db.js
-require('dotenv').config();
-const sql = require('mssql');
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\api\occupancy.service.js
 
-// Pull in and trim env-vars
-const DB_USER     = (process.env.DB_USER     || '').trim();
-const DB_PASSWORD = (process.env.DB_PASSWORD || '').trim();
-const DB_SERVER   = (process.env.DB_SERVER   || '').trim();
-const DB_DATABASE = (process.env.DB_DATABASE || '').trim();
-const DB_PORT     = parseInt((process.env.DB_PORT || '').trim(), 10);
 
-const dbConfig = {
-  user:     DB_USER,
-  password: DB_PASSWORD,
-  server:   DB_SERVER,
-  port:     DB_PORT,
-  database: DB_DATABASE,
-  options: { encrypt:false, trustServerCertificate:true, enableArithAbort:true },
-  pool: { max:10, min:0, idleTimeoutMillis:30000 }
+
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3005';
+
+// In-memory cache
+const cache = {
+  liveSummary: null,
+  history: new Map(),  // key: partition code or 'global'
 };
 
-const poolPromise = sql.connect(dbConfig)
-  .then(pool => {
-    console.log('✅ MSSQL (APAC) connected');
-    return pool;
-  })
-  .catch(err => {
-    console.error('❌ MSSQL (APAC) connection failed', err);
-    process.exit(1);
-  });
-
-module.exports = { sql, poolPromise };
-
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\controllers\occupancy.controller.js
-// src/controllers/occupancy.controller.js
-const service = require('../services/occupancy.service');
-// const doorMap = require('../utils/doorMap');
-// const doorZoneMap = require('../utils/doorMap'); 
-//  const { doorMap, doorZoneMap } = require('../utils/doorMap');
-//  const { doorMap, doorZoneMap, zoneFloorMap } = require('../utils/doorMap');
-
-const {
-  doorMap,
-  normalizedDoorZoneMap,
-  doorZoneMap,
-  zoneFloorMap,
-  normalizeDoorName
-} = require('../utils/doorMap');
-
-
-
-
-function isEmployeeType(pt) {
-  return ['Employee','Terminated Employee','Terminated Personnel'].includes(pt);
+/**
+ * Fetch live summary, caching for session.
+ */
+export async function fetchLiveSummary() {
+  if (cache.liveSummary) {
+    return cache.liveSummary;
+  }
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.liveSummary = json;
+  return json;
 }
 
-function lookupFloor(partition, rawDoor, direction, unmapped) {
-  const norm = normalizeDoorName(rawDoor);
-  const key  = `${norm}___${direction}`;
+/**
+ * Fetch history (global or per-partition), caching for session.
+ * @param {string} [location] — partition identifier, e.g. 'LT.Vilnius'
+ */
+export async function fetchHistory(location) {
+  const key = location || 'global';
+  if (cache.history.has(key)) {
+    return cache.history.get(key);
+  }
+  const url = location
+    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
+    : `${BASE}/api/occupancy/history`;
 
-  // 1) Try normalized lookup
-  const zone = normalizedDoorZoneMap[key];
-  if (zone) {
-    const f = zoneFloorMap[zone];
-    if (f) return f;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.history.set(key, json);
+  return json;
+}
+
+/**
+ * Clear all cached data (if you need to force a fresh fetch).
+ */
+export function clearCache() {
+  cache.liveSummary = null;
+  cache.history.clear();
+}
+
+// --- list of EMEA partitions for Dashboard
+export const partitionList = [
+  'AUT.Vienna',
+  'DU.Abu Dhab',
+  'IE.Dublin',
+  'IT.Rome',
+  'LT.Vilnius',
+  'MA.Casablanca',
+  'RU.Moscow',
+  'UK.London',
+  'ES.Madrid'
+];
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\assets\flags
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\assets\images
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\ChartCard.jsx
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid, Legend, Brush
+} from 'recharts';
+import dayjs from 'dayjs';
+
+export default function ChartCard({
+  data = [],
+  dataKey = 'value',
+  colors = { head: '#FFC107', cap: '#B0BEC5' },
+  chartHeight = 300,
+  title = ''
+}) {
+  // Hook must be called unconditionally
+  const [hidden, setHidden] = useState({});
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card>
+        <CardContent>
+          <Typography>No data to display.</Typography>
+        </CardContent>
+      </Card>
+    );
   }
 
-  // 2) Fallback to per-partition doorMap
-  const entry = doorMap.find(d =>
-    d.normalizedDoor === norm && d.partition === partition
+  const handleLegend = o => {
+    const key = o.dataKey;
+    setHidden(h => ({ ...h, [key]: !h[key] }));
+  };
+
+  return (
+    <Card>
+      <CardContent>
+        {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
+        <Box sx={{ width: '100%', height: chartHeight }}>
+          <ResponsiveContainer>
+            <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+              <defs>
+                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={colors.head} stopOpacity={0.8} />
+                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                tickFormatter={t =>
+                  typeof t === 'number' ? dayjs(t).format('HH:mm:ss') : t
+                }
+              />
+              <YAxis />
+              <Tooltip />
+              <Legend onClick={handleLegend} />
+              <Area
+                type="monotone"
+                dataKey={dataKey}
+                stroke={colors.head}
+                fill="url(#colorHead)"
+                hide={hidden[dataKey]}
+              />
+              <Brush dataKey="name" height={20} stroke={colors.head} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
   );
-  if (entry) {
-    const fl = direction === 'InDirection'
-      ? entry.inDirectionFloor
-      : entry.outDirectionFloor;
-    if (fl) return fl;
-  }
-
-  // 3) Nothing matched → record & return Unknown
-  unmapped.add(`${partition}|${rawDoor}`);
-  return 'Unknown';
 }
 
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\CompositeChartCard.jsx
 
-exports.getLiveOccupancy = async (req,res) => {
-  try {
-    const data = await service.fetchLiveOccupancy();
-    res.json({ success:true, count:data.length, data });
-  } catch(e) {
-    console.error(e);
-    res.status(500).json({ success:false, message:'Live fetch failed' });
-  }
-};
 
-exports.getLiveSummary = async (req,res) => {
-  try {
-    const swipes = await service.fetchLiveOccupancy();
+// src/components/CompositeChartCard.jsx
 
-    // first swipe per person = TODAY
-    const first = {};
-    swipes.forEach(r => {
-      const t = new Date(r.LocaleMessageTime).getTime();
-      if (!first[r.PersonGUID] || t < new Date(first[r.PersonGUID].LocaleMessageTime).getTime()) {
-        first[r.PersonGUID] = r;
-      }
-    });
-    const today = { total:0, Employee:0, Contractor:0 };
-    Object.values(first).forEach(r => {
-      today.total++;
-      if (isEmployeeType(r.PersonnelType)) today.Employee++;
-      else today.Contractor++;
-    });
-
-    // last swipe per person for realtime
-    const last = {};
-    swipes.forEach(r => {
-      const t = new Date(r.LocaleMessageTime).getTime();
-      if (!last[r.PersonGUID] || t > new Date(last[r.PersonGUID].LocaleMessageTime).getTime()) {
-        last[r.PersonGUID] = r;
-      }
-    });
-
-    const realtime = {};
-    const unmapped = new Set();
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+  LabelList,
+  Cell
+} from 'recharts';
 
 
 
-    // now update here logic as per doormap.js
-       Object.values(last).forEach(r => {
-      //   // **only** evict when zone is _exactly_ "Out of office"
-      //   if (r.Direction === 'OutDirection') {
-      //     const key  = normalizeDoorName(r.Door) + '___' + r.Direction;
-      //     const zone = doorZoneMap[key];
-      //     if (zone === 'Out of office') {
-      //       return;  // true exit → skip this person
-      //       // console.log('doorKey')
-      //     }
-      //     // otherwise (outer area, turnstile, etc.) we still count them
-//  }  
- 
-     // 1) Evict any swipe whose door+direction maps to "Out of office"
-    const normKey = normalizeDoorName(r.Door) + '___' + r.Direction;
-    const zone    = normalizedDoorZoneMap[normKey];
-    if (zone === 'Out of office') {
-      return;        // never count them—in totals or floors
-    }
-
-
-
-      const p    = r.PartitionName2;
-      const doorField = r.Door;  // now defined by service
-
-      if (!realtime[p]) {
-        realtime[p] = { total:0, Employee:0, Contractor:0, floors:{} };
-      }
-      // realtime[p].total++;
-      // if (isEmployeeType(r.PersonnelType)) realtime[p].Employee++;
-      // else realtime[p].Contractor++;
-
-
-    // 2) Now that it's not a true exit, count them in the headcount
-    realtime[p].total++;
-    if (isEmployeeType(r.PersonnelType)) realtime[p].Employee++;
-    else realtime[p].Contractor++;
-
- 
-
-    // 3) Bucket them into floors as before
-    const fl = lookupFloor(p, doorField, r.Direction, unmapped);
-    if (fl !== 'Unknown') {
-      realtime[p].floors[fl] = (realtime[p].floors[fl]||0) + 1;
-    }
- });
-
-
-
-
-    // Log to server console for quick dev feedback:
-    if (unmapped.size) console.warn('Unmapped doors:', Array.from(unmapped));
-
-    res.json({
-      success:    true,
-      today,
-      realtime,
-      // expose the raw list of partition|door keys that had no mapping:
-      unmapped:   Array.from(unmapped),
-      details:    Object.values(last)
-    });
-
-
-
-
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ success:false, message:'Summary failed' });
-  }
-};
-
-exports.getHistoricalOccupancy = async (req,res) => {
-  const location = req.params.location || null;
-  try {
-    const raw = await service.fetchHistoricalOccupancy(location);
-    // dedupe first swipe per person per day
-    const byDate = raw.reduce((acc,r) => {
-      const date = new Date(r.LocaleMessageTime).toISOString().slice(0,10);
-      acc[date] = acc[date]||{};
-      if (!acc[date][r.PersonGUID] ||
-          new Date(r.LocaleMessageTime) < new Date(acc[date][r.PersonGUID].LocaleMessageTime)
-      ) {
-        acc[date][r.PersonGUID] = { ...r, LocaleMessageTime: r.LocaleMessageTime };
-      }
-      return acc;
-    }, {});
-
-    const summaryByDate = [], details = [];
-    Object.keys(byDate).sort().forEach(date => {
-      const recs = Object.values(byDate[date]);
-      details.push(...recs);
-      const region = { total:0, Employee:0, Contractor:0 };
-      const partitions = {};
-      recs.forEach(r => {
-        region.total++;
-        if (isEmployeeType(r.PersonnelType)) region.Employee++;
-        else region.Contractor++;
-        if (!location) {
-          partitions[r.PartitionName2] = partitions[r.PartitionName2]||{ total:0,Employee:0,Contractor:0 };
-          partitions[r.PartitionName2].total++;
-          if (isEmployeeType(r.PersonnelType)) partitions[r.PartitionName2].Employee++;
-          else partitions[r.PartitionName2].Contractor++;
-        }
-      });
-      summaryByDate.push({
-        date,
-        day: new Date(date).toLocaleDateString('en-US',{ weekday:'long' }),
-        region: location ? { name:location, ...region } : { name:'APAC', ...region },
-        partitions: location ? undefined : partitions
-      });
-    });
-
-    res.json({ success:true, summaryByDate, details });
-  } catch(e) {
-    console.error(e);
-    res.status(500).json({ success:false, message:'Historical failed' });
-  }
-};
-
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\routes\occupancy.routes.js
-// src/routes/occupancy.routes.js
-const express    = require('express');
-const controller = require('../controllers/occupancy.controller');
-const router     = express.Router();
-
-router.get('/live',         controller.getLiveOccupancy);
-router.get('/live-summary', controller.getLiveSummary);
-router.get('/history',           controller.getHistoricalOccupancy);
-router.get('/history/:location', controller.getHistoricalOccupancy);
-
-module.exports = router;
-
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\services\occupancy.service.js
-// src/services/occupancy.service.js
-const { poolPromise, sql } = require('../config/db');
-
-const partitionList = [
-  'APAC.Default',
-  'CN.Beijing',
-  'JP.Tokyo',
-  'PH.Manila',
-  'MY.Kuala Lumpur',
-  'IN.Pune'
+const DARK_TO_LIGHT = [
+  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
+  '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
+  ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
+  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
 ];
 
-/**
- * Live occupancy (today) for APAC
- */
+export default function CompositeChartCard({
+  title,
+  data,
+  lineColor = '#fff',
+  height = 300,
+  animationDuration = 1500,
+  animationEasing = 'ease-in-out'
+}) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No realtime employee data
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+  // Enrich each datum with its usage percentage
+  const enriched = data.map((d, i) => ({
+    ...d,
+    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+  }));
+  const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
+  const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
+  const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
+  return (
+    <Card
+      sx={{
+        // border: `1px solid ${lineColor}`,
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.4)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          gutterBottom
+          sx={{ color: '#FFC107' }}
+        >
+          {title}
+        </Typography>
 
 
-exports.fetchLiveOccupancy = async () => {
-  const pool = await poolPromise;
-  const parts = partitionList.map(p => `'${p.replace("'", "''")}'`).join(',');
 
-  const query = `
-    WITH CombinedEmployeeData AS (
-      SELECT
-        t1.ObjectName1,
-        t1.ObjectName2            AS Door,               -- <— include Door here
-        CASE WHEN t2.Int1 = 0 THEN t2.Text12 ELSE CAST(t2.Int1 AS NVARCHAR) END AS EmployeeID,
-        t3.Name                   AS PersonnelType,
-        t1.ObjectIdentity1        AS PersonGUID,
-        CASE
-          WHEN t1.ObjectName2 LIKE 'APAC_PI%' THEN 'Taguig City'
-          WHEN t1.ObjectName2 LIKE 'APAC_PH%' THEN 'Quezon City'
-          WHEN t1.ObjectName2 LIKE '%PUN%'   THEN 'Pune'
-          WHEN t1.ObjectName2 LIKE 'APAC_JPN%' THEN 'JP.Tokyo'
-          WHEN t1.ObjectName2 LIKE 'APAC_MY%'  THEN 'MY.Kuala Lumpur'
-          ELSE t1.PartitionName2
-        END                        AS PartitionName2,
-        DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC) AS LocaleMessageTime,
-        t5d.value                 AS Direction
-      FROM ACVSUJournal_00010028.dbo.ACVSUJournalLog t1
-      JOIN ACVSCore.Access.Personnel      t2 ON t1.ObjectIdentity1 = t2.GUID
-      JOIN ACVSCore.Access.PersonnelType  t3 ON t2.PersonnelTypeID = t3.ObjectID
-      LEFT JOIN ACVSUJournal_00010028.dbo.ACVSUJournalLogxmlShred t5d
-        ON t1.XmlGUID = t5d.GUID AND t5d.Value IN ('InDirection','OutDirection')
-      WHERE
-        t1.MessageType = 'CardAdmitted'
-        AND t1.PartitionName2 IN (${parts})
-        AND CONVERT(DATE, DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC))
-            = CONVERT(DATE, GETDATE())
-    ), Ranked AS (
-      SELECT *,
-        ROW_NUMBER() OVER (PARTITION BY PersonGUID ORDER BY LocaleMessageTime DESC) AS rn
-      FROM CombinedEmployeeData
-    )
-    SELECT
-      ObjectName1,
-      Door,                            -- <— door is now returned
-      PersonnelType,
-      EmployeeID,
-      PartitionName2,
-      LocaleMessageTime,
-      Direction,
-      PersonGUID
-    FROM Ranked
-    WHERE rn = 1;
-  `;
 
-  const result = await pool.request().query(query);
-  return result.recordset;
+
+
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <ComposedChart
+              data={enriched}
+              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+
+
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                tickFormatter={(label, index) => {
+                  const strLabel = String(label);
+                  const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
+                  const floorNum = parseInt(match?.[0], 10);
+
+                  if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
+
+                  const suffix = (n) => {
+                    if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+                    switch (n % 10) {
+                      case 1: return `${n}st`;
+                      case 2: return `${n}nd`;
+                      case 3: return `${n}rd`;
+                      default: return `${n}th`;
+                    }
+                  };
+
+                  return suffix(floorNum);
+                }}
+              />
+
+
+              <YAxis
+                yAxisId="left"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+              />
+
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                domain={[0, 100]}
+                tickFormatter={val => `${val}%`}
+              />
+
+              {/* <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
+                formatter={(value, name) => 
+                  name === 'percentage' ? `${value}%` : value
+                }
+              /> */}
+
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
+                // custom content so we can show capacity only on hover
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const datum = payload[0].payload;
+                  return (
+                    <div style={{
+                      backgroundColor: '#FFD666',
+                      border: `1px solid ${lineColor}`,
+                      borderRadius: 4,
+                      padding: 8,
+                    }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+                      <div>Headcount: {datum.headcount}</div>
+                      <div>Usage %: {datum.percentage}%</div>
+                      <div>Seat Capacity: {datum.capacity}</div>
+                    </div>
+                  );
+                }}
+              />
+
+
+              {/* Headcount bars with per-bar colors & percentage labels */}
+              <Bar
+                yAxisId="left"
+                dataKey="headcount"
+                name="Headcount"
+                barSize={700}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              >
+                {enriched.map((entry, idx) => (
+                  <Cell key={`cell-${idx}`} fill={entry._color} />
+                ))}
+
+
+                {/* Show % on top of each bar */}
+                <LabelList
+                  dataKey="headcount"
+                  position="top"
+                  formatter={val => `${val}`}
+                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+                />
+
+                {/* Percentage centered inside each bar */}
+                <LabelList
+                  dataKey="percentage"
+                  position="inside"
+                  formatter={val => `${val}%`}
+                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
+                />
+              </Bar>
+
+
+              {/* Seat Capacity line */}
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="percentage"
+                name="Usage %"
+                stroke={lineColor}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+
+              {/* Optional: draw capacity as second line */}
+              <Line
+                yAxisId="left"
+                type="monotone"
+
+                //  dataKey="capacity"
+                name="Total Seats"
+                stroke="#81C784"
+                strokeDasharray="5 5"
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 4,
+            alignItems: 'center',
+            mb: 1,
+            fontWeight: 'bold',
+            fontSize: 16
+          }}
+        >
+          <Box sx={{ color: '#FFD700' /* Yellow */ }}>
+            Total Headcount: {totalHeadcount}
+          </Box>
+          <Box sx={{ color: '#4CAF50' /* Green */ }}>
+            Total Seats: {totalCapacity}
+          </Box>
+          <Box sx={{ color: '#FF4C4C' /* Red */ }}>
+            Usage: {avgUsage}%
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\DataTable.jsx
+
+
+import React from 'react';
+import {
+  Table, TableHead, TableBody, TableRow, TableCell,
+  TableContainer, Paper
+} from '@mui/material';
+
+export default function DataTable({ columns, rows }) {
+  return (
+    <TableContainer component={Paper} sx={{ mb:2 }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            {columns.map(c => (
+              <TableCell key={c.field} sx={{ fontWeight:'bold', borderBottom:'2px solid #000' }}>
+                {c.headerName}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((r,i)=>(
+            <TableRow key={i}>
+              {columns.map(c=>(
+                <TableCell key={c.field} sx={{ py:0.5, borderBottom:'1px solid #ccc' }}>
+                  {r[c.field]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Footer.jsx
+
+
+import React, { useEffect } from 'react';
+import { Box, Typography, Link } from '@mui/material';
+
+export default function Footer() {
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.display = 'flex';
+      root.style.flexDirection = 'column';
+      root.style.minHeight = '100vh';
+    }
+  }, []);
+
+  return (
+    <Box
+      component="footer"
+      sx={{
+        mt: 'auto', // Push footer to bottom when used inside flex container
+        backgroundColor: '#000',
+        color: '#FFC72C',
+        py: 2,
+        px: 2,
+        textAlign: 'center',
+        borderTop: '2px solid #FFC72C',
+        fontSize: '0.9rem',
+        lineHeight: 1.5,
+      }}
+    >
+      <Typography variant="subtitle2" fontWeight="bold">
+        Global Security Operations Center (GSOC)
+      </Typography>
+
+      <Typography variant="body2">
+        Live Occupancy dashboard for EMEA — Real-time occupancy and personnel insights.
+      </Typography>
+
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        Contact us:{' '}
+        <Link
+          href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
+          underline="hover"
+          sx={{ color: '#FFC72C' }}
+        >
+          gsoc@westernunion.com
+        </Link>{' '}
+        | Landline:{' '}
+        <Box component="span" sx={{ color: '#FFC72C' }}>
+          +91-020-67632394
+        </Box>
+      </Typography>
+
+      <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+        © {new Date().getFullYear()} Western Union. All rights reserved.
+      </Typography>
+    </Box>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Header.jsx
+
+
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+import wuLogo from '../assets/wu-logo.png';
+import austriaFlag from '../assets/flags/austria.png';
+import uaeFlag from '../assets/flags/uae.png';
+import irelandFlag from '../assets/flags/ireland.png';
+import italyFlag from '../assets/flags/italy.png';
+import lithuaniaFlag from '../assets/flags/lithuania.png';
+import moroccoFlag from '../assets/flags/morocco.png';
+import russiaFlag from '../assets/flags/russia.png';
+import ukFlag from '../assets/flags/uk.png';
+import spainFlag from '../assets/flags/spain.png';
+import { partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+
+
+export default function Header() {
+  // const navigate = useNavigate();
+  // const loc = useLocation();
+  // const { data } = useLiveOccupancy(1000);
+  // const [lastUpdate, setLastUpdate] = useState('');
+
+    const navigate = useNavigate();
+  const loc = useLocation(); // ✅ correct hook usage
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPart = parts[0] === 'partition' && parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
+   const isHome = loc.pathname === '/'; // ✅ fixed: use loc
+
+  const flagMap = {
+    'AUT.Vienna': austriaFlag,
+    'DU.Abu Dhab': uaeFlag,
+    'IE.Dublin': irelandFlag,
+    'IT.Rome': italyFlag,
+    'LT.Vilnius': lithuaniaFlag,
+    'MA.Casablanca': moroccoFlag,
+    'RU.Moscow': russiaFlag,
+    'UK.London': ukFlag,
+    'ES.Madrid': spainFlag
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+       <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* ✅ Static Vilnius button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* ✅ Dynamic partition button shown when inside any partition */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
+
+
+
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => navigate(e.target.value || '/')}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
+                <Box component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }} />
+                {p.split('.').pop()}
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Box />
+        </Box>
+
+      </Toolbar>
+    </AppBar>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\LoadingSpinner.jsx
+import React from 'react';
+import { Box, CircularProgress } from '@mui/material';
+
+export default function LoadingSpinner() {
+  return (
+    <Box sx={{ display:'flex', justifyContent:'center', py:4 }}>
+      <CircularProgress/>
+    </Box>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\PieChartCard.jsx
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
+
+export default function PieChartCard({
+  title,
+  data,
+  colors = [],
+  innerRadius = 40,
+  height = 300,
+  showZeroSlice = false,
+  animationDuration = 1500
+}) {
+  const filtered = showZeroSlice ? data : data.filter(d => d.value > 0);
+  if (filtered.length === 0) {
+    return (
+      <Card sx={{ border: '2px solid #FFD666', bgcolor: 'rgba(0,0,0,0.6)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No data to display
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      sx={{
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.6)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" gutterBottom sx={{color:'#FFC107'}}>
+          {title}
+        </Typography>
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={filtered}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={innerRadius}
+                outerRadius="80%"
+                isAnimationActive
+                animationDuration={animationDuration}
+                labelLine={false}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              >
+                {filtered.map((entry, idx) => (
+                  <Cell key={`slice-${idx}`} fill={colors[idx % colors.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: '#000' }}
+                formatter={(value, name) => [value, name]}
+              />
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                wrapperStyle={{ color: '#fff' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\SummaryCard.jsx
+// src/components/SummaryCard.jsx
+
+import React from 'react';
+import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
+
+export default function SummaryCard({
+  title,
+  total,
+  stats = [],
+  icon,
+  titleColor,
+  totalColor,
+  statColors = [],
+  sx = {}
+}) {
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        px: 2,
+        py: 1,
+        border: titleColor ? `2px solid ${titleColor}` : undefined,
+        borderRadius: 2,
+        bgcolor: 'rgba(0,0,0,0.4)',
+        overflow: 'hidden',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'translateY(-4px) scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)',
+        },
+        ...sx
+      }}
+    >
+      <CardContent sx={{ textAlign: 'center', p: 1 }}>
+        {/* Icon + Title */}
+        <Box display="flex" justifyContent="center" alignItems="center" mb={1}>
+          {icon && (
+            <Box
+              component="span"
+              sx={{
+                mr: 1,
+                fontSize: 32,
+                color: titleColor || 'primary.main',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {icon}
+            </Box>
+          )}
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={titleColor ? { color: titleColor } : undefined}
+          >
+            {title}
+          </Typography>
+        </Box>
+
+        {/* Total */}
+        {total != null && (
+          <Box display="flex" justifyContent="center" alignItems="baseline" mb={1}>
+            <Typography
+              variant="h4"
+              sx={{
+                mr: 1,
+                ...(totalColor ? { color: totalColor } : undefined),
+                transition: 'color 0.3s'
+              }}
+            >
+              {total}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Stats */}
+        <Grid container spacing={1} justifyContent="center">
+          {stats.map(({ label, value }, idx) => (
+            <Grid key={label} item xs={6}>
+              <Typography
+                variant="caption"
+                sx={
+                  statColors[idx]
+                    ? { color: statColors[idx], transition: 'color 0.3s' }
+                    : {}
+                }
+              >
+                {label}
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={
+                  statColors[idx]
+                    ? { color: statColors[idx], transition: 'color 0.3s' }
+                    : {}
+                }
+              >
+                {value}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+}
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
+const seatCapacities = {
+  Dubai: 53,
+  Dublin: 78,
+  Rome: 39,
+  London: 41,
+  Moscow: 108,
+  Casablanca: 55,
+  Madrid: 65,
 };
 
-/**
- * Historical raw‐data fetch for the past N days, all or by location.
- */
-exports.fetchHistoricalData = async ({ days = 7, location = null }) => {
-  const pool = await poolPromise;
-  const parts = partitionList.map(p => `'${p.replace("'", "''")}'`).join(',');
-  const locFilter = location
-    ? `AND PartitionName2 = @location`
-    : `AND PartitionName2 IN (${parts})`;
+export default seatCapacities;
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\hooks\useLiveOccupancy.js
 
-  const query = `
-    WITH Hist AS (
-      SELECT
-        DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC) AS LocaleMessageTime,
-        t1.ObjectName1,
-        t1.ObjectName2 AS Door,
-        CASE WHEN t2.Int1 = 0 THEN t2.Text12 ELSE CAST(t2.Int1 AS NVARCHAR) END AS EmployeeID,
-        t3.Name AS PersonnelType,
-        t1.ObjectIdentity1 AS PersonGUID,
-        t1.PartitionName2,
-        t5d.value AS Direction
-      FROM ACVSUJournal_00010028.dbo.ACVSUJournalLog t1
-      JOIN ACVSCore.Access.Personnel      t2 ON t1.ObjectIdentity1 = t2.GUID
-      JOIN ACVSCore.Access.PersonnelType  t3 ON t2.PersonnelTypeID = t3.ObjectID
-      LEFT JOIN ACVSUJournal_00010028.dbo.ACVSUJournalLogxmlShred t5d
-        ON t1.XmlGUID = t5d.GUID AND t5d.Value IN ('InDirection','OutDirection')
-      WHERE
-        t1.MessageType = 'CardAdmitted'
-        ${locFilter}
-        AND CONVERT(DATE, DATEADD(MINUTE, -1 * t1.MessageLocaleOffset, t1.MessageUTC))
-            >= DATEADD(DAY, -${days}, CONVERT(DATE, GETDATE()))
-    )
-    SELECT *
-    FROM Hist
-    ORDER BY LocaleMessageTime ASC;
-  `;
+import { useState, useEffect, useRef } from 'react';
+import { fetchLiveSummary } from '../api/occupancy.service';
 
-  const req = pool.request();
-  if (location) req.input('location', sql.NVarChar, location);
-  const result = await req.query(query);
-  return result.recordset;
+export function useLiveOccupancy(interval = 1000) {
+  const [data, setData]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    let active = true;
+
+    async function load() {
+      try {
+        // fetchLiveSummary now returns cached data instantly if available
+        const json = await fetchLiveSummary();
+        if (!active) return;
+        setData(json);
+        setLoading(false);
+      } catch (e) {
+        if (!active) return;
+        setError(e);
+        setLoading(false);
+      }
+    }
+
+    load();
+    timer.current = setInterval(load, interval);
+
+    return () => {
+      active = false;
+      clearInterval(timer.current);
+    };
+  }, [interval]);
+
+  return { data, loading, error };
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
+//C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
+
+
+// src/pages/Dashboard.jsx
+
+import React, { useEffect, useState } from 'react';
+import { Container, Box, Typography, Skeleton } from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import PeopleIcon from '@mui/icons-material/People';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SummaryCard from '../components/SummaryCard';
+import CompositeChartCard from '../components/CompositeChartCard';
+import PieChartCard from '../components/PieChartCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+import doorMapRaw from '../utils/doorMap';
+
+// Flags
+import austriaFlag from '../assets/flags/austria.png';
+import uaeFlag from '../assets/flags/uae.png';
+import irelandFlag from '../assets/flags/ireland.png';
+import italyFlag from '../assets/flags/italy.png';
+import lithuaniaFlag from '../assets/flags/lithuania.png';
+import moroccoFlag from '../assets/flags/morocco.png';
+import russiaFlag from '../assets/flags/russia.png';
+import ukFlag from '../assets/flags/uk.png';
+import spainFlag from '../assets/flags/spain.png';
+
+const partitions = [
+  'AUT.Vienna', 'DU.Abu Dhab', 'IE.Dublin', 'IT.Rome',
+  'LT.Vilnius', 'MA.Casablanca', 'RU.Moscow', 'UK.London', 'ES.Madrid'
+];
+const displayName = {
+  'AUT.Vienna': 'Vienna',
+  'DU.Abu Dhab': 'Abu Dhabi',
+  'IE.Dublin': 'Dublin',
+  'IT.Rome': 'Rome',
+  'LT.Vilnius': 'Vilnius',
+  'MA.Casablanca': 'Casablanca',
+  'RU.Moscow': 'Moscow',
+  'UK.London': 'London',
+  'ES.Madrid': 'Madrid'
+};
+const flagMap = {
+  'AUT.Vienna': austriaFlag,
+  'DU.Abu Dhab': uaeFlag,
+  'IE.Dublin': irelandFlag,
+  'IT.Rome': italyFlag,
+  'LT.Vilnius': lithuaniaFlag,
+  'MA.Casablanca': moroccoFlag,
+  'RU.Moscow': russiaFlag,
+  'UK.London': ukFlag,
+  'ES.Madrid': spainFlag
+};
+const colorsMap = {
+  'AUT.Vienna': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'DU.Abu Dhab': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'IE.Dublin': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'IT.Rome': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'LT.Vilnius': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'MA.Casablanca': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'RU.Moscow': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'UK.London': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'ES.Madrid': ['#FFC0CB', '#fcf3cf', '#2ecc71', '#ec7063']
 };
 
-exports.fetchHistoricalOccupancy = async (location) =>
-  exports.fetchHistoricalData({ days:7, location: location||null });
+// Vilnius door → building
+const vilniusMap = doorMapRaw.reduce((acc, { partition, door }) => {
+  if (partition === 'LT.Vilnius') {
+    acc[door] = door.toUpperCase().includes('GAMA') ? 'GAMA' : 'Delta';
+  }
+  return acc;
+}, {});
 
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\utils\doorMap.js
 
-const doorZoneMap = {
-  // Podium / Red
-  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection":                 "Red Zone",
-  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection":                               "Red Zone",
-  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___OutDirection":                              "Red Zone",
-  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___InDirection":               "Red Zone",
-  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___OutDirection":              "Out of office",
-  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___InDirection":                              "Red Zone",
-  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___OutDirection":                             "Red Zone - Outer Area",
-  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___InDirection":           "Red Zone",
-  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___OutDirection":          "Reception Area",
-  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___InDirection":       "Red Zone",
-  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___OutDirection":      "Yellow Zone - Outer Area",
 
-  // Podium / Yellow
-  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
-  "APAC_IN_PUN_PODIUM_YELLOW_MDF RESTRICTED DOOR___InDirection":                     "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_IT STORE ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_REPRO STORE-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_CONTROL PANEL ROOM-DOOR RESTRICTED DOOR___InDirection": "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_PREACTION ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_TESTING LAB-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___InDirection":                     "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___OutDirection":                    "Reception Area",
-  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___InDirection":                 "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___OutDirection":                "Out of office",
-  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
-  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___InDirection":                     "Yellow Zone",
-  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___OutDirection":                    "Yellow Zone - Outer Area",
 
-  // Podium / Green
+export default function Dashboard() {
+  const { data, loading, error } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
 
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\utils\timezones.js
-// src/utils/timezones.js
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
 
-module.exports = {
-  'APAC.Default':       'Asia/Kolkata',
-  'CN.Beijing':         'Asia/Shanghai',
-  'JP.Tokyo':           'Asia/Tokyo',
-  'PH.Manila':          'Asia/Manila',
-  'MY.Kuala Lumpur':    'Asia/Kuala_Lumpur',
-  'IN.Pune':            'Asia/Kolkata',
+  if (error) {
+    return <Box py={4}><Typography color="error" align="center">Error loading live data</Typography></Box>;
+  }
+
+  // Vilnius breakdown
+  // const counts = { GAMA: 0, Delta: 0 };
+  // (data?.details || []).forEach(r => {
+  //   if (r.PartitionName2 === 'LT.Vilnius' && r.Direction === 'InDirection') {
+  //     const b = vilniusMap[r.Door];
+  //     if (b) counts[b]++;
+  //   }
+  // });
+  // const vilniusFloors = Object.entries(counts).map(([name, headcount]) => ({ name, headcount, capacity: 0 }));
+
+  // Vilnius floor-wise breakdown from realtime data
+  const vilniusRealtimeFloors = data?.realtime?.['LT.Vilnius']?.floors || {};
+
+  const floorCapacities = {
+    // '1st Floor': 90,
+    '2nd Floor': 74,
+    '3rd Floor': 97,
+    '4th Floor': 97,
+    '5th Floor': 97,
+    '6th Floor': 143,
+    '7th Floor': 141,
+    '8th Floor': 147,
+    '9th Floor': 153,
+    '10th Floor': 135,
+
+    // Add/adjust these based on real capacity per floor
+  };
+
+  const vilniusFloors = Object.entries(vilniusRealtimeFloors).map(([floor, headcount]) => ({
+    name: floor,
+    headcount,
+    capacity: floorCapacities[floor] || 0
+  }));
+
+  // Vilnius door → building
+const vilniusMap = doorMapRaw.reduce((acc, { partition, door }) => {
+  if (partition === 'LT.Vilnius') {
+    acc[door] = door.toUpperCase().includes('GAMA') ? 'GAMA' : 'Delta';
+  }
+  return acc;
+}, {});
+
+  // Donut slices
+  const slice1 = partitions.slice(0, 4).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
+  const slice2 = partitions.slice(5).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
+
+  // Summary cards
+  const todayTot = data?.today.total || 0;
+  const todayEmp = data?.today.Employee || 0;
+  const todayCon = data?.today.Contractor || 0;
+  const realtimeTot = Object.values(data?.realtime || {}).reduce((s, x) => s + (x.total || 0), 0);
+  const realtimeEmp = Object.values(data?.realtime || {}).reduce((s, x) => s + (x.Employee || 0), 0);
+  const realtimeCon = Object.values(data?.realtime || {}).reduce((s, x) => s + (x.Contractor || 0), 0);
+
+  // Build per-site items
+  const summaryItems = [];
+  summaryItems.push({
+    label: 'Vilnius',
+    total: data?.realtime['LT.Vilnius']?.total || 0,
+    emp: data?.realtime['LT.Vilnius']?.Employee || 0,
+    cont: data?.realtime['LT.Vilnius']?.Contractor || 0,
+    flag: flagMap['LT.Vilnius'], colors: colorsMap['LT.Vilnius']
+  });
+  partitions.filter(k => k !== 'LT.Vilnius').forEach(k => {
+    const x = data?.realtime[k] || {};
+    summaryItems.push({ label: displayName[k], total: x.total || 0, emp: x.Employee || 0, cont: x.Contractor || 0, flag: flagMap[k], colors: colorsMap[k] });
+  });
+
+  return (
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 1 }}>
+
+        
+        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+            {
+              title: "Today's Total Headcount",
+              value: todayTot,
+              icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
+              border: '#FFD666'
+            },
+            {
+              title: "Today's Employees Count",
+              value: todayEmp,
+              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+              border: '#81C784'
+            },
+            {
+              title: "Today's Contractors Count",
+              value: todayCon,
+              icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 25 }} />,
+              border: '#FFE599'
+            },
+            {
+              title: "Realtime Headcount",
+              value: realtimeTot,
+              icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
+              border: '#FFF2CC'
+            },
+            {
+              title: "Realtime Employees Count",
+              value: realtimeEmp,
+              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+              border: '#FFD666'
+            },
+            {
+              title: "Realtime Contractors Count",
+              value: realtimeCon,
+              icon: <i className="fa-solid fa-circle-user" style={{ color: '#BA68C8', fontSize: 25 }} />,
+              border: '#FFE599'
+            }
+          ].map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }}
+              />
+            </Box>
+          ))}
+        </Box>
+
+
+
+        <Box display="flex" flexWrap="wrap" gap={1} mb={4}>
+          {loading ? <LoadingSpinner />
+            : summaryItems.map(item => {
+              const [tc, totc, ec, cc] = item.colors;
+              return (
+                // <Box key={item.label} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+                <Box key={item.label} sx={{ flex: '1 1 calc(10.66% - 1px)' }}>
+                  <SummaryCard
+                    title={item.label}
+                    total={item.total}
+                    stats={[{ label: 'Employees', value: item.emp }, { label: 'Contractors', value: item.cont }]}
+                    icon={item.flag && <Box component="img" src={item.flag} alt={item.label} sx={{ width: 50, height: 30, border: '1px solid #fff' }} />}
+                    titleColor={tc} totalColor={totc} statColors={[ec, cc]}
+                    sx={{
+                      height: 180,
+                      border: `2px solid ${tc}`,
+                      '& .MuiTypography-subtitle1': { fontSize: '1.3rem' },
+                      '& .MuiTypography-h4': { fontSize: '1.7rem' },
+                      '& .MuiTypography-caption': { fontSize: '0.875rem' }
+                    }}
+                  />
+                </Box>
+              )
+            })
+          }
+        </Box>
+
+
+
+        {/* Live charts row */}
+        <Box display="flex" gap={2} mb={4} flexWrap="wrap">
+
+          {/* 1) Vilnius composite */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <CompositeChartCard
+                title="Vilnius "
+                data={vilniusFloors}
+                barColor="#4CAF50"
+                lineColor="#FF0000"
+                height={410}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            )}
+          </Box>
+
+          {/* 2) Top regions donut */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <PieChartCard
+                title="Vienna • Abu Dhabi • Dublin • Rome"
+                data={slice1}
+                colors={['#4E79A7', '#F28E2B', '#E15759', '#76B7B2']}
+                innerRadius={60}
+                height={410}
+                showZeroSlice
+                animationDuration={1500}
+                sx={{title:{color:'#FFC107'}}}
+              />
+            )}
+          </Box>
+
+          {/* 3) Other regions donut */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <PieChartCard
+                title="Casablanca • Moscow • London • Madrid"
+                data={slice2}
+                colors={['#59A14F', '#EDC948', '#AF7AA1', '#EFBF04']}
+                innerRadius={60}
+                height={410}
+                showZeroSlice
+                animationDuration={1500}
+              />
+            )}
+          </Box>
+
+        </Box>
+      </Container>
+      
+      {/* <Footer /> */}
+      
+      <footer
+        style={{
+          backgroundColor: '#000',
+          color: '#FFC72C',
+          padding: '1.5rem 0',
+          textAlign: 'center',
+          // marginTop: '1rem',
+          borderTop: '2px solid #FFC72C',
+          fontSize: '0.95rem',
+          lineHeight: '1.6'
+        }}
+      >
+        <div>
+          <strong>Global Security Operations Center (GSOC)</strong>
+
+          Live Occupancy dashboard for Western Union Denver — Real-time occupancy, floor activity, and personnel insights.
+        </div>
+        <div style={{ marginTop: '0.75rem' }}>
+          Contact us: <a href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com" style={{ color: '#FFC72C', textDecoration: 'underline' }}>gsoc@westernunion.com</a> |
+          Landline: <span style={{ color: '#FFC72C' }}>+91-020-67632394</span>
+        </div>
+      </footer>
+
+    </>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\History.jsx
+
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  Container, Box, Typography, Paper, Table, TableHead, TableBody,
+  TableRow, TableCell, Button, TextField
+} from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchHistory } from '../api/occupancy.service';
+
+const codeToCountry = {
+  AUT: 'Austria', DU: 'UAE', IE: 'Ireland', IT: 'Italy',
+  LT: 'Lithuania', MA: 'Morocco', RU: 'Russia', UK: 'UK', ES: 'Spain'
 };
-C:\Users\W0024618\Desktop\apac-occupancy-backend\src\app.js
-// src/app.js
-const express           = require('express');
-const cors              = require('cors');
-const occupancyRoutes   = require('./routes/occupancy.routes');
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+export default function History() {
+  const { partition } = useParams();
+  const decoded = partition ? decodeURIComponent(partition) : null;
+  const filterCode = decoded?.split('.')[0] || null;
 
-// Health check
-app.get('/', (_req,res) => res.send('🌏 APAC Occupancy API Running'));
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
 
-// Mount occupancy
-app.use('/api/occupancy', occupancyRoutes);
+  useEffect(() => {
+    fetchHistory(partition).then(json => {
+      setData(json);
+      setLoading(false);
+    });
+  }, [partition]);
 
-module.exports = app;
-C:\Users\W0024618\Desktop\apac-occupancy-backend\.env
+  const summary = useMemo(() => {
+    if (!data || !date) return null;
+    const ds = format(date, 'yyyy-MM-dd');
+    return data.summaryByDate.find(r => r.date === ds) || null;
+  }, [data, date]);
 
-# APAC DB
-DB_USER=GSOC_Test
-DB_PASSWORD=Westernuniongsoc@2025
-DB_SERVER=SRVWUPNQ0986V
-DB_DATABASE=ACVSUJournal_00010028
-DB_PORT=1433
+  const rows = useMemo(() => {
+    if (!summary) return [];
+    return Object.entries(summary.partitions)
+      .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
+      .map(([k, v]) => {
+        const [code, site] = k.split('.');
+        return {
+          country: codeToCountry[code] || code,
+          site,
+          employee: v.Employee ?? v.EmployeeCount ?? 0,
+          contractor: v.Contractor ?? v.ContractorCount ?? 0,
+          total: v.total ?? 0
+        };
+      });
+  }, [summary, filterCode]);
 
-PORT=3007
-C:\Users\W0024618\Desktop\apac-occupancy-backend\server.js
-// server.js
-require('dotenv').config();
-const app = require('./src/app');
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 APAC server listening on port ${PORT}`);
+  const details = useMemo(() => {
+    if (!data || !date || !showDetails) return [];
+    const ds = format(date, 'yyyy-MM-dd');
+    return data.details.filter(r => r.SwipeDate.startsWith(ds))
+      .filter(r => !filterCode || r.PartitionName2.startsWith(filterCode + '.'));
+  }, [data, date, filterCode, showDetails]);
+
+  const exportExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(details.map((r, i) => ({
+      Sr: i + 1, Date: r.SwipeDate.slice(0, 10),
+      Time: r.LocaleMessageTime.slice(11, 19),
+      EmployeeID: r.EmployeeID, Name: r.ObjectName1,
+      Type: r.PersonnelType, Door: r.Door,
+      Partition: r.PartitionName2
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Details');
+    saveAs(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]),
+      `history_${format(date, 'yyyyMMdd')}.xlsx`);
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <>
+      <Header />
+
+    
+
+      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        {/* Flex row: DatePicker + Summary Table */}
+        <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 1, gap: '10px' }}>
+
+          {/* Left: Date Picker */}
+          <Box sx={{ flex: '0 0 200px' }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select date"
+                value={date}
+                onChange={d => { setDate(d); setShowDetails(false); }}
+                renderInput={params => <TextField fullWidth {...params} />}
+              />
+            </LocalizationProvider>
+          </Box>
+
+          {/* Right: Summary table */}
+          {date && summary && (
+            <Box sx={{ flex: 1, maxWidth: 800, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Paper elevation={3} sx={{ px: 2, py: 1, border: '3px solid #000', borderRadius: 2 }}>
+                <Table size='small' sx={{ border: '2px solid #000' }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={5} align="center"
+                        sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
+                        {format(date, 'EEEE, d MMMM, yyyy')}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#FFC107' }}>
+                      {['Country', 'Site', 'Employees', 'Contractors', 'Total'].map(h => (
+                        <TableCell key={h} align={['Country', 'Site'].includes(h) ? 'left' : 'right'}
+                          sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((r, i) => (
+                      <TableRow key={i}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.country}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.site}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.employee}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.contractor}</TableCell>
+                        <TableCell align="right" sx={{ backgroundColor: '#FFC107', fontWeight: 'bold', border: '2px solid #000' }}>{r.total}</TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow sx={{ bgcolor: '#666' }}>
+                      <TableCell colSpan={2} align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        Total
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {rows.reduce((s, r) => s + r.employee, 0)}
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {rows.reduce((s, r) => s + r.contractor, 0)}
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
+                        {rows.reduce((s, r) => s + r.total, 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Paper>
+
+              {/* Buttons */}
+              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
+                <Button
+                  variant="contained"
+                  sx={{ bgcolor: '#FFC107', color: '#000' }}
+                  onClick={() => setShowDetails(v => !v)}
+                >
+                  {showDetails ? 'Hide Details' : 'See Details'}
+                </Button>
+                {showDetails && (
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
+                    onClick={exportExcel}
+                  >
+                    Export to Excel
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          )}
+        </Box>
+
+        {/* Details Table: Still below, only if toggled */}
+        {showDetails && (
+          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
+            <Paper elevation={1} sx={{ px: '40px', py: 1, width: '100%', border: '3px solid #000', borderRadius: 2 }}>
+              {details.length > 0 ? (
+                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: '#000' }}>
+                      {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
+                        <TableCell key={h} align="center"
+                          sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {details.map((r, i) => (
+                      <TableRow key={`${r.PersonGUID}-${i}`}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.SwipeDate.slice(0, 10)}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.LocaleMessageTime.slice(11, 19)}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography variant="body2" sx={{ color: '#666', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
+                  No swipe records found for this date.
+                </Typography>
+              )}
+            </Paper>
+          </Box>
+        )}
+      </Container>
+      <Footer />
+    </>
+  );
+}
+
+src\pages\PartitionDetail.jsx
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Container, Box, Typography, Button } from '@mui/material';
+
+import Header         from '../components/Header';
+import Footer         from '../components/Footer';
+import SummaryCard    from '../components/SummaryCard';
+import ChartCard      from '../components/ChartCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+import GroupIcon          from '@mui/icons-material/Group';
+import TrackChangesIcon   from '@mui/icons-material/TrackChanges';
+import PeopleIcon         from '@mui/icons-material/People';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+
+import { fetchLiveSummary, fetchHistory } from '../api/occupancy.service';
+import buildingCapacities                from '../data/buildingCapacities';
+import doorMapRaw                        from '../utils/doorMap';
+import { lookupFloor }                   from '../utils/floorLookup';
+
+export default function PartitionDetail() {
+  const { partition } = useParams();
+  const navigate      = useNavigate();
+
+  const [live, setLive]         = useState(null);
+  const [history, setHistory]   = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  // Poll live
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!active) return;
+      setLive(json);
+      setLastUpdate(new Date().toLocaleTimeString());
+    };
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { active = false; clearInterval(iv); };
+  }, [partition]);
+
+  // Load history once
+  useEffect(() => {
+    setLoadingHistory(true);
+    fetchHistory(partition).then(json => {
+      setHistory(json);
+      setLoadingHistory(false);
+    });
+  }, [partition]);
+
+  if (!live || !history) return <LoadingSpinner />;
+
+  const today  = history.summaryByDate.at(-1).region;
+  const realtime = live.realtime[partition] || { total:0, Employee:0, Contractor:0, floors:{} };
+
+  // Build floor entries
+  const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
+    const name     = floor.trim();
+    const capacity = buildingCapacities[name] || 0;
+    const pct      = capacity ? Math.round(cnt / capacity * 100) : 0;
+    return {
+      name,
+      headcount: cnt,
+      capacity,
+      percentage: pct
+    };
+  });
+
+  // Six cards
+  const cards = [
+    { title: "Today's Total",    value: loadingHistory ? <LoadingSpinner size={20}/> : today.total,      icon:<GroupIcon/>,          border:'#FFD666' },
+    { title: "Today's Employees",value: loadingHistory ? <LoadingSpinner size={20}/> : today.Employee,   icon:<PeopleIcon/>,         border:'#81C784' },
+    { title: "Today's Contractors", value: loadingHistory ? <LoadingSpinner size={20}/> : today.Contractor, icon:<BusinessCenterIcon/>, border:'#FFE599' },
+    { title: "Realtime Total",    value: realtime.total,    icon:<TrackChangesIcon/>, border:'#FFF2CC' },
+    { title: "Realtime Employees",value: realtime.Employee, icon:<PeopleIcon/>,        border:'#FFD666' },
+    { title: "Realtime Contractors",value: realtime.Contractor,icon:<BusinessCenterIcon/>,border:'#FFE599' },
+  ];
+
+  return (
+    <>
+      <Header />
+
+      <Container maxWidth={false} disableGutters sx={{ px:2, py:2 }}>
+        <Box mb={1}>
+          <Button size="small" onClick={() => navigate(-1)}>← Back</Button>
+        </Box>
+
+        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+          {cards.map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }}
+              />
+            </Box>
+          ))}
+        </Box>
+
+        <Box sx={{ border:'2px solid #FFC107', p:2, borderRadius:2, background:'rgba(0,0,0,0.6)' }}>
+          <Box display="flex" justifyContent="space-between" mb={1}>
+            <Typography variant="h6">Live Floor Headcount vs Capacity</Typography>
+            <Typography variant="body2" color="textSecondary">Last updated: {lastUpdate}</Typography>
+          </Box>
+
+          <ChartCard
+            data={floorEntries}
+            dataKey="headcount"
+            chartHeight={320}
+            colors={{ head:'#28B463', cap:'#FDDA0D' }}
+            axisProps={{
+              xAxis: { tick:{ fill:'#fff' }, angle: -0, textAnchor:'end' },
+              yAxis: { tick:{ fill:'#fff' } }
+            }}
+          />
+        </Box>
+      </Container>
+
+      <Footer />
+    </>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\PartitionDetailDetails.jsx
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  Container, Box, Typography, Button, TextField,
+  TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
+} from '@mui/material';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import DataTable from '../components/DataTable';
+import { fetchLiveSummary } from '../api/occupancy.service';
+import { lookupFloor } from '../utils/floorLookup';
+
+export default function PartitionDetailDetails() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
+
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState('');
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(null);
+
+  // Load & refresh
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!active) return;
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === 'InDirection')
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction)
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+      setLoading(false);
+    };
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { active = false; clearInterval(iv); };
+  }, [partition]);
+
+  const floorMap = useMemo(() => {
+    return details.reduce((m, r) => {
+      m[r.floor] = m[r.floor] || [];
+      m[r.floor].push(r);
+      return m;
+    }, {});
+  }, [details]);
+
+ 
+
+  const displayed = useMemo(() => {
+  const term = search.toLowerCase();
+  return Object.entries(floorMap)
+    .map(([floor, emps]) => {
+      const filteredEmps = emps.filter(e =>
+        floor.toLowerCase().includes(term) ||
+        e.ObjectName1?.toLowerCase().includes(term) ||
+        e.EmployeeID?.toString().toLowerCase().includes(term)
+      );
+      return [floor, filteredEmps];
+    })
+    .filter(([, filteredEmps]) => filteredEmps.length > 0);
+}, [floorMap, search]);
+
+  if (loading) {
+    return <>
+      <Header />
+      <Box p={4}><LoadingSpinner /></Box>
+      <Footer />
+    </>;
+  }
+
+  return (
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 2 }}>
+
+        <Box mb={1}><Button size="small" onClick={() => navigate(-1)}>← Back to Overview</Button></Box>
+
+        <Box display="flex" alignItems="center" flexWrap="wrap" gap={0.5} mb={2}>
+          {/* Title */}
+          <Typography variant="h6">Floor Details</Typography>
+
+          {/* Last updated text */}
+          <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+            Last updated: {lastUpdate}
+          </Typography>
+
+          {/* Search field */}
+          <TextField
+            size="small"
+            placeholder="Search floor / emp…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            sx={{ ml: 1 }}
+          />
+        </Box>
+
+        <Box display="flex" flexWrap="wrap">
+  {[...displayed]
+    .sort((a, b) => b[1].length - a[1].length) // Priority: most rows first
+    .map(([floor, emps]) => {
+      const isExpanded = expanded === floor;
+      const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
+
+      return (
+        <Box
+          key={floor}
+          sx={{
+            width: { xs: '100%', sm: '50%' },
+            p: 1,
+            boxSizing: 'border-box',
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ fontWeight: 'bold' }}
+          >
+            {floor} (Total {emps.length})
+          </Typography>
+
+          {/* Smart height layout */}
+          <Box
+            sx={{
+              border: '2px solid #FFC107',
+              borderRadius: 1,
+              p: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 120,
+              maxHeight: isExpanded ? 600 : 'auto',
+            }}
+          >
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{
+                overflowY: 'auto',
+                flexGrow: 1,
+              }}
+            >
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map((h, idx, arr) => (
+                      <TableCell
+                        key={h}
+                        sx={{
+                          fontWeight: 'bold',
+                          py: 0.5,
+                          whiteSpace: 'nowrap',
+                          borderRight: idx !== arr.length - 1 ? '1px solid #ccc' : 'none',
+                          borderBottom: '1px solid #ccc',
+                        }}
+                      >
+                        {h}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {visibleEmps.map((r, i) => (
+                    <TableRow key={i}>
+                      {[
+                        r.EmployeeID,
+                        r.ObjectName1,
+                        new Date(r.LocaleMessageTime).toLocaleTimeString(),
+                        r.PersonnelType,
+                        r.CardNumber,
+                        r.Door,
+                      ].map((val, idx, arr) => (
+                        <TableCell
+                          key={idx}
+                          sx={{
+                            py: 0.5,
+                            minWidth: [50, 120, 100, 80, 100, 100][idx],
+                            whiteSpace: 'nowrap',
+                            borderRight: idx !== arr.length - 1 ? '1px solid #eee' : 'none',
+                          }}
+                        >
+                          {val}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {emps.length > 10 && (
+              <Box textAlign="right" mt={1}>
+                <Button
+                  size="small"
+                  onClick={() => setExpanded(isExpanded ? null : floor)}
+                >
+                  {isExpanded ? 'Hide' : 'See more…'}
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      );
+    })}
+</Box>
+
+        {expanded && (
+          <Box mt={2}>
+            <Typography variant="h6" gutterBottom>{expanded} — All Entries</Typography>
+            <DataTable
+              columns={[
+                { field: 'EmployeeID', headerName: 'ID' },
+                { field: 'ObjectName1', headerName: 'Name' },
+                { field: 'LocaleMessageTime', headerName: 'Time' },
+                { field: 'PersonnelType', headerName: 'Type' },
+                { field: 'CardNumber', headerName: 'Card' },
+                { field: 'Door', headerName: 'Door' }
+              ]}
+              rows={floorMap[expanded].map(r => ({
+                ...r,
+                LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+              }))}
+            />
+          </Box>
+        )}
+      </Container>
+      <Footer />
+    </>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\routes\AppRoutes.jsx
+
+
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const Dashboard               = lazy(() => import('../pages/Dashboard'));
+const History                 = lazy(() => import('../pages/History'));
+const PartitionDetail         = lazy(() => import('../pages/PartitionDetail'));
+const PartitionDetailDetails  = lazy(() => import('../pages/PartitionDetailDetails'));
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          {/* Home dashboard */}
+          <Route path="/" element={<Dashboard />} />
+
+          {/* Global history */}
+          <Route path="/history" element={<History />} />
+
+          {/* Partition-scoped history */}
+          <Route path="/partition/:partition/history" element={<History />} />
+
+          {/* Partition overview (live) */}
+          <Route path="/partition/:partition" element={<PartitionDetail />} />
+
+          {/* Partition “see details” sub-page */}
+          <Route
+            path="/partition/:partition/details"
+            element={<PartitionDetailDetails />}
+          />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\services\occupancy.service.js
+export const partitionList = [
+  'AUT.Vienna',
+  'DU.Abu Dhab',
+  'IE.Dublin',
+  'IT.Rome',
+  'LT.Vilnius',
+  'MA.Casablanca',
+  'RU.Moscow',
+  'UK.London',
+  'ES.Madrid'
+];
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\theme\westernUnionTheme.js
+// src/theme/westernUnionTheme.js
+import { createTheme } from '@mui/material/styles';
+
+const westernUnionTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#000000',
+      paper:   '#1c1c1c'
+    },
+    primary: {
+      main: '#FFC72C',
+      contrastText: '#000000'
+    },
+    secondary: {
+      main: '#FFFFFF',
+      contrastText: '#000000'
+    },
+    text: {
+      primary:   '#FFFFFF',
+      secondary: 'rgba(255,255,255,0.7)'
+    },
+    divider: 'rgba(255,255,255,0.2)'
+  },
+
+  typography: {
+    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+    // Card titles
+    subtitle1: { fontWeight: 900, color: '#FFE599' },
+    // Totals (variant h4 in SummaryCard)
+    h4: { color: '#fcf3cf', fontWeight: 'bold' },
+    // Stat values (variant h6)
+    h6: { color: '#FFC107', fontWeight: 900 },
+    // Stat labels (variant caption)
+    caption: { color: '#FFC107', fontWeight: 900 },
+
+    // You can leave other variants untouched
+    body1:   { color: '#FFFFFF' },
+    body2:   { color: 'rgba(255,255,255,0.7)' }
+  },
+
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: {
+          height: '100%'
+        },
+        body: {
+          margin: 0,
+          padding: 0,
+          height: '100%',
+          background: 'linear-gradient(135deg, #000000 30%, #2c0000 60%, #000000 100%)',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          animation: 'gradientSpin 20s ease infinite',
+          overflowX: 'hidden'
+        },
+        '@keyframes gradientSpin': {
+          '0%':   { backgroundPosition: '0% 50%' },
+          '50%':  { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' }
+        }
+      }
+    },
+
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          borderRadius: 4
+        },
+        contained: {
+          backgroundColor: '#FFC107',
+          color: '#000000',
+          '&:hover': {
+            backgroundColor: '#e6ac00'
+          }
+        }
+      }
+    },
+
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#333',
+          color: '#FFF'
+        }
+      }
+    }
+
+    // Note: We no longer override MuiCard so your SummaryCard and ChartCard
+    // backgrounds, borders and hover effects come from their own `sx` props.
+  }
 });
+
+export default westernUnionTheme;
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\utils\dateHelpers.js
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\utils\doorMap.js
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\utils\floorLookup.js
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\utils\partitionGroups.js
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\App.css
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\App.js
+
+
+
