@@ -1,27 +1,36 @@
- <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-          
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-          </Typography>
+import { useNavigate, useLocation } from 'react-router-dom';
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
+// Inside your component:
+const navigate = useNavigate();
+const location = useLocation();
+const isHome = location.pathname === '/';
 
-          {/* 👇 Always visible default partition path */}
-          <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-            <ListAltIcon />
-          </IconButton>
+<Box display="flex" alignItems="center">
+  <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+  
+  <Typography variant="h6" sx={{ flexGrow: 1 }}>
+    EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+  </Typography>
 
-          {/* Optional: Keep dynamic version if needed */}
-          {/* {isPart && (
+  <IconButton color="inherit" onClick={() => navigate('/')}>
+    <HomeIcon />
+  </IconButton>
+
+  <IconButton color="inherit" onClick={() => navigate('/history')}>
+    <HistoryIcon />
+  </IconButton>
+
+  {/* ✅ Show this ONLY on main dashboard */}
+  {isHome && (
+    <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
+      <ListAltIcon />
+    </IconButton>
+  )}
+
+  {/* ✅ Dynamic partition link shown when applicable */}
+  {isPart && (
     <IconButton color="inherit" onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
       <ListAltIcon />
     </IconButton>
-  )} */}
-
-        </Box>
+  )}
+</Box>
