@@ -1,34 +1,5 @@
-// src/hooks/useLiveOccupancy.js
-import { useEffect, useState } from 'react';
-import { getCurrentOccupancy } from '../api/occupancy.service'; // ✅ FIXED PATH
+occupancy.service.js:36 Error fetching occupancy data: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+getCurrentOccupancy	@	occupancy.service.js:36
 
-const useLiveOccupancy = (partitionNames = []) => {
-  const [data, setData] = useState({ today: {}, realtime: {} });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const occupancyData = await getCurrentOccupancy(partitionNames);
-        setData(occupancyData);
-      } catch (err) {
-        console.error('Error fetching occupancy:', err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, [partitionNames]);
-
-  return { data, loading, error };
-};
-
-export default useLiveOccupancy;
+occupancy.service.js:36 Error fetching occupancy data: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+getCurrentOccupancy	@	occupancy.service.js:36
