@@ -10,10 +10,9 @@
           {floor} (Total {emps.length})
         </Typography>
 
-        {/* Updated CSS here to ensure tables stay in one row */}
-        <Box display="flex" gap={2} flexWrap="nowrap" flexDirection="row">
+        <Box display="flex" flexWrap="wrap" gap={2}>
           {/* First Table */}
-          <Paper sx={{ width: '50%', border: '2px solid #FFC107', p: 2 }}>
+          <Paper sx={{ flex: 1, minWidth: '300px', maxWidth: '50%', border: '2px solid #FFC107', p: 2 }}>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
@@ -40,7 +39,7 @@
           </Paper>
 
           {/* Second Table */}
-          <Paper sx={{ width: '50%', border: '2px solid #FFC107', p: 2 }}>
+          <Paper sx={{ flex: 1, minWidth: '300px', maxWidth: '50%', border: '2px solid #FFC107', p: 2 }}>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
@@ -67,7 +66,7 @@
           </Paper>
         </Box>
 
-        {/* See more button */}
+        {/* See more */}
         <Box textAlign="right">
           <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
             {expanded === floor ? 'Hide' : 'See more…'}
