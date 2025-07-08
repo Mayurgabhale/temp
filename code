@@ -1,108 +1,5 @@
-// src/pages/EMEAHistory.jsx
-
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Container, Box, Typography, Paper, Table, TableHead, TableBody,
-  TableRow, TableCell, Button, TextField
-} from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchHistory } from '../api/occupancy.service';
-
-const codeToCountry = {
-  AUT: 'Austria', DU: 'UAE', IE: 'Ireland', IT: 'Italy',
-  LT: 'Lithuania', MA: 'Morocco', RU: 'Russia', UK: 'UK', ES: 'Spain'
-};
-
-export default function EMEAHistory() {
-  const { partition } = useParams();
-  const decoded = partition ? decodeURIComponent(partition) : null;
-  const filterCode = decoded?.split('.')[0] || null;
-
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [date, setDate] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-
-  useEffect(() => {
-    fetchHistory(partition).then(json => {
-      setData(json);
-      setLoading(false);
-    });
-  }, [partition]);
-
-  const summary = useMemo(() => {
-    if (!data || !date) return null;
-    const ds = format(date, 'yyyy-MM-dd');
-    return data.summaryByDate.find(r => r.date === ds) || null;
-  }, [data, date]);
-
-  const rows = useMemo(() => {
-    if (!summary) return [];
-    return Object.entries(summary.partitions)
-      .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
-      .map(([k, v]) => {
-        const [code, site] = k.split('.');
-        return {
-          country: codeToCountry[code] || code,
-          site,
-          employee: v.Employee ?? v.EmployeeCount ?? 0,
-          contractor: v.Contractor ?? v.ContractorCount ?? 0,
-          total: v.total ?? 0
-        };
-      });
-  }, [summary, filterCode]);
-
-  const details = useMemo(() => {
-    if (!data || !date || !showDetails) return [];
-    const ds = format(date, 'yyyy-MM-dd');
-    return data.details
-      .filter(r => r.SwipeDate.startsWith(ds))
-      .filter(r => !filterCode || r.PartitionName2.startsWith(filterCode + '.'))
-      .filter(r => r.Direction === 'InDirection')
-      .reduce((unique, row) => {
-        const key = `${row.PersonGUID}-${row.PersonnelType}`;
-        if (!unique._seen.has(key)) {
-          unique._seen.add(key);
-          unique.rows.push(row);
-        }
-        return unique;
-      }, { _seen: new Set(), rows: [] }).rows;
-  }, [data, date, filterCode, showDetails]);
-
-  const exportExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(details.map((r, i) => ({
-      Sr: i + 1,
-      Date: r.SwipeDate.slice(0, 10),
-      Time: r.LocaleMessageTime.slice(11, 19),
-      EmployeeID: r.EmployeeID,
-      Name: r.ObjectName1,
-      Type: r.PersonnelType,
-      Door: r.Door,
-      Partition: r.PartitionName2
-    })));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    saveAs(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]),
-      `history_${format(date, 'yyyyMMdd')}.xlsx`);
-  };
-
-  if (loading) return <LoadingSpinner />;
-  if (!data) return null;
-
-  return (
-    <>
-      <Header />
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        <Box sx={{ px: '20px', mb: 2 }}>
+ <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Select date"
@@ -115,7 +12,7 @@ export default function EMEAHistory() {
 
         {date && summary && (
           <>
-            <Box display="flex" alignItems="flex-start" sx={{ px: '20px', gap: '10px' }}>
+           <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ flex: 1, maxWidth: 900 }}>
                 <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
                   <Table sx={{ border: '2px solid #000' }}>
@@ -226,7 +123,3 @@ export default function EMEAHistory() {
           </Box>
         )}
       </Container>
-      <Footer />
-    </>
-  );
-}
