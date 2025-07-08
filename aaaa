@@ -1,35 +1,82 @@
-// src/components/Dashboard.jsx
+// src/api/occupancy.service.js
 
-import React from 'react';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-const partitionNames = ['Partition A', 'Partition B', 'Partition C'];
-
-const Dashboard = () => {
-  const { data, loading } = useLiveOccupancy(partitionNames);
-
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Occupancy Dashboard</h1>
-
-      {loading ? (
-        <p className="text-gray-500">Loading occupancy data...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {data.map((partition) => (
-            <div
-              key={partition.partitionName}
-              className="bg-white shadow rounded-xl p-6 text-center"
-            >
-              <h2 className="text-xl font-semibold mb-2">{partition.partitionName}</h2>
-              <p className="text-4xl text-blue-600">{partition.occupancy}</p>
-              <p className="text-sm text-gray-400 mt-1">occupants</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+export const getCurrentOccupancy = async (partitionNames) => {
+  try {
+    // Simulated API response
+    return partitionNames.map(name => ({
+      partitionName: name,
+      occupancy: Math.floor(Math.random() * 100), // Random value
+    }));
+  } catch (error) {
+    console.error('Failed to fetch occupancy:', error);
+    throw error;
+  }
 };
 
-export default Dashboard;
+
+
+.........
+
+
+
+
+
+// src/hooks/useLiveOccupancy.js
+
+import { useState, useEffect } from 'react';
+import { getCurrentOccupancy } from '../api/occupancy.service';
+
+export const useLiveOccupancy = (partitionNames) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const response = await getCurrentOccupancy(partitionNames);
+      setData(response);
+    } catch (error) {
+      console.error('Error fetching occupancy:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
+  }, [partitionNames]);
+
+  return { data, loading };
+};
+
+
+.....
+// src/App.js
+
+import React from 'react';
+import Dashboard from './components/Dashboard';
+
+function App() {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Dashboard />
+    </div>
+  );
+}
+
+export default App;
+......
+// src/index.js
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css'; // TailwindCSS or custom CSS
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
