@@ -1,146 +1,101 @@
-http://localhost:3007/api/occupancy/live-summary
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-{
-  "success": true,
-  "today": {
-    "total": 1308,
-    "Employee": 1143,
-    "Contractor": 165
-  },
-  "realtime": {
-    "Pune": {
-      "total": 242,
-      "Employee": 189,
-      "Contractor": 53,
-      "floors": {
-        "Podium Floor": 152,
-        "Tower B": 71,
-        "2nd Floor": 18
+const Dashboard = () => {
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchLiveSummary();
+  }, []);
+
+  const fetchLiveSummary = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3007/api/occupancy/live-summary");
+      if (data.success) {
+        setSummary(data);
       }
-    },
-    "Quezon City": {
-      "total": 164,
-      "Employee": 155,
-      "Contractor": 9,
-      "floors": {
-        "7th Floor": 90,
-        "6th Floor": 74
-      }
-    },
-    "JP.Tokyo": {
-      "total": 10,
-      "Employee": 9,
-      "Contractor": 1,
-      "floors": {
-        "Tokyo": 10
-      }
-    },
-    "MY.Kuala Lumpur": {
-      "total": 6,
-      "Employee": 5,
-      "Contractor": 1,
-      "floors": {
-        "Kuala Lumpur": 6
-      }
-    },
-    "Taguig City": {
-      "total": 19,
-      "Employee": 16,
-      "Contractor": 3,
-      "floors": {
-        "Taguig": 19
-      }
+    } catch (err) {
+      console.error("Failed to fetch data", err);
+    } finally {
+      setLoading(false);
     }
-  },
-  "unmapped": [],
-  "details": [
-    {
-      "ObjectName1": "Sarkaniya, Harish",
-      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-OUT DOOR",
-      "PersonnelType": "Contractor",
-      "EmployeeID": "W0024571",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T17:33:51.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "51A95852-C14E-4BB4-8F31-0057A87F67C7"
-    },
-    {
-      "ObjectName1": "Panda, Rajat Bhusan",
-      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-OUT DOOR",
-      "PersonnelType": "Employee",
-      "EmployeeID": "321041",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T17:10:02.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "F4F643ED-3E96-4457-8AE9-0086CFF50225"
-    },
-    {
-      "ObjectName1": "Verma, Rahul",
-      "Door": "APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR",
-      "PersonnelType": "Employee",
-      "EmployeeID": "305126",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T16:16:19.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "21B47951-6549-442B-87ED-008A7D523F7B"
-    },
-    {
-      "ObjectName1": "Consencino, Geraldine",
-      "Door": "APAC_PH_Manila_7th Floor_Recption Door 1-701",
-      "PersonnelType": "Property Management",
-      "EmployeeID": "",
-      "PartitionName2": "Quezon City",
-      "LocaleMessageTime": "2025-07-08T21:07:38.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "EC54EA4C-EE1A-43FD-A59D-00F410DBB11D"
-    },
-    {
-      "ObjectName1": "Tewari, Puja",
-      "Door": "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR",
-      "PersonnelType": "Employee",
-      "EmployeeID": "310108",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T16:05:03.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "49A9FFA2-8593-4AB8-AFEC-0113835A5BF4"
-    },
-    {
-      "ObjectName1": "Pune, VIS_PUN_142",
-      "Door": "APAC_IN_PUN_PODIUM_ORANGE_KITCHENETTE FIRE EXIT-DOOR NEW",
-      "PersonnelType": "Visitor",
-      "EmployeeID": "",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T18:41:54.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "D9756B1C-8C3F-45DE-96BF-01388189B31E"
-    },
-    {
-      "ObjectName1": "Minekar, Kisan",
-      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2 -OUT DOOR",
-      "PersonnelType": "Property Management",
-      "EmployeeID": "",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T16:21:11.000Z",
-      "Direction": "OutDirection",
-      "PersonGUID": "A5D41905-C5E0-4A75-A0B6-013D84B71A44"
-    },
-    {
-      "ObjectName1": "Gavle, Pravin",
-      "Door": "APAC_IN_PUN_PODIUM_ORANGE_RECEPTION ENTRY-DOOR",
-      "PersonnelType": "Property Management",
-      "EmployeeID": "",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-08T18:19:16.000Z",
-      "Direction": "InDirection",
-      "PersonGUID": "B355CB5B-BE42-4071-85BA-01438F3E4CC7"
-    },
-    {
-      "ObjectName1": "Vitan, Mary Jane",
-      "Door": "APAC_PH_Manila_7th Floor_Recption Door 2-701",
-      "PersonnelType": "Employee",
-      "EmployeeID": "241437",
-      "PartitionName2": "Quezon City",
-      "LocaleMessageTime": "2025-07-08T20:51:08.000Z",
-      "Direction": "InDirection",
-      "PersonGUID": "C8B879CD-44CE-4415-9BA2-0146A69C2012"
-    },
+  };
+
+  if (loading) return <div className="p-4 text-gray-500">Loading dashboard...</div>;
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* TODAY SUMMARY */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Today Summary</h2>
+        <div className="grid grid-cols-3 gap-4">
+          {["total", "Employee", "Contractor"].map((key) => (
+            <div key={key} className="bg-blue-50 rounded-xl p-4 shadow">
+              <div className="text-gray-600 text-sm">{key}</div>
+              <div className="text-xl font-bold">{summary.today[key]}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* REALTIME LOCATION SUMMARY */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Real-Time Occupancy</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Object.entries(summary.realtime).map(([location, data]) => (
+            <div key={location} className="border rounded-xl p-4 bg-white shadow-sm">
+              <div className="font-semibold text-lg">{location}</div>
+              <div className="text-sm text-gray-500 mb-2">
+                Total: {data.total} | Employees: {data.Employee} | Contractors: {data.Contractor}
+              </div>
+              <div className="text-sm text-gray-700 space-y-1">
+                {Object.entries(data.floors).map(([floor, count]) => (
+                  <div key={floor} className="flex justify-between">
+                    <span>{floor}</span>
+                    <span>{count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* LIVE ACCESS DETAILS */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Live Access Details</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border text-sm">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+              <tr>
+                <th className="px-4 py-2 border">Name</th>
+                <th className="px-4 py-2 border">Type</th>
+                <th className="px-4 py-2 border">Location</th>
+                <th className="px-4 py-2 border">Direction</th>
+                <th className="px-4 py-2 border">Time</th>
+                <th className="px-4 py-2 border">Door</th>
+              </tr>
+            </thead>
+            <tbody>
+              {summary.details.slice(0, 10).map((entry, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border">{entry.ObjectName1}</td>
+                  <td className="px-4 py-2 border">{entry.PersonnelType}</td>
+                  <td className="px-4 py-2 border">{entry.PartitionName2}</td>
+                  <td className="px-4 py-2 border">{entry.Direction}</td>
+                  <td className="px-4 py-2 border">
+                    {new Date(entry.LocaleMessageTime).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2 border">{entry.Door}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
