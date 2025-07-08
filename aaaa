@@ -1,10 +1,6 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 
-const Footer = () => (
-  <Box mt={4} textAlign="center">
-    <Typography variant="caption">© 2025 APAC Real-Time Headcount Dashboard</Typography>
-  </Box>
-);
-
-export default Footer;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
