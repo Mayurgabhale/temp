@@ -1,53 +1,62 @@
 <Box display="flex" flexWrap="wrap">
-  {displayed.map(([floor, emps], index) => (
-    <Box
-      key={floor}
-      sx={{
-        width: { xs: '100%', sm: '50%' },
-        p: 1,
-        boxSizing: 'border-box',
-      }}
-    >
-      <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
-        {floor} (Total {emps.length})
-      </Typography>
+  {displayed.map(([floor, emps]) => {
+    const isExpanded = expanded === floor;
+    const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
 
-      <Paper sx={{ border: '2px solid #FFC107', p: 2 }}>
-        <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
-                  <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>
-                    {h}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {emps.map((r, i) => (
-                <TableRow key={i}>
-                  <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
-                  <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
-                  <TableCell sx={{ py: 0.5 }}>
-                    {new Date(r.LocaleMessageTime).toLocaleTimeString()}
-                  </TableCell>
-                  <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
-                  <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
-                  <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
+    return (
+      <Box
+        key={floor}
+        sx={{
+          width: { xs: '100%', sm: '50%' },
+          p: 1,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+          {floor} (Total {emps.length})
+        </Typography>
+
+        <Paper sx={{ border: '2px solid #FFC107', p: 2 }}>
+          <TableContainer component={Paper} variant="outlined">
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map(h => (
+                    <TableCell key={h} sx={{ fontWeight: 'bold', py: 0.5 }}>
+                      {h}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+              </TableHead>
+              <TableBody>
+                {visibleEmps.map((r, i) => (
+                  <TableRow key={i}>
+                    <TableCell sx={{ py: 0.5 }}>{r.EmployeeID}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{r.ObjectName1}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>
+                      {new Date(r.LocaleMessageTime).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{r.PersonnelType}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{r.CardNumber}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{r.Door}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
 
-      {/* Optional See More button */}
-      <Box textAlign="right" mt={1}>
-        <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
-          {expanded === floor ? 'Hide' : 'See more…'}
-        </Button>
+        {emps.length > 10 && (
+          <Box textAlign="right" mt={1}>
+            <Button
+              size="small"
+              onClick={() => setExpanded(isExpanded ? null : floor)}
+            >
+              {isExpanded ? 'Hide' : 'See more…'}
+            </Button>
+          </Box>
+        )}
       </Box>
-    </Box>
-  ))}
+    );
+  })}
 </Box>
