@@ -1,15 +1,10 @@
-Uncaught runtime errors:
-×
-ERROR
-Cannot read properties of undefined (reading 'total')
-TypeError: Cannot read properties of undefined (reading 'total')
-    at APACDashboard (http://localhost:3000/static/js/bundle.js:46998:76)
-    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27655:18)
-    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17865:20)
-    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19558:17)
-    at beginWork (http://localhost:3000/static/js/bundle.js:20144:16)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15636:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22217:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:22110:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:22094:7)
-    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21858:42)
+const todayData = data?.today || {};
+const realtimeData = data?.realtime || {};
+
+const todayTot = todayData.total || 0;
+const todayEmp = todayData.Employee || 0;
+const todayCon = todayData.Contractor || 0;
+
+const realtimeTot = Object.values(realtimeData).reduce((s, x) => s + (x?.total || 0), 0);
+const realtimeEmp = Object.values(realtimeData).reduce((s, x) => s + (x?.Employee || 0), 0);
+const realtimeCon = Object.values(realtimeData).reduce((s, x) => s + (x?.Contractor || 0), 0);
