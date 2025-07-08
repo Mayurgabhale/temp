@@ -1,3 +1,127 @@
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\api\occupancy.service.js
+// 
+
+// src/api/occupancy.service.js
+
+export const getCurrentOccupancy = async (partitionNames) => {
+  try {
+    // Simulated API response
+    return partitionNames.map(name => ({
+      partitionName: name,
+      occupancy: Math.floor(Math.random() * 100), // Random value
+    }));
+  } catch (error) {
+    console.error('Failed to fetch occupancy:', error);
+    throw error;
+  }
+};
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\IN.India.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\JP.Tokyo.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\MY.KualaLumpur.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\PH.Manila.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\Quezon.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\Taguig.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\components\ChartCard.jsx
+import React from 'react';
+import { Card, CardContent, Typography } from '@mui/material';
+
+const ChartCard = ({ title, total, employee, contractor }) => (
+  <Card variant="outlined" sx={{ mb: 2 }}>
+    <CardContent>
+      <Typography variant="h6">{title}</Typography>
+      <Typography>Total: {total}</Typography>
+      <Typography>Employees: {employee}</Typography>
+      <Typography>Contractors: {contractor}</Typography>
+    </CardContent>
+  </Card>
+);
+
+export default ChartCard;
+
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\components\DataTable.jsx
+import React from 'react';
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+
+const DataTable = ({ data }) => (
+  <Table size="small">
+    <TableHead>
+      <TableRow>
+        <TableCell>Name</TableCell>
+        <TableCell>Type</TableCell>
+        <TableCell>Location</TableCell>
+        <TableCell>Time</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {data.map((row, idx) => (
+        <TableRow key={idx}>
+          <TableCell>{row.ObjectName1}</TableCell>
+          <TableCell>{row.PersonnelType}</TableCell>
+          <TableCell>{row.PartitionName2}</TableCell>
+          <TableCell>{new Date(row.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+);
+
+export default DataTable;
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\components\Footer.jsx
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+
+const Footer = () => (
+  <Box mt={4} textAlign="center">
+    <Typography variant="caption">© 2025 APAC Real-Time Headcount Dashboard</Typography>
+  </Box>
+);
+
+export default Footer;
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\components\Header.jsx
+import React from 'react';
+import { AppBar, Toolbar, Typography } from '@mui/material';
+
+const Header = () => (
+  <AppBar position="static">
+    <Toolbar>
+      <Typography variant="h6">APAC Occupancy Dashboard</Typography>
+    </Toolbar>
+  </AppBar>
+);
+
+export default Header;
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\data\buildingCapacities.js
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\hooks\useLiveOccupancy.js
+// src/hooks/useLiveOccupancy.js
+
+import { useState, useEffect } from 'react';
+import { getCurrentOccupancy } from '../api/occupancy.service';
+
+export const useLiveOccupancy = (partitionNames) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const response = await getCurrentOccupancy(partitionNames);
+      setData(response);
+    } catch (error) {
+      console.error('Error fetching occupancy:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
+  }, [partitionNames]);
+
+  return { data, loading };
+};
+
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { Container, Box, Typography, Skeleton } from '@mui/material';
 import Header from '../components/Header';
@@ -212,3 +336,179 @@ export default function APACDashboard() {
     </>
   );
 }
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\routes\AppRoutes.jsx
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\History.jsx
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\utils\doorMap.js
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\utils\floorLookup.js
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\utils\partitionGroups.js
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\App.js
+// import logo from './logo.svg';
+// import './App.css';
+
+// function App() {
+//   return (
+//     <div className="App">
+//       <header className="App-header">
+//         <img src={logo} className="App-logo" alt="logo" />
+//         <p>
+//           Edit <code>src/App.js</code> and save to reload.
+//         </p>
+//         <a
+//           className="App-link"
+//           href="https://reactjs.org"
+//           target="_blank"
+//           rel="noopener noreferrer"
+//         >
+//           Learn React
+//         </a>
+//       </header>
+//     </div>
+//   );
+// }
+
+// export default App;
+// import React from 'react';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import Dashboard from './pages/Dashboard';
+// import Header from './components/Header';
+// import Footer from './components/Footer';
+
+// const App = () => (
+//   <Router>
+//     <Header />
+//     <Routes>
+//       <Route path="/" element={<Dashboard />} />
+//     </Routes>
+//     <Footer />
+//   </Router>
+// );
+
+// export default App;
+// .........................
+
+
+
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import History from './pages/History';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/history/:partition" element={<History />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\theme\westernUnionTheme.js
+// src/theme/westernUnionTheme.js
+import { createTheme } from '@mui/material/styles';
+
+const westernUnionTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#000000',
+      paper:   '#1c1c1c'
+    },
+    primary: {
+      main: '#FFC72C',
+      contrastText: '#000000'
+    },
+    secondary: {
+      main: '#FFFFFF',
+      contrastText: '#000000'
+    },
+    text: {
+      primary:   '#FFFFFF',
+      secondary: 'rgba(255,255,255,0.7)'
+    },
+    divider: 'rgba(255,255,255,0.2)'
+  },
+
+  typography: {
+    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+    // Card titles
+    subtitle1: { fontWeight: 900, color: '#FFE599' },
+    // Totals (variant h4 in SummaryCard)
+    h4: { color: '#fcf3cf', fontWeight: 'bold' },
+    // Stat values (variant h6)
+    h6: { color: '#FFC107', fontWeight: 900 },
+    // Stat labels (variant caption)
+    caption: { color: '#FFC107', fontWeight: 900 },
+
+    // You can leave other variants untouched
+    body1:   { color: '#FFFFFF' },
+    body2:   { color: 'rgba(255,255,255,0.7)' }
+  },
+
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: {
+          height: '100%'
+        },
+        body: {
+          margin: 0,
+          padding: 0,
+          height: '100%',
+          background: 'linear-gradient(135deg, #000000 30%, #2c0000 60%, #000000 100%)',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          animation: 'gradientSpin 20s ease infinite',
+          overflowX: 'hidden'
+        },
+        '@keyframes gradientSpin': {
+          '0%':   { backgroundPosition: '0% 50%' },
+          '50%':  { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' }
+        }
+      }
+    },
+
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          borderRadius: 4
+        },
+        contained: {
+          backgroundColor: '#FFC107',
+          color: '#000000',
+          '&:hover': {
+            backgroundColor: '#e6ac00'
+          }
+        }
+      }
+    },
+
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#333',
+          color: '#FFF'
+        }
+      }
+    }
+
+    // Note: We no longer override MuiCard so your SummaryCard and ChartCard
+    // backgrounds, borders and hover effects come from their own `sx` props.
+  }
+});
+
+export default westernUnionTheme;
