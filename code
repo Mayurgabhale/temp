@@ -1,48 +1,9 @@
-import React from 'react';
-import { Box, Typography, Link } from '@mui/material';
-
-export default function Footer() {
-  return (
-    <Box
-      component="footer"
-      sx={{
-        backgroundColor: '#000',
-        color: '#FFC72C',
-        py: 3,
-        textAlign: 'center',
-        mt: 4,
-        borderTop: '2px solid #FFC72C',
-        fontSize: '0.95rem',
-        lineHeight: 1.6,
-      }}
-    >
-      <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-        Global Security Operations Center (GSOC)
-      </Typography>
-
-      <Typography variant="body2">
-        Live Occupancy dashboard for Western Union Denver — Real-time occupancy,
-        floor activity, and personnel insights.
-      </Typography>
-
-      <Typography variant="body2" mt={2}>
-        Contact us:{' '}
-        <Link
-          href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
-          underline="hover"
-          sx={{ color: '#FFC72C' }}
-        >
-          gsoc@westernunion.com
-        </Link>{' '}
-        | Landline:{' '}
-        <Box component="span" sx={{ color: '#FFC72C' }}>
-          +91-020-67632394
-        </Box>
-      </Typography>
-
-      <Typography variant="caption" display="block" mt={2}>
-        © {new Date().getFullYear()} Western Union. All rights reserved.
-      </Typography>
-    </Box>
-  );
-}
+ <PieChartCard
+                title="Vienna • Abu Dhabi • Dublin • Rome"
+                data={slice1}
+                colors={['#4E79A7', '#F28E2B', '#E15759', '#76B7B2']}
+                innerRadius={60}
+                height={410}
+                showZeroSlice
+                animationDuration={1500}
+              />
