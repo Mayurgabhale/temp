@@ -3,46 +3,47 @@ import { Container, Box, Typography, Skeleton } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SummaryCard from '../components/SummaryCard';
-import CompositeChartCard from '../components/CompositeChartCard';
 import PieChartCard from '../components/PieChartCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-import doorMapRaw from '../utils/doorMap';
 
 // APAC Flags
 import indiaFlag from '../assets/flags/IN.India.png';
-import singaporeFlag from '../assets/flags/singapore.png';
 import philippinesFlag from '../assets/flags/philippines.png';
 import malaysiaFlag from '../assets/flags/malaysia.png';
-import chinaFlag from '../assets/flags/china.png';
+import japanFlag from '../assets/flags/japan.png';
 
-// APAC site config
+// APAC site config (ONLY valid APAC entries)
 const partitions = [
-  'IN.Pune', 'SG.Singapore', 'PH.Manila', 'MY.KualaLumpur', 'CN.Beijing'
+  'IN.Pune',
+  'PH.QuezonCity',
+  'PH.TaguigCity',
+  'JP.Tokyo',
+  'MY.KualaLumpur'
 ];
 
 const displayName = {
   'IN.Pune': 'Pune',
-  'SG.Singapore': 'Singapore',
-  'PH.Manila': 'Manila',
-  'MY.KualaLumpur': 'Kuala Lumpur',
-  'CN.Beijing': 'Beijing'
+  'PH.QuezonCity': 'Quezon City',
+  'PH.TaguigCity': 'Taguig City',
+  'JP.Tokyo': 'Tokyo',
+  'MY.KualaLumpur': 'Kuala Lumpur'
 };
 
 const flagMap = {
   'IN.Pune': indiaFlag,
-  'SG.Singapore': singaporeFlag,
-  'PH.Manila': philippinesFlag,
-  'MY.KualaLumpur': malaysiaFlag,
-  'CN.Beijing': chinaFlag
+  'PH.QuezonCity': philippinesFlag,
+  'PH.TaguigCity': philippinesFlag,
+  'JP.Tokyo': japanFlag,
+  'MY.KualaLumpur': malaysiaFlag
 };
 
 const colorsMap = {
   'IN.Pune': ['#FFD666', '#FFF2CC', '#2ecc71', '#ec7063'],
-  'SG.Singapore': ['#FFE599', '#FFF2CC', '#2ecc71', '#ec7063'],
-  'PH.Manila': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
-  'MY.KualaLumpur': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
-  'CN.Beijing': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063']
+  'PH.QuezonCity': ['#FFE599', '#FFF2CC', '#2ecc71', '#ec7063'],
+  'PH.TaguigCity': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'JP.Tokyo': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+  'MY.KualaLumpur': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063']
 };
 
 export default function APACDashboard() {
@@ -112,7 +113,7 @@ export default function APACDashboard() {
           {loading ? <LoadingSpinner /> : summaryItems.map(item => {
             const [tc, totc, ec, cc] = item.colors;
             return (
-              <Box key={item.label} sx={{ flex: '1 1 calc(16% - 8px)' }}>
+              <Box key={item.label} sx={{ flex: '1 1 calc(20% - 8px)' }}>
                 <SummaryCard
                   title={item.label}
                   total={item.total}
@@ -137,7 +138,7 @@ export default function APACDashboard() {
           <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
             {loading ? <Skeleton variant="rectangular" height={350} /> : (
               <PieChartCard
-                title="Pune • Singapore • Manila"
+                title="Pune • Quezon City • Taguig"
                 data={slice1}
                 colors={['#4E79A7', '#F28E2B', '#E15759']}
                 innerRadius={60}
@@ -151,7 +152,7 @@ export default function APACDashboard() {
           <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
             {loading ? <Skeleton variant="rectangular" height={350} /> : (
               <PieChartCard
-                title="Kuala Lumpur • Beijing"
+                title="Tokyo • Kuala Lumpur"
                 data={slice2}
                 colors={['#59A14F', '#EDC948']}
                 innerRadius={60}
