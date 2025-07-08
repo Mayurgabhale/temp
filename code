@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Link } from '@mui/material';
 
 export default function Footer() {
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.display = 'flex';
+      root.style.flexDirection = 'column';
+      root.style.minHeight = '100vh';
+    }
+  }, []);
+
   return (
     <Box
       component="footer"
       sx={{
+        mt: 'auto', // Push footer to bottom when used inside flex container
         backgroundColor: '#000',
         color: '#FFC72C',
         py: 2,
