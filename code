@@ -1,11 +1,65 @@
-import { useNavigate, useLocation } from 'react-router-dom';
 
-const navigate = useNavigate();
+
+
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+import wuLogo from '../assets/wu-logo.png';
+import austriaFlag from '../assets/flags/austria.png';
+import uaeFlag from '../assets/flags/uae.png';
+import irelandFlag from '../assets/flags/ireland.png';
+import italyFlag from '../assets/flags/italy.png';
+import lithuaniaFlag from '../assets/flags/lithuania.png';
+import moroccoFlag from '../assets/flags/morocco.png';
+import russiaFlag from '../assets/flags/russia.png';
+import ukFlag from '../assets/flags/uk.png';
+import spainFlag from '../assets/flags/spain.png';
+import { partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+
+// const navigate = useNavigate();
 const location = useLocation();
 
 const isHome = location.pathname === '/'; // Only show Vilnius icon on homepage
 
-<Box display="flex" alignItems="center">
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPart = parts[0] === 'partition' && parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
+
+  const flagMap = {
+    'AUT.Vienna': austriaFlag,
+    'DU.Abu Dhab': uaeFlag,
+    'IE.Dublin': irelandFlag,
+    'IT.Rome': italyFlag,
+    'LT.Vilnius': lithuaniaFlag,
+    'MA.Casablanca': moroccoFlag,
+    'RU.Moscow': russiaFlag,
+    'UK.London': ukFlag,
+    'ES.Madrid': spainFlag
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+       <Box display="flex" alignItems="center">
   <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
 
   <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -36,3 +90,41 @@ const isHome = location.pathname === '/'; // Only show Vilnius icon on homepage
     </IconButton>
   )}
 </Box>
+
+
+
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => navigate(e.target.value || '/')}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
+                <Box component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }} />
+                {p.split('.').pop()}
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Box />
+        </Box>
+
+      </Toolbar>
+    </AppBar>
+  );
+}
+Compiled with problems:
+×
+ERROR
+[eslint] 
+src\components\Header.jsx
+  Line 135:18:  React Hook "useLocation" cannot be called at the top level. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
+
+Search for the keywords to learn more about each error.
