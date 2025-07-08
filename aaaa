@@ -1,27 +1,8 @@
-apac-headcount/
-├── public/
-│   └── index.html
-├── src/
-│   ├── api/
-│   │   └── occupancy.service.js
-│   ├── assets/
-│   │   └── flags/
-│   │       ├── IN.India.png
-│   │       ├── PH.Manila.png
-│   │       ├── JP.Tokyo.png
-│   │       ├── MY.KualaLumpur.png
-│   │       └── ... (other country flags)
-│   ├── components/
-│   │   ├── ChartCard.jsx
-│   │   ├── DataTable.jsx
-│   │   ├── Header.jsx
-│   │   └── Footer.jsx
-│   ├── pages/
-│   │   ├── Dashboard.jsx
-│   │   └── History.jsx
-│   ├── App.jsx
-│   ├── index.js
-│   └── theme.js (optional)
-├── .env
-├── package.json
-└── README.md
+import axios from 'axios';
+
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007/api/occupancy';
+
+export const fetchLiveSummary = async () => {
+  const response = await axios.get(`${BASE}/live-summary`);
+  return response.data;
+};
