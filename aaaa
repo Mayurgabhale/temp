@@ -1,82 +1,144 @@
-// src/api/occupancy.service.js
-
-export const getCurrentOccupancy = async (partitionNames) => {
-  try {
-    // Simulated API response
-    return partitionNames.map(name => ({
-      partitionName: name,
-      occupancy: Math.floor(Math.random() * 100), // Random value
-    }));
-  } catch (error) {
-    console.error('Failed to fetch occupancy:', error);
-    throw error;
-  }
-};
-
-
-
-.........
-
-
-
-
-
-// src/hooks/useLiveOccupancy.js
-
-import { useState, useEffect } from 'react';
-import { getCurrentOccupancy } from '../api/occupancy.service';
-
-export const useLiveOccupancy = (partitionNames) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchData = async () => {
-    try {
-      const response = await getCurrentOccupancy(partitionNames);
-      setData(response);
-    } catch (error) {
-      console.error('Error fetching occupancy:', error);
-    } finally {
-      setLoading(false);
+{
+  "success": true,
+  "today": {
+    "total": 1308,
+    "Employee": 1143,
+    "Contractor": 165
+  },
+  "realtime": {
+    "Pune": {
+      "total": 242,
+      "Employee": 189,
+      "Contractor": 53,
+      "floors": {
+        "Podium Floor": 152,
+        "Tower B": 71,
+        "2nd Floor": 18
+      }
+    },
+    "Quezon City": {
+      "total": 164,
+      "Employee": 155,
+      "Contractor": 9,
+      "floors": {
+        "7th Floor": 90,
+        "6th Floor": 74
+      }
+    },
+    "JP.Tokyo": {
+      "total": 10,
+      "Employee": 9,
+      "Contractor": 1,
+      "floors": {
+        "Tokyo": 10
+      }
+    },
+    "MY.Kuala Lumpur": {
+      "total": 6,
+      "Employee": 5,
+      "Contractor": 1,
+      "floors": {
+        "Kuala Lumpur": 6
+      }
+    },
+    "Taguig City": {
+      "total": 19,
+      "Employee": 16,
+      "Contractor": 3,
+      "floors": {
+        "Taguig": 19
+      }
     }
-  };
-
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, [partitionNames]);
-
-  return { data, loading };
-};
-
-
-.....
-// src/App.js
-
-import React from 'react';
-import Dashboard from './components/Dashboard';
-
-function App() {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Dashboard />
-    </div>
-  );
-}
-
-export default App;
-......
-// src/index.js
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css'; // TailwindCSS or custom CSS
-import App from './App';
-
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  },
+  "unmapped": [],
+  "details": [
+    {
+      "ObjectName1": "Sarkaniya, Harish",
+      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-OUT DOOR",
+      "PersonnelType": "Contractor",
+      "EmployeeID": "W0024571",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T17:33:51.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "51A95852-C14E-4BB4-8F31-0057A87F67C7"
+    },
+    {
+      "ObjectName1": "Panda, Rajat Bhusan",
+      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-OUT DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "321041",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T17:10:02.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "F4F643ED-3E96-4457-8AE9-0086CFF50225"
+    },
+    {
+      "ObjectName1": "Verma, Rahul",
+      "Door": "APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "305126",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:16:19.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "21B47951-6549-442B-87ED-008A7D523F7B"
+    },
+    {
+      "ObjectName1": "Consencino, Geraldine",
+      "Door": "APAC_PH_Manila_7th Floor_Recption Door 1-701",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-08T21:07:38.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "EC54EA4C-EE1A-43FD-A59D-00F410DBB11D"
+    },
+    {
+      "ObjectName1": "Tewari, Puja",
+      "Door": "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR",
+      "PersonnelType": "Employee",
+      "EmployeeID": "310108",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:05:03.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "49A9FFA2-8593-4AB8-AFEC-0113835A5BF4"
+    },
+    {
+      "ObjectName1": "Pune, VIS_PUN_142",
+      "Door": "APAC_IN_PUN_PODIUM_ORANGE_KITCHENETTE FIRE EXIT-DOOR NEW",
+      "PersonnelType": "Visitor",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T18:41:54.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "D9756B1C-8C3F-45DE-96BF-01388189B31E"
+    },
+    {
+      "ObjectName1": "Minekar, Kisan",
+      "Door": "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2 -OUT DOOR",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T16:21:11.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "A5D41905-C5E0-4A75-A0B6-013D84B71A44"
+    },
+    {
+      "ObjectName1": "Gavle, Pravin",
+      "Door": "APAC_IN_PUN_PODIUM_ORANGE_RECEPTION ENTRY-DOOR",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-08T18:19:16.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "B355CB5B-BE42-4071-85BA-01438F3E4CC7"
+    },
+    {
+      "ObjectName1": "Vitan, Mary Jane",
+      "Door": "APAC_PH_Manila_7th Floor_Recption Door 2-701",
+      "PersonnelType": "Employee",
+      "EmployeeID": "241437",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-08T20:51:08.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "C8B879CD-44CE-4415-9BA2-0146A69C2012"
+    },
