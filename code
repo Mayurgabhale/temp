@@ -6,13 +6,21 @@
 
     return (
       <Box key={floor} sx={{ width: '100%', p: 1 }}>
-        <Typography variant="subtitle1" gutterBottom>
+        {/* Floor name above both tables */}
+        <Typography
+          variant="subtitle1"
+          gutterBottom
+          sx={{ backgroundColor: '#FFF9C4', px: 1, py: 0.5, fontWeight: 'bold' }}
+        >
           {floor} (Total {emps.length})
         </Typography>
 
-        <Box display="flex" flexWrap="wrap" gap={2}>
+        <Box display="flex" gap={2} flexWrap="wrap">
           {/* First Table */}
-          <Paper sx={{ flex: 1, minWidth: '300px', maxWidth: '50%', border: '2px solid #FFC107', p: 2 }}>
+          <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
+            <Typography variant="body2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {floor} - Group A
+            </Typography>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
@@ -39,7 +47,10 @@
           </Paper>
 
           {/* Second Table */}
-          <Paper sx={{ flex: 1, minWidth: '300px', maxWidth: '50%', border: '2px solid #FFC107', p: 2 }}>
+          <Paper sx={{ flex: 1, minWidth: '48%', border: '2px solid #FFC107', p: 2 }}>
+            <Typography variant="body2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              {floor} - Group B
+            </Typography>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
@@ -66,7 +77,7 @@
           </Paper>
         </Box>
 
-        {/* See more */}
+        {/* See more button */}
         <Box textAlign="right">
           <Button size="small" onClick={() => setExpanded(expanded === floor ? null : floor)}>
             {expanded === floor ? 'Hide' : 'See more…'}
