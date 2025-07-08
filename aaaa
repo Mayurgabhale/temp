@@ -1,15 +1,27 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 
-const ChartCard = ({ title, total, employee, contractor }) => (
-  <Card variant="outlined" sx={{ mb: 2 }}>
-    <CardContent>
-      <Typography variant="h6">{title}</Typography>
-      <Typography>Total: {total}</Typography>
-      <Typography>Employees: {employee}</Typography>
-      <Typography>Contractors: {contractor}</Typography>
-    </CardContent>
-  </Card>
+const DataTable = ({ data }) => (
+  <Table size="small">
+    <TableHead>
+      <TableRow>
+        <TableCell>Name</TableCell>
+        <TableCell>Type</TableCell>
+        <TableCell>Location</TableCell>
+        <TableCell>Time</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {data.map((row, idx) => (
+        <TableRow key={idx}>
+          <TableCell>{row.ObjectName1}</TableCell>
+          <TableCell>{row.PersonnelType}</TableCell>
+          <TableCell>{row.PartitionName2}</TableCell>
+          <TableCell>{new Date(row.LocaleMessageTime).toLocaleTimeString()}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
 );
 
-export default ChartCard;
+export default DataTable;
