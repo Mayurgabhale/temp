@@ -1,57 +1,63 @@
-{/* Charts Section - Full Width with Large Charts */}
-<Box width="100%" mb={6} display="flex" flexDirection="column" gap={4}>
+{/* Charts Row - Two Big Charts Side by Side */}
+<Box
+  display="flex"
+  flexWrap="wrap"
+  gap={2}
+  mb={6}
+  justifyContent="space-between"
+>
 
-  {/* Composite Chart - Full Width & Large */}
+  {/* Composite Chart - Left */}
   <Box
     sx={{
-      width: '100%',
+      flex: '1 1 48%',
       border: '3px solid #FFC107',
       borderRadius: 3,
-      p: 4,
+      p: 3,
       background: 'rgba(0,0,0,0.65)',
-      boxShadow: '0 6px 14px rgba(0,0,0,0.5)'
+      boxShadow: '0 6px 14px rgba(0,0,0,0.4)'
     }}
   >
     {loading ? (
       <Skeleton variant="rectangular" height={460} />
     ) : (
       <>
-        <Box display="flex" alignItems="center" mb={3}>
-          <i className="fas fa-chart-bar" style={{ color: '#FFC107', fontSize: 32, marginRight: 14 }} />
-          <Typography variant="h4" sx={{ color: '#FFC72C' }}>
+        <Box display="flex" alignItems="center" mb={2}>
+          <i className="fas fa-chart-bar" style={{ color: '#FFC107', fontSize: 28, marginRight: 12 }} />
+          <Typography variant="h5" sx={{ color: '#FFC72C' }}>
             Pune (Sample Floors)
           </Typography>
         </Box>
         <CompositeChartCard
           title=""
-          data={[]} // Replace with actual data
+          data={[]} // replace with real data
           barColor="#4CAF50"
           lineColor="#FF0000"
-          height={480}
+          height={400}
           animationDuration={1500}
         />
       </>
     )}
   </Box>
 
-  {/* Pie Chart - Full Width & Large */}
+  {/* Pie Chart - Right */}
   <Box
     sx={{
-      width: '100%',
+      flex: '1 1 48%',
       border: '3px solid #4FC3F7',
       borderRadius: 3,
-      p: 4,
+      p: 3,
       background: 'rgba(0,0,0,0.65)',
-      boxShadow: '0 6px 14px rgba(0,0,0,0.5)'
+      boxShadow: '0 6px 14px rgba(0,0,0,0.4)'
     }}
   >
     {loading ? (
       <Skeleton variant="rectangular" height={460} />
     ) : (
       <>
-        <Box display="flex" alignItems="center" mb={3}>
-          <i className="fas fa-chart-pie" style={{ color: '#4FC3F7', fontSize: 32, marginRight: 14 }} />
-          <Typography variant="h4" sx={{ color: '#4FC3F7' }}>
+        <Box display="flex" alignItems="center" mb={2}>
+          <i className="fas fa-chart-pie" style={{ color: '#4FC3F7', fontSize: 28, marginRight: 12 }} />
+          <Typography variant="h5" sx={{ color: '#4FC3F7' }}>
             APAC Realtime Headcount
           </Typography>
         </Box>
