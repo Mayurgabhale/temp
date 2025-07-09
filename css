@@ -1,3 +1,107 @@
+take a emea chart reference and create apac chart ok
+
+
+
+***********************
+this is a flooer capacities for pune
+// client/src/constants/floorCapacities.js
+
+const floorCapacities = {
+  "Podium Floor": 725,
+  "Tower B": 303,
+  "2nd Floor": 185,
+};
+
+export default floorCapacities;
+
+and    .......................
+  Kuala Lumpur 100
+  Quezon City  100
+  Taguig 100
+  Tokyo 100
+*****************
+
+
+
+
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\ChartCard.jsx
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid, Legend, Brush
+} from 'recharts';
+import dayjs from 'dayjs';
+
+export default function ChartCard({
+  data = [],
+  dataKey = 'value',
+  colors = { head: '#FFC107', cap: '#B0BEC5' },
+  chartHeight = 300,
+  title = ''
+}) {
+  // Hook must be called unconditionally
+  const [hidden, setHidden] = useState({});
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card>
+        <CardContent>
+          <Typography>No data to display.</Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const handleLegend = o => {
+    const key = o.dataKey;
+    setHidden(h => ({ ...h, [key]: !h[key] }));
+  };
+
+  return (
+    <Card>
+      <CardContent>
+        {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
+        <Box sx={{ width: '100%', height: chartHeight }}>
+          <ResponsiveContainer>
+            <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+              <defs>
+                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={colors.head} stopOpacity={0.8} />
+                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                tickFormatter={t =>
+                  typeof t === 'number' ? dayjs(t).format('HH:mm:ss') : t
+                }
+              />
+              <YAxis />
+              <Tooltip />
+              <Legend onClick={handleLegend} />
+              <Area
+                type="monotone"
+                dataKey={dataKey}
+                stroke={colors.head}
+                fill="url(#colorHead)"
+                hide={hidden[dataKey]}
+              />
+              <Brush dataKey="name" height={20} stroke={colors.head} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\CompositeChartCard.jsx
+
+
+// src/components/CompositeChartCard.jsx
+
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
@@ -14,73 +118,242 @@ import {
   Cell
 } from 'recharts';
 
-const GREEN_SCALE = [
-  '#66BB6A', '#81C784', '#A5D6A7', '#C8E6C9', '#E8F5E9',
-  '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#4CAF50'
+
+
+const DARK_TO_LIGHT = [
+  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
+  '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
+  ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
+  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
 ];
 
 export default function CompositeChartCard({
-  title = 'Sample Floors',
-  data = [],
-  lineColor = '#4CAF50',
-  height = 400,
+  title,
+  data,
+  lineColor = '#fff',
+  height = 300,
   animationDuration = 1500,
   animationEasing = 'ease-in-out'
 }) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No realtime employee data
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+  // Enrich each datum with its usage percentage
   const enriched = data.map((d, i) => ({
     ...d,
-    percentage: d.capacity ? Math.round((d.headcount / d.capacity) * 100) : 0,
-    _color: GREEN_SCALE[i % GREEN_SCALE.length]
+    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
   }));
-
   const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
   const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
   const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
-
   return (
-    <Card sx={{
-      borderRadius: 2,
-      bgcolor: 'rgba(0,0,0,0.4)',
-      border: `2px solid ${lineColor}`
-    }}>
-      <CardContent>
-        <Typography variant="h6" sx={{ mb: 2, color: lineColor }}>
+    <Card
+      sx={{
+        // border: `1px solid ${lineColor}`,
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.4)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          gutterBottom
+          sx={{ color: '#FFC107' }}
+        >
           {title}
         </Typography>
+
+
+
+
+
+
         <Box sx={{ width: '100%', height }}>
           <ResponsiveContainer>
-            <ComposedChart data={enriched} margin={{ top: 10, right: 20, bottom: 20, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
+            <ComposedChart
+              data={enriched}
+              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+
+
               <XAxis
                 dataKey="name"
-                stroke="#fff"
-                tickFormatter={(label) => `${label} Floor`}
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                tickFormatter={(label, index) => {
+                  const strLabel = String(label);
+                  const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
+                  const floorNum = parseInt(match?.[0], 10);
+
+                  if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
+
+                  const suffix = (n) => {
+                    if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+                    switch (n % 10) {
+                      case 1: return `${n}st`;
+                      case 2: return `${n}nd`;
+                      case 3: return `${n}rd`;
+                      default: return `${n}th`;
+                    }
+                  };
+
+                  return suffix(floorNum);
+                }}
               />
-              <YAxis yAxisId="left" stroke="#fff" />
-              <YAxis yAxisId="right" orientation="right" stroke="#fff" domain={[0, 100]} tickFormatter={val => `${val}%`} />
+
+
+              <YAxis
+                yAxisId="left"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+              />
+
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                domain={[0, 100]}
+                tickFormatter={val => `${val}%`}
+              />
+
+              {/* <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
+                formatter={(value, name) => 
+                  name === 'percentage' ? `${value}%` : value
+                }
+              /> */}
 
               <Tooltip
-                contentStyle={{ backgroundColor: '#fff', color: '#000' }}
-                formatter={(value, name) => [value, name === 'percentage' ? 'Usage %' : name]}
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
+                // custom content so we can show capacity only on hover
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const datum = payload[0].payload;
+                  return (
+                    <div style={{
+                      backgroundColor: '#FFD666',
+                      border: `1px solid ${lineColor}`,
+                      borderRadius: 4,
+                      padding: 8,
+                    }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+                      <div>Headcount: {datum.headcount}</div>
+                      <div>Usage %: {datum.percentage}%</div>
+                      <div>Seat Capacity: {datum.capacity}</div>
+                    </div>
+                  );
+                }}
               />
-              <Legend />
 
-              <Bar yAxisId="left" dataKey="headcount" name="Headcount" barSize={30}>
-                {enriched.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry._color} />
+
+              {/* Headcount bars with per-bar colors & percentage labels */}
+              <Bar
+                yAxisId="left"
+                dataKey="headcount"
+                name="Headcount"
+                barSize={700}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              >
+                {enriched.map((entry, idx) => (
+                  <Cell key={`cell-${idx}`} fill={entry._color} />
                 ))}
-                <LabelList dataKey="headcount" position="top" style={{ fill: '#fff' }} />
+
+
+                {/* Show % on top of each bar */}
+                <LabelList
+                  dataKey="headcount"
+                  position="top"
+                  formatter={val => `${val}`}
+                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+                />
+
+                {/* Percentage centered inside each bar */}
+                <LabelList
+                  dataKey="percentage"
+                  position="inside"
+                  formatter={val => `${val}%`}
+                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
+                />
               </Bar>
 
-              <Line yAxisId="right" type="monotone" dataKey="percentage" name="Usage %" stroke={lineColor} strokeWidth={2} dot={false} />
+
+              {/* Seat Capacity line */}
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="percentage"
+                name="Usage %"
+                stroke={lineColor}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+
+              {/* Optional: draw capacity as second line */}
+              <Line
+                yAxisId="left"
+                type="monotone"
+
+                //  dataKey="capacity"
+                name="Total Seats"
+                stroke="#81C784"
+                strokeDasharray="5 5"
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </Box>
-
-        <Box sx={{ mt: 2, color: '#fff', display: 'flex', justifyContent: 'space-around' }}>
-          <div>Total Headcount: {totalHeadcount}</div>
-          <div>Total Capacity: {totalCapacity}</div>
-          <div>Usage: {avgUsage}%</div>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 4,
+            alignItems: 'center',
+            mb: 1,
+            fontWeight: 'bold',
+            fontSize: 16
+          }}
+        >
+          <Box sx={{ color: '#FFD700' /* Yellow */ }}>
+            Total Headcount: {totalHeadcount}
+          </Box>
+          <Box sx={{ color: '#4CAF50' /* Green */ }}>
+            Total Seats: {totalCapacity}
+          </Box>
+          <Box sx={{ color: '#FF4C4C' /* Red */ }}>
+            Usage: {avgUsage}%
+          </Box>
         </Box>
       </CardContent>
     </Card>
