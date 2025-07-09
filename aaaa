@@ -1,3 +1,15 @@
+
+export const apacPartitionList = [
+  'IN.Pune',
+  'MY.Kuala Lumpur',
+  'PH.Quezon',
+  'PH.Taguig',
+  'JP.Tokyo'
+];
+
+....
+
+
 const buildingCapacities = {
   "Podium Floor (Pune)": 725,
   "Tower B (Pune)": 303,
