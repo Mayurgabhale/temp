@@ -1,3 +1,13 @@
+import indiaFlag from '../assets/flags/india.png';
+import japanFlag from '../assets/flags/japan.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+import philippinesFlag from '../assets/flags/philippines.png';
+import taguigFlag from '../assets/flags/Taguig.png';
+
+
+
+
+
 // src/components/SummaryCard.jsx
 
 import React from 'react';
