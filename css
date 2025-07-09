@@ -7,8 +7,8 @@ this is a flooer capacities
 // client/src/constants/floorCapacities.js
 /*this is for  pune  */
 const floorCapacities = {
-  "Podium Floor": 725,
-  "Tower B": 303,
+  "Podium Floor": 725,  
+  "Tower B": 303,       >>>>>> this is for pune 
   "2nd Floor": 185,
 };
 and    .......................
