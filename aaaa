@@ -1,248 +1,67 @@
-this is emea code read carefully and write  same for apac
-
-const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3005';
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
 
 // In-memory cache
 const cache = {
   liveSummary: null,
-  history: new Map(),  // key: partition code or 'global'
+  history: new Map(), // key: partition code or 'global'
 };
 
 /**
- * Fetch live summary, caching for session.
+ * Fetch APAC live summary and cache it
  */
 export async function fetchLiveSummary() {
   if (cache.liveSummary) {
     return cache.liveSummary;
   }
+
   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+
   const json = await res.json();
+  if (!json.success) throw new Error('Live summary response not successful');
+
   cache.liveSummary = json;
   return json;
 }
 
 /**
- * Fetch history (global or per-partition), caching for session.
- * @param {string} [location] — partition identifier, e.g. 'LT.Vilnius'
+ * Fetch history (global or per-site), caching for session.
+ * @param {string} [site] — partition identifier, e.g. 'PH.Manila'
  */
-export async function fetchHistory(location) {
-  const key = location || 'global';
+export async function fetchHistory(site) {
+  const key = site || 'global';
   if (cache.history.has(key)) {
     return cache.history.get(key);
   }
-  const url = location
-    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
+
+  const url = site
+    ? `${BASE}/api/occupancy/history?site=${encodeURIComponent(site)}`
     : `${BASE}/api/occupancy/history`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
+
   const json = await res.json();
+  if (!json.success) throw new Error('History response not successful');
+
   cache.history.set(key, json);
   return json;
 }
 
 /**
- * Clear all cached data (if you need to force a fresh fetch).
+ * Clear APAC data cache
  */
 export function clearCache() {
   cache.liveSummary = null;
   cache.history.clear();
 }
 
-// --- list of EMEA partitions for Dashboard
+// --- List of APAC partitions for the dashboard
 export const partitionList = [
-  'AUT.Vienna',
-  'DU.Abu Dhab',
-  'IE.Dublin',
-  'IT.Rome',
-  'LT.Vilnius',
-  'MA.Casablanca',
-  'RU.Moscow',
-  'UK.London',
-  'ES.Madrid'
+  'IN.Pune',
+  'PH.Manila',
+  'PH.Quezon City',
+  'PH.Taguig City',
+  'MY.Kuala Lumpur',
+  'JP.Tokyo'
 ];
-
-
-
-this is apac 
-
-// src/api/occupancy.service.js
-const BASE_URL = process.env.REACT_APP_API_BASE || 'http://localhost:3007/api';
-
-// http://localhost:3007/api/occupancy/live-summary
-// http://localhost:3007/api/occupancy/history
-
-export const fetchOccupancy = async () => {
-  const res = await fetch(`${BASE_URL}/occupancy/live-summary`);
-  if (!res.ok) throw new Error('Failed to fetch occupancy');
-  return res.json();
-};
-
-export const fetchHistory = async (site) => {
-  const url = site
-    ? `${BASE_URL}/occupancy/history?site=${site}`
-    : `${BASE_URL}/occupancy/history`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Failed to fetch history');
-  return res.json();
-};
-
-http://localhost:3007/api/occupancy/live-summary
-
-this api respons
-{
-  "success": true,
-  "today": {
-    "total": 594,
-    "Employee": 515,
-    "Contractor": 79
-  },
-  "realtime": {
-    "Pune": {
-      "total": 268,
-      "Employee": 232,
-      "Contractor": 36,
-      "floors": {
-        "2nd Floor": 26,
-        "Tower B": 58,
-        "Podium Floor": 184
-      }
-    },
-    "Quezon City": {
-      "total": 116,
-      "Employee": 106,
-      "Contractor": 10,
-      "floors": {
-        "7th Floor": 82,
-        "6th Floor": 34
-      }
-    },
-    "MY.Kuala Lumpur": {
-      "total": 6,
-      "Employee": 5,
-      "Contractor": 1,
-      "floors": {
-        "Kuala Lumpur": 6
-      }
-    },
-    "Taguig City": {
-      "total": 15,
-      "Employee": 11,
-      "Contractor": 4,
-      "floors": {
-        "Taguig": 15
-      }
-    },
-    "JP.Tokyo": {
-      "total": 8,
-      "Employee": 7,
-      "Contractor": 1,
-      "floors": {
-        "Tokyo": 8
-      }
-    }
-  },
-  "unmapped": [],
-  "details": [
-    {
-      "ObjectName1": "Unavane, Aditya",
-      "Door": "APAC_IN_PUN_2NDFLR_RECPTION TO WORKSTATION DOOR_10:05:4B",
-      "PersonnelType": "Employee",
-      "EmployeeID": "328923",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-09T08:42:48.000Z",
-      "Direction": "InDirection",
-      "PersonGUID": "F4980CD9-374E-4408-BD7B-001F7D12F8AD"
-    },
-    {
-      "ObjectName1": "Panda, Rajat Bhusan",
-      "Door": "APAC_IN_PUN_TOWER B_GYM ROOM",
-      "PersonnelType": "Employee",
-      "EmployeeID": "321041",
-      "PartitionName2": "Pune",
-      "LocaleMessageTime": "2025-07-09T08:53:58.000Z",
-      "Direction": "InDirection",
-      "PersonGUID": "F4F643ED-3E96-4457-8AE9-0086CFF50225"
-    },
-    {
-      "ObjectName1": "Verma, Rahul",
-...
-
-http://localhost:3007/api/occupancy/history 
-this api respons
-
-{
-  "success": true,
-  "summaryByDate": [
-    {
-      "date": "2025-07-02",
-      "day": "Wednesday",
-      "region": {
-        "name": "APAC",
-        "total": 1383,
-        "Employee": 1225,
-        "Contractor": 158
-      },
-      "partitions": {
-        "PH.Manila": {
-          "total": 410,
-          "Employee": 369,
-          "Contractor": 41
-        },
-        "APAC.Default": {
-          "total": 958,
-          "Employee": 843,
-          "Contractor": 115
-        },
-        "MY.Kuala Lumpur": {
-          "total": 7,
-          "Employee": 6,
-          "Contractor": 1
-        },
-        "JP.Tokyo": {
-          "total": 8,
-          "Employee": 7,
-          "Contractor": 1
-        }
-      }
-    },
-    {
-      "date": "2025-07-03",
-      "day": "Thursday",
-      "region": {
-        "name": "APAC",
-        "total": 1035,
-        "Employee": 887,
-        "Contractor": 148
-      },
-      "partitions": {
-        "PH.Manila": {
-          "total": 371,
-          "Employee": 329,
-          "Contractor": 42
-        },
-        "APAC.Default": {
-          "total": 649,
-          "Employee": 545,
-          "Contractor": 104
-        },
-        "MY.Kuala Lumpur": {
-          "total": 6,
-          "Employee": 5,
-          "Contractor": 1
-        },
-        "JP.Tokyo": {
-          "total": 9,
-          "Employee": 8,
-          "Contractor": 1
-        }
-      }
-    },
-    {
-      "date": "2025-07-04",
-      "day": "Friday",
-      "region": {
-
-
-apac all fontend code are correct but data is not show
