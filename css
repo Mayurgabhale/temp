@@ -1,3 +1,15 @@
+<LocationOnIcon
+  htmlColor={color}
+  sx={{
+    fontSize: isSel ? 14 : 10, // reduce icon size
+    transform: 'translate(-50%, -100%)',
+    stroke: theme.palette.background.paper,
+    strokeWidth: 0.5,
+  }}
+/>
+
+...
+
 <circle
   cx={0}
   cy={0}
