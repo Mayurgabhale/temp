@@ -3,9 +3,9 @@ take a emea chart reference and create apac chart ok
 
 
 ***********************
-this is a flooer capacities for pune
+this is a flooer capacities 
 // client/src/constants/floorCapacities.js
-
+/*this is for  pune  */
 const floorCapacities = {
   "Podium Floor": 725,
   "Tower B": 303,
