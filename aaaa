@@ -1,10 +1,5 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
-import {
-  Container, Box, Typography, Skeleton,
-  Paper
-} from '@mui/material';
-
 import Header from '../components/Header';
 import SummaryCard from '../components/SummaryCard';
 import CompositeChartCard from '../components/CompositeChartCard';
@@ -15,9 +10,9 @@ import { partitionList } from '../services/occupancy.service';
 import buildingCapacities from '../data/buildingCapacities';
 
 const palette15 = [
-  '#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666',
-  '#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A',
-  '#FF9800','#673AB7','#009688','#CDDC39','#795548'
+  '#FFC107', '#E91E63', '#4CAF50', '#FFEB3B', '#FFD666',
+  '#D84315', '#3F51B5', '#9C27B0', '#00BCD4', '#8BC34A',
+  '#FF9800', '#673AB7', '#009688', '#CDDC39', '#795548'
 ];
 
 export default function Dashboard() {
@@ -25,11 +20,9 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <Box width="100vw" py={4}>
-        <Typography color="error" align="center">
-          Error loading live data
-        </Typography>
-      </Box>
+      <div className="w-full py-10 text-center text-red-500 text-lg">
+        Error loading live data
+      </div>
     );
   }
 
@@ -68,11 +61,7 @@ export default function Dashboard() {
       key: 'pune',
       title: 'Pune Composite Chart',
       body: pune?.total === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No Pune data
-          </Typography>
-        )
+        ? <div className="text-white text-center py-6">No Pune data</div>
         : (
           <CompositeChartCard
             data={floors.map(([f, h]) => ({
@@ -82,7 +71,6 @@ export default function Dashboard() {
             }))}
             lineColor={palette15[0]}
             height={300}
-            sx={{ border: 'none' }}
           />
         )
     },
@@ -90,11 +78,7 @@ export default function Dashboard() {
       key: 'quezon',
       title: 'Quezon City',
       body: quezonCity?.total === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No Quezon City data
-          </Typography>
-        )
+        ? <div className="text-white text-center py-6">No Quezon City data</div>
         : (
           <PieChartCard
             data={[
@@ -104,7 +88,6 @@ export default function Dashboard() {
             colors={[palette15[5], palette15[6]]}
             height={300}
             showZeroSlice
-            sx={{ border: 'none' }}
           />
         )
     },
@@ -112,21 +95,16 @@ export default function Dashboard() {
       key: 'combined',
       title: 'Tokyo + KL + Taguig',
       body: combinedRegions.length === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No regional data
-          </Typography>
-        )
+        ? <div className="text-white text-center py-6">No regional data</div>
         : (
           <PieChartCard
             data={combinedRegions.map(r => ({
-              name: r.name.replace(/^.*\./, ''),  // strip country code
+              name: r.name.replace(/^.*\./, ''),
               value: r.total
             }))}
             colors={[palette15[2], palette15[3], palette15[4]]}
             height={300}
             showZeroSlice
-            sx={{ border: 'none' }}
           />
         )
     }
@@ -135,74 +113,65 @@ export default function Dashboard() {
   return (
     <>
       <Header title="APAC Live Occupancy" />
-      <Container
-        maxWidth={false}
-        disableGutters
-        sx={{ py: 3, px: 2, background: 'rgba(0, 0, 0, 0.93)' }}
-      >
-        {/* Top Summary Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+      <div className="w-full px-4 py-6 bg-black bg-opacity-95">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {[
             {
               title: "Today's Total Headcount",
               value: todayTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }}  />,
-              border: '#FFB300',
-              
-          
+              icon: <i className="fa-solid fa-users text-xl" />,
+              border: '#FFB300'
             },
             {
               title: "Today's Employees Count",
               value: todayEmp,
-              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+              icon: <i className="bi bi-people text-xl" />,
               border: '#8BC34A'
             },
             {
               title: "Today's Contractors Count",
               value: todayCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+              icon: <i className="fa-solid fa-circle-user text-xl" />,
               border: '#E57373'
             },
             {
               title: "Realtime Headcount",
               value: realtimeTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+              icon: <i className="fa-solid fa-users text-xl" />,
               border: '#FFD180'
             },
             {
               title: "Realtime Employees Count",
               value: realtimeEmp,
-              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+              icon: <i className="bi bi-people text-xl" />,
               border: '#AED581'
             },
             {
               title: "Realtime Contractors Count",
               value: realtimeCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+              icon: <i className="fa-solid fa-circle-user text-xl" />,
               border: '#EF5350'
             }
           ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+            <div key={c.title}>
               <SummaryCard
                 title={c.title}
                 total={c.value}
-                stats={[]}
                 icon={c.icon}
+                stats={[]}
                 sx={{ height: 140, border: `2px solid ${c.border}` }}
               />
-            </Box>
+            </div>
           ))}
-        </Box>
+        </div>
 
-        {/* Region Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+        {/* Region Summary Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
+            ? <div className="col-span-full h-52 bg-gray-700 animate-pulse rounded" />
             : partitions.map(p => (
-              <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
-              >
+              <div key={p.name}>
                 <SummaryCard
                   title={p.name.replace(/^.*\./, '')}
                   total={p.total}
@@ -210,51 +179,30 @@ export default function Dashboard() {
                     { label: 'Employees', value: p.Employee },
                     { label: 'Contractors', value: p.Contractor }
                   ]}
-                  sx={{ width: '100%', border: '1px solid #FFB300' }}
+                  sx={{ border: '1px solid #FFB300' }}
                 />
-              </Box>
+              </div>
             ))
           }
-        </Box>
+        </div>
 
-        {/* Main Charts Section */}
-        <Box display="flex" gap={2} flexWrap="wrap" mb={4}>
+        {/* Chart Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {chartConfigs.map(({ key, title, body }) => (
-            <Box
+            <div
               key={key}
-              sx={{
-                flex: '1 1 32%',
-                minWidth: 280,
-                height: 380,
-                animation: 'fadeInUp 0.5s'
-              }}
+              className="bg-black bg-opacity-50 border border-yellow-400 rounded-lg p-4 flex flex-col"
             >
-              <Paper
-                sx={{
-                  p: 2,
-                  height: '100%',
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '1px solid #FFC107',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                <Typography variant="h6" align="center" sx={{ color: '#FFC107', mb: 2 }}>
-                  {title}
-                </Typography>
-                <Box sx={{ flex: 1, overflow: 'hidden' }}>
-                  {body}
-                </Box>
-              </Paper>
-            </Box>
+              <h3 className="text-center text-yellow-400 text-lg font-semibold mb-2">
+                {title}
+              </h3>
+              <div className="flex-1 overflow-hidden">
+                {body}
+              </div>
+            </div>
           ))}
-        </Box>
-      </Container>
+        </div>
+      </div>
     </>
   );
 }
-
-
-
-// .
-
