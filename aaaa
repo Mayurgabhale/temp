@@ -1,3 +1,6 @@
+create summery card desing more atrative and profesanl and responsive and alos add flags ok add icon colr text colro and dark matching theeme 
+
+
 // src/pages/Dashboard.jsx
 import React from 'react';
 import {
@@ -264,6 +267,68 @@ export default function Dashboard() {
 // .
 // .
 
+// src/components/SummaryCard.jsx
+
+import React from 'react';
+import { Card, CardContent, Box, Typography, useTheme } from '@mui/material';
+
+export default function SummaryCard({
+  title,
+  total,
+  stats = [],
+  icon,
+  titleColor = '#ccc',
+  totalColor = '#fff',
+  statColors = [],
+  sx = {}
+}) {
+  const theme = useTheme();
+
+  return (
+    <Card
+      sx={{
+        ...sx, // 👈 ensures external styles are applied
+        borderRadius: 2,
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
+        color: '#fff',
+      }}
+      elevation={0}
+    >
+      <CardContent>
+        {/* Top Section */}
+        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+          <Typography variant="subtitle1" sx={{ color: titleColor, fontWeight: 600 }}>
+            {title}
+          </Typography>
+          <Box>{icon}</Box>
+        </Box>
+
+        {/* Total Number */}
+        <Typography variant="h4" sx={{ color: totalColor, fontWeight: 700, mb: stats.length ? 1 : 0 }}>
+          {total}
+        </Typography>
+
+        {/* Bottom Stats */}
+        {stats.map((stat, index) => (
+          <Typography
+            key={index}
+            variant="caption"
+            sx={{ display: 'block', color: statColors[index] || '#aaa' }}
+          >
+            {stat.label}: {stat.value}
+          </Typography>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\india.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\japan.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\malaysia.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\philippines.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\Taguig.png
 
 
 
