@@ -5,11 +5,10 @@
   sx={{
     backgroundColor: 'black',
     color: '#fff',
+    borderBottom: '4px solid #FFD700',
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottom: '4px solid #FFD700', // Yellow border
+    justifyContent: 'center', // Center the group
+    alignItems: 'center',     // Align logo and text vertically
   }}
 >
   <Box
@@ -19,7 +18,7 @@
     sx={{
       height: { xs: 40, md: 60 },
       width: 'auto',
-      mb: 1,
+      mr: 2, // Space between logo and text
     }}
   />
 
