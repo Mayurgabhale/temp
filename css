@@ -1,60 +1,145 @@
-// src/api/occupancy.service.js
+// src/pages/Dashboard.jsx
 
-const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
+import React, { useEffect, useState } from 'react';
+import { Container, Box, Typography, Grid } from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import PeopleIcon from '@mui/icons-material/People';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 
-// In-memory cache
-const cache = {
-  liveSummary: null,
-  history: new Map(), // key: partition code or 'global'
-};
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SummaryCard from '../components/SummaryCard';
+import CompositeChartCard from '../components/CompositeChartCard';
+import PieChartCard from '../components/PieChartCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
-/**
- * Fetch live summary, caching for session.
- */
-export async function fetchLiveSummary() {
-  if (cache.liveSummary) {
-    return cache.liveSummary;
+import seatCapacities from '../data/buildingCapacities';
+
+// Flags (already imported in Header as well)
+import indiaFlag from '../assets/flags/india.png';
+import phFlag from '../assets/flags/philippines.png';
+import japanFlag from '../assets/flags/japan.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+
+export default function Dashboard() {
+  const { data, loading, error } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  if (error) {
+    return (
+      <Box py={4}>
+        <Typography color="error" align="center">Error loading live data</Typography>
+      </Box>
+    );
   }
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.liveSummary = json;
-  return json;
+
+  // APAC partitions
+  const partitions = ['Pune', 'Quezon City', 'JP.Tokyo', 'MY.Kuala Lumpur', 'Taguig City'];
+  const displayName = {
+    Pune: 'Pune',
+    'Quezon City': 'Quezon City',
+    'JP.Tokyo': 'Tokyo',
+    'MY.Kuala Lumpur': 'Kuala Lumpur',
+    'Taguig City': 'Taguig'
+  };
+  const flagMap = {
+    Pune: indiaFlag,
+    'Quezon City': phFlag,
+    'JP.Tokyo': japanFlag,
+    'MY.Kuala Lumpur': malaysiaFlag,
+    'Taguig City': phFlag
+  };
+  const colorsMap = {
+    Pune: ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+    'Quezon City': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063'],
+    'JP.Tokyo': ['#FFF2CC', '#fcf3cf', '#2ecc71', '#ec7063'],
+    'MY.Kuala Lumpur': ['#FFD666', '#fcf3cf', '#2ecc71', '#ec7063'],
+    'Taguig City': ['#FFE599', '#fcf3cf', '#2ecc71', '#ec7063']
+  };
+
+  // Donut chart slices (for example, split APAC sites into two slices)
+  const slice1 = partitions.slice(0, 3).map(k => ({
+    name: displayName[k],
+    value: data?.realtime?.[k]?.total || 0
+  }));
+  const slice2 = partitions.slice(3).map(k => ({
+    name: displayName[k],
+    value: data?.realtime?.[k]?.total || 0
+  }));
+
+  // Summary cards data (one per site)
+  const summaryItems = partitions.map(site => {
+    const x = data?.realtime?.[site] || {};
+    return {
+      label: displayName[site],
+      total: x.total || 0,
+      emp: x.Employee || 0,
+      cont: x.Contractor || 0,
+      flag: flagMap[site],
+      colors: colorsMap[site]
+    };
+  });
+
+  // Example of floor breakdown for Pune (if needed on this page or on partition page)
+  // const puneFloors = Object.entries(data?.realtime?.Pune?.floors || {}).map(
+  //   ([floor, headcount]) => ({
+  //     name: floor,
+  //     headcount,
+  //     capacity: seatCapacities[floor] || 0
+  //   })
+  // );
+
+  return (
+    <Container maxWidth="lg" sx={{ pb: 4 }}>
+      <Header />
+
+      {/* Summary Cards */}
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        {summaryItems.map(item => (
+          <Grid key={item.label} item xs={12} sm={6} md={4} lg={2}>
+            <SummaryCard
+              title={item.label}
+              total={item.total}
+              stats={[
+                { label: 'Employees', value: item.emp },
+                { label: 'Contractors', value: item.cont }
+              ]}
+              icon={<PeopleIcon />}
+              titleColor="#FFC107"
+              totalColor="#FFC107"
+              statColors={['#4CAF50', '#FF4C4C']}
+            >
+              {/* Optionally show the flag */}
+              <Box display="flex" justifyContent="center">
+                <img src={item.flag} alt={`${item.label} flag`} width={30} />
+              </Box>
+            </SummaryCard>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Pie Charts (example) */}
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <PieChartCard title="APAC Sites (Group 1)" data={slice1} colors={colorsMap['Pune']} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <PieChartCard title="APAC Sites (Group 2)" data={slice2} colors={colorsMap['MY.Kuala Lumpur']} />
+        </Grid>
+      </Grid>
+
+      {/* Last update time */}
+      <Box textAlign="right" mb={2}>
+        <Typography variant="caption">Last update: {lastUpdate}</Typography>
+      </Box>
+
+      <Footer />
+    </Container>
+  );
 }
-
-/**
- * Fetch history (global or per-partition), caching for session.
- * @param {string} [location] — partition identifier, e.g. 'Pune'
- */
-export async function fetchHistory(location) {
-  const key = location || 'global';
-  if (cache.history.has(key)) {
-    return cache.history.get(key);
-  }
-  const url = location
-    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
-    : `${BASE}/api/occupancy/history`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.history.set(key, json);
-  return json;
-}
-
-/**
- * Clear all cached data (if you need to force a fresh fetch).
- */
-export function clearCache() {
-  cache.liveSummary = null;
-  cache.history.clear();
-}
-
-// --- list of APAC partitions for Dashboard
-export const partitionList = [
-  'Pune',
-  'Quezon City',
-  'JP.Tokyo',
-  'MY.Kuala Lumpur',
-  'Taguig City'
-];
