@@ -1,121 +1,36 @@
-C:\Users\W0024618\Desktop\global-page\src\App.jsx
+{/* Header */}
+<Box
+  px={2}
+  py={3}
+  sx={{
+    backgroundColor: 'primary.main',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+  }}
+>
+  <Box
+    component="img"
+    src="/logo-wu.png"
+    alt="Western Union Logo"
+    sx={{
+      height: { xs: 40, md: 60 },
+      width: 'auto',
+    }}
+  />
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Grid, Box, Typography, CircularProgress } from '@mui/material';
-import Sidebar from './components/Sidebar.jsx';
-import MapChart from './components/MapChart.jsx';
-import VipGrid from './components/VipGrid.jsx';
-import Footer from './components/Footer.jsx';
-
-export default function App() {
-  const [counts, setCounts] = useState(null);
-  const [selected, setSelected] = useState('apac');
-
-  useEffect(() => {
-    axios
-      .get('http://localhost:3008/api/occupancy/live-summary')
-      .then(res => setCounts(res.data))
-      .catch(() => setCounts({}));
-  }, []);
-
-  if (counts === null) {
-    return (
-      <Box display="flex" justifyContent="center" mt={6}>
-        <CircularProgress color="primary" />
-      </Box>
-    );
-  }
-
-  return (
-    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
-      {/* Header */}
-      <Box py={4}>
-        <Typography
-          variant="h3"
-          align="center"
-          sx={{ color: 'primary.main', fontWeight: 'bold' }}
-        >
-          Western Union Global Headcount
-        </Typography>
-      </Box>
-
-      {/* Sidebar | Map | VIP */}
-      <Grid container sx={{ height: `calc(100vh - 96px)` }}>
-        {/* Sidebar */}
-        <Grid
-          item
-          xs={12}
-          sm={3}
-          md={2}
-          sx={{
-            bgcolor: 'secondary.main',
-            height: '100%',
-          }}
-        >
-          <Sidebar
-            counts={counts}
-            selected={selected}
-            onSelect={setSelected}
-          />
-        </Grid>
-
-        {/* Map */}
-        <Grid item xs={12} sm={7} md={7}>
-          <Box
-            p={2}
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Box
-              sx={{
-                width: '100%',
-                height: { xs: 500, md: 600 },
-              }}
-            >
-              <MapChart
-                counts={counts}
-                selected={selected}
-                onClickSite={setSelected}
-              />
-            </Box>
-          </Box>
-        </Grid>
-
-        {/* VIP Grid */}
-        <Grid item xs={12} sm={2} md={3}>
-          <Box
-            p={2}
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Box
-              sx={{
-                width: '100%',
-                height: { xs: 500, md: 600 },
-              }}
-            >
-              <VipGrid />
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
-
-      {/* Footer */}
-      <Box mt={4}>
-        <Footer />
-      </Box>
-    </Box>
-  );
-}
-
-C:\Users\W0024618\Desktop\global-page\public\logo-wu.png
-
+  <Typography
+    variant="h5"
+    sx={{
+      fontWeight: 'bold',
+      textAlign: { xs: 'center', md: 'right' },
+      flex: 1,
+      ml: { md: 2 },
+      mt: { xs: 2, md: 0 },
+    }}
+  >
+    Global Headcount Dashboard
+  </Typography>
+</Box>
