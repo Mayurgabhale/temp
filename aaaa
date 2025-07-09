@@ -1,23 +1,15 @@
-// src/components/Header.jsx
 import React, { useEffect, useState } from 'react';
-import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
-} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 
-// import wuLogo from '../assets/images/wu-logo.png';
-import wuLogo from '../assets/wu-logo.png'
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+import wuLogo from '../assets/wu-logo.png';
 import indiaFlag from '../assets/flags/india.png';
 import phFlag from '../assets/flags/philippines.png';
 import japanFlag from '../assets/flags/japan.png';
 import malaysiaFlag from '../assets/flags/malaysia.png';
-// import { partitionList } from '../api/occupancy.service';
+
 import { apacPartitionList as partitionList } from '../api/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -26,7 +18,9 @@ export default function Header() {
   const [lastUpdate, setLastUpdate] = useState('');
 
   useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
+    if (data) {
+      setLastUpdate(new Date().toLocaleTimeString());
+    }
   }, [data]);
 
   const parts = loc.pathname.split('/').filter(Boolean);
@@ -43,62 +37,63 @@ export default function Header() {
   };
 
   return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+    <header className="bg-black text-white mb-4 shadow-md">
+      <div className="container mx-auto flex items-center justify-between px-4 py-3 flex-wrap">
+        {/* Left: Logo + Title + Navigation Icons */}
+        <div className="flex items-center space-x-4">
+          <img src={wuLogo} alt="WU" className="h-10" />
 
-          {/* Title: APAC Occupancy */}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            APAC Occupancy{current && ` • ${current}`}
-          </Typography>
+          <h1 className="text-xl sm:text-2xl font-semibold text-yellow-400 whitespace-nowrap">
+            APAC Occupancy {current && <span className="text-white">• {current}</span>}
+          </h1>
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
-
-          {/* Static Pune button shown only on main dashboard */}
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-
-          {/* Dynamic partition button for any partition page */}
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
+          <div className="hidden sm:flex space-x-2">
+            <button
+              onClick={() => navigate('/')}
+              className="text-white hover:text-yellow-400"
+              title="Home"
             >
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
+              <i className="fas fa-home text-lg"></i>
+            </button>
 
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
+            <button
+              onClick={() => navigate('/history')}
+              className="text-white hover:text-yellow-400"
+              title="History"
+            >
+              <i className="fas fa-clock text-lg"></i>
+            </button>
+
+            {(isHome || isPart) && (
+              <button
+                onClick={() =>
+                  navigate(`/partition/${encodeURIComponent(current || 'Pune')}/details`)
+                }
+                className="text-white hover:text-yellow-400"
+                title="Details"
+              >
+                <i className="fas fa-list text-lg"></i>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Partition Select */}
+        <div className="mt-2 sm:mt-0">
+          <select
             value={current}
-            displayEmpty
             onChange={e => navigate(e.target.value || '/')}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+            className="bg-white text-black px-3 py-1 rounded focus:outline-none min-w-[160px]"
           >
-            <MenuItem value="">— Select Site —</MenuItem>
+            <option value="">— Select Site —</option>
             {partitionList.map(p => (
-              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
-                <Box component="img"
-                  src={flagMap[p]}
-                  alt={p}
-                  sx={{ width: 24, height: 16, mr: 1 }} />
+              <option key={p} value={`/partition/${encodeURIComponent(p)}`}>
                 {p}
-              </MenuItem>
+              </option>
             ))}
-          </Select>
-        </Box>
-      </Toolbar>
-    </AppBar>
+          </select>
+        </div>
+      </div>
+    </header>
   );
 }
