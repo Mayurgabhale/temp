@@ -1,2 +1,19 @@
-import buildingCapacities from '../data/buildingCapacities';
-import CompositeChartCardAPAC from '../components/CompositeChartCard'; // assuming the APAC version replaces default
+const apacCompositeData = partitions.map(partition => {
+  const real = data?.realtime?.[partition] || {};
+  const headcount = real.total || 0;
+
+  // Match human-friendly name
+  const label = displayName[partition];
+
+  // Match capacity using label
+  const matchingKey = Object.keys(buildingCapacities).find(key =>
+    key.toLowerCase().includes(label.toLowerCase())
+  );
+  const capacity = matchingKey ? buildingCapacities[matchingKey] : 0;
+
+  return {
+    name: label,
+    headcount,
+    capacity
+  };
+});
