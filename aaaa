@@ -1,3 +1,8 @@
+import { apacPartitionList as partitionList } from '../api/occupancy.service';
+
+
+
+
 // src/components/Header.jsx
 import React, { useEffect, useState } from 'react';
 import {
