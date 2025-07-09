@@ -1,113 +1,85 @@
-import { apacPartitionList as partitionList } from '../api/occupancy.service';
+
+// // // src/routes/AppRoutes.jsx
+// import React from 'react';
+// import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// import Dashboard              from '../pages/Dashboard';
+// import History                from '../pages/History';
+// import PartitionDetail        from '../pages/PartitionDetail';
+// import PartitionDetailDetails from '../pages/PartitionDetailDetails';
+
+// export default function AppRoutes() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+
+//         {/* Home dashboard */}
+//         <Route path="/" element={<Dashboard />} />
+
+//         {/* Global history */}
+//         <Route path="/history" element={<History />} />
+
+//         {/* Partition-scoped history */}
+//         <Route path="/partition/:partition/history" element={<History />} />
+
+//         {/* Partition overview (live) */}
+//         <Route path="/partition/:partition" element={<PartitionDetail />} />
+
+//         {/* Partition “see details” sub-page */}
+//         <Route
+//           path="/partition/:partition/details"
+//           element={<PartitionDetailDetails />}
+//         />
+
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
 
 
 
 
-// src/components/Header.jsx
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 
-// import wuLogo from '../assets/images/wu-logo.png';
-import wuLogo from '../assets/wu-logo.png'
-import indiaFlag from '../assets/flags/india.png';
-import phFlag from '../assets/flags/philippines.png';
-import japanFlag from '../assets/flags/japan.png';
-import malaysiaFlag from '../assets/flags/malaysia.png';
-import { partitionList } from '../api/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
-export default function Header() {
-  const navigate = useNavigate();
-  const loc = useLocation();
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
 
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
 
-  const parts = loc.pathname.split('/').filter(Boolean);
-  const isPart = parts[0] === 'partition' && parts[1];
-  const current = isPart ? decodeURIComponent(parts[1]) : '';
-  const isHome = loc.pathname === '/';
 
-  const flagMap = {
-    'Pune': indiaFlag,
-    'Quezon City': phFlag,
-    'JP.Tokyo': japanFlag,
-    'MY.Kuala Lumpur': malaysiaFlag,
-    'Taguig City': phFlag
-  };
 
+
+
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const Dashboard               = lazy(() => import('../pages/Dashboard'));
+const History                 = lazy(() => import('../pages/History'));
+const PartitionDetail         = lazy(() => import('../pages/PartitionDetail'));
+const PartitionDetailDetails  = lazy(() => import('../pages/PartitionDetailDetails'));
+
+export default function AppRoutes() {
   return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          {/* Home dashboard */}
+          <Route path="/" element={<Dashboard />} />
 
-          {/* Title: APAC Occupancy */}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            APAC Occupancy{current && ` • ${current}`}
-          </Typography>
+          {/* Global history */}
+          <Route path="/history" element={<History />} />
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
+          {/* Partition-scoped history */}
+          <Route path="/partition/:partition/history" element={<History />} />
 
-          {/* Static Pune button shown only on main dashboard */}
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
+          {/* Partition overview (live) */}
+          <Route path="/partition/:partition" element={<PartitionDetail />} />
 
-          {/* Dynamic partition button for any partition page */}
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
-            >
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
-
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={current}
-            displayEmpty
-            onChange={e => navigate(e.target.value || '/')}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
-          >
-            <MenuItem value="">— Select Site —</MenuItem>
-            {partitionList.map(p => (
-              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
-                <Box component="img"
-                  src={flagMap[p]}
-                  alt={p}
-                  sx={{ width: 24, height: 16, mr: 1 }} />
-                {p}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-      </Toolbar>
-    </AppBar>
+          {/* Partition “see details” sub-page */}
+          <Route
+            path="/partition/:partition/details"
+            element={<PartitionDetailDetails />}
+          />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
-
-Compiled with problems:
-×
-ERROR in ./src/components/Header.jsx 152:20-37
-export 'partitionList' (imported as 'partitionList') was not found in '../api/occupancy.service' (possible exports: apacPartitionList, clearCache, fetchHistory, fetchLiveSummary)
