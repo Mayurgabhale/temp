@@ -1,115 +1,14 @@
-// src/pages/Dashboard.jsx
-import React, { useEffect, useState } from 'react';
-import { Container, Box, Typography, Skeleton } from '@mui/material';
-import Header from '../components/Header';
-import SummaryCard from '../components/SummaryCard';
-import CompositeChartCardAPAC from '../components/CompositeChartCardAPAC';
-import PieChartCard from '../components/PieChartCard';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-import indiaFlag from '../assets/flags/india.png';
-import phFlag from '../assets/flags/philippines.png';
-import japanFlag from '../assets/flags/japan.png';
-import malaysiaFlag from '../assets/flags/malaysia.png';
+// src/components/CompositeChartCardAPAC.jsx
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import { ComposedChart,... } from 'recharts';
 
-const partitions = ['Pune', 'Quezon City', 'JP.Tokyo', 'MY.Kuala Lumpur', 'Taguig City'];
-const displayName = { /* same as before */ };
-const flagMap = { /* same as before */ };
-const colorsMap = { /* same as before */ };
+export default function CompositeChartCardAPAC({ title, data }) {
+  if (!data?.length) return <Card><CardContent><Typography>No data</Typography></CardContent></Card>;
 
-export default function Dashboard() {
-  const { data, loading, error } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
-
-  if (error) return <Typography color="error" align="center">Error loading live data</Typography>;
-
-  const totals = {
-    todayTot: data?.today.total || 0,
-    todayEmp: data?.today.Employee || 0,
-    todayCon: data?.today.Contractor || 0,
-    realtimeTot: Object.values(data?.realtime || {}).reduce((a, x) => a + (x.total || 0), 0),
-    realtimeEmp: Object.values(data?.realtime || {}).reduce((a, x) => a + (x.Employee || 0), 0),
-    realtimeCon: Object.values(data?.realtime || {}).reduce((a, x) => a + (x.Contractor || 0), 0),
-  };
-
-  const darkSummaryCards = [
-    { title: "Today’s Total", value: totals.todayTot, icon: '👥', border: 'linear-gradient(180deg,#FFB74D,#FF9800)' },
-    // ...other cards...
-  ];
-
-  const summaryItems = partitions.map(site => ({
-    label: displayName[site],
-    total: data?.realtime?.[site]?.total || 0,
-    emp: data?.realtime?.[site]?.Employee || 0,
-    cont: data?.realtime?.[site]?.Contractor || 0,
-    flag: flagMap[site],
-    colors: colorsMap[site]
+  const enriched = data.map((d,i) => ({
+    ...d, percentage: d.capacity ? Math.round(d.headcount / d.capacity *100) : 0,
+    _color: ['#66BB6A','#81C784','#A5D6A7'][i %3]
   }));
-
-  const slice1 = partitions.slice(0, 3).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
-  const slice2 = partitions.slice(3).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
-
-  // Example floor data for Pune
-  const puneFloors = [
-    { name: '1st Floor', headcount: 50, capacity: 75 },
-    { name: '2nd Floor', headcount: 60, capacity: 80 },
-    { name: '3rd Floor', headcount: 45, capacity: 70 },
-  ];
-
-  return (
-    <>
-      <Header />
-      <Container maxWidth={false} sx={{ px:2, py:2, bgcolor:'#121212', minHeight:'100vh' }}>
-        {/* Summary areas */}
-        <Box display="flex" flexWrap="wrap" gap={1}>
-          {darkSummaryCards.map(c => (
-            <Box key={c.title} sx={{ flex:'1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard title={c.title} total={c.value} stats={[]} icon={<span>{c.icon}</span>} sx={{
-                bgcolor:'#1E1E1E', borderRadius:2, border:`2px solid transparent`,
-                borderImage:`${c.border} 1`, boxShadow:'0 2px 8px rgba(0,0,0,0.3)'
-              }} />
-            </Box>
-          ))}
-        </Box>
-
-        <Box display="flex" flexWrap="wrap" gap={1} mt={2}>
-          {loading ? <LoadingSpinner /> : summaryItems.map((item, idx) => {
-            const [tc, totc] = item.colors;
-            return (
-              <Box key={idx} sx={{ flex:'1 1 calc(20% - 8px)' }}>
-                <SummaryCard title={item.label} total={item.total} stats={[
-                  { label:'Employees', value:item.emp },
-                  { label:'Contractors', value:item.cont }
-                ]} icon={<Box component="img" src={item.flag} alt={item.label} sx={{ width:40, height:24 }} />}
-                titleColor={tc} totalColor={totc} sx={{
-                  bgcolor:'#1A1A1A', border:`1.5px solid ${tc}`, borderRadius:2,
-                  boxShadow:'0 2px 6px rgba(0,0,0,0.25)'
-                }} />
-              </Box>
-            );
-          })}
-        </Box>
-
-        {/* Charts */}
-        <Box display="flex" flexWrap="wrap" gap={2} mt={4}>
-          <Box sx={{ flex:'1 1 0', p:2, bgcolor:'rgba(0,0,0,0.6)', borderRadius:2 }}>
-            {loading ? <Skeleton variant="rectangular" height={380} /> :
-              <CompositeChartCardAPAC title="Pune Floor Usage" data={puneFloors} />}
-          </Box>
-
-          {[{ title:'Group 1', data:slice1, colors:['#4E79A7','#F28E2B','#E15759'] },
-            { title:'Group 2', data:slice2, colors:['#59A14F','#EDC948','#42A5F5'] }].map((cfg, i) => (
-            <Box key={i} sx={{ flex:'1 1 0', p:2, bgcolor:'rgba(0,0,0,0.6)', borderRadius:2 }}>
-              {loading ? <Skeleton variant="rectangular" height={380} /> :
-                <PieChartCard title={cfg.title} data={cfg.data} colors={cfg.colors} />}
-            </Box>
-          ))}
-        </Box>
-      </Container>
-    </>
-  );
+  // ... rest unchanged as earlier provided ...
 }
