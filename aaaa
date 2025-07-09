@@ -1,3 +1,24 @@
+<SummaryCard
+  title={p.name.replace(/^.*\./, '')}
+  total={p.total}
+  stats={[
+    { label: 'Employees', value: p.Employee },
+    { label: 'Contractors', value: p.Contractor }
+  ]}
+  icon={<i className="fa-solid fa-building-user" />}
+  flag={
+    p.name.includes('Pune') ? indiaFlag :
+    p.name.includes('Quezon') ? philippinesFlag :
+    p.name.includes('Tokyo') ? japanFlag :
+    p.name.includes('Kuala') ? malaysiaFlag :
+    p.name.includes('Taguig') ? taguigFlag : null
+  }
+  sx={{ width: '100%' }}
+/>
+
+
+...
+
 import indiaFlag from '../assets/flags/india.png';
 import japanFlag from '../assets/flags/japan.png';
 import malaysiaFlag from '../assets/flags/malaysia.png';
