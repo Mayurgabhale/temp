@@ -1,15 +1,15 @@
-
+// src/hooks/useLiveOccupancy.js
 import { useEffect, useState } from 'react';
-import { fetchOccupancy } from '../api/occupancy.service';
+import { fetchLiveSummary } from '../api/occupancy.service';  // ✅ FIXED
 
 export default function useLiveOccupancy() {
-  const [occupancyData, setOccupancyData] = useState([]);
+  const [occupancyData, setOccupancyData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const data = await fetchOccupancy();
+      const data = await fetchLiveSummary();  // ✅ FIXED
       setOccupancyData(data);
     } catch (e) {
       console.error('Failed to fetch occupancy data', e);
@@ -26,9 +26,3 @@ export default function useLiveOccupancy() {
 
   return { occupancyData, loading };
 }
-
-
-ERROR in ./src/hooks/useLiveOccupancy.js 50:25-39
-export 'fetchOccupancy' (imported as 'fetchOccupancy') was not found in '../api/occupancy.service' (possible exports: clearCache, fetchHistory, fetchLiveSummary, partitionList)
-
-webpack compiled with 1 error and 1 warning
