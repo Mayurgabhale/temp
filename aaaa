@@ -1,160 +1,269 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography, Paper, useTheme, Skeleton } from '@mui/material';
-import { People as GroupIcon } from '@mui/icons-material';
-import SummaryCard from './SummaryCard';
-import PieChartComponent from './PieChartComponent';
-import BarChartComponent from './BarChartComponent';
-import GeoChart from './GeoChart';
-import { fetchDashboardData } from '../services/dashboardService';
+// src/pages/Dashboard.jsx
+import React from 'react';
+import {
+  Container, Box, Typography, Skeleton,
+  Paper
+} from '@mui/material';
 
-const Dashboard = () => {
-  const theme = useTheme();
-  const [data, setData] = useState(null);
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
-  useEffect(() => {
-    fetchDashboardData().then(setData);
-  }, []);
+import SummaryCard from '../components/SummaryCard';
+import CompositeChartCard from '../components/CompositeChartCard';
+import PieChartCard from '../components/PieChartCard';
 
-  const themeColors = {
-    primary: '#FF6F61',
-    secondary: '#6A0572',
-    accent: '#FFC300',
-    background: '#121212',
-    surface: '#1E1E2F',
-    chartColors: ['#FF6F61', '#FFC107', '#6A0572', '#00BFA5', '#9575CD']
-  };
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+import { partitionList } from '../services/occupancy.service';
+import buildingCapacities from '../data/buildingCapacities';
 
-  if (!data) {
+const palette15 = [
+  '#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666',
+  '#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A',
+  '#FF9800','#673AB7','#009688','#CDDC39','#795548'
+];
+
+export default function Dashboard() {
+  const { data, loading, error } = useLiveOccupancy(1000);
+
+  if (error) {
     return (
-      <Grid container spacing={3} p={3}>
-        {[...Array(4)].map((_, i) => (
-          <Grid item xs={12} sm={6} md={3} key={i}>
-            <Skeleton variant="rectangular" height={100} sx={{ borderRadius: 2, bgcolor: '#1E1E2F' }} />
-          </Grid>
-        ))}
-      </Grid>
+      <Box width="100vw" py={4}>
+        <Typography color="error" align="center">
+          Error loading live data
+        </Typography>
+      </Box>
     );
   }
 
-  return (
-    <Box sx={{ background: themeColors.background, minHeight: '100vh', padding: 3 }}>
-      {/* Summary Cards */}
-      <Grid container spacing={3} mb={2}>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Total Clients"
-            value={data.totalClients}
-            icon={<GroupIcon />}
-            color={themeColors.accent}
-            border={`2px solid`}
-            borderImage="linear-gradient(45deg, #FFC107, #FF5722) 1"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Current Clients"
-            value={data.currentClients}
-            icon={<GroupIcon />}
-            color={themeColors.primary}
-            border={`2px solid`}
-            borderImage="linear-gradient(45deg, #FF6F61, #6A0572) 1"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Prospects"
-            value={data.prospects}
-            icon={<GroupIcon />}
-            color={themeColors.secondary}
-            border={`2px solid`}
-            borderImage="linear-gradient(45deg, #6A0572, #FFC300) 1"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Inactive Clients"
-            value={data.inactiveClients}
-            icon={<GroupIcon />}
-            color="#9E9E9E"
-            border={`2px solid`}
-            borderImage="linear-gradient(45deg, #9E9E9E, #616161) 1"
-          />
-        </Grid>
-      </Grid>
+  const regions = data?.realtime || {};
+  const partitions = partitionList
+    .map(name => {
+      const key = Object.keys(regions).find(k => k.includes(name));
+      const p = key ? regions[key] : {};
+      return {
+        name,
+        total: p.total || 0,
+        Employee: p.Employee || 0,
+        Contractor: p.Contractor || 0,
+        floors: p.floors || {}
+      };
+    })
+    .sort((a, b) => b.total - a.total);
 
-      {/* Charts */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper
-            elevation={4}
-            sx={{
-              p: 3,
-              backdropFilter: 'blur(10px)',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
-              boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.01)'
-              }
-            }}
-          >
-            <Typography variant="h6" sx={{ color: themeColors.accent, mb: 2 }}>
-              Clients by Category
-            </Typography>
-            <PieChartComponent data={data.clientCategories} colors={themeColors.chartColors} />
-          </Paper>
-        </Grid>
+  const todayTot = data?.today?.total || 0;
+  const todayEmp = data?.today?.Employee || 0;
+  const todayCont = data?.today?.Contractor || 0;
+  const realtimeTot = partitions.reduce((sum, p) => sum + p.total, 0);
+  const realtimeEmp = partitions.reduce((sum, p) => sum + p.Employee, 0);
+  const realtimeCont = partitions.reduce((sum, p) => sum + p.Contractor, 0);
 
-        <Grid item xs={12} md={6}>
-          <Paper
-            elevation={4}
-            sx={{
-              p: 3,
-              backdropFilter: 'blur(10px)',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
-              boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.01)'
-              }
-            }}
-          >
-            <Typography variant="h6" sx={{ color: themeColors.accent, mb: 2 }}>
-              Clients by Sector
-            </Typography>
-            <BarChartComponent data={data.clientSectors} colors={themeColors.chartColors} />
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Paper
-            elevation={4}
-            sx={{
-              p: 3,
-              backdropFilter: 'blur(10px)',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
-              boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.01)'
-              }
-            }}
-          >
-            <Typography variant="h6" sx={{ color: themeColors.accent, mb: 2 }}>
-              Clients by Country
-            </Typography>
-            <GeoChart data={data.clientCountries} />
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+  const pune = partitions.find(p => p.name === 'Pune');
+  const quezonCity = partitions.find(p => p.name === 'Quezon City');
+  const combinedRegions = partitions.filter(p =>
+    ['JP.Tokyo', 'MY.Kuala Lumpur', 'Taguig City'].includes(p.name)
   );
-};
 
-export default Dashboard;
+  const floors = Object.entries(pune?.floors || {});
+
+  const chartConfigs = [
+    {
+      key: 'pune',
+      title: 'Pune Composite Chart',
+      body: pune?.total === 0
+        ? (
+          <Typography color="white" align="center" py={6}>
+            No Pune data
+          </Typography>
+        )
+        : (
+          <CompositeChartCard
+            data={floors.map(([f, h]) => ({
+              name: f,
+              headcount: h,
+              capacity: buildingCapacities[f] || 0
+            }))}
+            lineColor={palette15[0]}
+            height={300}
+            sx={{ border: 'none' }}
+          />
+        )
+    },
+    {
+      key: 'quezon',
+      title: 'Quezon City',
+      body: quezonCity?.total === 0
+        ? (
+          <Typography color="white" align="center" py={6}>
+            No Quezon City data
+          </Typography>
+        )
+        : (
+          <PieChartCard
+            data={[
+              { name: 'Employees', value: quezonCity.Employee },
+              { name: 'Contractors', value: quezonCity.Contractor }
+            ]}
+            colors={[palette15[5], palette15[6]]}
+            height={300}
+            showZeroSlice
+            sx={{ border: 'none' }}
+          />
+        )
+    },
+    {
+      key: 'combined',
+      title: 'Asia-Pacific',
+      body: combinedRegions.length === 0
+        ? (
+          <Typography color="white" align="center" py={6}>
+            No regional data
+          </Typography>
+        )
+        : (
+          <PieChartCard
+            data={combinedRegions.map(r => ({
+              name: r.name.replace(/^.*\./, ''),  // strip country code
+              value: r.total
+            }))}
+            colors={[palette15[2], palette15[3], palette15[4]]}
+            height={300}
+            showZeroSlice
+            sx={{ border: 'none' }}
+          />
+        )
+    }
+  ];
+
+  return (
+    <>
+      <Header title="APAC Live Occupancy" />
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{ py: 3, px: 2, background: 'rgba(0, 0, 0, 0.93)' }}
+      >
+        {/* Top Summary Cards */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+            {
+              title: "Today's Total Headcount",
+              value: todayTot,
+              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }}  />,
+              border: '#FFB300',
+              
+          
+            },
+            {
+              title: "Today's Employees Count",
+              value: todayEmp,
+              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+              border: '#8BC34A'
+            },
+            {
+              title: "Today's Contractors Count",
+              value: todayCont,
+              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+              border: '#E57373'
+            },
+            {
+              title: "Realtime Headcount",
+              value: realtimeTot,
+              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+              border: '#FFD180'
+            },
+            {
+              title: "Realtime Employees Count",
+              value: realtimeEmp,
+              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+              border: '#AED581'
+            },
+            {
+              title: "Realtime Contractors Count",
+              value: realtimeCont,
+              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+              border: '#EF5350'
+            }
+          ].map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }}
+              />
+            </Box>
+          ))}
+        </Box>
+
+        {/* Region Cards */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+          {loading
+            ? <Skeleton variant="rectangular" width="90%" height={200} />
+            : partitions.map(p => (
+              <Box
+                key={p.name}
+                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
+              >
+                <SummaryCard
+                  title={p.name.replace(/^.*\./, '')}
+                  total={p.total}
+                  stats={[
+                    { label: 'Employees', value: p.Employee },
+                    { label: 'Contractors', value: p.Contractor }
+                  ]}
+                  sx={{ width: '100%', border: '1px solid #FFB300' }}
+                />
+              </Box>
+            ))
+          }
+        </Box>
+
+        {/* Main Charts Section */}
+        <Box display="flex" gap={2} flexWrap="wrap" mb={4}>
+          {chartConfigs.map(({ key, title, body }) => (
+            <Box
+              key={key}
+              sx={{
+                flex: '1 1 32%',
+                minWidth: 280,
+                height: 380,
+                animation: 'fadeInUp 0.5s'
+              }}
+            >
+              <Paper
+                sx={{
+                  p: 2,
+                  height: '100%',
+                  background: 'rgba(0,0,0,0.4)',
+                  border: '1px solid #FFC107',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                <Typography variant="h6" align="center" sx={{ color: '#FFC107', mb: 2 }}>
+                  {title}
+                </Typography>
+                <Box sx={{ flex: 1, overflow: 'hidden' }}>
+                  {body}
+                </Box>
+              </Paper>
+            </Box>
+          ))}
+        </Box>
+      </Container>
+      <Footer />
+      
+    </>
+  );
+}
+
+
+
+// .
+// .
+// .
+
+
+
+
