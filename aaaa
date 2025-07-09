@@ -1,39 +1,83 @@
-// src/routes/AppRoutesAPAC.jsx
+{/* Top-level Summary Cards */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {darkSummaryCards.map((c) => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{
+                  height: 150,
+                  background: '#1E1E1E',
+                  border: '2px solid transparent',
+                  borderImage: `${c.border} 1`,
+                  borderRadius: 2,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                }}
+              />
+            </Box>
+          ))}
+        </Box>
 
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoadingSpinner from '../components/LoadingSpinner';
 
-// Lazy load APAC-specific pages
-const Dashboard               = lazy(() => import('../pages/Dashboard'));
-const History                 = lazy(() => import('../pages/History'));
-const PartitionDetail         = lazy(() => import('../pages/PartitionDetail'));
-const PartitionDetailDetails  = lazy(() => import('../pages/PartitionDetailDetails'));
 
-export default function AppRoutesAPAC() {
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\components\SummaryCard.jsx
+
+
+// src/components/SummaryCard.jsx
+
+import React from 'react';
+import { Card, CardContent, Box, Typography, useTheme } from '@mui/material';
+
+export default function SummaryCard({
+  title,
+  total,
+  stats = [],
+  icon,
+  titleColor = '#ccc',
+  totalColor = '#fff',
+  statColors = [],
+  sx = {}
+}) {
+  const theme = useTheme();
+
   return (
-    <BrowserRouter>
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          {/* APAC Home dashboard */}
-          <Route path="/" element={<Dashboard />} />
+    <Card
+      sx={{
+        ...sx, // 👈 ensures external styles are applied
+        borderRadius: 2,
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
+        color: '#fff',
+      }}
+      elevation={0}
+    >
+      <CardContent>
+        {/* Top Section */}
+        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+          <Typography variant="subtitle1" sx={{ color: titleColor, fontWeight: 600 }}>
+            {title}
+          </Typography>
+          <Box>{icon}</Box>
+        </Box>
 
-          {/* APAC Global history */}
-          <Route path="/history" element={<History />} />
+        {/* Total Number */}
+        <Typography variant="h4" sx={{ color: totalColor, fontWeight: 700, mb: stats.length ? 1 : 0 }}>
+          {total}
+        </Typography>
 
-          {/* APAC Partition-scoped history */}
-          <Route path="/partition/:partition/history" element={<History />} />
-
-          {/* APAC Partition live overview */}
-          <Route path="/partition/:partition" element={<PartitionDetail />} />
-
-          {/* APAC Partition "see details" sub-page */}
-          <Route
-            path="/partition/:partition/details"
-            element={<PartitionDetailDetails />}
-          />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+        {/* Bottom Stats */}
+        {stats.map((stat, index) => (
+          <Typography
+            key={index}
+            variant="caption"
+            sx={{ display: 'block', color: statColors[index] || '#aaa' }}
+          >
+            {stat.label}: {stat.value}
+          </Typography>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
