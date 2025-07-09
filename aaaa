@@ -1,3 +1,31 @@
+<Box
+  key={p.name}
+  sx={{ flex: '1 1 calc(16.66% - 8px)' }}
+>
+  <SummaryCard
+    title={p.name.replace(/^.*\./, '')}
+    total={p.total}
+    stats={[
+      { label: 'Employees', value: p.Employee },
+      { label: 'Contractors', value: p.Contractor }
+    ]}
+    icon={<i className="fa-solid fa-building-user" />}
+    flag={
+      p.name.includes('Pune') ? indiaFlag :
+      p.name.includes('Quezon') ? philippinesFlag :
+      p.name.includes('Tokyo') ? japanFlag :
+      p.name.includes('Kuala') ? malaysiaFlag :
+      p.name.includes('Taguig') ? taguigFlag :
+      null
+    }
+    sx={{ width: '100%', border: '1px solid #FFB300' }}
+  />
+</Box>
+
+
+
+...
+
 {[
   {
     title: "Today's Total Headcount",
