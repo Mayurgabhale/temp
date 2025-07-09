@@ -1,3 +1,39 @@
+<Marker
+  key={region}
+  coordinates={coords}
+  onClick={() => onClickSite(region)}
+  style={{ cursor: 'pointer' }}
+>
+  {/* Bootstrap geo-alt icon */}
+  <foreignObject width="24" height="24" x={-12} y={-24}>
+    <div style={{ textAlign: 'center' }}>
+      <i
+        className="bi bi-geo-alt"
+        style={{
+          fontSize: isSel ? 18 : 12,
+          color: color,
+        }}
+      />
+    </div>
+  </foreignObject>
+
+  {/* Label: REGION COUNT */}
+  <text
+    x={0}
+    y={-8}
+    textAnchor="middle"
+    fill={color}
+    fontSize="11"
+    fontWeight="bold"
+  >
+    {region.toUpperCase()} {count}
+  </text>
+</Marker>
+
+
+......
+
+
 <i class="bi bi-geo-alt"></i>
 
 
