@@ -1,3 +1,14 @@
+<CompositeChartCardAPAC
+  title="APAC Capacity vs Realtime Headcount"
+  data={apacCompositeData}
+  lineColor="#FFC72C"
+  height={500}
+/>
+
+
+
+
+
 <CompositeChartCard
   title=""
   data={[]} // Replace with real data
