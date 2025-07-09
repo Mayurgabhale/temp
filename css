@@ -1,6 +1,6 @@
 take a emea chart reference and create apac chart ok
 
-
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\data\buildingCapacities.js
 
 ***********************
 this is a flooer capacities 
@@ -11,14 +11,14 @@ const floorCapacities = {
   "Tower B": 303,
   "2nd Floor": 185,
 };
-
-export default floorCapacities;
-
 and    .......................
   Kuala Lumpur 100
   Quezon City  100
   Taguig 100
   Tokyo 100
+export default floorCapacities;
+
+
 *****************
 
 
