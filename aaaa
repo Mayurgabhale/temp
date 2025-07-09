@@ -1,3 +1,38 @@
+<Box
+  sx={{
+    flex: '1 1 600px',
+    minWidth: 580,
+    maxWidth: 700,
+    border: '3px solid #FFC107',
+    borderRadius: 3,
+    p: 3,
+    background: 'rgba(0,0,0,0.65)',
+    boxShadow: '0 6px 14px rgba(0,0,0,0.5)'
+  }}
+>
+  {loading ? (
+    <Skeleton variant="rectangular" height={400} />
+  ) : (
+    <>
+      <Box display="flex" alignItems="center" mb={3}>
+        <i className="fas fa-chart-bar" style={{ color: '#FFC107', fontSize: 28, marginRight: 10 }} />
+        <Typography variant="h5" sx={{ color: '#FFC72C' }}>
+          APAC Capacity vs Realtime Headcount
+        </Typography>
+      </Box>
+      <CompositeChartCardAPAC
+        title=""
+        data={apacCompositeData}
+        lineColor="#FFC72C"
+        height={500}
+      />
+    </>
+  )}
+</Box>
+
+...
+
+
 <CompositeChartCardAPAC
   title="APAC Capacity vs Realtime Headcount"
   data={apacCompositeData}
