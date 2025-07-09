@@ -1,7 +1,4 @@
-this is a emea code using this code create apac file read each line carefully and create apac file 
-
-
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\ChartCard.jsx
+// src/components/ChartCard.apac.jsx
 import React, { useState } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
@@ -10,21 +7,20 @@ import {
 } from 'recharts';
 import dayjs from 'dayjs';
 
-export default function ChartCard({
+export default function ChartCardAPAC({
   data = [],
   dataKey = 'value',
-  colors = { head: '#FFC107', cap: '#B0BEC5' },
+  colors = { head: '#4CAF50', cap: '#A5D6A7' }, // ✅ APAC-green tones
   chartHeight = 300,
   title = ''
 }) {
-  // Hook must be called unconditionally
   const [hidden, setHidden] = useState({});
 
   if (!Array.isArray(data) || data.length === 0) {
     return (
       <Card>
         <CardContent>
-          <Typography>No data to display.</Typography>
+          <Typography>No APAC data to display.</Typography>
         </CardContent>
       </Card>
     );
@@ -74,10 +70,12 @@ export default function ChartCard({
   );
 }
 
-       C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\CompositeChartCard.jsx
-                                                        
 
-// src/components/CompositeChartCard.jsx
+
+
+.......
+
+// src/components/CompositeChartCard.apac.jsx
 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
@@ -95,95 +93,76 @@ import {
   Cell
 } from 'recharts';
 
-
-
-const DARK_TO_LIGHT = [
-  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
-  '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
-  ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
-  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
+const GREEN_SCALE = [
+  '#66BB6A', '#81C784', '#A5D6A7', '#C8E6C9', '#E8F5E9',
+  '#66BB6A', '#81C784', '#A5D6A7', '#C8E6C9', '#E8F5E9',
+  '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#4CAF50'
 ];
 
-export default function CompositeChartCard({
+export default function CompositeChartCardAPAC({
   title,
   data,
-  lineColor = '#fff',
+  lineColor = '#4CAF50',
   height = 300,
   animationDuration = 1500,
   animationEasing = 'ease-in-out'
 }) {
   if (!Array.isArray(data) || data.length === 0) {
     return (
-      <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
+      <Card sx={{ border: `1px solid ${lineColor}`, bgcolor: 'rgba(0,0,0,0.4)' }}>
         <CardContent>
           <Typography variant="subtitle1" align="center" color="text.secondary">
             {title}
           </Typography>
           <Typography variant="body2" align="center" sx={{ mt: 4 }}>
-            No realtime employee data
+            No APAC real-time data
           </Typography>
         </CardContent>
       </Card>
     );
   }
-  // Enrich each datum with its usage percentage
+
   const enriched = data.map((d, i) => ({
     ...d,
     percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+    _color: GREEN_SCALE[i % GREEN_SCALE.length]
   }));
+
   const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
   const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
   const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
+
   return (
-    <Card
-      sx={{
-        // border: `1px solid ${lineColor}`,
-        borderRadius: 2,
-        overflow: 'hidden',
-        bgcolor: 'rgba(0,0,0,0.4)',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'scale(1.02)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
-        }
-      }}
-    >
+    <Card sx={{
+      borderRadius: 2,
+      overflow: 'hidden',
+      bgcolor: 'rgba(0,0,0,0.4)',
+      transition: 'transform 0.3s, box-shadow 0.3s',
+      '&:hover': {
+        transform: 'scale(1.02)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+      }
+    }}>
       <CardContent sx={{ p: 1 }}>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          gutterBottom
-          sx={{ color: '#FFC107' }}
-        >
+        <Typography variant="subtitle1" align="center" gutterBottom sx={{ color: '#4CAF50' }}>
           {title}
         </Typography>
 
-
-
-
-
-
         <Box sx={{ width: '100%', height }}>
           <ResponsiveContainer>
-            <ComposedChart
-              data={enriched}
-              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
-            >
+            <ComposedChart data={enriched} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-
 
               <XAxis
                 dataKey="name"
                 tickLine={false}
                 axisLine={false}
                 stroke="rgba(255,255,255,0.6)"
-                tickFormatter={(label, index) => {
+                tickFormatter={(label) => {
                   const strLabel = String(label);
-                  const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
+                  const match = strLabel.match(/\d+/);
                   const floorNum = parseInt(match?.[0], 10);
-
-                  if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
+                  if (isNaN(floorNum)) return strLabel;
 
                   const suffix = (n) => {
                     if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
@@ -194,45 +173,21 @@ export default function CompositeChartCard({
                       default: return `${n}th`;
                     }
                   };
-
                   return suffix(floorNum);
                 }}
               />
 
-
-              <YAxis
-                yAxisId="left"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-              />
-
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-                domain={[0, 100]}
-                tickFormatter={val => `${val}%`}
-              />
-
-              {/* <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
-                formatter={(value, name) => 
-                  name === 'percentage' ? `${value}%` : value
-                }
-              /> */}
+              <YAxis yAxisId="left" tickLine={false} axisLine={false} stroke="rgba(255,255,255,0.6)" />
+              <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} stroke="rgba(255,255,255,0.6)" domain={[0, 100]} tickFormatter={val => `${val}%`} />
 
               <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
-                // custom content so we can show capacity only on hover
+                contentStyle={{ backgroundColor: '#A5D6A7', borderColor: lineColor, padding: 8 }}
                 content={({ active, payload, label }) => {
                   if (!active || !payload || !payload.length) return null;
                   const datum = payload[0].payload;
                   return (
                     <div style={{
-                      backgroundColor: '#FFD666',
+                      backgroundColor: '#A5D6A7',
                       border: `1px solid ${lineColor}`,
                       borderRadius: 4,
                       padding: 8,
@@ -246,99 +201,36 @@ export default function CompositeChartCard({
                 }}
               />
 
-
-              {/* Headcount bars with per-bar colors & percentage labels */}
-              <Bar
-                yAxisId="left"
-                dataKey="headcount"
-                name="Headcount"
-                barSize={700}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              >
+              <Bar yAxisId="left" dataKey="headcount" name="Headcount" barSize={700} isAnimationActive animationDuration={animationDuration} animationEasing={animationEasing}>
                 {enriched.map((entry, idx) => (
                   <Cell key={`cell-${idx}`} fill={entry._color} />
                 ))}
-
-
-                {/* Show % on top of each bar */}
-                <LabelList
-                  dataKey="headcount"
-                  position="top"
-                  formatter={val => `${val}`}
-                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
-                />
-
-                {/* Percentage centered inside each bar */}
-                <LabelList
-                  dataKey="percentage"
-                  position="inside"
-                  formatter={val => `${val}%`}
-                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
-                />
+                <LabelList dataKey="headcount" position="top" style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }} />
+                <LabelList dataKey="percentage" position="inside" style={{ fill: '#1B5E20', fontSize: 14, fontWeight: 700 }} />
               </Bar>
 
+              <Line yAxisId="right" type="monotone" dataKey="percentage" name="Usage %" stroke={lineColor} strokeWidth={2} dot={false} isAnimationActive animationDuration={animationDuration} animationEasing={animationEasing} />
 
-              {/* Seat Capacity line */}
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="percentage"
-                name="Usage %"
-                stroke={lineColor}
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
-
-              {/* Optional: draw capacity as second line */}
-              <Line
-                yAxisId="left"
-                type="monotone"
-
-                //  dataKey="capacity"
-                name="Total Seats"
-                stroke="#81C784"
-                strokeDasharray="5 5"
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
+              <Line yAxisId="left" type="monotone" name="Total Seats" stroke="#81C784" strokeDasharray="5 5" dot={false} isAnimationActive animationDuration={animationDuration} animationEasing={animationEasing} />
             </ComposedChart>
           </ResponsiveContainer>
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 4,
-            alignItems: 'center',
-            mb: 1,
-            fontWeight: 'bold',
-            fontSize: 16
-          }}
-        >
-          <Box sx={{ color: '#FFD700' /* Yellow */ }}>
-            Total Headcount: {totalHeadcount}
-          </Box>
-          <Box sx={{ color: '#4CAF50' /* Green */ }}>
-            Total Seats: {totalCapacity}
-          </Box>
-          <Box sx={{ color: '#FF4C4C' /* Red */ }}>
-            Usage: {avgUsage}%
-          </Box>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, alignItems: 'center', mb: 1, fontWeight: 'bold', fontSize: 16 }}>
+          <Box sx={{ color: '#388E3C' }}>Total Headcount: {totalHeadcount}</Box>
+          <Box sx={{ color: '#1B5E20' }}>Total Seats: {totalCapacity}</Box>
+          <Box sx={{ color: '#FF7043' }}>Usage: {avgUsage}%</Box>
         </Box>
       </CardContent>
     </Card>
   );
 }
 
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\DataTable.jsx
 
+
+....
+
+// src/components/DataTable.apac.jsx
 
 import React from 'react';
 import {
@@ -346,24 +238,31 @@ import {
   TableContainer, Paper
 } from '@mui/material';
 
-export default function DataTable({ columns, rows }) {
+export default function DataTableAPAC({ columns, rows }) {
   return (
-    <TableContainer component={Paper} sx={{ mb:2 }}>
+    <TableContainer component={Paper} sx={{ mb: 2 }}>
       <Table size="small">
         <TableHead>
           <TableRow>
             {columns.map(c => (
-              <TableCell key={c.field} sx={{ fontWeight:'bold', borderBottom:'2px solid #000' }}>
+              <TableCell
+                key={c.field}
+                sx={{
+                  fontWeight: 'bold',
+                  borderBottom: '2px solid #2E7D32', // APAC style: Green border
+                  color: '#1B5E20'
+                }}
+              >
                 {c.headerName}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((r,i)=>(
+          {rows.map((r, i) => (
             <TableRow key={i}>
-              {columns.map(c=>(
-                <TableCell key={c.field} sx={{ py:0.5, borderBottom:'1px solid #ccc' }}>
+              {columns.map(c => (
+                <TableCell key={c.field} sx={{ py: 0.5, borderBottom: '1px solid #A5D6A7' }}>
                   {r[c.field]}
                 </TableCell>
               ))}
@@ -374,3 +273,5 @@ export default function DataTable({ columns, rows }) {
     </TableContainer>
   );
 }
+
+
