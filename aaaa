@@ -1,77 +1,108 @@
-<Box
-  sx={{
-    flex: '1 1 600px',
-    minWidth: 580,
-    maxWidth: 700,
-    border: '3px solid #FFC107',
-    borderRadius: 3,
-    p: 3,
-    background: 'rgba(0,0,0,0.65)',
-    boxShadow: '0 6px 14px rgba(0,0,0,0.5)'
-  }}
->
-  {loading ? (
-    <Skeleton variant="rectangular" height={400} />
-  ) : (
-    <>
-      <Box display="flex" alignItems="center" mb={3}>
-        <i className="fas fa-chart-bar" style={{ color: '#FFC107', fontSize: 28, marginRight: 10 }} />
-        <Typography variant="h5" sx={{ color: '#FFC72C' }}>
-          APAC Capacity vs Realtime Headcount
-        </Typography>
-      </Box>
-      <CompositeChartCardAPAC
-        title=""
-        data={apacCompositeData}
-        lineColor="#FFC72C"
-        height={500}
-      />
-    </>
-  )}
-</Box>
+// src/components/Header.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
-...
+// import wuLogo from '../assets/images/wu-logo.png';
+import wuLogo from '../assets/wu-logo.png'
+import indiaFlag from '../assets/flags/india.png';
+import phFlag from '../assets/flags/philippines.png';
+import japanFlag from '../assets/flags/japan.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+import { partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
 
-<CompositeChartCardAPAC
-  title="APAC Capacity vs Realtime Headcount"
-  data={apacCompositeData}
-  lineColor="#FFC72C"
-  height={500}
-/>
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
 
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPart = parts[0] === 'partition' && parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
+  const isHome = loc.pathname === '/';
 
-
-
-
-<CompositeChartCard
-  title=""
-  data={[]} // Replace with real data
-  barColor="#4CAF50"
-  lineColor="#FF0000"
-  height={750}
-  animationDuration={1500}
-/>
-
-
-
-...
-const apacCompositeData = partitions.map(partition => {
-  const real = data?.realtime?.[partition] || {};
-  const headcount = real.total || 0;
-
-  // Match human-friendly name
-  const label = displayName[partition];
-
-  // Match capacity using label
-  const matchingKey = Object.keys(buildingCapacities).find(key =>
-    key.toLowerCase().includes(label.toLowerCase())
-  );
-  const capacity = matchingKey ? buildingCapacities[matchingKey] : 0;
-
-  return {
-    name: label,
-    headcount,
-    capacity
+  const flagMap = {
+    'Pune': indiaFlag,
+    'Quezon City': phFlag,
+    'JP.Tokyo': japanFlag,
+    'MY.Kuala Lumpur': malaysiaFlag,
+    'Taguig City': phFlag
   };
-});
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+          {/* Title: APAC Occupancy */}
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            APAC Occupancy{current && ` • ${current}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* Static Pune button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* Dynamic partition button for any partition page */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
+            >
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => navigate(e.target.value || '/')}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
+                <Box component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }} />
+                {p}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+Compiled with problems:
+×
+ERROR in ./src/components/Header.jsx 152:20-37
+export 'partitionList' (imported as 'partitionList') was not found in '../api/occupancy.service' (possible exports: apacPartitionList, clearCache, fetchHistory, fetchLiveSummary)
