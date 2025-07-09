@@ -1,8 +1,7 @@
-// src/pages/Dashboard.jsx
 import React from 'react';
 import {
   Container, Box, Typography, Skeleton,
-  Paper
+  Paper, Grid, useTheme
 } from '@mui/material';
 
 import Header from '../components/Header';
@@ -17,13 +16,14 @@ import { partitionList } from '../services/occupancy.service';
 import buildingCapacities from '../data/buildingCapacities';
 
 const palette15 = [
-  '#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666',
-  '#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A',
-  '#FF9800','#673AB7','#009688','#CDDC39','#795548'
+  '#FFC107', '#E91E63', '#4CAF50', '#FFEB3B', '#FFD666',
+  '#D84315', '#3F51B5', '#9C27B0', '#00BCD4', '#8BC34A',
+  '#FF9800', '#673AB7', '#009688', '#CDDC39', '#795548'
 ];
 
 export default function Dashboard() {
   const { data, loading, error } = useLiveOccupancy(1000);
+  const theme = useTheme();
 
   if (error) {
     return (
@@ -122,7 +122,7 @@ export default function Dashboard() {
         : (
           <PieChartCard
             data={combinedRegions.map(r => ({
-              name: r.name.replace(/^.*\./, ''),  // strip country code
+              name: r.name.replace(/^.*\./, ''),
               value: r.total
             }))}
             colors={[palette15[2], palette15[3], palette15[4]]}
@@ -140,18 +140,17 @@ export default function Dashboard() {
       <Container
         maxWidth={false}
         disableGutters
-        sx={{ py: 3, px: 2, background: 'rgba(0, 0, 0, 0.93)' }}
+        sx={{ py: 3, px: { xs: 1, sm: 3 }, background: '#0d0d0d' }}
       >
+
         {/* Top Summary Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+        <Grid container spacing={2} mb={3}>
           {[
             {
               title: "Today's Total Headcount",
               value: todayTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }}  />,
-              border: '#FFB300',
-              
-          
+              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+              border: '#FFB300'
             },
             {
               title: "Today's Employees Count",
@@ -183,87 +182,86 @@ export default function Dashboard() {
               icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
               border: '#EF5350'
             }
-          ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard
-                title={c.title}
-                total={c.value}
-                stats={[]}
-                icon={c.icon}
-                sx={{ height: 140, border: `2px solid ${c.border}` }}
-              />
-            </Box>
-          ))}
-        </Box>
-
-        {/* Region Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
-            : partitions.map(p => (
+          ].map((card, index) => (
+            <Grid key={index} item xs={12} sm={6} md={4} lg={2}>
               <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
+                sx={{
+                  border: `2px solid ${card.border}`,
+                  borderRadius: 2,
+                  transition: 'all 0.3s',
+                  '&:hover': {
+                    boxShadow: `0px 0px 12px ${card.border}`
+                  }
+                }}
               >
                 <SummaryCard
-                  title={p.name.replace(/^.*\./, '')}
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees', value: p.Employee },
-                    { label: 'Contractors', value: p.Contractor }
-                  ]}
-                  sx={{ width: '100%', border: '1px solid #FFB300' }}
+                  title={card.title}
+                  total={card.value}
+                  stats={[]}
+                  icon={card.icon}
+                  sx={{ height: 140 }}
                 />
               </Box>
-            ))
-          }
-        </Box>
+            </Grid>
+          ))}
+        </Grid>
 
-        {/* Main Charts Section */}
-        <Box display="flex" gap={2} flexWrap="wrap" mb={4}>
+        {/* Region Cards */}
+        <Grid container spacing={2} mb={4}>
+          {loading ? (
+            <Skeleton variant="rectangular" width="100%" height={200} />
+          ) : (
+            partitions.map(p => (
+              <Grid item key={p.name} xs={12} sm={6} md={4} lg={2}>
+                <Box
+                  sx={{
+                    border: '1px solid #FFB300',
+                    borderRadius: 2,
+                    transition: 'all 0.3s',
+                    '&:hover': {
+                      boxShadow: '0px 0px 10px #FFB300'
+                    }
+                  }}
+                >
+                  <SummaryCard
+                    title={p.name.replace(/^.*\./, '')}
+                    total={p.total}
+                    stats={[
+                      { label: 'Employees', value: p.Employee },
+                      { label: 'Contractors', value: p.Contractor }
+                    ]}
+                    sx={{ width: '100%' }}
+                  />
+                </Box>
+              </Grid>
+            ))
+          )}
+        </Grid>
+
+        {/* Chart Section */}
+        <Grid container spacing={3}>
           {chartConfigs.map(({ key, title, body }) => (
-            <Box
-              key={key}
-              sx={{
-                flex: '1 1 32%',
-                minWidth: 280,
-                height: 380,
-                animation: 'fadeInUp 0.5s'
-              }}
-            >
+            <Grid item key={key} xs={12} md={6} lg={4}>
               <Paper
+                elevation={4}
                 sx={{
                   p: 2,
                   height: '100%',
-                  background: 'rgba(0,0,0,0.4)',
+                  background: 'rgba(0,0,0,0.5)',
                   border: '1px solid #FFC107',
-                  display: 'flex',
-                  flexDirection: 'column'
+                  borderRadius: 2
                 }}
               >
                 <Typography variant="h6" align="center" sx={{ color: '#FFC107', mb: 2 }}>
                   {title}
                 </Typography>
-                <Box sx={{ flex: 1, overflow: 'hidden' }}>
-                  {body}
-                </Box>
+                {body}
               </Paper>
-            </Box>
+            </Grid>
           ))}
-        </Box>
+        </Grid>
       </Container>
       <Footer />
-      
     </>
   );
 }
-
-
-
-// .
-// .
-// .
-
-
-
-
