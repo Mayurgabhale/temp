@@ -1,285 +1,17 @@
-create summery card desing more atrative and profesanl and responsive and alos add flags ok add icon colr text colro and dark matching theeme 
-
-
-// src/pages/Dashboard.jsx
-import React from 'react';
-import {
-  Container, Box, Typography, Skeleton,
-  Paper
-} from '@mui/material';
-
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-
-import SummaryCard from '../components/SummaryCard';
-import CompositeChartCard from '../components/CompositeChartCard';
-import PieChartCard from '../components/PieChartCard';
-
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-import { partitionList } from '../services/occupancy.service';
-import buildingCapacities from '../data/buildingCapacities';
-
-const palette15 = [
-  '#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666',
-  '#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A',
-  '#FF9800','#673AB7','#009688','#CDDC39','#795548'
-];
-
-export default function Dashboard() {
-  const { data, loading, error } = useLiveOccupancy(1000);
-
-  if (error) {
-    return (
-      <Box width="100vw" py={4}>
-        <Typography color="error" align="center">
-          Error loading live data
-        </Typography>
-      </Box>
-    );
-  }
-
-  const regions = data?.realtime || {};
-  const partitions = partitionList
-    .map(name => {
-      const key = Object.keys(regions).find(k => k.includes(name));
-      const p = key ? regions[key] : {};
-      return {
-        name,
-        total: p.total || 0,
-        Employee: p.Employee || 0,
-        Contractor: p.Contractor || 0,
-        floors: p.floors || {}
-      };
-    })
-    .sort((a, b) => b.total - a.total);
-
-  const todayTot = data?.today?.total || 0;
-  const todayEmp = data?.today?.Employee || 0;
-  const todayCont = data?.today?.Contractor || 0;
-  const realtimeTot = partitions.reduce((sum, p) => sum + p.total, 0);
-  const realtimeEmp = partitions.reduce((sum, p) => sum + p.Employee, 0);
-  const realtimeCont = partitions.reduce((sum, p) => sum + p.Contractor, 0);
-
-  const pune = partitions.find(p => p.name === 'Pune');
-  const quezonCity = partitions.find(p => p.name === 'Quezon City');
-  const combinedRegions = partitions.filter(p =>
-    ['JP.Tokyo', 'MY.Kuala Lumpur', 'Taguig City'].includes(p.name)
-  );
-
-  const floors = Object.entries(pune?.floors || {});
-
-  const chartConfigs = [
-    {
-      key: 'pune',
-      title: 'Pune Composite Chart',
-      body: pune?.total === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No Pune data
-          </Typography>
-        )
-        : (
-          <CompositeChartCard
-            data={floors.map(([f, h]) => ({
-              name: f,
-              headcount: h,
-              capacity: buildingCapacities[f] || 0
-            }))}
-            lineColor={palette15[0]}
-            height={300}
-            sx={{ border: 'none' }}
-          />
-        )
-    },
-    {
-      key: 'quezon',
-      title: 'Quezon City',
-      body: quezonCity?.total === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No Quezon City data
-          </Typography>
-        )
-        : (
-          <PieChartCard
-            data={[
-              { name: 'Employees', value: quezonCity.Employee },
-              { name: 'Contractors', value: quezonCity.Contractor }
-            ]}
-            colors={[palette15[5], palette15[6]]}
-            height={300}
-            showZeroSlice
-            sx={{ border: 'none' }}
-          />
-        )
-    },
-    {
-      key: 'combined',
-      title: 'Asia-Pacific',
-      body: combinedRegions.length === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No regional data
-          </Typography>
-        )
-        : (
-          <PieChartCard
-            data={combinedRegions.map(r => ({
-              name: r.name.replace(/^.*\./, ''),  // strip country code
-              value: r.total
-            }))}
-            colors={[palette15[2], palette15[3], palette15[4]]}
-            height={300}
-            showZeroSlice
-            sx={{ border: 'none' }}
-          />
-        )
-    }
-  ];
-
-  return (
-    <>
-      <Header title="APAC Live Occupancy" />
-      <Container
-        maxWidth={false}
-        disableGutters
-        sx={{ py: 3, px: 2, background: 'rgba(0, 0, 0, 0.93)' }}
-      >
-        {/* Top Summary Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-          {[
-            {
-              title: "Today's Total Headcount",
-              value: todayTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }}  />,
-              border: '#FFB300',
-              
-          
-            },
-            {
-              title: "Today's Employees Count",
-              value: todayEmp,
-              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
-              border: '#8BC34A'
-            },
-            {
-              title: "Today's Contractors Count",
-              value: todayCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
-              border: '#E57373'
-            },
-            {
-              title: "Realtime Headcount",
-              value: realtimeTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
-              border: '#FFD180'
-            },
-            {
-              title: "Realtime Employees Count",
-              value: realtimeEmp,
-              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
-              border: '#AED581'
-            },
-            {
-              title: "Realtime Contractors Count",
-              value: realtimeCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
-              border: '#EF5350'
-            }
-          ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard
-                title={c.title}
-                total={c.value}
-                stats={[]}
-                icon={c.icon}
-                sx={{ height: 140, border: `2px solid ${c.border}` }}
-              />
-            </Box>
-          ))}
-        </Box>
-
-        {/* Region Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
-            : partitions.map(p => (
-              <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
-              >
-                <SummaryCard
-                  title={p.name.replace(/^.*\./, '')}
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees', value: p.Employee },
-                    { label: 'Contractors', value: p.Contractor }
-                  ]}
-                  sx={{ width: '100%', border: '1px solid #FFB300' }}
-                />
-              </Box>
-            ))
-          }
-        </Box>
-
-        {/* Main Charts Section */}
-        <Box display="flex" gap={2} flexWrap="wrap" mb={4}>
-          {chartConfigs.map(({ key, title, body }) => (
-            <Box
-              key={key}
-              sx={{
-                flex: '1 1 32%',
-                minWidth: 280,
-                height: 380,
-                animation: 'fadeInUp 0.5s'
-              }}
-            >
-              <Paper
-                sx={{
-                  p: 2,
-                  height: '100%',
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '1px solid #FFC107',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                <Typography variant="h6" align="center" sx={{ color: '#FFC107', mb: 2 }}>
-                  {title}
-                </Typography>
-                <Box sx={{ flex: 1, overflow: 'hidden' }}>
-                  {body}
-                </Box>
-              </Paper>
-            </Box>
-          ))}
-        </Box>
-      </Container>
-      <Footer />
-      
-    </>
-  );
-}
-
-
-
-// .
-// .
-// .
-
 // src/components/SummaryCard.jsx
 
 import React from 'react';
-import { Card, CardContent, Box, Typography, useTheme } from '@mui/material';
+import { Card, CardContent, Box, Typography, Avatar, useTheme, Tooltip } from '@mui/material';
 
 export default function SummaryCard({
   title,
   total,
   stats = [],
   icon,
-  titleColor = '#ccc',
-  totalColor = '#fff',
+  titleColor = '#FFEB3B',
+  totalColor = '#FFFFFF',
   statColors = [],
+  flag, // path to flag image
   sx = {}
 }) {
   const theme = useTheme();
@@ -287,48 +19,54 @@ export default function SummaryCard({
   return (
     <Card
       sx={{
-        ...sx, // 👈 ensures external styles are applied
-        borderRadius: 2,
+        ...sx,
+        borderRadius: 3,
         overflow: 'hidden',
-        backgroundColor: 'transparent',
+        background: 'linear-gradient(to bottom, rgba(30,30,30,0.9), rgba(15,15,15,0.8))',
+        border: '1px solid rgba(255, 193, 7, 0.3)',
+        backdropFilter: 'blur(10px)',
         color: '#fff',
+        transition: 'transform 0.2s ease',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: `0 0 10px ${titleColor}`
+        }
       }}
-      elevation={0}
+      elevation={3}
     >
       <CardContent>
-        {/* Top Section */}
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="subtitle1" sx={{ color: titleColor, fontWeight: 600 }}>
-            {title}
-          </Typography>
-          <Box>{icon}</Box>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+          <Box display="flex" alignItems="center" gap={1}>
+            {flag && (
+              <Tooltip title={title}>
+                <Avatar
+                  src={flag}
+                  alt={title}
+                  sx={{ width: 24, height: 24, borderRadius: '4px' }}
+                />
+              </Tooltip>
+            )}
+            <Typography variant="subtitle2" sx={{ color: titleColor, fontWeight: 600 }}>
+              {title}
+            </Typography>
+          </Box>
+          <Box sx={{ fontSize: 26, color: titleColor }}>{icon}</Box>
         </Box>
 
-        {/* Total Number */}
         <Typography variant="h4" sx={{ color: totalColor, fontWeight: 700, mb: stats.length ? 1 : 0 }}>
           {total}
         </Typography>
 
-        {/* Bottom Stats */}
         {stats.map((stat, index) => (
           <Typography
             key={index}
-            variant="caption"
-            sx={{ display: 'block', color: statColors[index] || '#aaa' }}
+            variant="body2"
+            sx={{ color: statColors[index] || '#B0BEC5' }}
           >
-            {stat.label}: {stat.value}
+            {stat.label}: <strong>{stat.value}</strong>
           </Typography>
         ))}
       </CardContent>
     </Card>
   );
 }
-
-C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\india.png
-C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\japan.png
-C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\malaysia.png
-C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\philippines.png
-C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\Taguig.png
-
-
-
