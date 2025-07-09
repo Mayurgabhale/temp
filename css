@@ -1,35 +1,217 @@
-{/* Header */}
-<Box
-  px={2}
-  py={3}
-  sx={{
-    backgroundColor: 'black',
-    color: '#fff',
-    borderBottom: '4px solid #FFD700',
-    display: 'flex',
-    justifyContent: 'center', // Center the group
-    alignItems: 'center',     // Align logo and text vertically
-  }}
->
-  <Box
-    component="img"
-    src="/wu-head-logo.png"
-    alt="Western Union Logo"
-    sx={{
-      height: { xs: 40, md: 60 },
-      width: 'auto',
-      mr: 2, // Space between logo and text
-    }}
-  />
+// src/components/Sidebar.jsx
+import React from 'react';
+import {
+  Box,
+  Button,
+  Typography,
+  Divider
+} from '@mui/material';
+import PublicIcon from '@mui/icons-material/Public';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-  <Typography
-    variant="h5"
-    sx={{
-      fontWeight: 'bold',
-      color: 'primary.main',
-      textAlign: 'center',
-    }}
-  >
-    Global Headcount Dashboard
-  </Typography>
-</Box>
+const regions = ['apac', 'emea', 'laca', 'namer'];
+
+export default function Sidebar({ counts = {}, selected, onSelect }) {
+  return (
+    <Box
+      sx={{
+        width: 180,
+        bgcolor: 'secondary.main',
+        color: 'secondary.contrastText',
+        height: '100vh',
+        px: 2,
+        pt: 2
+      }}
+    >
+      {/* Header with global icon */}
+      <Box display="flex" alignItems="center" mb={1}>
+        <PublicIcon sx={{ color: 'primary.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ color: 'primary.main' }}>
+          Regions
+        </Typography>
+      </Box>
+      <Divider sx={{ bgcolor: 'primary.main', mb: 2 }} />
+
+      {/* Region buttons with location icons */}
+      {regions.map((region) => {
+        const count = counts[region];
+        const isSelected = region === selected;
+
+        return (
+          <Button
+            key={region}
+            fullWidth
+            onClick={() => onSelect(region)}
+            variant={isSelected ? 'contained' : 'text'}
+            color={isSelected ? 'primary' : 'secondary'}
+            startIcon={
+              <LocationOnIcon
+                sx={{
+                  fontSize: 20,
+                  color: isSelected
+                    ? 'primary.contrastText'
+                    : 'secondary.contrastText'
+                }}
+              />
+            }
+            sx={{
+              justifyContent: 'space-between',
+              mb: 1,
+              textTransform: 'uppercase',
+              fontSize: '0.875rem'
+            }}
+          >
+            <span>{region}</span>
+            <span style={{ color: '#FFCC00' }}>
+              {typeof count === 'number' ? count : '–'}
+            </span>
+          </Button>
+        );
+      })}
+    </Box>
+  );
+}
+
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Grid, Box, Typography, CircularProgress } from '@mui/material';
+import Sidebar from './components/Sidebar.jsx';
+import MapChart from './components/MapChart.jsx';
+import VipGrid from './components/VipGrid.jsx';
+import Footer from './components/Footer.jsx';
+
+export default function App() {
+  const [counts, setCounts] = useState(null);
+  const [selected, setSelected] = useState('apac');
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3008/api/occupancy/live-summary')
+      .then(res => setCounts(res.data))
+      .catch(() => setCounts({}));
+  }, []);
+
+  if (counts === null) {
+    return (
+      <Box display="flex" justifyContent="center" mt={6}>
+        <CircularProgress color="primary" />
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
+      {/* Header */}
+      <Box
+        px={2}
+        py={3}
+        sx={{
+          backgroundColor: 'black',
+          color: '#fff',
+          borderBottom: '4px solid #FFD700',
+          display: 'flex',
+          justifyContent: 'center', // Center the group
+          alignItems: 'center',     // Align logo and text vertically
+        }}
+      >
+        <Box
+          component="img"
+          src="/wu-head-logo.png"
+          alt="Western Union Logo"
+          sx={{
+            height: { xs: 40, md: 60 },
+            width: 'auto',
+            mr: 2, // Space between logo and text
+          }}
+        />
+
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 'bold',
+            color: 'primary.main',
+            textAlign: 'center',
+          }}
+        >
+          Global Headcount Dashboard
+        </Typography>
+      </Box>
+
+      {/* Sidebar | Map | VIP */}
+      <Grid container sx={{ height: `calc(100vh - 96px)` }}>
+        {/* Sidebar */}
+        <Grid
+          item
+          xs={12}
+          sm={3}
+          md={2}
+          sx={{
+            bgcolor: 'secondary.main',
+            height: '100%',
+          }}
+        >
+          <Sidebar
+            counts={counts}
+            selected={selected}
+            onSelect={setSelected}
+          />
+        </Grid>
+
+        {/* Map */}
+        <Grid item xs={12} sm={7} md={7}>
+          <Box
+            p={2}
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                height: { xs: 500, md: 600 },
+              }}
+            >
+              <MapChart
+                counts={counts}
+                selected={selected}
+                onClickSite={setSelected}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
+        {/* VIP Grid */}
+        <Grid item xs={12} sm={2} md={3}>
+          <Box
+            p={2}
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                height: { xs: 500, md: 600 },
+              }}
+            >
+              <VipGrid />
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+
+      {/* Footer */}
+      <Box mt={4}>
+        <Footer />
+      </Box>
+    </Box>
+  );
+}
+
