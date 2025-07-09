@@ -1,28 +1,28 @@
-// src/hooks/useLiveOccupancy.js
-import { useEffect, useState } from 'react';
-import { fetchLiveSummary } from '../api/occupancy.service';  // ✅ FIXED
+// src/data/buildingCapacities.js
 
-export default function useLiveOccupancy() {
-  const [occupancyData, setOccupancyData] = useState(null);
-  const [loading, setLoading] = useState(true);
+const buildingCapacities = {
+  // ---------------------
+  // 🇮🇳 India - Pune
+  // ---------------------
+  "Podium Floor (Pune)": 725,
+  "Tower B (Pune)": 303,
+  "2nd Floor (Pune)": 185,
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchLiveSummary();  // ✅ FIXED
-      setOccupancyData(data);
-    } catch (e) {
-      console.error('Failed to fetch occupancy data', e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ---------------------
+  // 🇲🇾 Malaysia
+  // ---------------------
+  "Kuala Lumpur": 100,
 
-  useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  // ---------------------
+  // 🇵🇭 Philippines
+  // ---------------------
+  "Quezon City": 100,
+  "Taguig": 100,
 
-  return { occupancyData, loading };
-}
+  // ---------------------
+  // 🇯🇵 Japan
+  // ---------------------
+  "Tokyo": 100
+};
+
+export default buildingCapacities;
