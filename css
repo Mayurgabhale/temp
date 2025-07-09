@@ -6,3 +6,46 @@
   stroke={theme.palette.background.paper}
   strokeWidth={1}
 />
+
+
+
+
+
+.....
+
+{Object.entries(SITES).map(([region, coords]) => {
+  const count = counts[region] ?? '–';
+  const color = getColor(region, brands);
+  const isSel = region === selected;
+
+  return (
+    <Marker
+      key={region}
+      coordinates={coords}
+      onClick={() => onClickSite(region)}
+      style={{ cursor: 'pointer' }}
+    >
+      {/* Pin as circle */}
+      <circle
+        cx={0}
+        cy={0}
+        r={isSel ? 6 : 4}
+        fill={color}
+        stroke={theme.palette.background.paper}
+        strokeWidth={1}
+      />
+
+      {/* Label: REGION COUNT */}
+      <text
+        x={0}
+        y={-8}
+        textAnchor="middle"
+        fill={color}
+        fontSize="11"
+        fontWeight="bold"
+      >
+        {region.toUpperCase()} {count}
+      </text>
+    </Marker>
+  );
+})}
