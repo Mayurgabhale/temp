@@ -1,1042 +1,119 @@
-  import React, { useEffect, useState } from 'react';
-  import {
-    AppBar,
-    Toolbar,
-    Box,
-    Typography,
-    Select,
-    MenuItem,
-    IconButton
-  } from '@mui/material';
-  import { useNavigate, useLocation } from 'react-router-dom';
-  import HomeIcon    from '@mui/icons-material/Home';
-  import HistoryIcon from '@mui/icons-material/History';
-  import InfoIcon    from '@mui/icons-material/Info';
+C:\Users\W0024618\Desktop\global-page\src\App.jsx
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Grid, Box, Typography, CircularProgress } from '@mui/material';
+import Sidebar from './components/Sidebar.jsx';
+import MapChart from './components/MapChart.jsx';
+import VipGrid from './components/VipGrid.jsx';
+import Footer from './components/Footer.jsx';
+
+export default function App() {
+  const [counts, setCounts] = useState(null);
+  const [selected, setSelected] = useState('apac');
 
-  import WuLogo       from '../assets/wu-logo.png';
-  import DenverFlag   from '../assets/flags/denver.png';
-  import MiamiFlag    from '../assets/flags/miami.png';
-  import NewYorkFlag  from '../assets/flags/new-york.png';
-  import AustinFlag   from '../assets/flags/austin.png';
-  import DefaultFlag  from '../assets/flags/default.png';
-
-  import { partitionList }    from '../services/occupancy.service';
-  import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-  export default function Header() {
-    const navigate  = useNavigate();
-    const location  = useLocation();
-    const { data }  = useLiveOccupancy(1000);
-    const [lastUpdate, setLastUpdate] = useState('');
-
-    useEffect(() => {
-      if (data) setLastUpdate(new Date().toLocaleTimeString());
-    }, [data]);
-
-    // Determine current partition
-    const segments         = location.pathname.split('/').filter(Boolean);
-    const isPartitionPage  = segments[0] === 'partition' && Boolean(segments[1]);
-    const currentPartition = isPartitionPage ? decodeURIComponent(segments[1]) : '';
-    const suffixSegments   = isPartitionPage ? segments.slice(2) : [];
-
-    // Flag mapping
-    const flagMap = {
-      'US.CO.OBS':          DenverFlag,
-      'US.FL.Miami':        MiamiFlag,
-      'US.NYC':             NewYorkFlag,
-      'USA/Canada Default': AustinFlag
-    };
-    const selectedFlag = flagMap[currentPartition] || DefaultFlag;
-
-    // Handle select change
-    const handlePartitionChange = (newPartition) => {
-      if (!newPartition) return navigate('/');
-      const base = `/partition/${encodeURIComponent(newPartition)}`;
-      const full = suffixSegments.length
-        ? `${base}/${suffixSegments.join('/')}`
-        : base;
-      navigate(full);
-    };
-
-    // Handle details icon click
-    const handleDetailsClick = () => {
-      if (isPartitionPage) {
-        navigate(`/partition/${encodeURIComponent(currentPartition)}/details`);
-      } else {
-        navigate('/partition/US.CO.OBS/details');
-      }
-    };
-
-    return (
-      <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-        <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Left side: Logo, title, nav icons */}
-          <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-            <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-            <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>
-              NAMER {currentPartition && ` • ${currentPartition}`} HeadCount
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: '#FFC72C',
-                ml: 2,
-                opacity: data ? 1 : 0,
-                transition: 'opacity 0.8s'
-              }}
-            >
-              {/* {lastUpdate} */}
-            </Typography>
-
-            <IconButton color="inherit" onClick={() =>
-              navigate(isPartitionPage
-                ? `/partition/${encodeURIComponent(currentPartition)}`
-                : '/'
-              )
-            }>
-              <HomeIcon />
-            </IconButton>
-
-            <IconButton color="inherit" onClick={() =>
-              navigate(isPartitionPage
-                ? `/partition/${encodeURIComponent(currentPartition)}/history`
-                : '/history'
-              )
-            }>
-              <HistoryIcon />
-            </IconButton>
-
-            {/* Single details icon for all pages */}
-            <IconButton 
-              color="inherit" 
-              onClick={handleDetailsClick}
-            >
-              <InfoIcon />
-            </IconButton>
-          </Box>
-
-          {/* Right side: dropdown + flag */}
-          <Box display="flex" alignItems="center">
-            <Select
-              size="small"
-              value={currentPartition}
-              displayEmpty
-              onChange={(e) => handlePartitionChange(e.target.value)}
-              sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 180 }}
-            >
-              <MenuItem value="">— Select Region —</MenuItem>
-              {partitionList.map(p => (
-                <MenuItem key={p} value={p}>
-                  {p.replace(' Partition','')}
-                </MenuItem>
-              ))}
-            </Select>
-            <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 40 }} />
-          </Box>
-        </Toolbar>
-      </AppBar>
-    );
-  }
-
-....
-
-
-
-                                           // // src/pages/Dashboard.jsx
-  // import React, { useEffect,useState } from 'react';
-  // import {
-  //   Container,Box,Typography,Skeleton,
-  //   Table,TableHead,TableRow,TableCell,TableBody,Paper
-  // } from '@mui/material';
-  // import GroupIcon from '@mui/icons-material/Group';
-  // import TrackChangesIcon from '@mui/icons-material/TrackChanges';
-  // import PeopleIcon from '@mui/icons-material/People';
-  // import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
-
-  // import Header from '../components/Header';
-  // import SummaryCard from '../components/SummaryCard';
-  // import CompositeChartCard from '../components/CompositeChartCard';
-  // import PieChartCard from '../components/PieChartCard';
-
-  // import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-  // import { useSecurityOfficers } from '../hooks/useSecurityOfficers';
-  // import { useBadgeRejections } from '../hooks/useBadgeRejections';
-  // import { partitionList } from '../services/occupancy.service';
-  // import {
-  //   fetchVisitorCountsByFloor,
-  //   fetchForecastFromHistory
-  // } from '../api/occupancy.service';
-
-  // import seatCapacities from '../data/seatCapacities';
-  // import buildingCapacities from '../data/buildingCapacities';
-
-  // import DenverFlag from '../assets/flags/denver.png';
-  // import MiamiFlag from '../assets/flags/miami.png';
-  // import NewYorkFlag from '../assets/flags/new-york.png';
-  // import AustinFlag from '../assets/flags/austin.png';
-
-  // const displayNameMap = {
-  //   'US.CO.OBS':'Denver',
-  //   'US.FL.Miami':'Miami',
-  //   'US.NYC':'New York',
-  //   'USA/Canada Default':'Austin Texas'
-  // };
-  // const colorsMap = {
-  //   'US.CO.OBS':['#FFD666','#fcf3cf','#2ecc71','#ec7063'],
-  //   'US.FL.Miami':['#FFE599','#fcf3cf','#2ecc71','#ec7063'],
-  //   'US.NYC':['#FFD666','#fcf3cf','#2ecc71','#ec7063'],
-  //   'USA/Canada Default':['#FFE599','#fcf3cf','#2ecc71','#ec7063']
-  // };
-  // const palette15 = ['#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666','#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A','#FF9800','#673AB7','#009688','#CDDC39','#795548'];
-
-  // export default function Dashboard(){
-  //   const { data,loading,error }=useLiveOccupancy(1000);
-  //   const { data:secData,loading:lo1 }=useSecurityOfficers(5000);
-  //   const { rejections,loading:lo2 }=useBadgeRejections(5000);
-  //   const [visitorsByFloor,setVisitors]=useState([]);
-  //   const [forecast,setForecast]=useState({history:[],forecast:[]});
-  //   const officers=Array.isArray(secData.present)?secData.present:[];
-
-  //   useEffect(()=>{
-  //     fetchVisitorCountsByFloor().then(json=>json.success&&setVisitors(json.counts));
-  //     fetchForecastFromHistory().then(json=>setForecast(json));
-  //   },[]);
-
-  //   if(error){
-  //     return <Box width="100vw%" py={4}><Typography color="error" align="center">Error loading live data</Typography></Box>;
-  //   }
-
-  //   const regions=data?.realtime||{};
-  //   const partitions=partitionList.map(name=>{
-  //     const key=Object.keys(regions).find(k=>k.includes(name));
-  //     const p=key?regions[key]:{};
-  //     return {name,total:p.total||0,Employee:p.Employee||0,Contractor:p.Contractor||0,floors:p.floors||{}};
-  //   }).sort((a,b)=>b.total-a.total);
-
-  //   const todayTot=data?.today?.total||0;
-  //   const todayEmp=data?.today?.Employee||0;
-  //   const todayCont=data?.today?.Contractor||0;
-  //   const realtimeTot=partitions.reduce((s,p)=>s+p.total,0);
-  //   const realtimeEmp=partitions.reduce((s,p)=>s+p.Employee,0);
-  //   const realtimeCont=partitions.reduce((s,p)=>s+p.Contractor,0);
-
-  //   const denver=partitions.find(p=>p.name==='US.CO.OBS');
-  //   const others=partitions.filter(p=>['US.FL.Miami','US.NYC','USA/Canada Default'].includes(p.name));
-
-  //   const floors=Object.entries(denver?.floors||{});
-  //   const avgForecast=forecast.forecast.length
-  //     ?Math.round(forecast.forecast.reduce((s,r)=>s+r.yhat,0)/forecast.forecast.length)
-  //     :0;
-
-  //   return <>
-  //     <Header title="NAMER Live Occupancy"/>
-  //     <Container maxWidth={false} disableGutters sx={{py:3,px:2,background:'rgba(0,0,0,0.6)'}}>
-  //       {/* top summary */}
-  //       <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-  //         {[ 
-  //           {title:"Today's Total Headcount",value:todayTot,icon:<GroupIcon/>,border:'#FFD666'},
-  //           {title:"Today's Employees Count",value:todayEmp,icon:<PeopleIcon/>,border:'#81C784'},
-  //           {title:"Today's Contractors Count",value:todayCont,icon:<BusinessCenterIcon/>,border:'#FFE599'},
-  //           {title:"Realtime Headcount",value:realtimeTot,icon:<TrackChangesIcon/>,border:'#FFF2CC'},
-  //           {title:"Realtime Employees Count",value:realtimeEmp,icon:<PeopleIcon/>,border:'#FFD666'},
-  //           {title:"Realtime Contractors Count",value:realtimeCont,icon:<BusinessCenterIcon/>,border:'#FFE599'},
-  //         ].map(c=>(
-  //           <Box key={c.title} sx={{flex:'1 1 calc(16.66% - 8px)'}}>
-  //             <SummaryCard title={c.title} total={c.value} stats={[]} icon={c.icon} sx={{height:140,border:`1px solid ${c.border}`}}/>
-  //           </Box>
-  //         ))}
-  //       </Box>
-
-  //       {/* partition cards */}
-  //       <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-  //         {loading
-  //           ?<Skeleton variant="rectangular" width="100%" height={200}/>
-  //           :partitions.map(p=>{
-  //             const flags={'US.CO.OBS':DenverFlag,'US.FL.Miami':MiamiFlag,'US.NYC':NewYorkFlag,'USA/Canada Default':AustinFlag};
-  //             const [tc,totc,...sc]=colorsMap[p.name]||[];
-  //             return <Box key={p.name} sx={{flex:'1 1 calc(16.66% - 8px)'}}>
-  //               <SummaryCard
-  //                 title={displayNameMap[p.name]}
-  //                 icon={<Box component="img" src={flags[p.name]} sx={{width:50,height:30,border:'1px solid #fff'}}/>}
-  //                 total={p.total}
-  //                 stats={[{label:'Employees',value:p.Employee},{label:'Contractors',value:p.Contractor}]}
-  //                 titleColor={tc} totalColor={totc} statColors={sc}
-  //                 sx={{width:'100%',border:`1px solid ${tc}`}}
-  //               />
-  //             </Box>;
-  //           })
-  //         }
-  //       </Box>
-
-  //       {/* three panels */}
-  //       <Box display="flex" gap={2} flexWrap="wrap" mb={4}>
-  //         {/* Denver composite */}
-  //         <Box sx={{flex:'1 1 32%',minWidth:280}}>
-  //           {denver.total===0
-  //             ?<Typography color="white" align="center" py={6}>No Denver data</Typography>
-  //             :<CompositeChartCard
-  //               title="Denver"
-  //               data={floors.map(([f,h])=>({
-  //                 name:`${f}`,
-  //                 headcount:h,
-  //                 capacity:buildingCapacities[f]||0
-  //               }))}
-  //               lineColor={palette15[1]}
-  //               height={350}
-  //             />
-  //           }
-  //         </Box>
-
-  //         {/* others pie */}
-  //         <Box sx={{flex:'1 1 32%',minWidth:280}}>
-  //           <PieChartCard
-  //             title="Other Regions Overview"
-  //             data={others.map(o=>({name:displayNameMap[o.name],value:o.total}))}
-  //             colors={[palette15[2],palette15[3],palette15[4]]}
-  //             height={350}
-  //             showZeroSlice
-  //             totalSeats={others.reduce((s,o)=>s+seatCapacities[o.name],0)}
-  //           />
-  //         </Box>
-
-  //         {/* Denver floor details */}
-  //         <Box sx={{flex:'1 1 32%',minWidth:300}}>
-  //                <Paper sx={{
-  //           p:2,
-  //           background:'rgba(0,0,0,0.4)',
-  //           border:'1px solid #FFC107'    // yellow border
-  //         }}>
-
-
-  //             <Typography variant="h6" sx={{color:'#FFC107',mb:1}}>Denver Floor Details</Typography>
-  //             {loading
-  //               ?<Skeleton variant="rectangular" width="100%" height={240}/>
-  //               :<Table size="small" sx={{color:'white'}}>
-  //                 <TableHead>
-  //                   <TableRow>
-  //                     {['Floor','Headcount','Visitors','Security','Rejections','Avg Forecast'].map(h=>(
-  //                       <TableCell key={h} sx={{color:'#FFC107',borderColor:'#444'}}>{h}</TableCell>
-  //                     ))}
-  //                   </TableRow>
-  //                 </TableHead>
-  //                 <TableBody>
-  //                   {floors.map(([floor, headcount])=>{
-  //                     const visitors=visitorsByFloor.find(v=>v.Floor===floor)?.visitorCount||0;
-  //                     const officerCount=officers.filter(o=>o.floor===floor).length;
-  //                     return <TableRow key={floor}>
-  //                       <TableCell sx={{borderColor:'#444',color:'white'}}>{floor}</TableCell>
-  //                       <TableCell sx={{borderColor:'#444',color:'white'}}>{headcount}</TableCell>
-  //                       <TableCell sx={{borderColor:'#444',color:'white'}}>{visitors}</TableCell>
-  //                       <TableCell sx={{borderColor:'#444',color:'white'}}>
-  //                         {lo1?<Skeleton variant="text" width={24}/>:officerCount}
-  //                       </TableCell>
-  //                       <TableCell sx={{borderColor:'#444',color:'white'}}>
-  //                         {lo2?<Skeleton variant="text" width={24}/>:rejections}
-  //                       </TableCell>
-  //                       <TableCell sx={{borderColor:'#444',color:'white'}}>{avgForecast}</TableCell>
-  //                     </TableRow>;
-  //                   })}
-  //                 </TableBody>
-  //               </Table>
-  //             }
-  //           </Paper>
-  //         </Box>
-  //       </Box>
-  
-  //     </Container>
-  //   </>;
-  // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // src/pages/Dashboard.jsx
-  import React, { useEffect,useState } from 'react';
-  import {
-    Container,Box,Typography,Skeleton,
-    Table,TableHead,TableRow,TableCell,TableBody,Paper
-  } from '@mui/material';
-  import GroupIcon from '@mui/icons-material/Group';
-  import TrackChangesIcon from '@mui/icons-material/TrackChanges';
-  import PeopleIcon from '@mui/icons-material/People';
-  import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
-
-  import Header from '../components/Header';
-  import SummaryCard from '../components/SummaryCard';
-  import CompositeChartCard from '../components/CompositeChartCard';
-  import PieChartCard from '../components/PieChartCard';
-
-  import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-  import { useSecurityOfficers } from '../hooks/useSecurityOfficers';
-  import { useBadgeRejections } from '../hooks/useBadgeRejections';
-  import { partitionList } from '../services/occupancy.service';
-  import {
-    fetchVisitorCountsByFloor,
-    fetchForecastFromHistory
-  } from '../api/occupancy.service';
-
-  import seatCapacities from '../data/seatCapacities';
-  import buildingCapacities from '../data/buildingCapacities';
-
-  import DenverFlag from '../assets/flags/denver.png';
-  import MiamiFlag from '../assets/flags/miami.png';
-  import NewYorkFlag from '../assets/flags/new-york.png';
-  import AustinFlag from '../assets/flags/austin.png';
-
-  const displayNameMap = {
-    'US.CO.OBS':'Denver',
-    'US.FL.Miami':'Miami',
-    'US.NYC':'New York',
-    'USA/Canada Default':'Austin Texas'
-  };
-  const colorsMap = {
-    'US.CO.OBS':['#FFD666','#fcf3cf','#2ecc71','#ec7063'],
-    'US.FL.Miami':['#FFE599','#fcf3cf','#2ecc71','#ec7063'],
-    'US.NYC':['#FFD666','#fcf3cf','#2ecc71','#ec7063'],
-    'USA/Canada Default':['#FFE599','#fcf3cf','#2ecc71','#ec7063']
-  };
-  const palette15 = ['#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666','#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A','#FF9800','#673AB7','#009688','#CDDC39','#795548'];
-
-  export default function Dashboard(){
-    const { data,loading,error }=useLiveOccupancy(1000);
-    const { data:secData,loading:lo1 }=useSecurityOfficers(5000);
-    const { rejections,loading:lo2 }=useBadgeRejections(5000);
-    const [visitorsByFloor,setVisitors]=useState([]);
-    const [forecast,setForecast]=useState({history:[],forecast:[]});
-    const officers=Array.isArray(secData.present)?secData.present:[];
-
-    useEffect(()=>{
-      fetchVisitorCountsByFloor().then(json=>json.success&&setVisitors(json.counts));
-      fetchForecastFromHistory().then(json=>setForecast(json));
-    },[]);
-
-    if(error){
-      return <Box width="100vw%" py={4}><Typography color="error" align="center">Error loading live data</Typography></Box>;
-    }
-
-    const regions=data?.realtime||{};
-    const partitions=partitionList.map(name=>{
-      const key=Object.keys(regions).find(k=>k.includes(name));
-      const p=key?regions[key]:{};
-      return {name,total:p.total||0,Employee:p.Employee||0,Contractor:p.Contractor||0,floors:p.floors||{}};
-    }).sort((a,b)=>b.total-a.total);
-
-    const todayTot=data?.today?.total||0;
-    const todayEmp=data?.today?.Employee||0;
-    const todayCont=data?.today?.Contractor||0;
-    const realtimeTot=partitions.reduce((s,p)=>s+p.total,0);
-    const realtimeEmp=partitions.reduce((s,p)=>s+p.Employee,0);
-    const realtimeCont=partitions.reduce((s,p)=>s+p.Contractor,0);
-
-    const denver=partitions.find(p=>p.name==='US.CO.OBS');
-    const others=partitions.filter(p=>['US.FL.Miami','US.NYC','USA/Canada Default'].includes(p.name));
-
-    const floors=Object.entries(denver?.floors||{});
-    const avgForecast=forecast.forecast.length
-      ?Math.round(forecast.forecast.reduce((s,r)=>s+r.yhat,0)/forecast.forecast.length)
-      :0;
-
-    return <>
-      <Header title="NAMER Live Occupancy"/>
-      <Container maxWidth={false} disableGutters sx={{py:3,px:2,background:'rgba(0,0,0,0.6)'}}>
-       
-       
-         <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-          {[
-            {
-              title: "Today's Total Headcount",
-              value: todayTot,
-              icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
-              border: '#FFD666'
-            },
-            {
-              title: "Today's Employees Count",
-              value: todayEmp,
-              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
-              border: '#81C784'
-            },
-            {
-              title: "Today's Contractors Count",
-              value: todayCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 25 }} />,
-              border: '#FFE599'
-            },
-            {
-              title: "Realtime Headcount",
-              value: realtimeTot,
-              icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
-              border: '#FFF2CC'
-            },
-            {
-              title: "Realtime Employees Count",
-              value: realtimeEmp,
-              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
-              border: '#FFD666'
-            },
-            {
-              title: "Realtime Contractors Count",
-              value: realtimeCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ color: '#BA68C8', fontSize: 25 }} />,
-              border: '#FFE599'
-            }
-          ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard
-                title={c.title}
-                total={c.value}
-                stats={[]}
-                icon={c.icon}
-                sx={{ height: 140, border: `2px solid ${c.border}` }}
-              />
-            </Box>
-          ))}
-        </Box>
-
-        {/* partition cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ?<Skeleton variant="rectangular" width="90%" height={200}/>
-            :partitions.map(p=>{
-              const flags={'US.CO.OBS':DenverFlag,'US.FL.Miami':MiamiFlag,'US.NYC':NewYorkFlag,'USA/Canada Default':AustinFlag};
-              const [tc,totc,...sc]=colorsMap[p.name]||[];
-              return <Box key={p.name} sx={{flex:'1 1 calc(16.66% - 8px)'}}>
-             
-                <SummaryCard
-                  title={displayNameMap[p.name]}
-                  icon={<Box component="img" src={flags[p.name]} sx={{width:50,height:33,border:'1px solid #fff'}}/>}
-                  total={p.total}
-                  stats={[{label:'Employees',value:p.Employee},{label:'Contractors',value:p.Contractor}]}
-                  titleColor={tc} totalColor={totc} statColors={sc}
-                  sx={{width:'100%',border:`1px solid ${tc}`}}
-                />
-     
-              </Box>;
-            })
-          }
-        </Box>
-
-
-
-<Box display="flex" gap={2} flexWrap="wrap" mb={4}>
-  {[  
-    // Denver composite
-    {
-      key: 'denver',
-      title: 'Denver',
-      body: denver.total === 0
-        ? <Typography color="white" align="center" py={6}>
-            No Denver data
-          </Typography>
-        : <CompositeChartCard
-            data={floors.map(([f,h])=>({
-              name: f,
-              headcount: h,
-              capacity: buildingCapacities[f] || 0
-            }))}
-            lineColor={palette15[1]}
-            height={300}
-            sx={{ border: 'none' }}
-          />
-    },
-    // Other regions
-    {
-      key: 'others',
-      title: 'North America',
-      body: <PieChartCard
-        data={others.map(o=>({name:displayNameMap[o.name],value:o.total}))}
-        colors={[palette15[2],palette15[3],palette15[4]]}
-        height={300}
-        showZeroSlice
-        totalSeats={others.reduce((s,o)=>s+seatCapacities[o.name],0)}
-        sx={{ border: 'none' }}
-      />
-    },
-    // Denver floor details
-    {
-      key: 'details',
-      title: 'Denver Floor Details',
-      body: loading
-        ? <Skeleton variant="rectangular" width="100%" height={300}/>
-        : <Table size="small" sx={{ color:'white', borderCollapse:'collapse', '& td, & th': { border: 'none' } }}>
-            <TableHead>
-              <TableRow>
-                {['Floor','Headcount','Visitors','Security','Rejections','Avg Forecast'].map(h=>(
-                  <TableCell key={h} sx={{ color:'#FFC107' }}>
-                    {h}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {floors.map(([floor, headcount]) => {
-                const visitors = visitorsByFloor.find(v=>v.Floor===floor)?.visitorCount||0;
-                const officerCount = officers.filter(o=>o.floor===floor).length;
-                return (
-                  <TableRow key={floor}>
-                    <TableCell sx={{ color:'white' }}>{floor}</TableCell>
-                    <TableCell sx={{ color:'white' }}>{headcount}</TableCell>
-                    <TableCell sx={{ color:'white' }}>{visitors}</TableCell>
-                    <TableCell sx={{ color:'white' }}>
-                      {lo1 ? <Skeleton variant="text" width={24}/> : officerCount}
-                    </TableCell>
-                    <TableCell sx={{ color:'white' }}>
-                      {lo2 ? <Skeleton variant="text" width={24}/> : rejections}
-                    </TableCell>
-                    <TableCell sx={{ color:'white' }}>{avgForecast}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-    }
-  ].map(({ key, title, body }) => (
-    <Box
-      key={key}
-      sx={{
-        flex:'1 1 32%',
-        minWidth: 280,
-        height: 380,
-        animation:'fadeInUp 0.5s'
-      }}
-    >
-      <Paper
-        sx={{
-          p:2,
-          height:'100%',
-          background:'rgba(0,0,0,0.4)',
-          border:'1px solid #FFC107',
-          display:'flex',
-          flexDirection:'column'
-        }}
-      >
-        <Typography
-          variant="h6"
-          align="center"
-          sx={{ color:'#FFC107', mb:2 }}
-        >
-          {title}
-        </Typography>
-        <Box sx={{ flex:1, overflow:'hidden' }}>
-          {body}
-        </Box>
-      </Paper>
-    </Box>
-  ))}
-</Box>
-
- {/* Footer */}
-      <footer
-        style={{
-          backgroundColor: '#000',
-          color: '#FFC72C',
-          padding: '1.0rem 0',
-          textAlign: 'center',
-          marginTop: '0.1rem',
-          borderTop: '2px solid #FFC72C',
-          fontSize: '0.95rem',
-          lineHeight: '1.6'
-        }}
-      >
-        <div>
-          <strong>Global Security Operations Center (GSOC)</strong><br />
-          Live Occupancy dashboard for Western Union North America — Real-time occupancy, floor activity, and personnel insights.
-        </div>
-        <div style={{ marginTop: '0.75rem' }}>
-          Contact us: <a href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com" style={{ color: '#FFC72C', textDecoration: 'underline' }}>gsoc@westernunion.com</a> |
-          Landline: <span style={{ color: '#FFC72C' }}>+91-020-67632394</span>
-        </div>
-      </footer>
-
-      </Container>
-
-  
-    </>;
-  }
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Button,
-  Typography,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  TextField
-} from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { format } from 'date-fns';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchHistory } from '../api/occupancy.service';
-
-export default function History() {
-  // Grab optional partition from URL
-  const { partition } = useParams();
-  const decodedPartition = partition ? decodeURIComponent(partition) : null;
-  // e.g. "US" from "US.CO.OBS"
-  const filterCode = decodedPartition?.split('.')[0] || null;
-
-  const [data, setData]               = useState(null);
-  const [loading, setLoading]         = useState(true);
-  const [pickedDate, setPickedDate]   = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-
-  // 1) Summary entry for the selected date
-  const summaryEntry = useMemo(() => {
-    if (!data || !pickedDate) return null;
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    return data.summaryByDate.find(r => r.date === dateStr) || null;
-  }, [data, pickedDate]);
-
-  // 2) Build & filter partitionRows
- const partitionRows = useMemo(() => {
-  if (!summaryEntry) return [];
-  const codeToCountry = {
-    US: 'United States',
-    CA: 'Canada'
-  };
-
-  // Define partition display names
-  const partitionToDisplay = {
-    'US.CO.OBS': { city: 'Denver', country: 'United States' },
-    'US.FL.Miami': { city: 'Miami', country: 'United States' },
-    'US.NYC': { city: 'New York', country: 'United States' },
-    'USA/Canada Default': { city: 'Austin Texas', country: 'United States' }
-  };
-
-  return Object.entries(summaryEntry.partitions)
-    .filter(([key]) =>
-      !filterCode ? true : key.startsWith(filterCode + '.')
-    )
-    .map(([key, vals]) => {
-      // Use display mapping if available, else fallback
-      if (partitionToDisplay[key]) {
-        return {
-          ...partitionToDisplay[key],
-          employee: vals.Employee ?? 0,
-          contractor: vals.Contractor ?? 0,
-          total: vals.total ?? 0,
-        };
-      }
-
-      // Fallback for unknown partitions
-      const [code] = key.split('.');
-      return {
-        country: codeToCountry[code] || code,
-        city: key,  // Use full key as fallback
-        employee: vals.Employee ?? 0,
-        contractor: vals.Contractor ?? 0,
-        total: vals.total ?? 0,
-      };
-    });
-}, [summaryEntry, filterCode]);
-
-  // 3) Build & filter detailRows
-  const detailRows = useMemo(() => {
-    if (!data || !pickedDate) return [];
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    return data.details
-      // same-day only
-      .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
-      // only the partition(s) we care about
-      .filter(r =>
-        !filterCode
-          ? true
-          : r.PartitionName2.startsWith(filterCode + '.')
-      )
-      // only InDirection swipes count toward headcount
-      .filter(r => r.Direction === 'InDirection')
-      // dedupe by EmployeeID + PersonnelType
-      .reduce((unique, row) => {
-        const key = `${row.PersonGUID}-${row.PersonnelType}`;
-        if (!unique._seen.has(key)) {
-          unique._seen.add(key);
-          unique.rows.push(row);
-        }
-        return unique;
-      }, { _seen: new Set(), rows: [] })
-      .rows;
-  }, [data, pickedDate, filterCode]);
-
-  // Fetch all on mount
   useEffect(() => {
-    setLoading(true);
-    fetchHistory()
-      .then(json => setData(json))
-      .finally(() => setLoading(false));
+    axios
+      .get('http://localhost:3008/api/occupancy/live-summary')
+      .then(res => setCounts(res.data))
+      .catch(() => setCounts({}));
   }, []);
 
-  if (loading) return <LoadingSpinner />;
-  if (!data)    return null;
-
-  // Export to Excel
-  const handleExport = () => {
-    const ws = XLSX.utils.json_to_sheet(
-      detailRows.map((r, i) => ({
-        Sr: i + 1,
-        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
-        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
-        EmployeeID: r.EmployeeID,
-        Name: r.ObjectName1,
-        PersonnelType: r.PersonnelType,   // preserve visitor/temp badge/contractor/etc.
-        Door: r.Door,
-        Partition: r.PartitionName2
-      }))
+  if (counts === null) {
+    return (
+      <Box display="flex" justifyContent="center" mt={6}>
+        <CircularProgress color="primary" />
+      </Box>
     );
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([buf]), `history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
-  };
+  }
 
   return (
-    <>
-      <Header />
+    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
+      {/* Header */}
+      <Box py={4}>
+        <Typography
+          variant="h3"
+          align="center"
+          sx={{ color: 'primary.main', fontWeight: 'bold' }}
+        >
+          Western Union Global Headcount
+        </Typography>
+      </Box>
 
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        {/* DatePicker + Summary */}
-        {pickedDate && summaryEntry ? (
-          <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
-            {/* Date picker */}
-            <Box sx={{ flex: '0 0 200px' }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Select date"
-                  value={pickedDate}
-                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                  renderInput={params => <TextField fullWidth {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
+      {/* Sidebar | Map | VIP */}
+      <Grid container sx={{ height: `calc(100vh - 96px)` }}>
+        {/* Sidebar */}
+        <Grid
+          item
+          xs={12}
+          sm={3}
+          md={2}
+          sx={{
+            bgcolor: 'secondary.main',
+            height: '100%',
+          }}
+        >
+          <Sidebar
+            counts={counts}
+            selected={selected}
+            onSelect={setSelected}
+          />
+        </Grid>
 
-            {/* Summary & Toggle */}
-            <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* Summary table */}
-              <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
-                <Table sx={{ border: '2px solid #000' }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell
-                        colSpan={5}
-                        align="center"
-                        sx={{
-                          fontWeight: 'bold',
-                          fontSize: 16,
-                          bgcolor: '#000',
-                          color: '#FFC107',
-                          border: '2px solid #000'
-                        }}
-                      >
-                        {format(pickedDate, 'EEEE, d MMMM, yyyy')}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow sx={{ bgcolor: '#FFC107' }}>
-                      {['Country','City','Employees','Contractors','Total'].map(h => (
-                        <TableCell
-                          key={h}
-                          align={['Country','City'].includes(h) ? 'left' : 'right'}
-                          sx={{
-                            color: '#000',
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            border: '2px solid #000'
-                          }}
-                        >
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-
-                  <TableBody>
-                    {partitionRows.map((row,i) => (
-                      <TableRow key={i}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{row.country}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{row.city}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.employee}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.contractor}</TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{
-                            backgroundColor: '#FFC107',
-                            fontWeight: 'bold',
-                            border: '2px solid #000'
-                          }}
-                        >
-                          {row.total}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-
-                    {/* Grand total row */}
-                    <TableRow sx={{ bgcolor: '#666' }}>
-                      <TableCell colSpan={2} align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        Total
-                      </TableCell>
-                      <TableCell align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.employee, 0)}
-                      </TableCell>
-                      <TableCell align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.contractor, 0)}
-                      </TableCell>
-                      <TableCell align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.total, 0)}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Paper>
-
-              {/* See/Hide Details & Export */}
-              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
-                <Button
-                  variant="contained"
-                  sx={{ bgcolor: '#FFC107', color: '#000' }}
-                  onClick={() => setShowDetails(v => !v)}
-                >
-                  {showDetails ? 'Hide Details' : 'See Details'}
-                </Button>
-                {showDetails && (
-                  <Button
-                    variant="outlined"
-                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-                    onClick={handleExport}
-                  >
-                    Export to Excel
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          </Box>
-        ) : (
-          // Only date picker
-          <Box sx={{ px: '20px', mb: 3 }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Select date"
-                value={pickedDate}
-                onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                renderInput={params => <TextField fullWidth {...params} />}
-              />
-            </LocalizationProvider>
-            {!pickedDate && (
-              <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
-                Please pick a date to view region summary.
-              </Typography>
-            )}
-          </Box>
-        )}
-
-        {/* Details table */}
-        {showDetails && (
-          <Box display="flex" justifyContent="center" mb={2} sx={{ width:'100%' }}>
-            <Paper
-              elevation={1}
+        {/* Map */}
+        <Grid item xs={12} sm={7} md={7}>
+          <Box
+            p={2}
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
               sx={{
-                px: '40px',
-                py: 1,
                 width: '100%',
-                border: '3px solid #000',
-                borderRadius: 2,
+                height: { xs: 500, md: 600 },
               }}
             >
-              {detailRows.length > 0 ? (
-                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: '#000' }}>
-                      {[
-                        'Sr','Date','Time',
-                        'Employee ID','Name','Personnel Type',
-                        'Door','Partition'
-                      ].map(h => (
-                        <TableCell
-                          key={h}
-                          align="center"
-                          sx={{
-                            color: '#FFC107',
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            border: '2px solid #000',
-                          }}
-                        >
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {detailRows.map((r, i) => (
-                      <TableRow key={`${r.PersonGUID}-${i}`}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>
-                          {format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}
-                        </TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>
-                          {format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}
-                        </TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: '#666',
-                    textAlign: 'center',
-                    mt: 2,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  No swipe records found for this date.
-                </Typography>
-              )}
-            </Paper>
+              <MapChart
+                counts={counts}
+                selected={selected}
+                onClickSite={setSelected}
+              />
+            </Box>
           </Box>
-        )}
-      </Container>
+        </Grid>
 
-      <Footer />
-    </>
+        {/* VIP Grid */}
+        <Grid item xs={12} sm={2} md={3}>
+          <Box
+            p={2}
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                height: { xs: 500, md: 600 },
+              }}
+            >
+              <VipGrid />
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+
+      {/* Footer */}
+      <Box mt={4}>
+        <Footer />
+      </Box>
+    </Box>
   );
 }
+
