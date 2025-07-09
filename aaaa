@@ -1,3 +1,15 @@
+<CompositeChartCard
+  title=""
+  data={[]} // Replace with real data
+  barColor="#4CAF50"
+  lineColor="#FF0000"
+  height={750}
+  animationDuration={1500}
+/>
+
+
+
+...
 const apacCompositeData = partitions.map(partition => {
   const real = data?.realtime?.[partition] || {};
   const headcount = real.total || 0;
