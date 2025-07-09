@@ -1,43 +1,73 @@
- {/* Charts */}
-        <Box display="flex" gap={1} mb={4} flexWrap="wrap">
-          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
-            {loading ? (
-              <Skeleton variant="rectangular" height={350} />
-            ) : (
-              <CompositeChartCard
-                title="Pune (Sample Floors)"
-                data={[]} // Replace with real data
-                barColor="#4CAF50"
-                lineColor="#FF0000"
-                height={410}
-                animationDuration={1500}
-              />
-            )}
-          </Box>
-
-         
-
-          <Box display="flex" justifyContent="center" mb={4}>
-          <Box sx={{
-            width: 400,
-            border: '2px solid #FFC107',
-            borderRadius: 2,
-            p: 2,
-            background: 'rgba(0,0,0,0.6)'
-          }}>
-            {loading ? (
-              <Skeleton variant="rectangular" height={350} />
-            ) : (
-              <PieChartCard
-                title="APAC Realtime Headcount"
-                data={partitions.map(site => ({
-                  name: displayName[site],
-                  value: data?.realtime?.[site]?.total || 0
-                }))}
-              />
-            )}
-          </Box>
+{/* Charts */}
+<Box display="flex" flexWrap="wrap" gap={2} mb={4} justifyContent="center">
+  
+  {/* Composite Chart */}
+  <Box
+    sx={{
+      flex: '1 1 350px',
+      minWidth: 350,
+      maxWidth: 600,
+      border: '2px solid #FFC107',
+      borderRadius: 2,
+      p: 2,
+      background: 'rgba(0,0,0,0.6)',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.4)'
+    }}
+  >
+    {loading ? (
+      <Skeleton variant="rectangular" height={350} />
+    ) : (
+      <>
+        <Box display="flex" alignItems="center" mb={1}>
+          <i className="fas fa-chart-bar" style={{ color: '#FFC107', fontSize: 20, marginRight: 8 }} />
+          <Typography variant="h6" sx={{ color: '#FFC72C' }}>
+            Pune (Sample Floors)
+          </Typography>
         </Box>
+        <CompositeChartCard
+          title=""
+          data={[]} // Replace with real data
+          barColor="#4CAF50"
+          lineColor="#FF0000"
+          height={410}
+          animationDuration={1500}
+        />
+      </>
+    )}
+  </Box>
 
-          
+  {/* Pie Chart */}
+  <Box
+    sx={{
+      flex: '1 1 350px',
+      minWidth: 350,
+      maxWidth: 500,
+      border: '2px solid #FFC107',
+      borderRadius: 2,
+      p: 2,
+      background: 'rgba(0,0,0,0.6)',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.4)'
+    }}
+  >
+    {loading ? (
+      <Skeleton variant="rectangular" height={350} />
+    ) : (
+      <>
+        <Box display="flex" alignItems="center" mb={1}>
+          <i className="fas fa-chart-pie" style={{ color: '#4FC3F7', fontSize: 20, marginRight: 8 }} />
+          <Typography variant="h6" sx={{ color: '#4FC3F7' }}>
+            APAC Realtime Headcount
+          </Typography>
         </Box>
+        <PieChartCard
+          title=""
+          data={partitions.map(site => ({
+            name: displayName[site],
+            value: data?.realtime?.[site]?.total || 0
+          }))}
+        />
+      </>
+    )}
+  </Box>
+
+</Box>
