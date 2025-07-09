@@ -1,44 +1,194 @@
-{regions.map((region) => {
-  const count = counts[region];
-  const isSelected = region === selected;
+ {/* Map */}
+        <Grid item xs={12} sm={7} md={7}>
+          <Box
+            p={2}
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                height: { xs: 500, md: 600 },
+              }}
+            >
+              <MapChart
+                counts={counts}
+                selected={selected}
+                onClickSite={setSelected}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
+C:\Users\W0024618\Desktop\global-page\src\components\MapChart.jsx
+
+import React from 'react';
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+} from 'react-simple-maps';
+import { useTheme } from '@mui/material/styles';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+
+// GeoJSON (must live in public/world-110m.json)
+const geoUrl = '/world-110m.json';
+
+// Exact [lon, lat] for each region
+const SITES = {
+  apac:  [77.6,   12.97],
+  emea:  [25.28,  54.69],
+  laca:  [-99.13, 19.43],
+  namer: [-104.99, 39.74],
+};
+
+// Fix ordering so colors stay consistent
+const regionOrder = ['apac', 'emea', 'laca', 'namer'];
+function getColor(region, palette) {
+  const idx = regionOrder.indexOf(region);
+  return palette[idx % palette.length];
+}
+
+export default function MapChart({ counts = {}, selected, onClickSite }) {
+  const theme = useTheme();
+  const brands = theme.palette.brand.colors;
 
   return (
-    <Button
-      key={region}
-      fullWidth
-      onClick={() => onSelect(region)}
-      variant={isSelected ? 'contained' : 'text'}
-      color={isSelected ? 'primary' : 'secondary'}
-      startIcon={
-        <LocationOnIcon
-          sx={{
-            fontSize: 20,
-            color: isSelected
-              ? 'primary.contrastText'
-              : 'secondary.contrastText'
-          }}
-        />
-      }
-      sx={{
-        justifyContent: 'space-between',
-        mb: 1,
-        textTransform: 'uppercase', // Already helps
-        fontSize: '0.875rem',
-        color: isSelected ? 'primary.contrastText' : 'secondary.contrastText',
+    <ComposableMap
+      projectionConfig={{ scale: 160 }}
+      style={{
+        width:  '100%',
+        height: '100%',
+        backgroundColor: theme.palette.background.paper,
+        border: `1px solid ${theme.palette.secondary.main}`,
+        borderRadius: theme.shape.borderRadius,
       }}
     >
-      <Box
-        component="span"
-        sx={{ flexGrow: 1, textAlign: 'left' }}
-      >
-        {region.toUpperCase()}
-      </Box>
-      <Box
-        component="span"
-        sx={{ color: '#FFCC00' }}
-      >
-        {typeof count === 'number' ? count : '–'}
-      </Box>
-    </Button>
+      {/* Draw all countries */}
+      <Geographies geography={geoUrl}>
+        {({ geographies }) =>
+          geographies.map((geo) => (
+            <Geography
+              key={geo.rsmKey}
+              geography={geo}
+              fill="#444"
+              stroke="#222"
+              strokeWidth={0.5}
+            />
+          ))
+        }
+      </Geographies>
+
+      {/* One pin + label per region */}
+      {Object.entries(SITES).map(([region, coords]) => {
+        const count = counts[region] ?? '–';
+        const color = getColor(region, brands);
+        const isSel = region === selected;
+
+        return (
+          <Marker
+            key={region}
+            coordinates={coords}
+            onClick={() => onClickSite(region)}
+            style={{ cursor: 'pointer' }}
+          >
+            {/* Pin */}
+            <LocationOnIcon
+              htmlColor={color}
+              sx={{
+                fontSize: isSel ? 24 : 16,    // selected:24px, otherwise:16px
+                transform: 'translate(-50%, -100%)',
+                stroke: theme.palette.background.paper,
+                strokeWidth: 1,
+              }}
+            />
+
+            {/* Label: REGION COUNT */}
+            <text
+              x={0}
+              y={-10}
+              textAnchor="middle"
+              fill={color}
+              fontSize="12"
+              fontWeight="bold"
+            >
+              {region.toUpperCase()} {count}
+            </text>
+          </Marker>
+        );
+      })}
+    </ComposableMap>
   );
-})}
+}
+
+C:\Users\W0024618\Desktop\global-page\src\components\LiveMap.jsx
+
+                              // src/components/LiveMap.jsx
+import React from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import { useTheme } from '@mui/material/styles';
+
+// Yellow circle icon
+const markerIcon = new L.DivIcon({
+  html: '<div style="background:#FFCC00;border:2px solid #000;border-radius:50%;width:16px;height:16px;"></div>',
+  iconSize: [16, 16],
+  className: ''
+});
+
+// lat,lng for each region
+const regionCoords = {
+  apac:  [12.97,  77.6],
+  emea:  [54.69,  25.28],
+  laca:  [19.43, -99.13],
+  namer: [39.74, -104.99]
+};
+
+export default function LiveMap({ highlight, onClickSite }) {
+  const theme = useTheme();
+
+  return (
+    <MapContainer
+      center={[20, 0]}
+      zoom={2}
+      style={{
+        height: '400px',
+        width: '100%',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: theme.palette.background.paper
+      }}
+      scrollWheelZoom
+    >
+      {/* Direct children only */}
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="© OpenStreetMap contributors"
+      />
+
+      {Object.entries(regionCoords).map(([region, [lat, lng]]) => {
+        const isHighlighted = region === highlight;
+        return (
+          <Marker
+            key={region}
+            position={[lat, lng]}
+            icon={markerIcon}
+            eventHandlers={{ click: () => onClickSite(region) }}
+          >
+            <Popup>
+              <strong style={{ color: isHighlighted ? '#FFCC00' : '#000' }}>
+                {region.toUpperCase()}
+              </strong>
+            </Popup>
+          </Marker>
+        );
+      })}
+    </MapContainer>
+  );
+}
+
+
