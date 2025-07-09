@@ -1,31 +1,3 @@
- {/* Map */}
-        <Grid item xs={12} sm={7} md={7}>
-          <Box
-            p={2}
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Box
-              sx={{
-                width: '100%',
-                height: { xs: 500, md: 600 },
-              }}
-            >
-              <MapChart
-                counts={counts}
-                selected={selected}
-                onClickSite={setSelected}
-              />
-            </Box>
-          </Box>
-        </Grid>
-
-C:\Users\W0024618\Desktop\global-page\src\components\MapChart.jsx
-
 import React from 'react';
 import {
   ComposableMap,
@@ -101,10 +73,10 @@ export default function MapChart({ counts = {}, selected, onClickSite }) {
             <LocationOnIcon
               htmlColor={color}
               sx={{
-                fontSize: isSel ? 24 : 16,    // selected:24px, otherwise:16px
+                fontSize: isSel ? 18 : 12,    // selected:24px, otherwise:16px
                 transform: 'translate(-50%, -100%)',
                 stroke: theme.palette.background.paper,
-                strokeWidth: 1,
+                strokeWidth: 0.5,
               }}
             />
 
@@ -125,70 +97,4 @@ export default function MapChart({ counts = {}, selected, onClickSite }) {
     </ComposableMap>
   );
 }
-
-C:\Users\W0024618\Desktop\global-page\src\components\LiveMap.jsx
-
-                              // src/components/LiveMap.jsx
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import { useTheme } from '@mui/material/styles';
-
-// Yellow circle icon
-const markerIcon = new L.DivIcon({
-  html: '<div style="background:#FFCC00;border:2px solid #000;border-radius:50%;width:16px;height:16px;"></div>',
-  iconSize: [16, 16],
-  className: ''
-});
-
-// lat,lng for each region
-const regionCoords = {
-  apac:  [12.97,  77.6],
-  emea:  [54.69,  25.28],
-  laca:  [19.43, -99.13],
-  namer: [39.74, -104.99]
-};
-
-export default function LiveMap({ highlight, onClickSite }) {
-  const theme = useTheme();
-
-  return (
-    <MapContainer
-      center={[20, 0]}
-      zoom={2}
-      style={{
-        height: '400px',
-        width: '100%',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: theme.palette.background.paper
-      }}
-      scrollWheelZoom
-    >
-      {/* Direct children only */}
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="© OpenStreetMap contributors"
-      />
-
-      {Object.entries(regionCoords).map(([region, [lat, lng]]) => {
-        const isHighlighted = region === highlight;
-        return (
-          <Marker
-            key={region}
-            position={[lat, lng]}
-            icon={markerIcon}
-            eventHandlers={{ click: () => onClickSite(region) }}
-          >
-            <Popup>
-              <strong style={{ color: isHighlighted ? '#FFCC00' : '#000' }}>
-                {region.toUpperCase()}
-              </strong>
-            </Popup>
-          </Marker>
-        );
-      })}
-    </MapContainer>
-  );
-}
-
 
