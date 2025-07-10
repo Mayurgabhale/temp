@@ -1,14 +1,11 @@
-const partitions = partitionList
-  .map(name => {
-    const key = Object.keys(regions).find(k => k.includes(name));
-    const p = key ? regions[key] : {};
-    return {
-      name,
-      total: p.total || 0,
-      Employee: p.Employee || 0,
-      Contractor: p.Contractor || 0,
-      floors: p.floors || {},
-      flag: flagMap[name] || null // ← ADD THIS LINE
-    };
-  })
-  .sort((a, b) => b.total - a.total);
+ <SummaryCard
+                  title={p.name.replace(/^.*\./, '')}
+                  total={p.total}
+                  stats={[
+                    { label: 'Employees', value: p.Employee },
+                    { label: 'Contractors', value: p.Contractor }
+                  ]}
+                  sx={{ width: '100%', border: '2px solid #FFB300' }}
+                  icon={<Box component="img" src={p.flag} sx={{ width: 48, height: 32 }} />}
+
+                />
