@@ -1,17 +1,30 @@
 <SummaryCard
-                  title={p.name.replace(/^.*\./, '')}
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees', value: p.Employee, color:'red' },
-                    { label: 'Contractors', value: p.Contractor,color:'green', fontSize:29 }
-                  ]}
-                  sx={{
-                    width: '100%',
-                    border: `2px solid ${palette15[index % palette15.length]}`
-                  }}
-                  icon={
-                    <Box
-                      component="img"
-                      src={p.flag}
-                      sx={{ width: 48, height: 32 }}
-                    />
+  title={
+    <Typography
+      variant="subtitle1"
+      sx={{
+        fontWeight: 'bold',
+        color: '#FFC107',  // Change this to your desired color
+        fontSize: '1rem'
+      }}
+    >
+      {p.name.replace(/^.*\./, '')}
+    </Typography>
+  }
+  total={p.total}
+  stats={[
+    { label: 'Employees', value: p.Employee, color: 'red' },
+    { label: 'Contractors', value: p.Contractor, color: 'green' }
+  ]}
+  sx={{
+    width: '100%',
+    border: `2px solid ${palette15[index % palette15.length]}`
+  }}
+  icon={
+    <Box
+      component="img"
+      src={p.flag}
+      sx={{ width: 48, height: 32 }}
+    />
+  }
+/>
