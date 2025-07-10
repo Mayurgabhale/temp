@@ -1,23 +1,50 @@
-renderValue={(selected) =>
-  selected ? (
-    <Box display="flex" alignItems="center">
-      <Box
-        component="img"
-        src={flagMap[selected]} // ✅ FIX: uncomment this!
-        alt={selected}
-        sx={{ width: 24, height: 16, mr: 1 }}
-      />
-      {selected}
-    </Box>
-  ) : "— Select Site —"
-}
-
-
-..
-const flagMap = {
-  'Pune': indiaFlag,
-  'Quezon': philippinesFlag,
-  'Taguig': taguigFlag, // if using Taguig-specific flag
-  'JP.Tokyo': japanFlag,
-  'MY.Kuala Lumpur': malaysiaFlag
-};
+ <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+            {
+              title: "Today's Total Headcount",
+              value: todayTot,
+              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+              border: '#FFB300',
+            },
+            {
+              title: "Today's Employees Count",
+              value: todayEmp,
+              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+              border: '#8BC34A'
+            },
+            {
+              title: "Today's Contractors Count",
+              value: todayCont,
+              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+              border: '#E57373'
+            },
+            {
+              title: "Realtime Headcount",
+              value: realtimeTot,
+              icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+              border: '#FFD180'
+            },
+            {
+              title: "Realtime Employees Count",
+              value: realtimeEmp,
+              icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+              border: '#AED581'
+            },
+            {
+              title: "Realtime Contractors Count",
+              value: realtimeCont,
+              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+              border: '#EF5350'
+            }
+          ].map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }}
+              />
+            </Box>
+          ))}
+        </Box>
