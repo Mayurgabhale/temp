@@ -1,255 +1,285 @@
-// src/components/CompositeChartCard.jsx
- 
+// src/pages/Dashboard.jsx
 import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  Legend,
-  LabelList,
-  Cell
-} from 'recharts';
- 
- 
- 
-const DARK_TO_LIGHT = [
-  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
-  '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
-  ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
-  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
+  Container, Box, Typography, Skeleton,
+  Paper
+} from '@mui/material';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
+import SummaryCard from '../components/SummaryCard';
+import CompositeChartCard from '../components/CompositeChartCard';
+import PieChartCard from '../components/PieChartCard';
+
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+import { partitionList } from '../services/occupancy.service';
+import buildingCapacities from '../data/buildingCapacities';
+
+
+import indiaFlag from '../assets/flags/india.png';
+import japanFlag from '../assets/flags/japan.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+import philippinesFlag from '../assets/flags/philippines.png';
+import taguigFlag from '../assets/flags/Taguig.png';
+
+const palette15 = [
+  '#FFC107','#E91E63','#4CAF50','#FFEB3B','#FFD666',
+  '#D84315','#3F51B5','#9C27B0','#00BCD4','#8BC34A',
+  '#FF9800','#673AB7','#009688','#CDDC39','#795548'
 ];
- 
-export default function CompositeChartCard({
-  title,
-  data,
-  lineColor = '#fff',
-  height = 300,
-  animationDuration = 1500,
-  animationEasing = 'ease-in-out'
-}) {
-  if (!Array.isArray(data) || data.length === 0) {
+
+const flagMap = {
+  'Pune': indiaFlag,
+  'Quezon City': philippinesFlag,
+  'JP.Tokyo': japanFlag,
+  'MY.Kuala Lumpur': malaysiaFlag,
+  'Taguig City': philippinesFlag
+};
+
+export default function Dashboard() {
+  const { data, loading, error } = useLiveOccupancy(1000);
+
+  if (error) {
     return (
-      <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
-        <CardContent>
-          <Typography variant="subtitle1" align="center" color="text.secondary">
-            {title}
-          </Typography>
-          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
-            No realtime employee data
-          </Typography>
-        </CardContent>
-      </Card>
+      <Box width="100vw" py={4}>
+        <Typography color="error" align="center">
+          Error loading live data
+        </Typography>
+      </Box>
     );
   }
-  // Enrich each datum with its usage percentage
-  const enriched = data.map((d, i) => ({
-    ...d,
-    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
-  }));
-  const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
-  const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
-  const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
+
+  const regions = data?.realtime || {};
+  const partitions = partitionList
+    .map(name => {
+      const key = Object.keys(regions).find(k => k.includes(name));
+      const p = key ? regions[key] : {};
+      return {
+        name,
+        total: p.total || 0,
+        Employee: p.Employee || 0,
+        Contractor: p.Contractor || 0,
+        floors: p.floors || {}
+      };
+    })
+    .sort((a, b) => b.total - a.total);
+
+  const todayTot = data?.today?.total || 0;
+  const todayEmp = data?.today?.Employee || 0;
+  const todayCont = data?.today?.Contractor || 0;
+  const realtimeTot = partitions.reduce((sum, p) => sum + p.total, 0);
+  const realtimeEmp = partitions.reduce((sum, p) => sum + p.Employee, 0);
+  const realtimeCont = partitions.reduce((sum, p) => sum + p.Contractor, 0);
+
+  const pune = partitions.find(p => p.name === 'Pune');
+  const quezonCity = partitions.find(p => p.name === 'Quezon City');
+  const combinedRegions = partitions.filter(p =>
+    ['JP.Tokyo', 'MY.Kuala Lumpur', 'Taguig City'].includes(p.name)
+  );
+
+  const floors = Object.entries(pune?.floors || {});
+
+  const chartConfigs = [
+    {
+      key: 'pune',
+      title: 'Pune Composite Chart',
+      body: pune?.total === 0
+        ? (
+          <Typography color="white" align="center" py={6}>
+            No Pune data
+          </Typography>
+        )
+        : (
+          <CompositeChartCard
+            data={floors.map(([f, h]) => ({
+              name: f,
+              headcount: h,
+              capacity: buildingCapacities[f] || 0
+            }))}
+            lineColor={palette15[0]}
+            height={300}
+            sx={{ border: 'none' }}
+          />
+        )
+    },
+    {
+      key: 'quezon',
+      title: 'Quezon City',
+      body: quezonCity?.total === 0
+        ? (
+          <Typography color="white" align="center" py={6}>
+            No Quezon City data
+          </Typography>
+        )
+        : (
+          <PieChartCard
+            data={[
+              { name: 'Employees', value: quezonCity.Employee },
+              { name: 'Contractors', value: quezonCity.Contractor }
+            ]}
+            colors={[palette15[5], palette15[6]]}
+            height={300}
+            showZeroSlice
+            sx={{ border: 'none' }}
+          />
+        )
+    },
+    {
+      key: 'combined',
+      title: 'Asia-Pacific',
+      body: combinedRegions.length === 0
+        ? (
+          <Typography color="white" align="center" py={6}>
+            No regional data
+          </Typography>
+        )
+        : (
+          <PieChartCard
+            data={combinedRegions.map(r => ({
+              name: r.name.replace(/^.*\./, ''),  // strip country code
+              value: r.total
+            }))}
+            colors={[palette15[2], palette15[3], palette15[4]]}
+            height={300}
+            showZeroSlice
+            sx={{ border: 'none' }}
+          />
+        )
+    }
+  ];
+
   return (
-    <Card
-      sx={{
-        // border: `1px solid ${lineColor}`,
-        borderRadius: 2,
-        overflow: 'hidden',
-        bgcolor: 'rgba(0,0,0,0.4)',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'scale(1.02)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
-        }
-      }}
-    >    
-      <CardContent sx={{ p: 1 }}>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          gutterBottom
-          sx={{ color: '#FFC107' }}
-        >
-          {title}
-        </Typography>
- 
-        <Box sx={{ width: '100%', height }}>
-          <ResponsiveContainer>
-            <ComposedChart
-              data={enriched}
-              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
- 
- 
-              <XAxis
-                dataKey="name"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-                tickFormatter={(label, index) => {
-                  const strLabel = String(label);
-                  const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
-                  const floorNum = parseInt(match?.[0], 10);
- 
-                  if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
- 
-                  const suffix = (n) => {
-                    if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
-                    switch (n % 10) {
-                      case 1: return `${n}st`;
-                      case 2: return `${n}nd`;
-                      case 3: return `${n}rd`;
-                      default: return `${n}th`;
-                    }
-                  };
- 
-                  return suffix(floorNum);
-                }}
-              />
- 
- 
-              <YAxis
-                yAxisId="left"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-              />
- 
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-                domain={[0, 100]}
-                tickFormatter={val => `${val}%`}
-              />
- 
-              {/* <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
-                formatter={(value, name) =>
-                  name === 'percentage' ? `${value}%` : value
-                }
-              /> */}
- 
-              <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
-                // custom content so we can show capacity only on hover
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const datum = payload[0].payload;
-                  return (
-                    <div style={{
-                      backgroundColor: '#FFD666',
-                      border: `1px solid ${lineColor}`,
-                      borderRadius: 4,
-                      padding: 8,
-                    }}>
-                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
-                      <div>Headcount: {datum.headcount}</div>
-                      <div>Usage %: {datum.percentage}%</div>
-                      <div>Seat Capacity: {datum.capacity}</div>
-                    </div>
-                  );
-                }}
-              />
- 
- 
-              {/* Headcount bars with per-bar colors & percentage labels */}
-              <Bar
-                yAxisId="left"
-                dataKey="headcount"
-                name="Headcount"
-                barSize={700}
-                  isAnimationActive={false}
-                // animationDuration={animationDuration}
-                // animationEasing={animationEasing}
+    <>
+      <Header title="APAC Live Occupancy" />
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{ py: 3, px: 2, background: 'rgba(0, 0, 0, 0.93)' }}
+      >
+        {/* Top Summary Cards */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+  {
+    title: "Today's Total Headcount",
+    value: todayTot,
+    icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+    border: '#FFB300',
+  },
+  {
+    title: "Today's Employees Count",
+    value: todayEmp,
+    icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+    border: '#8BC34A'
+  },
+  {
+    title: "Today's Contractors Count",
+    value: todayCont,
+    icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+    border: '#E57373'
+  },
+  {
+    title: "Realtime Headcount",
+    value: realtimeTot,
+    icon: <i className="fa-solid fa-users" style={{ fontSize: 25 }} />,
+    border: '#FFD180'
+  },
+  {
+    title: "Realtime Employees Count",
+    value: realtimeEmp,
+    icon: <i className="bi bi-people" style={{ fontSize: 25 }} />,
+    border: '#AED581'
+  },
+  {
+    title: "Realtime Contractors Count",
+    value: realtimeCont,
+    icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} />,
+    border: '#EF5350'
+  }
+].map(c => (
+  <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+    <SummaryCard
+      title={c.title}
+      total={c.value}
+      stats={[]}
+      icon={c.icon}
+      sx={{ height: 140, border: `2px solid ${c.border}` }}
+    />
+  </Box>
+))}
+        </Box>
+
+        {/* Region Cards */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+          {loading
+            ? <Skeleton variant="rectangular" width="90%" height={200} />
+            : partitions.map(p => (
+              <Box
+                key={p.name}
+                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
               >
-                {enriched.map((entry, idx) => (
-                  <Cell key={`cell-${idx}`} fill={entry._color} />
-                ))}
- 
- 
-                {/* Show % on top of each bar */}
-                <LabelList
-                  dataKey="headcount"
-                  position="top"
-                  formatter={val => `${val}`}
-                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+                <SummaryCard
+                  title={p.name.replace(/^.*\./, '')}
+                  total={p.total}
+                  stats={[
+                    { label: 'Employees', value: p.Employee },
+                    { label: 'Contractors', value: p.Contractor }
+                  ]}
+                  sx={{ width: '100%', border: '1px solid #FFB300' }}
+                  icon={<Box component="img" src={p.flag} sx={{ width:48, height:32 }} />}
+                  
                 />
- 
-                {/* Percentage centered inside each bar */}
-                <LabelList
-                  dataKey="percentage"
-                  position="inside"
-                  formatter={val => `${val}%`}
-                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
-                />
-              </Bar>
- 
- 
-              {/* Seat Capacity line */}
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="percentage"
-                name="Usage %"
-                stroke={lineColor}
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
- 
-              {/* Optional: draw capacity as second line */}
-              <Line
-                yAxisId="left"
-                type="monotone"
- 
-                //  dataKey="capacity"
-                name="Total Seats"
-                stroke="#81C784"
-                strokeDasharray="5 5"
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
+              </Box>
+            ))
+          }
+
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 4,
-            alignItems: 'center',
-            mb: 1,
-            fontWeight: 'bold',
-            fontSize: 16
-          }}
-        >
-          <Box sx={{ color: '#FFD700' /* Yellow */ }}>
-            Total Headcount: {totalHeadcount}
-          </Box>
-          <Box sx={{ color: '#4CAF50' /* Green */ }}>
-            Total Seats: {totalCapacity}
-          </Box>
-          <Box sx={{ color: '#FF4C4C' /* Red */ }}>
-            Usage: {avgUsage}%
-          </Box>
+
+        {/* Main Charts Section */}
+        <Box display="flex" gap={2} flexWrap="wrap" mb={4}>
+          {chartConfigs.map(({ key, title, body }) => (
+            <Box
+              key={key}
+              sx={{
+                flex: '1 1 32%',
+                minWidth: 280,
+                height: 380,
+                animation: 'fadeInUp 0.5s'
+              }}
+            >
+              <Paper
+                sx={{
+                  p: 2,
+                  height: '100%',
+                  background: 'rgba(0,0,0,0.4)',
+                  border: '1px solid #FFC107',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                <Typography variant="h6" align="center" sx={{ color: '#FFC107', mb: 2 }}>
+                  {title}
+                </Typography>
+                <Box sx={{ flex: 1, overflow: 'hidden' }}>
+                  {body}
+                </Box>
+              </Paper>
+            </Box>
+          ))}
         </Box>
-      </CardContent>
-    </Card>
+      </Container>
+      <Footer />
+      
+    </>
   );
 }
+
+
+
+// .
+// .
+// .
+
+
+
 
