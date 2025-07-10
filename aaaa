@@ -1,44 +1,55 @@
 import React from 'react';
 import {
-  Card, CardContent, Typography, Box
+  Card, CardContent, Typography, Box, Stack, Chip
 } from '@mui/material';
 import {
-  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from 'recharts';
 
-// Default color palette
-const DEFAULT_COLORS = ['#4DD0E1', '#81C784', '#FFB74D', '#BA68C8', '#FFD54F'];
+const GRADIENT_COLORS = [
+  'url(#grad1)', 'url(#grad2)', 'url(#grad3)', 'url(#grad4)', 'url(#grad5)'
+];
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-  const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+// Reusable gradient definitions
+const GradientDefs = () => (
+  <defs>
+    <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#42A5F5" />
+      <stop offset="100%" stopColor="#1E88E5" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#66BB6A" />
+      <stop offset="100%" stopColor="#388E3C" />
+    </linearGradient>
+    <linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#FFA726" />
+      <stop offset="100%" stopColor="#FB8C00" />
+    </linearGradient>
+    <linearGradient id="grad4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#AB47BC" />
+      <stop offset="100%" stopColor="#8E24AA" />
+    </linearGradient>
+    <linearGradient id="grad5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#26C6DA" />
+      <stop offset="100%" stopColor="#0097A7" />
+    </linearGradient>
+  </defs>
+);
 
-  return (
-    <text
-      x={x}
-      y={y}
-      fill="#fff"
-      textAnchor="middle"
-      dominantBaseline="central"
-      style={{ fontSize: 12 }}
-    >
-      {`${name} (${(percent * 100).toFixed(0)}%)`}
-    </text>
-  );
-};
+const renderLabel = ({ name, percent }) =>
+  `${name} - ${(percent * 100).toFixed(0)}%`;
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload?.length) {
     const { name, value } = payload[0];
     return (
       <Box sx={{
-        bgcolor: '#2a2a2a',
+        bgcolor: '#121212',
         px: 2,
         py: 1,
         borderRadius: 1,
         color: '#fff',
-        boxShadow: 2
+        border: '1px solid #444'
       }}>
         <Typography variant="body2"><strong>{name}</strong>: {value}</Typography>
       </Box>
@@ -50,69 +61,75 @@ const CustomTooltip = ({ active, payload }) => {
 const PieChartCard = ({
   title,
   data,
-  colors = DEFAULT_COLORS,
-  width = '100%',
-  height = 360,
-  outerRadius = 100,
-  innerRadius = 40
-}) => (
-  <Card
-    variant="outlined"
-    sx={{
-      backgroundColor: '#1E1E1E',
-      color: '#fff',
-      borderRadius: 2,
-      boxShadow: '0px 4px 12px rgba(0,0,0,0.4)'
-    }}
-  >
-    <CardContent>
-      {title && (
-        <Typography
-          variant="h6"
-          gutterBottom
-          sx={{
-            color: '#FFC72C',
-            fontWeight: 600,
-            mb: 2
-          }}
-        >
-          {title}
-        </Typography>
-      )}
-      <ResponsiveContainer width={width} height={height}>
-        <PieChart>
-          <Pie
-            data={data}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            outerRadius={outerRadius}
-            innerRadius={innerRadius}
-            labelLine={false}
-            label={renderCustomizedLabel}
+  height = 340,
+  outerRadius = 90,
+  innerRadius = 50,
+}) => {
+  return (
+    <Card
+      sx={{
+        background: 'rgba(30, 30, 30, 0.95)',
+        border: '1px solid #333',
+        borderRadius: 3,
+        boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+        color: '#fff',
+        backdropFilter: 'blur(4px)',
+        overflow: 'hidden'
+      }}
+    >
+      <CardContent>
+        {title && (
+          <Typography
+            variant="h6"
+            sx={{ color: '#FFC107', mb: 2, fontWeight: 600 }}
           >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={colors[index % colors.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          <Legend
-            verticalAlign="bottom"
-            iconType="circle"
-            wrapperStyle={{
-              color: '#ccc',
-              fontSize: 12,
-              paddingTop: 10
-            }}
-          />
-        </PieChart>
-      </ResponsiveContainer>
-    </CardContent>
-  </Card>
-);
+            {title}
+          </Typography>
+        )}
+
+        <ResponsiveContainer width="100%" height={height}>
+          <PieChart>
+            <GradientDefs />
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={outerRadius}
+              innerRadius={innerRadius}
+              paddingAngle={2}
+              label={renderLabel}
+              isAnimationActive
+              animationDuration={900}
+              stroke="#1E1E1E"
+            >
+              {data.map((entry, index) => (
+                <Cell key={index} fill={GRADIENT_COLORS[index % GRADIENT_COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
+
+        {/* Legend */}
+        <Stack direction="row" spacing={1} mt={2} flexWrap="wrap">
+          {data.map((item, index) => (
+            <Chip
+              key={index}
+              label={`${item.name}: ${item.value}`}
+              sx={{
+                background: GRADIENT_COLORS[index % GRADIENT_COLORS.length],
+                color: '#fff',
+                fontWeight: 500
+              }}
+              size="small"
+            />
+          ))}
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default PieChartCard;
