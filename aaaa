@@ -1,148 +1,41 @@
-// src/components/SummaryCard.jsx
-
-import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-
-export default function SummaryCard({
-  title,
-  total,
-  stats = [],
-  icon,
-  titleColor,
-  totalColor,
-  statColors = [],
-  sx = {}
-}) {
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        px: 2,
-        py: 1.5,
-        border: titleColor ? `2px solid ${titleColor}` : undefined,
-        borderRadius: 2,
-        bgcolor: 'rgba(0,0,0,0.4)',
-        overflow: 'hidden',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'translateY(-4px) scale(1.02)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.7)',
-        },
-        ...sx
-      }}
-    >
-      <CardContent sx={{ p: 1 }}>
-
-        {/* Title (left) + Icon (right) */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-          <Typography
-            variant="subtitle1"
-            sx={{
-              fontWeight: 'bold',
-              fontSize: '1.2rem',
-              color: titleColor || '#FFC107'
-            }}
-          >
-            {title}
-          </Typography>
-
-          {icon && (
-            <Box
-              component="span"
-              sx={{
-                fontSize: 28,
-                display: 'flex',
-                alignItems: 'center',
-                ml: 1
-              }}
-            >
-              {icon}
+<Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+  {loading ? <LoadingSpinner />
+    : summaryItems
+        .filter(item => !['Dublin', 'Rome', 'Moscow'].includes(item.label)) // ⛔️ Remove unwanted cards
+        .map(item => {
+          const [tc, totc, ec, cc] = item.colors;
+          return (
+            <Box key={item.label} sx={{ flex: '1 1 calc(10.66% - 1px)' }}>
+              <SummaryCard
+                title={item.label}
+                total={item.total}
+                stats={[
+                  { label: 'Employees', value: item.emp },
+                  { label: 'Contractors', value: item.cont }
+                ]}
+                icon={
+                  item.flag && (
+                    <Box
+                      component="img"
+                      src={item.flag}
+                      alt={item.label}
+                      sx={{ width: 45, height: 25, border: '1px solid #fff' }}
+                    />
+                  )
+                }
+                titleColor={tc}
+                totalColor={totc}
+                statColors={[ec, cc]}
+                sx={{
+                  height: 170,
+                  border: `2px solid ${tc}`,
+                  '& .MuiTypography-subtitle1': { fontSize: '1.1rem' },
+                  '& .MuiTypography-h4': { fontSize: '1.5rem' },
+                  '& .MuiTypography-caption': { fontSize: '0.875rem' }
+                }}
+              />
             </Box>
-          )}
-        </Box>
-
-        {/* Total */}
-        {total != null && (
-          <Typography
-            variant="h4"
-            align="center"
-            sx={{
-              color: totalColor || '#FFFFFF',
-              fontWeight: 'bold',
-              mb: 1,
-              transition: 'color 0.3s'
-            }}
-          >
-            {total}
-          </Typography>
-        )}
-
-        {/* Stats */}
-        {stats?.length > 0 && (
-          <Box>
-            {stats.map((stat, idx) => (
-              <Box
-                key={stat.label}
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mt={0.5}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight="bold"
-                  fontSize={14}
-                  sx={{
-                    color: statColors?.[idx] || (stat.label === 'Employees' ? '#2ecc71' : '#ec7063')
-                  }}
-                >
-                  {stat.label}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fontWeight="bold"
-                  fontSize={18}
-                  sx={{
-                    color: statColors?.[idx] || (stat.label === 'Employees' ? '#2ecc71' : '#ec7063')
-                  }}
-                >
-                  {stat.value}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-
-
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading ? <LoadingSpinner />
-            : summaryItems.map(item => {
-              const [tc, totc, ec, cc] = item.colors;
-              return (
-                // <Box key={item.label} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-                <Box key={item.label} sx={{ flex: '1 1 calc(10.66% - 1px)' }}>
-                  <SummaryCard
-                    title={item.label}
-                    total={item.total}
-                    stats={[{ label: 'Employees', value: item.emp }, { label: 'Contractors', value: item.cont }]}
-                    icon={item.flag && <Box component="img" src={item.flag} alt={item.label} sx={{ width: 45, height: 25, border: '1px solid #fff' }} />}
-                    titleColor={tc} totalColor={totc} statColors={[ec, cc]}
-                    sx={{
-                      height: 170,
-                      border: `2px solid ${tc}`,
-                      '& .MuiTypography-subtitle1': { fontSize: '1.1rem' },
-                      '& .MuiTypography-h4': { fontSize: '1.5rem' },
-                      '& .MuiTypography-caption': { fontSize: '0.875rem' }
-                    }}
-                  />
-                </Box>
-              )
-            })
-          }
-        </Box>
-in this summry card remove these three card Dublin,RomeMoscow remove in summary card only display otehr six card ok carefully 
+          );
+        })
+  }
+</Box>
