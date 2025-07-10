@@ -1,21 +1,33 @@
- {/* Header (you can reuse exact same header from GlobalPage) */}
-      <Box
-        px={2} py={3}
-        sx={{
-          backgroundColor: 'black',
-          color: '#fff',
-          borderBottom: '4px solid #FFD700',
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      >
-        <IconButton onClick={() => navigate('/')} sx={{ color: '#fff', mr: 2 }}>
-          <ArrowBackIcon />
-        </IconButton>/
-// add logo this logo-wu.png in between
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-          Our Leaders
-        </Typography>
-      </Box>
+<Box
+  px={2}
+  py={3}
+  sx={{
+    backgroundColor: 'black',
+    color: '#fff',
+    borderBottom: '4px solid #FFD700',
+    display: 'flex',
+    alignItems: 'center'
+  }}
+>
+  {/* Back Button */}
+  <IconButton onClick={() => navigate('/')} sx={{ color: '#fff', mr: 2 }}>
+    <ArrowBackIcon />
+  </IconButton>
 
-C:\Users\W0024618\Desktop\global-page\public\logo-wu.png
+  {/* Logo in between */}
+  <Box
+    component="img"
+    src="/logo-wu.png"
+    alt="Western Union Logo"
+    sx={{
+      height: 40,
+      width: 'auto',
+      mx: 2  // spacing between button and title
+    }}
+  />
+
+  {/* Title */}
+  <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+    Our Leaders
+  </Typography>
+</Box>
