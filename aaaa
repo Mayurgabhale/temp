@@ -1,11 +1,26 @@
- <SummaryCard
-                  title={p.name.replace(/^.*\./, '')}
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees', value: p.Employee },
-                    { label: 'Contractors', value: p.Contractor }
-                  ]}
-                  sx={{ width: '100%', border: '2px solid #FFB300' }}
-                  icon={<Box component="img" src={p.flag} sx={{ width: 48, height: 32 }} />}
-
-                />
+{partitions.map((p, index) => (
+  <Box
+    key={p.name}
+    sx={{ flex: '1 1 calc(16.66% - 8px)' }}
+  >
+    <SummaryCard
+      title={p.name.replace(/^.*\./, '')}
+      total={p.total}
+      stats={[
+        { label: 'Employees', value: p.Employee },
+        { label: 'Contractors', value: p.Contractor }
+      ]}
+      sx={{
+        width: '100%',
+        border: `2px solid ${palette15[index % palette15.length]}`
+      }}
+      icon={
+        <Box
+          component="img"
+          src={p.flag}
+          sx={{ width: 48, height: 32 }}
+        />
+      }
+    />
+  </Box>
+))}
