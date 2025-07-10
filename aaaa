@@ -1,3 +1,14 @@
+const pieData1 = summaryItems
+  .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+  .map(item => ({
+    name: item.label,
+    value: item.total
+  }));
+
+..
+
+
+
   const pieData1 = summaryItems
   .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
   .flatMap(item => ([
