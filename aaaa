@@ -1,37 +1,7 @@
-{/* Title */}
-<Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-  <Typography
-    variant="subtitle1"
-    sx={{
-      fontWeight: 'bold',
-      fontSize: '1.2rem',
-      color: titleColor || '#FFC107'
-    }}
-  >
-    {title}
-  </Typography>
-
-  {icon && (
-    <Box
-      component="span"
-      sx={{
-        fontSize: 28,
-        display: 'flex',
-        alignItems: 'center',
-        ml: 1
-      }}
-    >
-      {icon}
-    </Box>
-  )}
-</Box>
-
-yes above code is correct but add in below correct perfetct
-
 // src/components/SummaryCard.jsx
 
 import React from 'react';
-import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Box } from '@mui/material';
 
 export default function SummaryCard({
   title,
@@ -45,105 +15,104 @@ export default function SummaryCard({
 }) {
   return (
     <Card
-  variant="outlined"
-  sx={{
-    px: 2,
-    py: 1.5,
-    border: titleColor ? `2px solid ${titleColor}` : undefined,
-    borderRadius: 2,
-    bgcolor: 'rgba(0,0,0,0.4)',
-    overflow: 'hidden',
-    transition: 'transform 0.3s, box-shadow 0.3s',
-    '&:hover': {
-      transform: 'translateY(-4px) scale(1.02)',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.7)',
-    },
-    ...sx
-  }}
->
-  <CardContent sx={{ p: 1 }}>
-    
-    {/* Icon + Title */}
-    <Box display="flex" alignItems="center" justifyContent="center" mb={1}>
-      {icon && (
-        <Box
-          component="span"
-          sx={{
-            mr: 1,
-            fontSize: 30,
-            display: 'flex',
-            alignItems: 'center',
-            color: titleColor || 'primary.main'
-          }}
-        >
-          {icon}
-        </Box>
-      )}
-      <Typography
-        variant="subtitle1"
-        sx={{
-          fontWeight: 'bold',
-          fontSize: '1.2rem',
-          color: titleColor || '#FFC107',
-        }}
-      >
-        {title}
-      </Typography>
-    </Box>
+      variant="outlined"
+      sx={{
+        px: 2,
+        py: 1.5,
+        border: titleColor ? `2px solid ${titleColor}` : undefined,
+        borderRadius: 2,
+        bgcolor: 'rgba(0,0,0,0.4)',
+        overflow: 'hidden',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'translateY(-4px) scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)',
+        },
+        ...sx
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
 
-    {/* Total */}
-    {total != null && (
-      <Typography
-        variant="h4"
-        align="center"
-        sx={{
-          color: totalColor || '#FFFFFF',
-          fontWeight: 'bold',
-          mb: 1,
-          transition: 'color 0.3s'
-        }}
-      >
-        {total}
-      </Typography>
-    )}
-
-    {/* Stats */}
-    {stats?.length > 0 && (
-      <Box>
-        {stats.map((stat, idx) => (
-          <Box
-            key={stat.label}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={0.5}
+        {/* Title (left) + Icon (right) */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 'bold',
+              fontSize: '1.2rem',
+              color: titleColor || '#FFC107'
+            }}
           >
-            <Typography
-              variant="body2"
-              fontWeight="bold"
-              fontSize={14}
+            {title}
+          </Typography>
+
+          {icon && (
+            <Box
+              component="span"
               sx={{
-                color: statColors?.[idx] || (stat.label === 'Employees' ? '#2ecc71' : '#ec7063')
+                fontSize: 28,
+                display: 'flex',
+                alignItems: 'center',
+                ml: 1
               }}
             >
-              {stat.label}
-            </Typography>
-            <Typography
-              variant="body2"
-              fontWeight="bold"
-              fontSize={18}
-              sx={{
-                color: statColors?.[idx] || (stat.label === 'Employees' ? '#2ecc71' : '#ec7063')
-              }}
-            >
-              {stat.value}
-            </Typography>
+              {icon}
+            </Box>
+          )}
+        </Box>
+
+        {/* Total */}
+        {total != null && (
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{
+              color: totalColor || '#FFFFFF',
+              fontWeight: 'bold',
+              mb: 1,
+              transition: 'color 0.3s'
+            }}
+          >
+            {total}
+          </Typography>
+        )}
+
+        {/* Stats */}
+        {stats?.length > 0 && (
+          <Box>
+            {stats.map((stat, idx) => (
+              <Box
+                key={stat.label}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mt={0.5}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  fontSize={14}
+                  sx={{
+                    color: statColors?.[idx] || (stat.label === 'Employees' ? '#2ecc71' : '#ec7063')
+                  }}
+                >
+                  {stat.label}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  fontSize={18}
+                  sx={{
+                    color: statColors?.[idx] || (stat.label === 'Employees' ? '#2ecc71' : '#ec7063')
+                  }}
+                >
+                  {stat.value}
+                </Typography>
+              </Box>
+            ))}
           </Box>
-        ))}
-      </Box>
-    )}
-  </CardContent>
-</Card>
+        )}
+      </CardContent>
+    </Card>
   );
 }
-
