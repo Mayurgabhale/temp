@@ -1,22 +1,23 @@
- stats={[
-                    { label: 'Employees',  value: p.Employee, color: '#40E0D0' },
-                    { label: 'Contractors', value: p.Contractor, color: 'green' }
-                  ]}
+{stats.map(stat => (
+  <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
+    {/* Label with stat.color */}
+    <Typography
+      variant="body2"
+      fontWeight="bold"
+      fontSize={18}
+      sx={{ color: stat.label === 'Employees' ? 'green' : 'red' }}
+    >
+      {stat.label}
+    </Typography>
 
-
- {/* Bottom Stats */}
-        {stats.map(stat => (
-          <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
-            <Typography variant="body2" fontWeight="bold" fontSize={18} sx={{ color: '#9FE2BF' || '#6495ED' }}>
-              {stat.label}
-            </Typography>
-            <Typography
-              variant="body2"
-              fontWeight="bold"
-              fontSize={22}
-              sx={{ color: '#DE3163' || '#6495ED' }}
-            >
-              {stat.value}
-            </Typography>
-          </Box>
-        ))}
+    {/* Value with same stat.color */}
+    <Typography
+      variant="body2"
+      fontWeight="bold"
+      fontSize={22}
+      sx={{ color: stat.label === 'Employees' ? 'green' : 'red' }}
+    >
+      {stat.value}
+    </Typography>
+  </Box>
+))}
