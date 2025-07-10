@@ -1,3 +1,52 @@
+{/* CHART 1: Dublin, Rome, Moscow Breakdown */}
+<Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+  {loading ? (
+    <Skeleton variant="rectangular" height={350} />
+  ) : (
+    <PieChartCard
+      title="Dublin • Rome • Moscow (Total, Employees, Contractors)"
+      data={pieData1}
+      colors={['#FFB74D', '#4DB6AC', '#9575CD', '#FFB74D', '#4DB6AC', '#9575CD', '#FFB74D', '#4DB6AC', '#9575CD']}
+      innerRadius={60}
+      height={410}
+      showZeroSlice
+      animationDuration={1500}
+    />
+  )}
+</Box>
+
+{/* CHART 2: Other Cities Total */}
+<Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+  {loading ? (
+    <Skeleton variant="rectangular" height={350} />
+  ) : (
+    <PieChartCard
+      title="Abu Dhabi • Vienna • Casablanca • London • Madrid"
+      data={pieData2}
+      colors={['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F']}
+      innerRadius={60}
+      height={410}
+      showZeroSlice
+      animationDuration={1500}
+    />
+  )}
+</Box>
+
+
+
+.....
+
+
+
+
+
+
+
+
+
+
+...
+
 // CHART 1: Dublin, Rome, Moscow with breakdown (Total, Employee, Contractor per city)
 const pieData1 = summaryItems
   .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
