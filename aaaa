@@ -1,3 +1,23 @@
+<Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+  <PieChartCard
+    title="Dublin + Rome + Moscow"
+    data={[
+      { name: 'Employees', value: combinedData.emp },
+      { name: 'Contractors', value: combinedData.cont },
+      { name: 'Total', value: combinedData.total }
+    ]}
+    colors={['#2ECC71', '#EC7063', '#3498DB']}
+    innerRadius={60}
+    height={410}
+    showZeroSlice
+    animationDuration={1500}
+  />
+</Box>
+
+
+
+...
+
 const cityGroup = ['Dublin', 'Rome', 'Moscow'];
 const combinedData = summaryItems
   .filter(item => cityGroup.includes(item.label))
