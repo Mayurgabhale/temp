@@ -134,6 +134,22 @@ export default function Dashboard() {
     return acc;
   }, {});
 
+
+  // Build per-site items
+  const summaryItems = [];
+  summaryItems.push({
+    label: 'Vilnius',
+    total: data?.realtime['LT.Vilnius']?.total || 0,
+    emp: data?.realtime['LT.Vilnius']?.Employee || 0,
+    cont: data?.realtime['LT.Vilnius']?.Contractor || 0,
+    flag: flagMap['LT.Vilnius'], colors: colorsMap['LT.Vilnius']
+  });
+  partitions.filter(k => k !== 'LT.Vilnius').forEach(k => {
+    const x = data?.realtime[k] || {};
+    summaryItems.push({ label: displayName[k], total: x.total || 0, emp: x.Employee || 0, cont: x.Contractor || 0, flag: flagMap[k], colors: colorsMap[k] });
+  });
+
+
   // CHART 1: Dublin, Rome, Moscow with breakdown (Total, Employee, Contractor per city)
 const pieData1 = summaryItems
   .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
@@ -163,19 +179,7 @@ const pieData2 = summaryItems
 
 
 
-  // Build per-site items
-  const summaryItems = [];
-  summaryItems.push({
-    label: 'Vilnius',
-    total: data?.realtime['LT.Vilnius']?.total || 0,
-    emp: data?.realtime['LT.Vilnius']?.Employee || 0,
-    cont: data?.realtime['LT.Vilnius']?.Contractor || 0,
-    flag: flagMap['LT.Vilnius'], colors: colorsMap['LT.Vilnius']
-  });
-  partitions.filter(k => k !== 'LT.Vilnius').forEach(k => {
-    const x = data?.realtime[k] || {};
-    summaryItems.push({ label: displayName[k], total: x.total || 0, emp: x.Employee || 0, cont: x.Contractor || 0, flag: flagMap[k], colors: colorsMap[k] });
-  });
+  
 
 
  const cityGroup = ['Dublin', 'Rome', 'Moscow'];
@@ -409,22 +413,7 @@ const combinedData = summaryItems
 
 // ..............
 
-please slove this error 
-Uncaught runtime errors:
-×
-ERROR
-Cannot access 'summaryItems' before initialization
-ReferenceError: Cannot access 'summaryItems' before initialization
-    at Dashboard (http://localhost:3000/static/js/src_pages_Dashboard_jsx.chunk.js:1046:20)
-    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27734:18)
-    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17944:20)
-    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19637:17)
-    at beginWork (http://localhost:3000/static/js/bundle.js:20205:637)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15715:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22296:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:22189:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:22173:7)
-    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21937:42)
+
 
 
 
