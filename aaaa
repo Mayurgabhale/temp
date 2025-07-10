@@ -1,54 +1,3 @@
-{/* Region Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
-            :
-            partitions.map((p, index) => (
-              <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
-              >
-                <SummaryCard
-                  title={
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        fontWeight: 'bold',
-                        color: '#FFC107',  // Change this to your desired color
-                        fontSize: '1.3rem'
-                      }}
-                    >
-                      {p.name.replace(/^.*\./, '')}
-                    </Typography>
-                  }
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees',  value: p.Employee, color: '#40E0D0' },
-                    { label: 'Contractors', value: p.Contractor, color: 'green' }
-                  ]}
-                  sx={{
-                    width: '100%',
-                    border: `2px solid ${palette15[index % palette15.length]}`
-                  }}
-                  icon={
-                    <Box
-                      component="img"
-                      src={p.flag}
-                      sx={{ width: 48, height: 32 }}
-                    />
-                  }
-                />
-              </Box>
-            ))
-          }
-
-        </Box>
-
-        {/* .............. */}
-
-......
-
-same as above code 
 {/* Title */}
 <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
   <Typography
@@ -76,13 +25,3 @@ same as above code
     </Box>
   )}
 </Box>
-
-ERROR
-[eslint] 
-src\pages\Dashboard.jsx
-  Line 229:14:  'titleColor' is not defined  no-undef
-  Line 232:6:   'title' is not defined       no-undef
-  Line 235:4:   'icon' is not defined        no-undef
-  Line 245:8:   'icon' is not defined        no-undef
-
-Search for the keywords to learn more about each error.
