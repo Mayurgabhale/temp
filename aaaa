@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Card, CardContent, Typography, Box, Stack, Chip
+  Card, CardContent, Typography, Box, Stack
 } from '@mui/material';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer
@@ -10,7 +10,7 @@ const GRADIENT_COLORS = [
   'url(#grad1)', 'url(#grad2)', 'url(#grad3)', 'url(#grad4)', 'url(#grad5)'
 ];
 
-// Reusable gradient definitions
+// Define gradients
 const GradientDefs = () => (
   <defs>
     <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
@@ -36,9 +36,7 @@ const GradientDefs = () => (
   </defs>
 );
 
-const renderLabel = ({ name, percent }) =>
-  `${name} - ${(percent * 100).toFixed(0)}%`;
-
+// Tooltip styling
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload?.length) {
     const { name, value } = payload[0];
@@ -61,10 +59,12 @@ const CustomTooltip = ({ active, payload }) => {
 const PieChartCard = ({
   title,
   data,
-  height = 340,
+  height = 360,
   outerRadius = 90,
-  innerRadius = 50,
+  innerRadius = 60,
 }) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
   return (
     <Card
       sx={{
@@ -74,7 +74,8 @@ const PieChartCard = ({
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         color: '#fff',
         backdropFilter: 'blur(4px)',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        minHeight: 440
       }}
     >
       <CardContent>
@@ -87,44 +88,79 @@ const PieChartCard = ({
           </Typography>
         )}
 
-        <ResponsiveContainer width="100%" height={height}>
-          <PieChart>
-            <GradientDefs />
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={outerRadius}
-              innerRadius={innerRadius}
-              paddingAngle={2}
-              label={renderLabel}
-              isAnimationActive
-              animationDuration={900}
-              stroke="#1E1E1E"
-            >
-              {data.map((entry, index) => (
-                <Cell key={index} fill={GRADIENT_COLORS[index % GRADIENT_COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
+        <Box position="relative" height={height}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <GradientDefs />
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={innerRadius}
+                outerRadius={outerRadius}
+                paddingAngle={2}
+                isAnimationActive
+                animationDuration={900}
+                stroke="#1E1E1E"
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={GRADIENT_COLORS[index % GRADIENT_COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
 
-        {/* Legend */}
-        <Stack direction="row" spacing={1} mt={2} flexWrap="wrap">
+          {/* Center Total */}
+          <Box
+            position="absolute"
+            top="50%"
+            left="50%"
+            sx={{
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center'
+            }}
+          >
+            <Typography variant="h4" sx={{ color: '#fff', fontWeight: 600 }}>
+              {total}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#ccc' }}>
+              Total
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Bottom Labels */}
+        <Stack
+          direction="row"
+          justifyContent="center"
+          spacing={4}
+          mt={3}
+          flexWrap="wrap"
+        >
           {data.map((item, index) => (
-            <Chip
+            <Box
               key={index}
-              label={`${item.name}: ${item.value}`}
-              sx={{
-                background: GRADIENT_COLORS[index % GRADIENT_COLORS.length],
-                color: '#fff',
-                fontWeight: 500
-              }}
-              size="small"
-            />
+              display="flex"
+              alignItems="center"
+              sx={{ color: '#ccc', fontSize: 14 }}
+            >
+              <Box
+                sx={{
+                  width: 12,
+                  height: 12,
+                  background: GRADIENT_COLORS[index % GRADIENT_COLORS.length],
+                  borderRadius: '50%',
+                  mr: 1
+                }}
+              />
+              {item.name}: <strong style={{ marginLeft: 4 }}>{item.value}</strong>
+            </Box>
           ))}
         </Stack>
       </CardContent>
