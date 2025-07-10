@@ -1,19 +1,13 @@
-// Donut slices for Dublin, Rome, and Moscow with 3 segments each
-const pieCities = ['Dublin', 'Rome', 'Moscow'];
-
-const pieData = summaryItems
-  .filter(item => pieCities.includes(item.label))
-  .flatMap(item => ([
-    { name: `${item.label} Total`, value: item.total },
-    { name: `${item.label} Employees`, value: item.emp },
-    { name: `${item.label} Contractors`, value: item.cont }
-  ]));
-
-// Now group them for the two existing pie charts:
-const slice1 = pieData.filter(item =>
-  item.name.startsWith('Dublin') || item.name.startsWith('Rome')
-);
-
-const slice2 = pieData.filter(item =>
-  item.name.startsWith('Moscow')
-);
+<PieChartCard
+  title="Vienna • Abu Dhabi • Dublin • Rome"
+  data={slice1}
+  colors={[
+    '#4E79A7', '#A0CBE8', '#729ECE',   // Dublin: Total, Employees, Contractors
+    '#F28E2B', '#FFBE7D', '#FF9E40'    // Rome: Total, Employees, Contractors
+  ]}
+  innerRadius={60}
+  height={410}
+  showZeroSlice
+  animationDuration={1500}
+  sx={{ title: { color: '#FFC107' } }}
+/>
