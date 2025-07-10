@@ -1,5 +1,16 @@
 const pieData1 = summaryItems
   .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+  .map(item => ({
+    name: item.label,
+    value: item.total // or item.total || item.emp + item.cont
+  }));
+....
+
+
+
+
+const pieData1 = summaryItems
+  .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
   .flatMap(item => ([
     { name: `${item.label} - Total`, value: item.total },
     { name: `${item.label} - Employees`, value: item.emp },
