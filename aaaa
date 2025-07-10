@@ -1,3 +1,18 @@
+{stats.map(stat => (
+  <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
+    <Typography variant="body2" sx={{ color: stat.color || 'text.secondary' }}>
+      {stat.label}
+    </Typography>
+    <Typography variant="body2" fontWeight="bold" sx={{ color: stat.color || 'text.primary' }}>
+      {stat.value}
+    </Typography>
+  </Box>
+))}
+
+
+
+....
+
  <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
           {loading
             ? <Skeleton variant="rectangular" width="90%" height={200} />
