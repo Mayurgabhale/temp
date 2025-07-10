@@ -1,23 +1,17 @@
-{stats.map(stat => (
-  <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
-    {/* Label with stat.color */}
-    <Typography
-      variant="body2"
-      fontWeight="bold"
-      fontSize={18}
-      sx={{ color: stat.label === 'Employees' ? 'green' : 'red' }}
-    >
-      {stat.label}
-    </Typography>
+ <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+            {
+              title: "Today's Total Headcount",
+              
+              color:'#FFE599',
+              value: todayTot,
+              icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+              border: '#FFB300',
 
-    {/* Value with same stat.color */}
-    <Typography
-      variant="body2"
-      fontWeight="bold"
-      fontSize={22}
-      sx={{ color: stat.label === 'Employees' ? 'green' : 'red' }}
-    >
-      {stat.value}
-    </Typography>
-  </Box>
-))}
+            },
+            {
+              title: "Today's Employees Count",
+              value: todayEmp,
+              icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+              border: '#8BC34A'
+            },
