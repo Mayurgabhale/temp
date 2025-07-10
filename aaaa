@@ -1,3 +1,21 @@
+
+
+
+
+
+stats={[
+  { label: 'Employees', value: p.Employee, color: 'green' },
+  { label: 'Contractors', value: p.Contractor, color: 'orange' }
+]}
+
+
+
+
+
+
+
+
+....
 stats={[
                     { label: 'Employees',  value: p.Employee, color: 'red' },
                     { label: 'Contractors', value: p.Contractor, color: 'green' }
