@@ -1,43 +1,152 @@
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\india.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\japan.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\malaysia.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\philippines.png
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\assets\flags\Taguig.png 
+flag path
+
+
+in the header select section only jp.tokye and kuala lumpur flat are disply other are not displye
+
+// src/components/Header.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+// import wuLogo from '../assets/images/wu-logo.png';
+import wuLogo from '../assets/wu-logo.png'
+
+
+import indiaFlag from '../assets/flags/india.png';
+import japanFlag from '../assets/flags/japan.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+import philippinesFlag from '../assets/flags/philippines.png';
+import taguigFlag from '../assets/flags/Taguig.png';
+
+
+// import { partitionList } from '../api/occupancy.service';
+import { apacPartitionList as partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPart = parts[0] === 'partition' && parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
+  const isHome = loc.pathname === '/';
+
+  // const flagMap = {
+  //   'Pune': indiaFlag,
+  //   'Quezon City': phFlag,
+  //   'JP.Tokyo': japanFlag,
+  //   'MY.Kuala Lumpur': malaysiaFlag,
+  //   'Taguig City': phFlag
+  // };
+
+  
+const flagMap = {
+  'Pune': indiaFlag,
+  'Quezon City': philippinesFlag,
+  'JP.Tokyo': japanFlag,
+  'MY.Kuala Lumpur': malaysiaFlag,
+  'Taguig City': philippinesFlag
+};
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+          {/* Title: APAC Occupancy */}
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            APAC Occupancy{current && ` • ${current}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* Static Pune button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* Dynamic partition button for any partition page */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
+            >
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
 onChange={e => {
   const partition = e.target.value;
   navigate(partition ? `/partition/${encodeURIComponent(partition)}` : '/');
 }}
+            renderValue={(selected) =>
+              selected ? (
+                <Box display="flex" alignItems="center">
+                  <Box
+                    component="img"
+                    // src={flagMap[selected]}
+                    alt={selected}
+                    sx={{ width: 24, height: 16, mr: 1 }}
+                  />
+                  {selected}
+                </Box>
+              ) : "— Select Site —"
+            }
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={p}>
+                <Box
+                  component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }}
+                />
+                {p}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+
+// /////////
 
 
 
-<Select
-  size="small"
-  value={current}
-  displayEmpty
-  onChange={e => {
-    const partition = e.target.value;
-    navigate(partition ? `/partition/${encodeURIComponent(partition)}` : '/');
-  }}
-  renderValue={(selected) =>
-    selected ? (
-      <Box display="flex" alignItems="center">
-        <Box
-          component="img"
-          src={flagMap[selected]}
-          alt={selected}
-          sx={{ width: 24, height: 16, mr: 1 }}
-        />
-        {selected}
-      </Box>
-    ) : "— Select Site —"
-  }
-  sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
->
-  <MenuItem value="">— Select Site —</MenuItem>
-  {partitionList.map(p => (
-    <MenuItem key={p} value={p}>
-      <Box
-        component="img"
-        src={flagMap[p]}
-        alt={p}
-        sx={{ width: 24, height: 16, mr: 1 }}
-      />
-      {p}
-    </MenuItem>
-  ))}
-</Select>
+
