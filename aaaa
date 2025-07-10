@@ -1,3 +1,13 @@
+const palette15 = [
+  '#FFC107', '#4CAF50', '#2196F3', '#FF5722', '#9C27B0',
+  '#00BCD4', '#E91E63', '#8BC34A', '#FF9800', '#3F51B5',
+  '#CDDC39', '#F44336', '#03A9F4', '#673AB7', '#009688'
+];
+
+
+
+...
+
 
 ERROR in [eslint]
 src\pages\Dashboard.jsx
