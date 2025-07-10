@@ -1,23 +1,13 @@
-{
-  key: 'quezon',
-  title: 'Quezon City',
-  body: quezonCity?.total === 0
-    ? (
-      <Typography color="white" align="center" py={6}>
-        No Quezon City data
-      </Typography>
-    )
-    : (
-      <PieChartCard
-        title="Quezon City"
-        data={[
-          { name: 'Employees', value: quezonCity.Employee },
-          { name: 'Contractors', value: quezonCity.Contractor }
-        ]}
-        colors={['#4CAF50', '#F44336']} // ✅ Green for employee, red for contractor
-        height={290}
-        showZeroSlice
-        sx={{ border: 'none' }}
-      />
-    )
-}
+<Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="percentage"
+                name="Usage %"
+                stroke={lineColor}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+ 
