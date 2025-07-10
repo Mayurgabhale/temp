@@ -1,83 +1,48 @@
- <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
 
-          {/* Title: APAC Occupancy */}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            APAC Occupancy{current && ` • ${current}`}
-          </Typography>
+import React from 'react';
+import { Card, CardContent, Typography } from '@mui/material';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
+const DEFAULT_COLORS = ['#8884d8', '#82ca9d', '#FF8042', '#00C49F', '#FFBB28'];
 
-          {/* Static Pune button shown only on main dashboard */}
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-
-          {/* Dynamic partition button for any partition page */}
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
-            >
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
-
-        <Box display="flex" alignItems="center">
-
-          <Select
-            size="small"
-            value={current}
-            displayEmpty
-            onChange={e => {
-              const partition = e.target.value;
-              navigate(partition ? `/partition/${encodeURIComponent(partition)}` : '/');
-            }}
-            renderValue={(selected) =>
-              selected ? (
-                <Box display="flex" alignItems="center">
-                  <Box
-                    component="img"
-                    src={flagMap[selected]} 
-                    alt={selected}
-                    sx={{ width: 24, height: 16, mr: 1 }}
-                  />
-                  {selected}
-                </Box>
-              ) : "— Select Site —"
-            }
-
-
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+const PieChartCard = ({
+  title,
+  data,
+  colors = DEFAULT_COLORS,
+  width = '100%',
+  height = 360,
+  outerRadius = 100,
+  innerRadius = 0,
+}) => (
+  <Card variant="outlined" sx={{ backgroundColor: '#1E1E1E', color: '#fff' }}>
+    <CardContent>
+      {title && (
+        <Typography variant="h6" gutterBottom sx={{ color: '#FFC72C' }}>
+          {title}
+        </Typography>
+      )}
+      <ResponsiveContainer width={width} height={height}>
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={outerRadius}
+            innerRadius={innerRadius}
+            label
           >
-            <MenuItem value="">— Select Site —</MenuItem>
-
-            {partitionList.map(p => (
-              <MenuItem key={p} value={p}>
-                <Box
-                  component="img"
-                  src={flagMap[p]}
-                  alt={p}
-                  sx={{ width: 24, height: 16, mr: 1 }}
-                />
-                {p}
-              </MenuItem>
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
-            
-          </Select>
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </CardContent>
+  </Card>
+);
 
-        </Box>
-
-
-      </Toolbar>
-    </AppBar>
+export default PieChartCard;
