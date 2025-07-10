@@ -1,3 +1,9 @@
+listion carefully in this page two pie char but i want to Dublin, rome, and moscow in one chart and oterh 
+means Abu Dhabi, Vienna, Casablanca ,London, Madrid
+
+and in Dublin, rome, and moscow charto are display Dublin total, employeee and contractors. 
+rome  total, employeee and contractors. moscow total, employeee and contractors. ok 
+
 //C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
 
 
@@ -134,25 +140,9 @@ export default function Dashboard() {
     return acc;
   }, {});
 
-  // Donut slices for Dublin, Rome, and Moscow with 3 segments each
-  const pieCities = ['Dublin', 'Rome', 'Moscow'];
-
-  const pieData = summaryItems
-    .filter(item => pieCities.includes(item.label))
-    .flatMap(item => ([
-      { name: `${item.label} Total`, value: item.total },
-      { name: `${item.label} Employees`, value: item.emp },
-      { name: `${item.label} Contractors`, value: item.cont }
-    ]));
-
-  // Now group them for the two existing pie charts:
-  const slice1 = pieData.filter(item =>
-    item.name.startsWith('Dublin') || item.name.startsWith('Rome')
-  );
-
-  const slice2 = pieData.filter(item =>
-    item.name.startsWith('Moscow')
-  );
+  // Donut slices
+  const slice1 = partitions.slice(0, 4).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
+  const slice2 = partitions.slice(5).map(k => ({ name: displayName[k], value: data?.realtime?.[k]?.total || 0 }));
 
   // Summary cards
   const todayTot = data?.today.total || 0;
@@ -166,23 +156,7 @@ export default function Dashboard() {
 
 
 
-  ;
-
-
-  const cityGroup = ['Dublin', 'Rome', 'Moscow'];
-  const combinedData = summaryItems
-    .filter(item => cityGroup.includes(item.label))
-    .reduce(
-      (acc, item) => {
-        acc.total += item.total || 0;
-        acc.emp += item.emp || 0;
-        acc.cont += item.cont || 0;
-        return acc;
-      },
-      { total: 0, emp: 0, cont: 0 }
-    );
-
-    // Build per-site items
+  // Build per-site items
   const summaryItems = [];
   summaryItems.push({
     label: 'Vilnius',
@@ -194,7 +168,22 @@ export default function Dashboard() {
   partitions.filter(k => k !== 'LT.Vilnius').forEach(k => {
     const x = data?.realtime[k] || {};
     summaryItems.push({ label: displayName[k], total: x.total || 0, emp: x.Employee || 0, cont: x.Contractor || 0, flag: flagMap[k], colors: colorsMap[k] });
-  })
+  });
+
+
+ const cityGroup = ['Dublin', 'Rome', 'Moscow'];
+const combinedData = summaryItems
+  .filter(item => cityGroup.includes(item.label))
+  .reduce(
+    (acc, item) => {
+      acc.total += item.total || 0;
+      acc.emp += item.emp || 0;
+      acc.cont += item.cont || 0;
+      return acc;
+    },
+    { total: 0, emp: 0, cont: 0 }
+  );
+
 
   return (
     <>
@@ -272,7 +261,7 @@ export default function Dashboard() {
                     value: item.total
                   }));
 
-
+               
                 return (
                   <Box key={item.label} sx={{ flex: '1 1 calc(10.66% - 1px)' }}>
                     <SummaryCard
@@ -308,9 +297,9 @@ export default function Dashboard() {
               })
           }
         </Box>
+     
 
-
-
+     
 
 
 
@@ -349,10 +338,7 @@ export default function Dashboard() {
               <PieChartCard
                 title="Vienna • Abu Dhabi • Dublin • Rome"
                 data={slice1}
-                colors={[
-                  '#4E79A7', '#A0CBE8', '#729ECE',   // Dublin: Total, Employees, Contractors
-                  '#F28E2B', '#FFBE7D', '#FF9E40'    // Rome: Total, Employees, Contractors
-                ]}
+                colors={['#4E79A7', '#F28E2B', '#E15759', '#76B7B2']}
                 innerRadius={60}
                 height={410}
                 showZeroSlice
@@ -371,9 +357,7 @@ export default function Dashboard() {
               <PieChartCard
                 title="Casablanca • Moscow • London • Madrid"
                 data={slice2}
-                colors={[
-                  '#59A14F', '#86BC86', '#39737C'    // Moscow: Total, Employees, Contractors
-                ]}
+                colors={['#59A14F', '#EDC948', '#AF7AA1', '#EFBF04']}
                 innerRadius={60}
                 height={410}
                 showZeroSlice
@@ -382,7 +366,7 @@ export default function Dashboard() {
             )}
           </Box>
 
-
+          
 
         </Box>
       </Container>
@@ -425,18 +409,3 @@ export default function Dashboard() {
 
 
 // ...............
-Uncaught runtime errors:
-×
-ERROR
-Cannot access 'summaryItems' before initialization
-ReferenceError: Cannot access 'summaryItems' before initialization
-    at Dashboard (http://localhost:3000/static/js/src_pages_Dashboard_jsx.chunk.js:1047:19)
-    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27734:18)
-    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17944:20)
-    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19637:17)
-    at beginWork (http://localhost:3000/static/js/bundle.js:20205:637)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15715:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22296:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:22189:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:22173:7)
-    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21937:42) please slove this eroro and reqrjie all code carefully
