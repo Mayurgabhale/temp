@@ -1,41 +1,130 @@
-<Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-  {loading ? <LoadingSpinner />
-    : summaryItems
-        .filter(item => !['Dublin', 'Rome', 'Moscow'].includes(item.label)) // ⛔️ Remove unwanted cards
-        .map(item => {
-          const [tc, totc, ec, cc] = item.colors;
-          return (
-            <Box key={item.label} sx={{ flex: '1 1 calc(10.66% - 1px)' }}>
-              <SummaryCard
-                title={item.label}
-                total={item.total}
-                stats={[
-                  { label: 'Employees', value: item.emp },
-                  { label: 'Contractors', value: item.cont }
-                ]}
-                icon={
-                  item.flag && (
-                    <Box
-                      component="img"
-                      src={item.flag}
-                      alt={item.label}
-                      sx={{ width: 45, height: 25, border: '1px solid #fff' }}
-                    />
-                  )
-                }
-                titleColor={tc}
-                totalColor={totc}
-                statColors={[ec, cc]}
-                sx={{
-                  height: 170,
-                  border: `2px solid ${tc}`,
-                  '& .MuiTypography-subtitle1': { fontSize: '1.1rem' },
-                  '& .MuiTypography-h4': { fontSize: '1.5rem' },
-                  '& .MuiTypography-caption': { fontSize: '0.875rem' }
-                }}
+in both pie chart only Dublin,Rome and Moscow disply Total headcound and Employee and Contractors ok carefully 
+
+
+{/* 2) Top regions donut */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <PieChartCard
+                title="Vienna • Abu Dhabi • Dublin • Rome"
+                data={slice1}
+                colors={['#4E79A7', '#F28E2B', '#E15759', '#76B7B2']}
+                innerRadius={60}
+                height={410}
+                showZeroSlice
+                animationDuration={1500}
+                sx={{title:{color:'#FFC107'}}}
               />
-            </Box>
-          );
-        })
+            )}
+          </Box>
+
+          {/* 3) Other regions donut */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+
+            {loading ? (
+              <Skeleton variant="rectangular" height={350} />
+            ) : (
+              <PieChartCard
+                title="Casablanca • Moscow • London • Madrid"
+                data={slice2}
+                colors={['#59A14F', '#EDC948', '#AF7AA1', '#EFBF04']}
+                innerRadius={60}
+                height={410}
+                showZeroSlice
+                animationDuration={1500}
+              />
+            )}
+          </Box>
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\PieChartCard.jsx
+
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
+
+export default function PieChartCard({
+  title,
+  data,
+  colors = [],
+  innerRadius = 40,
+  height = 300,
+  showZeroSlice = false,
+  animationDuration = 1500
+}) {
+  const filtered = showZeroSlice ? data : data.filter(d => d.value > 0);
+  if (filtered.length === 0) {
+    return (
+      <Card sx={{ border: '2px solid #FFD666', bgcolor: 'rgba(0,0,0,0.6)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No data to display
+          </Typography>
+        </CardContent>
+      </Card>
+    );
   }
-</Box>
+
+  return (
+    <Card
+      sx={{
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.6)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" gutterBottom sx={{color:'#FFC107'}}>
+          {title}
+        </Typography>
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={filtered}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={innerRadius}
+                outerRadius="80%"
+                isAnimationActive
+                animationDuration={animationDuration}
+                labelLine={false}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              >
+                {filtered.map((entry, idx) => (
+                  <Cell key={`slice-${idx}`} fill={colors[idx % colors.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: '#000' }}
+                formatter={(value, name) => [value, name]}
+              />
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                wrapperStyle={{ color: '#fff' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
