@@ -1,44 +1,132 @@
-<Grid container spacing={2} mb={4}>
-  {partitions.map((p, index) => (
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      md={4}
-      lg={3}
-      xl={2}
-      key={p.name}
-      sx={{ display: 'flex' }}
-    >
-      <SummaryCard
-        title={p.name.replace(/^.*\./, '')}
-        total={p.total}
-        stats={[
-          { label: 'Employees', value: p.Employee },
-          { label: 'Contractors', value: p.Contractor }
-        ]}
-        sx={{
-          flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          minHeight: 160,
-          padding: 2,
-          borderRadius: 2,
-          border: `2px solid ${palette15[index % palette15.length]}`,
-          backgroundColor: '#1f1f1f',
-          color: '#fff',
-          boxShadow: '0 0 12px rgba(0,0,0,0.3)'
-        }}
-        icon={
-          <Box
-            component="img"
-            src={p.flag}
-            alt={`${p.name} flag`}
-            sx={{ width: 48, height: 32, borderRadius: 1 }}
-          />
-        }
-      />
-    </Grid>
-  ))}
-</Grid>
+// src/components/Header.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+// import wuLogo from '../assets/images/wu-logo.png';
+import wuLogo from '../assets/wu-logo.png'
+import indiaFlag from '../assets/flags/india.png';
+import phFlag from '../assets/flags/philippines.png';
+import japanFlag from '../assets/flags/japan.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+// import { partitionList } from '../api/occupancy.service';
+import { apacPartitionList as partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPart = parts[0] === 'partition' && parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
+  const isHome = loc.pathname === '/';
+
+  const flagMap = {
+    'Pune': indiaFlag,
+    'Quezon City': phFlag,
+    'JP.Tokyo': japanFlag,
+    'MY.Kuala Lumpur': malaysiaFlag,
+    'Taguig City': phFlag
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+          {/* Title: APAC Occupancy */}
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            APAC Occupancy{current && ` • ${current}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* Static Pune button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* Dynamic partition button for any partition page */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
+            >
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => navigate(e.target.value || '/')}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
+                <Box component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }} />
+                {p}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+
+// /////////
+
+
+
+
+ in this flag are not display 
+<Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => navigate(e.target.value || '/')}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
+                <Box component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }} />
+                {p}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
