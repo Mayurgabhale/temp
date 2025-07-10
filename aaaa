@@ -1,4 +1,13 @@
+const pieData1 = summaryItems
+  .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+  .map(item => ({
+    name: item.label,     // 👈 just city name
+    value: item.total     // 👈 total headcount value
+  }));
 
+
+
+...
 i want ot displaye totoal chart bottom side in Dublin Moscow Rome 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
