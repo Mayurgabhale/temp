@@ -1,4 +1,19 @@
+<PieChartCard
+  title="Casablanca • Moscow • London • Madrid"
+  data={slice2}
+  colors={[
+    '#59A14F', '#86BC86', '#39737C'    // Moscow: Total, Employees, Contractors
+  ]}
+  innerRadius={60}
+  height={410}
+  showZeroSlice
+  animationDuration={1500}
+/>
 
+
+
+
+m....
 // Donut slices for Dublin, Rome, and Moscow with 3 segments each
 const pieCities = ['Dublin', 'Rome', 'Moscow'];
 
