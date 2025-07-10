@@ -1,3 +1,12 @@
+<Legend
+  verticalAlign="bottom"
+  wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
+  formatter={(value, entry) => `${value}: ${entry.payload.value}`}
+/>
+
+
+
+
 
 
 import React from 'react';
