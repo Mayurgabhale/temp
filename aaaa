@@ -1,3 +1,19 @@
+renderValue={(selected) =>
+  selected ? (
+    <Box display="flex" alignItems="center">
+      <Box
+        component="img"
+        src={flagMap[selected]} // ✅ FIX: uncomment this!
+        alt={selected}
+        sx={{ width: 24, height: 16, mr: 1 }}
+      />
+      {selected}
+    </Box>
+  ) : "— Select Site —"
+}
+
+
+..
 const flagMap = {
   'Pune': indiaFlag,
   'Quezon': philippinesFlag,
