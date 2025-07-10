@@ -1,37 +1,5 @@
-{stats.map(stat => (
-  <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
-    <Typography variant="body2" sx={{ color: stat.color || 'text.primary' }}>
-      {stat.label}
-    </Typography>
-    <Typography
-      variant="body2"
-      fontWeight="bold"
-      fontSize={20}
-      sx={{ color: stat.color || 'text.primary' }}
-    >
-      {stat.value}
-    </Typography>
-  </Box>
-))}
-
-
-
-
-stats={[
-  { label: 'Employees', value: p.Employee, color: 'green' },
-  { label: 'Contractors', value: p.Contractor, color: 'orange' }
-]}
-
-
-
-
-
-
-
-
-....
-stats={[
-                    { label: 'Employees',  value: p.Employee, color: 'red' },
+ stats={[
+                    { label: 'Employees',  value: p.Employee, color: '#40E0D0' },
                     { label: 'Contractors', value: p.Contractor, color: 'green' }
                   ]}
 
@@ -39,10 +7,15 @@ stats={[
  {/* Bottom Stats */}
         {stats.map(stat => (
           <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
-            <Typography variant="body2" sx={{ color: 'green' || 'text.primary' }}>
+            <Typography variant="body2" fontWeight="bold" fontSize={18} sx={{ color: '#9FE2BF' || '#6495ED' }}>
               {stat.label}
             </Typography>
-            <Typography variant="body2" fontWeight="bold" fontSize={20} sx={{ color: stat.color || 'text.primary' }}>
+            <Typography
+              variant="body2"
+              fontWeight="bold"
+              fontSize={22}
+              sx={{ color: '#DE3163' || '#6495ED' }}
+            >
               {stat.value}
             </Typography>
           </Box>
