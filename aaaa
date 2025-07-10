@@ -1,4 +1,18 @@
-
+{stats.map(stat => (
+  <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
+    <Typography variant="body2" sx={{ color: stat.color || 'text.primary' }}>
+      {stat.label}
+    </Typography>
+    <Typography
+      variant="body2"
+      fontWeight="bold"
+      fontSize={20}
+      sx={{ color: stat.color || 'text.primary' }}
+    >
+      {stat.value}
+    </Typography>
+  </Box>
+))}
 
 
 
