@@ -1,3 +1,48 @@
+
+<Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+  {loading ? <LoadingSpinner />
+    : summaryItems.map(item => {
+        const [titleColor, totalColor, empColor, contColor] = item.colors;
+        return (
+          <Box key={item.label} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+            <SummaryCard
+              title={item.label}
+              total={item.total}
+              stats={[
+                { label: 'Employees', value: item.emp },
+                { label: 'Contractors', value: item.cont }
+              ]}
+              icon={
+                item.flag && (
+                  <Box
+                    component="img"
+                    src={item.flag}
+                    alt={item.label}
+                    sx={{
+                      width: 48,
+                      height: 32,
+                      border: '1px solid #fff',
+                      borderRadius: 1
+                    }}
+                  />
+                )
+              }
+              titleColor={titleColor}
+              totalColor={totalColor}
+              statColors={[empColor, contColor]}
+              sx={{
+                height: 180
+              }}
+            />
+          </Box>
+        );
+      })
+  }
+</Box>
+
+
+
+.....
 <Card
   variant="outlined"
   sx={{
