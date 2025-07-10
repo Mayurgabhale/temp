@@ -1,48 +1,83 @@
-{stats.map(stat => (
-  <Box key={stat.label} display="flex" justifyContent="space-between" mt={1}>
-    <Typography variant="body2" sx={{ color: stat.color || 'text.secondary' }}>
-      {stat.label}
-    </Typography>
-    <Typography variant="body2" fontWeight="bold" sx={{ color: stat.color || 'text.primary' }}>
-      {stat.value}
-    </Typography>
-  </Box>
-))}
+ <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+          {/* Title: APAC Occupancy */}
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            APAC Occupancy{current && ` • ${current}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* Static Pune button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/Pune/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* Dynamic partition button for any partition page */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}
+            >
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box display="flex" alignItems="center">
+
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => {
+              const partition = e.target.value;
+              navigate(partition ? `/partition/${encodeURIComponent(partition)}` : '/');
+            }}
+            renderValue={(selected) =>
+              selected ? (
+                <Box display="flex" alignItems="center">
+                  <Box
+                    component="img"
+                    src={flagMap[selected]} 
+                    alt={selected}
+                    sx={{ width: 24, height: 16, mr: 1 }}
+                  />
+                  {selected}
+                </Box>
+              ) : "— Select Site —"
+            }
 
 
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
 
-....
-
- <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
-            :
-            partitions.map((p, index) => (
-              <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
-              >
-                <SummaryCard
-                  title={p.name.replace(/^.*\./, '')}
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees', value: p.Employee, color:'#8BC34A' },
-                    { label: 'Contractors', value: p.Contractor }
-                  ]}
-                  sx={{
-                    width: '100%',
-                    border: `2px solid ${palette15[index % palette15.length]}`
-                  }}
-                  icon={
-                    <Box
-                      component="img"
-                      src={p.flag}
-                      sx={{ width: 48, height: 32 }}
-                    />
-                  }
+            {partitionList.map(p => (
+              <MenuItem key={p} value={p}>
+                <Box
+                  component="img"
+                  src={flagMap[p]}
+                  alt={p}
+                  sx={{ width: 24, height: 16, mr: 1 }}
                 />
-              </Box>
-            ))
-          }
+                {p}
+              </MenuItem>
+            ))}
+            
+          </Select>
 
         </Box>
+
+
+      </Toolbar>
+    </AppBar>
