@@ -1,51 +1,62 @@
-<Box display="flex" flexWrap="wrap" gap={1} mb={1}>
-  {loading ? (
-    <LoadingSpinner />
-  ) : (
-    summaryItems
-      .filter(item => !['Dublin', 'Rome', 'Moscow'].includes(item.label))
-      .map((item, index) => {
-        const [tc, totc, ec, cc] = item.colors;
-        const pieCities = ['Dublin', 'Rome', 'Moscow'];
+  <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+          {[
+            {
+              title: "Today's Total Headcount",
+              value: todayTot,
+              icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
+              border: '#FFB300'
+            },
+            {
+              title: "Today's Employees Count",
+              value: todayEmp,
+              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+              border: '#8BC34A'
+            },
+            {
+              title: "Today's Contractors Count",
+              value: todayCon,
+              icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 25 }} />,
+              border: '#E57373'
+            },
+            {
+              title: "Realtime Headcount",
+              value: realtimeTot,
+              icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
+              border: '#FFD180'
+            },
+            {
+              title: "Realtime Employees Count",
+              value: realtimeEmp,
+              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+              border: '#AED581'
+            },
+            {
+              title: "Realtime Contractors Count",
+              value: realtimeCon,
+              icon: <i className="fa-solid fa-circle-user" style={{ color: '#BA68C8', fontSize: 25 }} />,
+              border: '#EF5350'
+            }
+          ].map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }}
+              />
+            </Box>
+          ))}
+        </Box>
+read above code and add icons in below and same border and size, i means same for abve ok carefuuly
 
-        const pieData = summaryItems
-          ?.filter(item => pieCities.includes(item.label))
-          .map(item => ({
-            name: item.label,
-            value: item.total
-          }));
 
-        return (
-          <Box key={item.label} sx={{ flex: '1 1 calc(10.66% - 1px)' }}>
-            <SummaryCard
-              title={item.label}
-              total={item.total}
-              stats={[
-                { label: 'Employees', value: item.emp },
-                { label: 'Contractors', value: item.cont }
-              ]}
-              icon={
-                item.flag && (
-                  <Box
-                    component="img"
-                    src={item.flag}
-                    alt={item.label}
-                    sx={{ width: 45, height: 25, border: '1px solid #fff' }}
-                  />
-                )
-              }
-              titleColor={tc}
-              statColors={[ec, cc]}
-              sx={{
-                height: 200,
-                border: `2px solid ${palette15[index % palette15.length]}`, // ✅ Now index is defined
-                '& .MuiTypography-subtitle1': { fontSize: '1.3rem' },
-                '& .MuiTypography-h4': { fontSize: '2rem' },
-                '& .MuiTypography-caption': { fontSize: '1.3rem' }
-              }}
-            />
-          </Box>
-        );
-      })
-  )}
-</Box>
+const cards = [
+    { title: "Today's Total",    value: loadingHistory ? <LoadingSpinner size={20}/> : today.total,      icon:<GroupIcon/>,          border:'#FFD666' },
+    { title: "Today's Employees",value: loadingHistory ? <LoadingSpinner size={20}/> : today.Employee,   icon:<PeopleIcon/>,         border:'#81C784' },
+    { title: "Today's Contractors", value: loadingHistory ? <LoadingSpinner size={20}/> : today.Contractor, icon:<BusinessCenterIcon/>, border:'#FFE599' },
+    { title: "Realtime Total",    value: realtime.total,    icon:<TrackChangesIcon/>, border:'#FFF2CC' },
+    { title: "Realtime Employees",value: realtime.Employee, icon:<PeopleIcon/>,        border:'#FFD666' },
+    { title: "Realtime Contractors",value: realtime.Contractor,icon:<BusinessCenterIcon/>,border:'#FFE599' },
+  ];
+
