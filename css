@@ -4,121 +4,62 @@ const palette15 = [
   '#FF9800', '#673AB7', '#009688', '#CDDC39', '#795548'
 ];
 
+<Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+  {loading ? (
+    <Skeleton variant="rectangular" width="90%" height={200} />
+  ) : (
+    partitions.map((p, index) => {
+      const flagSrc = p.flag;
+      const borderColor = palette15[index % palette15.length];
 
-
-
- <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
-            :
-            partitions.map((p, index) => (
-              <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
-              >
-                <SummaryCard
-                  title={
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        fontWeight: 'bold',
-                        color: '#FFC107',  // Change this to your desired color
-                        fontSize: '1.3rem'
-                      }}
-                    >
-                      {p.name.replace(/^.*\./, '')}
-                    </Typography>
-                  }
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees',  value: p.Employee, color: '#40E0D0' },
-                    { label: 'Contractors', value: p.Contractor, color: 'green' }
-                  ]}
+      return (
+        <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+          <SummaryCard
+            title={
+              displayNameMap[p.name] || p.name.replace(' Partition', '')
+            }
+            icon={
+              flagSrc && (
+                <Box
+                  component="img"
+                  src={flagSrc}
+                  alt={`${p.name} flag`}
                   sx={{
-                    width: '100%',
-                    border: `2px solid ${palette15[index % palette15.length]}`
+                    width: 50,
+                    height: 30,
+                    border: '1px solid #fff'
                   }}
-                  icon={
-                    <Box
-                      component="img"
-                      src={p.flag}
-                      sx={{ width: 48, height: 32 }}
-                    />
-                  }
                 />
-              </Box>
-            ))
-          }
-
+              )
+            }
+            total={p.total}
+            stats={[
+              { label: 'Employees', value: p.Employee },
+              { label: 'Contractors', value: p.Contractor }
+            ]}
+            // pass our new color props
+            titleColor={borderColor}
+            totalColor={borderColor}
+            statColors={{
+              Employees: '#40E0D0',
+              Contractors: 'green'
+            }}
+            sx={{
+              width: '100%',
+              border: `2px solid ${borderColor}`,
+              '& .MuiTypography-subtitle1': {
+                fontSize: '1.3rem'
+              },
+              '& .MuiTypography-h4': {
+                fontSize: '1.7rem'
+              },
+              '& .MuiTypography-caption': {
+                fontSize: '0.875rem'
+              }
+            }}
+          />
         </Box>
-
-
-read the above code carefully and add dynamic border color for below code carefully 
-
-  <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-                    <SummaryCard
-                      // title={p.name}
-                      title={displayNameMap[p.name] || p.name.replace(' Partition', '')}
-
-                      icon={
-                        flagSrc && (
-                          <Box
-                            component="img"
-                            src={flagSrc}
-                            alt={`${p.name} flag`}
-                            sx={{
-                              width: 50,
-                              height: 30,
-                              border: '1px solid #fff'  // 1px border
-                            }}
-                          />
-                        )
-                      }
-
-
-                      // total={p.total}
-                      // stats={[
-                      //   { label: 'Employees', value: p.Employee },
-                      //   { label: 'Contractors', value: p.Contractor },
-                      //   ...(p.name === 'CR.Costa Rica Partition'
-                      //     ? [{ label: 'Temp Badge', value: p.TempBadge }]
-                      //     : [])
-                      // ]}
-
-
-                      total={p.total}
-                      stats={[
-                        { label: 'Employees', value: p.Employee },
-                        { label: 'Contractors', value: p.Contractor },
-
-                      ]}
-
-
-
-
-
-                      // pass our new color props
-                      titleColor={titleC}
-                      totalColor={totalC}
-                      statColors={statCs}
-
-
-                      sx={{
-                        width: '100vw%',
-
-                        border: `1px solid ${titleC}`,
-
-                        // typography overrides:
-                        '& .MuiTypography-subtitle1': {
-                          fontSize: '1.3rem'          // partition title
-                        },
-                        '& .MuiTypography-h4': {
-                          fontSize: '1.7rem'        // partition total
-                        },
-                        '& .MuiTypography-caption': {
-                          fontSize: '0.875rem'      // partition stats labels/values
-                        }
-
-                      }}
-                    />
-                  </Box>
+      );
+    })
+  )}
+</Box>
