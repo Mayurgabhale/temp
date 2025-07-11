@@ -1,62 +1,38 @@
-  <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-          {[
-            {
-              title: "Today's Total Headcount",
-              value: todayTot,
-              icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
-              border: '#FFB300'
-            },
-            {
-              title: "Today's Employees Count",
-              value: todayEmp,
-              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
-              border: '#8BC34A'
-            },
-            {
-              title: "Today's Contractors Count",
-              value: todayCon,
-              icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 25 }} />,
-              border: '#E57373'
-            },
-            {
-              title: "Realtime Headcount",
-              value: realtimeTot,
-              icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
-              border: '#FFD180'
-            },
-            {
-              title: "Realtime Employees Count",
-              value: realtimeEmp,
-              icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
-              border: '#AED581'
-            },
-            {
-              title: "Realtime Contractors Count",
-              value: realtimeCon,
-              icon: <i className="fa-solid fa-circle-user" style={{ color: '#BA68C8', fontSize: 25 }} />,
-              border: '#EF5350'
-            }
-          ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard
-                title={c.title}
-                total={c.value}
-                stats={[]}
-                icon={c.icon}
-                sx={{ height: 140, border: `2px solid ${c.border}` }}
-              />
-            </Box>
-          ))}
-        </Box>
-read above code and add icons in below and same border and size, i means same for abve ok carefuuly
-
-
 const cards = [
-    { title: "Today's Total",    value: loadingHistory ? <LoadingSpinner size={20}/> : today.total,      icon:<GroupIcon/>,          border:'#FFD666' },
-    { title: "Today's Employees",value: loadingHistory ? <LoadingSpinner size={20}/> : today.Employee,   icon:<PeopleIcon/>,         border:'#81C784' },
-    { title: "Today's Contractors", value: loadingHistory ? <LoadingSpinner size={20}/> : today.Contractor, icon:<BusinessCenterIcon/>, border:'#FFE599' },
-    { title: "Realtime Total",    value: realtime.total,    icon:<TrackChangesIcon/>, border:'#FFF2CC' },
-    { title: "Realtime Employees",value: realtime.Employee, icon:<PeopleIcon/>,        border:'#FFD666' },
-    { title: "Realtime Contractors",value: realtime.Contractor,icon:<BusinessCenterIcon/>,border:'#FFE599' },
-  ];
-
+  {
+    title: "Today's Total",
+    value: loadingHistory ? <LoadingSpinner size={20} /> : today.total,
+    icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
+    border: '#FFB300'
+  },
+  {
+    title: "Today's Employees",
+    value: loadingHistory ? <LoadingSpinner size={20} /> : today.Employee,
+    icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+    border: '#8BC34A'
+  },
+  {
+    title: "Today's Contractors",
+    value: loadingHistory ? <LoadingSpinner size={20} /> : today.Contractor,
+    icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 25 }} />,
+    border: '#E57373'
+  },
+  {
+    title: "Realtime Total",
+    value: realtime.total,
+    icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
+    border: '#FFD180'
+  },
+  {
+    title: "Realtime Employees",
+    value: realtime.Employee,
+    icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+    border: '#AED581'
+  },
+  {
+    title: "Realtime Contractors",
+    value: realtime.Contractor,
+    icon: <i className="fa-solid fa-circle-user" style={{ color: '#BA68C8', fontSize: 25 }} />,
+    border: '#EF5350'
+  }
+];
