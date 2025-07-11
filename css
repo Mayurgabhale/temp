@@ -1,67 +1,62 @@
-  <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-                    <SummaryCard
-                      // title={p.name}
-                      title={displayNameMap[p.name] || p.name.replace(' Partition', '')}
+{partitions.map((p, index) => {
+  const flagSrc = p.flag;
+  const borderColor = palette15[index % palette15.length];  // ✅ Add this line
 
-                      icon={
-                        flagSrc && (
-                          <Box
-                            component="img"
-                            src={flagSrc}
-                            alt={`${p.name} flag`}
-                            sx={{
-                              width: 50,
-                              height: 30,
-                              border: '1px solid #fff'  // 1px border
-                            }}
-                          />
-                        )
-                      }
+  return (
+    <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+      <SummaryCard
+        // title={p.name}
+        title={displayNameMap[p.name] || p.name.replace(' Partition', '')}
 
+        icon={
+          flagSrc && (
+            <Box
+              component="img"
+              src={flagSrc}
+              alt={`${p.name} flag`}
+              sx={{
+                width: 50,
+                height: 30,
+                border: '1px solid #fff'  // 1px border
+              }}
+            />
+          )
+        }
 
-                      // total={p.total}
-                      // stats={[
-                      //   { label: 'Employees', value: p.Employee },
-                      //   { label: 'Contractors', value: p.Contractor },
-                      //   ...(p.name === 'CR.Costa Rica Partition'
-                      //     ? [{ label: 'Temp Badge', value: p.TempBadge }]
-                      //     : [])
-                      // ]}
+        // total={p.total}
+        // stats={[
+        //   { label: 'Employees', value: p.Employee },
+        //   { label: 'Contractors', value: p.Contractor },
+        //   ...(p.name === 'CR.Costa Rica Partition'
+        //     ? [{ label: 'Temp Badge', value: p.TempBadge }]
+        //     : [])
+        // ]}
 
+        total={p.total}
+        stats={[
+          { label: 'Employees', value: p.Employee },
+          { label: 'Contractors', value: p.Contractor },
+        ]}
 
-                      total={p.total}
-                      stats={[
-                        { label: 'Employees', value: p.Employee },
-                        { label: 'Contractors', value: p.Contractor },
+        // pass our new color props
+        titleColor={titleC}
+        totalColor={totalC}
+        statColors={statCs}
 
-                      ]}
-
-
-
-
-
-                      // pass our new color props
-                      titleColor={titleC}
-                      totalColor={totalC}
-                      statColors={statCs}
-
-
-                      sx={{
-                        width: '100vw%',
-
-                        border: `1px solid ${titleC}`,
-
-                        // typography overrides:
-                        '& .MuiTypography-subtitle1': {
-                          fontSize: '1.3rem'          // partition title
-                        },
-                        '& .MuiTypography-h4': {
-                          fontSize: '1.7rem'        // partition total
-                        },
-                        '& .MuiTypography-caption': {
-                          fontSize: '0.875rem'      // partition stats labels/values
-                        }
-
-                      }}
-                    />
-                  </Box>
+        sx={{
+          width: '100vw%',
+          border: `2px solid ${borderColor}`,  // ✅ Updated line ONLY
+          '& .MuiTypography-subtitle1': {
+            fontSize: '1.3rem'          // partition title
+          },
+          '& .MuiTypography-h4': {
+            fontSize: '1.7rem'        // partition total
+          },
+          '& .MuiTypography-caption': {
+            fontSize: '0.875rem'      // partition stats labels/values
+          }
+        }}
+      />
+    </Box>
+  );
+})}
