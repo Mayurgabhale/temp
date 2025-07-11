@@ -1,87 +1,82 @@
-const titleC = palette15[index % palette15.length];
+
+        {partitions.map((p, index) => {
+          const flagSrc = p.flag;
+        const titleC = palette15[index % palette15.length];
 const borderColor = titleC;  // reuse the same color
 
+          return (
+            <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                // title={p.name}
+                title={displayNameMap[p.name] || p.name.replace(' Partition', '')}
 
+                icon={
+                  flagSrc && (
+                    <Box
+                      component="img"
+                      src={flagSrc}
+                      alt={`${p.name} flag`}
+                      sx={{
+                        width: 50,
+                        height: 30,
+                        border: '1px solid #fff'  // 1px border
+                      }}
+                    />
+                  )
+                }
 
+                // total={p.total}
+                // stats={[
+                //   { label: 'Employees', value: p.Employee },
+                //   { label: 'Contractors', value: p.Contractor },
+                //   ...(p.name === 'CR.Costa Rica Partition'
+                //     ? [{ label: 'Temp Badge', value: p.TempBadge }]
+                //     : [])
+                // ]}
 
-...
+                total={p.total}
+                stats={[
+                  { label: 'Employees', value: p.Employee },
+                  { label: 'Contractors', value: p.Contractor },
+                ]}
 
-{partitions.map((p, index) => {
-  const flagSrc = p.flag;
-  const borderColor = palette15[index % palette15.length];  // ✅ Add this line
+                // pass our new color props
+                titleColor={titleC}
+                totalColor={totalC}
+                statColors={statCs}
 
-  return (
-    <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-      <SummaryCard
-        // title={p.name}
-        title={displayNameMap[p.name] || p.name.replace(' Partition', '')}
-
-        icon={
-          flagSrc && (
-            <Box
-              component="img"
-              src={flagSrc}
-              alt={`${p.name} flag`}
-              sx={{
-                width: 50,
-                height: 30,
-                border: '1px solid #fff'  // 1px border
-              }}
-            />
-          )
-        }
-
-        // total={p.total}
-        // stats={[
-        //   { label: 'Employees', value: p.Employee },
-        //   { label: 'Contractors', value: p.Contractor },
-        //   ...(p.name === 'CR.Costa Rica Partition'
-        //     ? [{ label: 'Temp Badge', value: p.TempBadge }]
-        //     : [])
-        // ]}
-
-        total={p.total}
-        stats={[
-          { label: 'Employees', value: p.Employee },
-          { label: 'Contractors', value: p.Contractor },
-        ]}
-
-        // pass our new color props
-        titleColor={titleC}
-        totalColor={totalC}
-        statColors={statCs}
-
-        sx={{
-          width: '100vw%',
-          border: `2px solid ${borderColor}`,  // ✅ Updated line ONLY
-          '& .MuiTypography-subtitle1': {
-            fontSize: '1.3rem'          // partition title
-          },
-          '& .MuiTypography-h4': {
-            fontSize: '1.7rem'        // partition total
-          },
-          '& .MuiTypography-caption': {
-            fontSize: '0.875rem'      // partition stats labels/values
-          }
-        }}
-      />
-    </Box>
-  );
-})}
+                sx={{
+                  width: '100vw%',
+                  border: `2px solid ${borderColor}`,  // ✅ Updated line ONLY
+                  '& .MuiTypography-subtitle1': {
+                    fontSize: '1.3rem'          // partition title
+                  },
+                  '& .MuiTypography-h4': {
+                    fontSize: '1.7rem'        // partition total
+                  },
+                  '& .MuiTypography-caption': {
+                    fontSize: '0.875rem'      // partition stats labels/values
+                  }
+                }}
+              />
+            </Box>
+          );
+        })}
 
 
 Uncaught runtime errors:
 ×
 ERROR
-titleC is not defined
-ReferenceError: titleC is not defined
-    at http://localhost:3003/src_pages_Dashboard_jsx.f658ed846a3b00fac684.hot-update.js:371:25
+totalC is not defined
+ReferenceError: totalC is not defined
+    at http://localhost:3003/static/js/src_pages_Dashboard_jsx.chunk.js:1736:25
     at Array.map (<anonymous>)
-    at Dashboard (http://localhost:3003/src_pages_Dashboard_jsx.f658ed846a3b00fac684.hot-update.js:323:28)
+    at Dashboard (http://localhost:3003/static/js/src_pages_Dashboard_jsx.chunk.js:1686:28)
     at react-stack-bottom-frame (http://localhost:3003/static/js/bundle.js:27689:18)
     at renderWithHooks (http://localhost:3003/static/js/bundle.js:17899:20)
     at updateFunctionComponent (http://localhost:3003/static/js/bundle.js:19592:17)
     at beginWork (http://localhost:3003/static/js/bundle.js:20160:637)
     at runWithFiberInDEV (http://localhost:3003/static/js/bundle.js:15670:68)
     at performUnitOfWork (http://localhost:3003/static/js/bundle.js:22251:93)
-    at workLoopSync (http://localhost:3003/static/js/bundle.js:22144:38)
+    at workLoopSync (http://localhost:3003/static/js/bundle.js:22144:38) 
+slove this error carefully
