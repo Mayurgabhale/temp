@@ -1,3 +1,11 @@
+const titleC = palette15[index % palette15.length];
+const borderColor = titleC;  // reuse the same color
+
+
+
+
+...
+
 {partitions.map((p, index) => {
   const flagSrc = p.flag;
   const borderColor = palette15[index % palette15.length];  // ✅ Add this line
