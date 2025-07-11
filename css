@@ -1,5 +1,5 @@
 line percent i want to dislay employee and contractores 
-read the below code carefully and dislpy only in Dublin Moscow Rome 
+read the below code carefully and dislpy only in Dublin Moscow Rome pie chart
 
 <Pie
                 data={renderData}
