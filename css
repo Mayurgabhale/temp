@@ -1,72 +1,76 @@
- {/* Region Cards */}
-        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-          {loading
-            ? <Skeleton variant="rectangular" width="90%" height={200} />
-            :
-            partitions.map((p, index) => (
-              <Box
-                key={p.name}
-                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
-              >
-                <SummaryCard
-                  title={
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        fontWeight: 'bold',
-                        color: '#FFC107',  // Change this to your desired color
-                        fontSize: '1.3rem'
-                      }}
-                    >
-                      {p.name.replace(/^.*\./, '')}
-                    </Typography>
-                  }
-                  total={p.total}
-                  stats={[
-                    { label: 'Employees', value: p.Employee, color: '#40E0D0' },
-                    { label: 'Contractors', value: p.Contractor, color: 'green' }
-                  ]}
+{/* Partition Cards (Region Summary) */}
+<Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+  {loading
+    ? <Skeleton variant="rectangular" width="90%" height={200} />
+    : partitions.map((p, index) => {
+        const regionName = displayNameMap[p.name] || p.name.replace(/^.*\./, '');
+        const flagSrc = flagMap[p.name];
+
+        return (
+          <Box
+            key={p.name}
+            sx={{ flex: '1 1 calc(16.66% - 8px)' }}
+          >
+            <SummaryCard
+              title={
+                <Typography
+                  variant="subtitle1"
                   sx={{
-                    width: '100%',
-                    border: `2px solid ${palette15[index % palette15.length]}`
+                    fontWeight: 'bold',
+                    color: '#FFC107',
+                    fontSize: '1.3rem'
                   }}
-                  icon={
-                    <Box
-                      component="img"
-                      src={p.flag}
-                      sx={{ width: 48, height: 32 }}
-                    />
-                  }
+                >
+                  {regionName}
+                </Typography>
+              }
+              total={p.total}
+              stats={[
+                { label: 'Employees', value: p.Employee, color: '#40E0D0' },
+                { label: 'Contractors', value: p.Contractor, color: 'green' }
+              ]}
+              sx={{
+                width: '100%',
+                border: `2px solid ${palette15[index % palette15.length]}`
+              }}
+              icon={
+                <Box
+                  component="img"
+                  src={flagSrc}
+                  sx={{
+                    width: 48,
+                    height: 32,
+                    border: '1px solid white',
+                    borderRadius: '2px',
+                    objectFit: 'cover'
+                  }}
                 />
-              </Box>
-            ))
-          }
+              }
+            />
+          </Box>
+        );
+      })
+  }
+</Box>
 
-        </Box>
+......
 
+const displayNameMap = {
+  'US.CO.OBS': 'Denver',
+  'US.FL.Miami': 'Miami',
+  'US.NYC': 'New York',
+  'USA/Canada Default': 'Austin Texas'
+};
 
+const flagMap = {
+  'US.CO.OBS': DenverFlag,
+  'US.FL.Miami': MiamiFlag,
+  'US.NYC': NewYorkFlag,
+  'USA/Canada Default': AustinFlag
+};
 
-read above code carefully and add different colro border same as above 
-
-  {/* partition cards */}
-      <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
-        {loading
-          ? <Skeleton variant="rectangular" width="90%" height={200} />
-          : partitions.map(p => {
-            const flags = { 'US.CO.OBS': DenverFlag, 'US.FL.Miami': MiamiFlag, 'US.NYC': NewYorkFlag, 'USA/Canada Default': AustinFlag };
-            const [tc, totc, ...sc] = colorsMap[p.name] || [];
-            return <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-
-              <SummaryCard
-                title={displayNameMap[p.name]}
-                icon={<Box component="img" src={flags[p.name]} sx={{ width: 50, height: 33, border: '1px solid #fff' }} />}
-                total={p.total}
-                stats={[{ label: 'Employees', value: p.Employee }, { label: 'Contractors', value: p.Contractor }]}
-                titleColor={tc} totalColor={totc} statColors={sc}
-                sx={{ width: '100%', border: `1px solid ${tc}` }}
-              />
-
-            </Box>;
-          })
-        }
-      </Box>
+const palette15 = [
+  '#FFC107', '#E91E63', '#4CAF50', '#FFEB3B', '#FFD666',
+  '#D84315', '#3F51B5', '#9C27B0', '#00BCD4', '#8BC34A',
+  '#FF9800', '#673AB7', '#009688', '#CDDC39', '#795548'
+];
