@@ -1,110 +1,53 @@
-  <Box display="flex" flexWrap="wrap" gap={1} mb={1}>
-          {[
-            {
-              title: "Today's Total Headcount",
-
-              color: '#FFE599',
-              value: todayTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
-              border: '#FFB300',
-
-            },
-            {
-              title: "Today's Employees Count",
-              value: todayEmp,
-              icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
-              border: '#8BC34A'
-            },
-            {
-              title: "Today's Contractors Count",
-              value: todayCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
-              border: '#E57373'
-            },
-            {
-              title: "Realtime Headcount",
-              value: realtimeTot,
-              icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
-              border: '#FFD180'
-            },
-            {
-              title: "Realtime Employees Count",
-              value: realtimeEmp,
-              icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
-              border: '#AED581'
-            },
-            {
-              title: "Realtime Contractors Count",
-              value: realtimeCont,
-              icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
-              border: '#EF5350'
-            }
-          ].map(c => (
-            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-              <SummaryCard
-                title={c.title}
-                total={c.value}
-                stats={[]}
-                icon={c.icon}
-                sx={{ height: 140, border: `2px solid ${c.border}` }}
-              />
-            </Box>
-          ))}
-        </Box>
-
-
-read above code carefully and write desing as it is for below code carefully
-
- <Box display="flex" flexWrap="wrap" gap={1} mb={2} sx={{ px: "20px" }}>
-            {[
-              {
-                title: `Today's Total Headcount`,
-                value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
-                icon: <GroupIcon sx={{ color: "#E57373", fontSize: 36 }} />,
-                border: "#FFD666",
-              },
-              {
-                title: `Today's Employees Count`,
-                value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
-                icon: <PeopleIcon sx={{ color: "#81C784", fontSize: 36 }} />,
-                border: "#81C784",
-              },
-              {
-                title: `Today's Contractors Count`,
-                value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
-                icon: <BusinessCenterIcon sx={{ color: "#64B5F6", fontSize: 36 }} />,
-                border: "#FFE599",
-              },
-              {
-                title: `Realtime Headcount`,
-                value: live.total,
-                icon: <TrackChangesIcon sx={{ color: "#BA68C8", fontSize: 36 }} />,
-                border: "#FFF2CC",
-              },
-              {
-                title: `Realtime Employees Count`,
-                value: live.Employee,
-                icon: <PeopleIcon sx={{ color: "#FFB74D", fontSize: 36 }} />,
-                border: "#FFD666",
-              },
-              {
-                title: `Realtime Contractors Count`,
-                value: live.Contractor,
-                icon: <BusinessCenterIcon sx={{ color: "#4DB6AC", fontSize: 36 }} />,
-                border: "#FFE599",
-              },
-            ].map((card) => (
-              <Box key={card.title} sx={{ flex: "1 1 calc(16.66% - 8px)" }}>
-                <SummaryCard
-                  title={card.title}
-                  total={card.value}
-                  stats={[]}
-                  icon={card.icon}
-                  sx={{
-                    height: 140,
-                    border: `1px solid ${card.border}`,
-                  }}
-                />
-              </Box>
-            ))}
-          </Box>
+<Box display="flex" flexWrap="wrap" gap={1} mb={1}>
+  {[
+    {
+      title: "Today's Total Headcount",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
+      icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+      border: '#FFB300',
+    },
+    {
+      title: "Today's Employees Count",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
+      icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+      border: '#8BC34A',
+    },
+    {
+      title: "Today's Contractors Count",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
+      border: '#E57373',
+    },
+    {
+      title: "Realtime Headcount",
+      value: live.total,
+      icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+      border: '#FFD180',
+    },
+    {
+      title: "Realtime Employees Count",
+      value: live.Employee,
+      icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+      border: '#AED581',
+    },
+    {
+      title: "Realtime Contractors Count",
+      value: live.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
+      border: '#EF5350',
+    },
+  ].map((card) => (
+    <Box key={card.title} sx={{ flex: "1 1 calc(16.66% - 8px)" }}>
+      <SummaryCard
+        title={card.title}
+        total={card.value}
+        stats={[]}
+        icon={card.icon}
+        sx={{
+          height: 140,
+          border: `2px solid ${card.border}`,
+        }}
+      />
+    </Box>
+  ))}
+</Box>
