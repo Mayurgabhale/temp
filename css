@@ -1,5 +1,5 @@
-const pieData1 = summaryItems
-  .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+const pieData2 = summaryItems
+  .filter(item => ['Abu Dhabi', 'Vienna', 'Casablanca', 'London', 'Madrid'].includes(item.label))
   .map(item => ({
     name: item.label,
     value: item.total,
