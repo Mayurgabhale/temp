@@ -1,8 +1,17 @@
-const pieData2 = summaryItems
-  .filter(item => ['Abu Dhabi', 'Vienna', 'Casablanca', 'London', 'Madrid'].includes(item.label))
-  .map(item => ({
-    name: item.label,
-    value: item.total,
-    Employee: item.emp,         // ✅ Add Employee
-    Contractor: item.cont       // ✅ Add Contractor
-  }));
+  {/* 2) Top regions donut */}
+          {/* CHART 1: Dublin, Rome, Moscow Breakdown */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+            {loading ? (
+              <Skeleton variant="rectangular" height={300} />
+            ) : (
+              <PieChartCard
+                title=" "
+                data={pieData1}
+                colors={['#FFB74D', '#4DB6AC', '#9575CD']}
+                innerRadius={60}
+                height={400}
+                showZeroSlice
+                animationDuration={1500}
+              />
+            )}
+          </Box>
