@@ -60,3 +60,20 @@
     </Box>
   );
 })}
+
+
+Uncaught runtime errors:
+×
+ERROR
+titleC is not defined
+ReferenceError: titleC is not defined
+    at http://localhost:3003/src_pages_Dashboard_jsx.f658ed846a3b00fac684.hot-update.js:371:25
+    at Array.map (<anonymous>)
+    at Dashboard (http://localhost:3003/src_pages_Dashboard_jsx.f658ed846a3b00fac684.hot-update.js:323:28)
+    at react-stack-bottom-frame (http://localhost:3003/static/js/bundle.js:27689:18)
+    at renderWithHooks (http://localhost:3003/static/js/bundle.js:17899:20)
+    at updateFunctionComponent (http://localhost:3003/static/js/bundle.js:19592:17)
+    at beginWork (http://localhost:3003/static/js/bundle.js:20160:637)
+    at runWithFiberInDEV (http://localhost:3003/static/js/bundle.js:15670:68)
+    at performUnitOfWork (http://localhost:3003/static/js/bundle.js:22251:93)
+    at workLoopSync (http://localhost:3003/static/js/bundle.js:22144:38)
