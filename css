@@ -1,24 +1,25 @@
-  {/* 2) Top regions donut */}
-          {/* CHART 1: Dublin, Rome, Moscow Breakdown */}
-          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
-            {loading ? (
-              <Skeleton variant="rectangular" height={300} />
-            ) : (
-              <PieChartCard
-                title=" "
-                data={pieData1}
-                colors={['#FFB74D', '#4DB6AC', '#9575CD']}
-                innerRadius={60}
-                height={400}
-                showZeroSlice
-                animationDuration={1500}
-              />
-            )}
-          </Box>
+line percent i want to dislay employee and contractores 
+read the below code carefully and dislpy only in Dublin Moscow Rome 
+
+<Pie
+                data={renderData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={70}
+                outerRadius={120}
+                paddingAngle={4}
+                isAnimationActive
+                animationDuration={animationDuration}
+                // show percent labels inside each slice
+                label={({ percent, }) => `${(percent * 100).toFixed(0)}%`}
+                
+                labelLine={false}
+
+              >
 
 
 
-             
+                           
 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
@@ -83,7 +84,8 @@ export default function PieChartCard({
                 isAnimationActive
                 animationDuration={animationDuration}
                 // show percent labels inside each slice
-                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                label={({ percent, }) => `${(percent * 100).toFixed(0)}%`}
+                
                 labelLine={false}
 
               >
@@ -183,6 +185,36 @@ const cardStyle = borderColor => ({
   }
 });
 
+
+..
+ // CHART 1: Dublin, Rome, Moscow with breakdown (Total, Employee, Contractor per city)
+  const pieData1 = summaryItems
+  .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+  .map(item => ({
+    name: item.label,
+    value: item.total,
+    Employee: item.emp,         // ✅ Add Employee
+    Contractor: item.cont       // ✅ Add Contractor
+  }));
+
+
+  {/* 1) Vilnius composite */}
+          <Box flex="1 1 0" sx={{ border: '2px solid #FFC107', borderRadius: 2, p: 2, background: 'rgba(0,0,0,0.6)' }}>
+
+            {loading ? (
+              <Skeleton variant="rectangular" height={300} />
+            ) : (
+              <CompositeChartCard
+                title="Vilnius "
+                data={vilniusFloors}
+                barColor="#4CAF50"
+                lineColor="#FF0000"
+                height={350}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            )}
+          </Box>
 
 
 
