@@ -1,12 +1,72 @@
-const partitions = partitionList.map(name => {
-  const key = Object.keys(regions).find(k => k.includes(name));
-  const p = key ? regions[key] : {};
-  return {
-    name,
-    total: p.total || 0,
-    Employee: p.Employee || 0,
-    Contractor: p.Contractor || 0,
-    floors: p.floors || {},
-    flag: flagMap[name] || null  // ✅ Add flag here
-  };
-}).sort((a, b) => b.total - a.total);
+ {/* Region Cards */}
+        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+          {loading
+            ? <Skeleton variant="rectangular" width="90%" height={200} />
+            :
+            partitions.map((p, index) => (
+              <Box
+                key={p.name}
+                sx={{ flex: '1 1 calc(16.66% - 8px)' }}
+              >
+                <SummaryCard
+                  title={
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 'bold',
+                        color: '#FFC107',  // Change this to your desired color
+                        fontSize: '1.3rem'
+                      }}
+                    >
+                      {p.name.replace(/^.*\./, '')}
+                    </Typography>
+                  }
+                  total={p.total}
+                  stats={[
+                    { label: 'Employees', value: p.Employee, color: '#40E0D0' },
+                    { label: 'Contractors', value: p.Contractor, color: 'green' }
+                  ]}
+                  sx={{
+                    width: '100%',
+                    border: `2px solid ${palette15[index % palette15.length]}`
+                  }}
+                  icon={
+                    <Box
+                      component="img"
+                      src={p.flag}
+                      sx={{ width: 48, height: 32 }}
+                    />
+                  }
+                />
+              </Box>
+            ))
+          }
+
+        </Box>
+
+
+
+read above code carefully and add different colro border same as above 
+
+  {/* partition cards */}
+      <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+        {loading
+          ? <Skeleton variant="rectangular" width="90%" height={200} />
+          : partitions.map(p => {
+            const flags = { 'US.CO.OBS': DenverFlag, 'US.FL.Miami': MiamiFlag, 'US.NYC': NewYorkFlag, 'USA/Canada Default': AustinFlag };
+            const [tc, totc, ...sc] = colorsMap[p.name] || [];
+            return <Box key={p.name} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+
+              <SummaryCard
+                title={displayNameMap[p.name]}
+                icon={<Box component="img" src={flags[p.name]} sx={{ width: 50, height: 33, border: '1px solid #fff' }} />}
+                total={p.total}
+                stats={[{ label: 'Employees', value: p.Employee }, { label: 'Contractors', value: p.Contractor }]}
+                titleColor={tc} totalColor={totc} statColors={sc}
+                sx={{ width: '100%', border: `1px solid ${tc}` }}
+              />
+
+            </Box>;
+          })
+        }
+      </Box>
