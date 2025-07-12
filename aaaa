@@ -1,36 +1,78 @@
-// export async function fetchLiveSummary() {
-//   if (cache.liveSummary) {
-//     return cache.liveSummary;
-//   }
-//   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-//   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-//   const json = await res.json();
-//   cache.liveSummary = json;
-//   return json;
-// }
+import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useEffect, useState } from 'react';
+import { fetchLiveSummary } from '@/lib/data/occupancy';
 
-What is is different between thies two fucntion becaeu 
-i used below fucniton thie two things are not displying please slove the probl e
- {/* Show % on top of each bar */}
-                <LabelList
-                  dataKey="headcount"
-                  position="top"
-                  formatter={val => `${val}`}
-                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
-                />
+const DARK_TO_LIGHT = ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087'];
 
-                {/* Percentage centered inside each bar */}
-                  <LabelList
-                  dataKey="percentage"
-                  position="inside"
-                  formatter={val => `${val}%`}
-                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
-                />
+export function CompositeChartCard() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    async function getData() {
+      try {
+        const result = await fetchLiveSummary();
 
-export async function fetchLiveSummary() {
-  // always fetch fresh data (no in-memory caching)
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);   // live data fetch
-  return res.json();
+        // ✅ SAFELY process the result
+        const enriched = result.map((d, i) => {
+          const headcount = d.headcount ?? 0;
+          const capacity = d.capacity ?? 0;
+          const percentage = capacity > 0 ? Math.round((headcount / capacity) * 100) : 0;
+
+          return {
+            ...d,
+            headcount,
+            capacity,
+            percentage,
+            _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length],
+          };
+        });
+
+        setData(enriched);
+      } catch (err) {
+        console.error('Failed to fetch data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getData();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (!data || data.length === 0) return <p>No data available.</p>;
+
+  return (
+    <div style={{ width: '100%', height: 400 }}>
+      <ResponsiveContainer>
+        <BarChart
+          data={data}
+          layout="vertical"
+          margin={{ top: 20, right: 50, bottom: 20, left: 100 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" />
+          <YAxis type="category" dataKey="locationName" />
+          <Tooltip />
+          <Bar dataKey="headcount" fill="#8884d8">
+            {/* ✅ Label on top of bar */}
+            <LabelList
+              dataKey="headcount"
+              position="top"
+              formatter={val => `${val}`}
+              style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+            />
+
+            {/* ✅ Percentage inside bar */}
+            <LabelList
+              dataKey="percentage"
+              position="inside"
+              formatter={val => `${val}%`}
+              style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
 }
