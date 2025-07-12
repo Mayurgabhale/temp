@@ -1,223 +1,291 @@
-// src/pages/History.jsx
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Typography,
-  Paper,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  TextField
-} from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\utils\doorMap.js/
+/ src/utils/doorMap.js
+const doorMap = [
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchHistory } from '../api/occupancy.service';
 
-// Map partition codes to friendly names
-const apacPartitionNames = {
-  'IN.Pune': 'Pune',
-  'MY.Kuala Lumpur': 'Kuala Lumpur',
-  'PH.Quezon': 'Quezon City',
-  'PH.Taguig': 'Taguig',
-  'JP.Tokyo': 'Tokyo'
+  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection":                 "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection":                               "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___OutDirection":                              "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___InDirection":               "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___OutDirection":              "Out of office",
+  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___InDirection":                              "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___OutDirection":                             "Red Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___InDirection":           "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___OutDirection":          "Reception Area",
+  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___InDirection":       "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___OutDirection":      "Yellow Zone - Outer Area",
+
+  // Podium / Yellow
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_MDF RESTRICTED DOOR___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_IT STORE ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_REPRO STORE-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_CONTROL PANEL ROOM-DOOR RESTRICTED DOOR___InDirection": "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_PREACTION ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_TESTING LAB-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___OutDirection":                    "Reception Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___InDirection":                 "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___OutDirection":                "Out of office",
+  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___OutDirection":                    "Yellow Zone - Outer Area",
+
+  // Podium / Green
+  "APAC_IN_PUN_PODIUM_GREEN-_IDF ROOM 1-RESTRICTED DOOR___InDirection":              "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_UPS ENTRY 1-DOOR RESTRICTED DOOR___InDirection":          "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_UPS ENTRY 2-DOOR RESTRICTED DOOR___InDirection":          "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_LOCKER HR STORE 3-DOOR RESTRICTED DOOR___InDirection":    "Green Zone",
+  "APAC_IN_PUN_PODIUM_ST4 DOOR 2 (GREEN)___InDirection":                              "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN-MAIN LIFT LOBBY-DOOR___InDirection":                      "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN-MAIN LIFT LOBBY-DOOR___OutDirection":                     "Green Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_ST3 DOOR 2 (GREEN)___InDirection":                              "Green Zone",
+  "APAC_IN_PUN_PODIUM_ST3 DOOR 2 (GREEN)___OutDirection":                             "Green Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_GREEN_RECEPTION ENTRY-DOOR___InDirection":                     "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_RECEPTION ENTRY-DOOR___OutDirection":                    "Reception Area",
+
+  // Podium / Orange
+  "APAC_IN_PUN_PODIUM_ST4 DOOR 1 (ORANGE)___InDirection":                             "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_RECEPTION ENTRY-DOOR___InDirection":                    "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_RECEPTION ENTRY-DOOR___OutDirection":                   "Reception Area",
+  "APAC_IN_PUN_PODIUM_ST3_DOOR 1 (ORANGE)___InDirection":                            "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ST3_DOOR 1 (ORANGE)___OutDirection":                           "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_MAIN LIFT LOBBY-DOOR___InDirection":                     "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_MAIN LIFT LOBBY-DOOR___OutDirection":                    "Orange Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_ORANGE-IDF ROOM 3-RESTRICTED DOOR___InDirection":               "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_KITCHENETTE FIRE EXIT-DOOR NEW___InDirection":          "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_KITCHENETTE FIRE EXIT-DOOR NEW___OutDirection":         "Orange Zone - Outer Area",
+
+  // Podium / GSOC door
+  "APAC_IN_PUN_PODIUM_GSOC DOOR RESTRICTED DOOR___InDirection":                       "Yellow Zone",
+
+  // Podium / Main Right & Left Entry
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM RIGHT ENTRY-DOOR NEW___InDirection":                "Reception Area",
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM RIGHT ENTRY-DOOR NEW___OutDirection":               "Assembly Area",
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM LEFT ENTRY-DOOR NEW___InDirection":                 "Reception Area",
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM LEFT ENTRY-DOOR NEW___OutDirection":                "Assembly Area",
+
+  // Podium / Turnstiles
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR___InDirection":                           "Reception Area",
+  // "APAC_IN_PUN_POD podium_P-1 TURNSTILE 2-DOOR___InDirection":                       "Reception Area",
+  // "APAC_IN_PUN_POD podium_P-1 TURNSTILE 3-DOOR___InDirection":                       "Reception Area",
+
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR___InDirection":                           "Reception Area",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR___InDirection":                           "Reception Area",
+
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4-DOOR___InDirection":                           "Reception Area",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2 -OUT DOOR___OutDirection":                     "Out of office",
+  // "APAC_IN_PUN-PODIUM_P-1 TURNSTILE 3 -OUT DOOR___OutDirection":                     "Out of office",
+   "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3 -OUT DOOR___OutDirection":                     "Out of office",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4 -OUT DOOR___OutDirection":                     "Out of office",
+  "APAC_IN_PUN_POD podium_P-1 TURNSTILE 1-OUT DOOR___OutDirection":                  "Out of office",
+
+  // 2nd Floor / various
+  "APAC_IN_PUN_2NDFLR_IDF ROOM_10:05:86 RESTRICTED DOOR___InDirection":                "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_UPS/ELEC ROOM RESTRICTED DOOR___InDirection":                    "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_RECPTION TO WORKSTATION DOOR___InDirection":                     "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_RECPTION TO WORKSTATION DOOR___OutDirection":                    "Out of office",
+  "APAC_IN_PUN_2NDFLR_LIFTLOBBY TO RECEPTION EMTRY DOOR___InDirection":                 "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_LIFTLOBBY TO RECEPTION EMTRY DOOR___OutDirection":                "2nd Floor, Pune",
+
+  // Tower B
+  "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR___InDirection":                             "Tower B",
+  "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR___OutDirection":                            "Out of office",
+  "APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR___InDirection":                                 "Tower B",
+  "APAC_IN_PUN_PODIUM_TOWER B_LIFT LOBBY DOOR___OutDirection":                          "Out of office",
+  "APAC_IN_PUN_TOWER B_ST6_GYM SIDE DOOR___InDirection":                               "Tower B",
+  "APAC_IN_PUN_TOWER B_ST6_GYM SIDE DOOR___OutDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_ST6_WKS SIDE DOOR___InDirection":                               "Tower B",
+  "APAC_IN_PUN_TOWER B_ST6_WKS SIDE DOOR___OutDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_KAPIL DEV DOOR___InDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_KAPIL DEV DOOR___OutDirection":                             "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_WKS SIDE DOOR___InDirection":                               "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_WKS SIDE DOOR___OutDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION LEFT DOOR___InDirection":                             "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION LEFT DOOR___OutDirection":                            "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR___InDirection":                            "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR___OutDirection":                           "Tower B",
+  "APAC_IN_PUN_TOWER B_IBMS ROOM___InDirection":                                       "Tower B",
+  "APAC_IN_PUN_TOWER B_UPS ROOM___InDirection":                                        "Tower B",
+  "APAC_IN_PUN_TOWER B_MDF ROOM___InDirection":                                        "Tower B",
+  "APAC_IN_PUN_TOWER B_PAC ROOM___InDirection":                                        "Tower B",
+  "APAC_IN_PUN_TOWER B_IT STORE ROOM___InDirection":                                   "Tower B",
+  "APAC_IN_PUN_TOWER B_GYM ROOM___InDirection":                                        "Tower B GYM",
+  "APAC_IN_PUN_TOWER B_GYM ROOM___OutDirection":                                       "Tower B GYM",
+  "APAC_IN_PUN_TOWER B_SITE OPS STORE___InDirection":                                 "Tower B",
+
+
+ // ----- APAC-wide (from your Excel file) -----
+  // Kuala Lumpur
+  "APAC_MY_KL_MAIN ENTRANCE DOOR___InDirection":    "Kuala Lumpur",
+  "APAC_MY_KL_MAIN ENTRANCE DOOR___OutDirection":  "Out of office",
+  "APAC_MY_KL_INTERIOR RECEPTION DOOR___InDirection":"Kuala Lumpur",
+  "APAC_MY_KL_INTERIOR RECEPTION DOOR___OutDirection":"Kuala Lumpur",
+  "APAC_MY_KL_SIDE ENTRANCE DOOR NEW___InDirection":"Kuala Lumpur",
+  "APAC_MY_KL_SIDE ENTRANCE DOOR NEW___OutDirection":"Kuala Lumpur",
+  "APAC_MY_KL_PANTRY ENTRANCE DOOR NEW___InDirection":"Kuala Lumpur",
+  "APAC_MY_KL_PANTRY ENTRANCE DOOR NEW___OutDirection":"Kuala Lumpur",
+  "APAC_MY_KL_SERVER ROOM DOOR___InDirection":     "Kuala Lumpur",
+  "APAC_MY_KL_SERVER ROOM DOOR___OutDirection":    "Kuala Lumpur",
+
+  // Tokyo
+  "APAC_JPN_Tokyo_7th FLRSide Entrance___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLRSide Entrance___OutDirection":"Out of office",
+  "APAC_JPN_Tokyo_7th FLR_IT Room___InDirection":     "Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_IT Room___OutDirection":    "Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Main Entrance___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Main Entrance___OutDirection":"Out of office",
+  "APAC_JPN_Tokyo_7th FLR_Office Entrance___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Office Entrance___OutDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Side Entrance to Back Office___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Side Entrance to Back Office___OutDirection":"Out of office",
+
+  // Manila (6th & 7th Floor)
+  "APAC_PH_Manila_6th Floor Enrty Door 1___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor Enrty Door 1___OutDirection":"Out of office",
+  "APAC_PH_Manila_6th Floor Open Office 2___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor Open Office 2___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Entry Door 2___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Entry Door 2___OutDirection":"Out of office",
+  "APAC_PH_Manila_6th Floor_Entry Door 3___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Entry Door 3___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Exit Corridor___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Exit Corridor___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_IDF Restricted Door___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_IDF Restricted Door___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Mothers Room___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Mothers Room___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Print Area___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Print Area___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_UPS/Switch Restricted Door___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_UPS/Switch Restricted Door___OutDirection":"6th Floor",
+
+  "APAC_PH_Manila_7th Floor_Directors Office-708___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Directors Office-708___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Exit Corridore-704___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Exit Corridore-704___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_IT Work Room  725___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_IT Work Room  725___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_MDF-726 Restricted Door___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_MDF-726 Restricted Door___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 1-721___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 1-721___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 2-721___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 2-721___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Pantry-720a___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Pantry-720a___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Recption Door 1-701___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Recption Door 1-701___OutDirection":"Out of office",
+  "APAC_PH_Manila_7th Floor_Recption Door 2-701___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Recption Door 2-701___OutDirection":"Out of office",
+  "APAC_PH_Manila_7th Floor_Security Room-723___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Security Room-723___OutDirection":"7th Floor",
+
+  // PI Manila DR (Taguig)
+  "APAC_PI_Manila_DR_MainEntrance___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_MainEntrance___OutDirection":"Out of office",
+  "APAC_PI_Manila_DR_OfficeLobby___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_OfficeLobby___OutDirection":"Out of office",
+  "APAC_PI_Manila_DR_Server Restricted Door___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_Server Restricted Door___OutDirection":"Taguig",
+  "APAC_PI_Manila_DR_StorageRm___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_StorageRm___OutDirection":"Taguig",
+  "APAC_PI_Manila_Emerg Exit Dr- Lobby___InDirection":"Taguig",
+  "APAC_PI_Manila_Emerg Exit Dr- Lobby___OutDirection":"Taguig",
+  "APAC_PI_Manila_Emgerg DR_Storage RM___InDirection":"Taguig",
+  "APAC_PI_Manila_Emgerg DR_Storage RM___OutDirection":"Taguig",
+
+
+
+
+// --- Manila 7th Floor Reception Doors ---
+"APAC_PH_Manila_7th Floor Recption Door 1-701___InDirection":    "7th Floor",
+"APAC_PH_Manila_7th Floor Recption Door 1-701___OutDirection":   "Out of office",
+
+"APAC_PH_Manila_7th Floor Recption Door 2-701___InDirection":    "7th Floor",
+"APAC_PH_Manila_7th Floor Recption Door 2-701___OutDirection":   "Out of office",
+
+// --- Manila 7th Floor Open Office Door 2-721 ---
+"APAC_PH_Manila_7th Floor Open Office Door 2-721___InDirection":  "7th Floor",
+"APAC_PH_Manila_7th Floor Open Office Door 2-721___OutDirection": "7th Floor",
+
+// --- Manila 7th Floor IT Work Room  725 & Security Room 723 ---
+"APAC_PH_Manila_7th Floor IT Work Room  725___InDirection":      "7th Floor",
+"APAC_PH_Manila_7th Floor IT Work Room  725___OutDirection":     "7th Floor",
+
+"APAC_PH_Manila_7th Floor Security Room-723___InDirection":      "7th Floor",
+"APAC_PH_Manila_7th Floor Security Room-723___OutDirection":     "7th Floor",
+
+// --- Manila 6th Floor variants ---
+"APAC_PH_Manila_6th Floor Enrty Door 1___InDirection":           "6th Floor",
+"APAC_PH_Manila_6th Floor Enrty Door 1___OutDirection":          "Out of office",
+
+"APAC_PH_Manila_6th Floor Print Area___InDirection":             "6th Floor",
+"APAC_PH_Manila_6th Floor Print Area___OutDirection":            "6th Floor",
+
+"APAC_PH_Manila_6th Floor Entry Door 2___InDirection":           "6th Floor",
+"APAC_PH_Manila_6th Floor Entry Door 2___OutDirection":          "Out of office",
+
+"APAC_PH_Manila_6th Floor Entry Door 3___InDirection":           "6th Floor",
+"APAC_PH_Manila_6th Floor Entry Door 3___OutDirection":          "6th Floor",
+
+// --- Pune Tower B Lift Lobby Door (OutDirection) ---
+"APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR___OutDirection":            "Out of office",
+
+// --- Pune Turnstile 1 Exit Door (normalize the hyphen) ---
+"APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1 OUT DOOR___OutDirection":    "Out of office",
+
+// --- Taguig Main Entrance Door (InDirection) ---
+"APAC_PI_Manila_DR_MainEntrance___InDirection":                  "Taguig",
+"APAC_PI_Manila_DR_MainEntrance___OutDirection":                 "Out of office",
+
+// --- Tokyo 7th Floor Office Entrance (OutDirection) ---
+"APAC_JPN_Tokyo_7th FLR Office Entrance___OutDirection":        "Out of office",
+
+
+]
+
+
+
+
+// 2) zone → floor
+const zoneFloorMap = {
+  "Red Zone":                 "Podium Floor",
+  "Red Zone - Outer Area":    "Podium Floor",
+  "Yellow Zone":              "Podium Floor",
+  "Yellow Zone - Outer Area": "Podium Floor",
+  "Reception Area":           "Podium Floor",
+  "Green Zone":               "Podium Floor",
+  "Green Zone - Outer Area":  "Podium Floor",
+  "Orange Zone":              "Podium Floor",
+  "Orange Zone - Outer Area": "Podium Floor",
+  "2nd Floor, Pune":          "2nd Floor",
+  "2nd Floor, Pune - Outer Area": "2nd Floor",
+  "Tower B":                  "Tower B",
+  "Tower B - Outer Area":     "Tower B",
+  "Tower B GYM":              "Tower B",
+  "Tower B GYM - Outer Area": "Tower B",
+  "Kuala Lumpur":             "Kuala Lumpur",
+  "6th Floor":                "6th Floor",
+  "7th Floor":                "7th Floor",
+  "Tokyo":                    "Tokyo",
+  "Taguig":                   "Taguig",
+  // All true “Out of office” go to Unknown:
+  "Out of office":            null
 };
 
-export default function History() {
-  const { partition } = useParams();
-  const decodedPartition = partition ? decodeURIComponent(partition) : null;
 
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [pickedDate, setPickedDate] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
+// 3) How to derive partition for PartitionName2
+// 3) Partition → friendly name
+const partitionMap = {
+  'APAC_IN_PUN':    'Pune',
+  'APAC_PH_Manila': 'Quezon City',
+  'APAC_JPN_Tokyo': 'JP.Tokyo',
+  'APAC_MY_KL':     'MY.Kuala Lumpur',
+  'APAC_PI_Manila': 'Taguig City'
+};
 
-  // load history on mount or when partition changes
-  useEffect(() => {
-    setLoading(true);
-    fetchHistory(decodedPartition)
-      .then(json => setData(json))
-      .finally(() => setLoading(false));
-  }, [decodedPartition]);
 
-  // find the summary row for the selected date
-  const summaryEntry = useMemo(() => {
-    if (!data || !pickedDate) return null;
-    const ds = format(pickedDate, 'yyyy-MM-dd');
-    return data.summaryByDate.find(r => r.date === ds) || null;
-  }, [data, pickedDate]);
-
-  // build the summary table rows
-  const summaryRows = useMemo(() => {
-    if (!summaryEntry) return [];
-    return Object.entries(summaryEntry.partitions)
-      .filter(([key]) => !decodedPartition || key === decodedPartition)
-      .map(([key, vals]) => ({
-        location: apacPartitionNames[key] || key,
-        employees: vals.Employee ?? 0,
-        contractors: vals.Contractor ?? 0,
-        total: vals.total ?? 0
-      }));
-  }, [summaryEntry, decodedPartition]);
-
-  // build the details table rows
-  const detailRows = useMemo(() => {
-    if (!data || !pickedDate || !showDetails) return [];
-    const ds = format(pickedDate, 'yyyy-MM-dd');
-    return data.details
-      .filter(r => r.SwipeDate.slice(0, 10) === ds)
-      .filter(r => !decodedPartition || r.PartitionName2 === decodedPartition)
-      .map((r, i) => ({
-        sr: i + 1,
-        date: r.SwipeDate.slice(0, 10),
-        time: r.LocaleMessageTime.slice(11, 19),
-        employeeId: r.EmployeeID,
-        name: r.ObjectName1,
-        type: r.PersonnelType,
-        door: r.Door,
-        partition: apacPartitionNames[r.PartitionName2] || r.PartitionName2
-      }));
-  }, [data, pickedDate, decodedPartition, showDetails]);
-
-  const handleExport = () => {
-    const ws = XLSX.utils.json_to_sheet(detailRows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
-  };
-
-  if (loading) return <LoadingSpinner />;
-  if (!data) return null;
-
-  return (
-    <>
-      <Header />
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        <Box sx={{ px: 2, mb: 2 }}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Select date"
-              value={pickedDate}
-              onChange={d => { setPickedDate(d); setShowDetails(false); }}
-              renderInput={params => <TextField fullWidth {...params} />}
-            />
-          </LocalizationProvider>
-        </Box>
-
-        {pickedDate && summaryEntry && (
-          <Paper elevation={3} sx={{ mx: 2, mb: 2, p: 2 }}>
-            <Typography variant="h6" align="center" gutterBottom>
-              {format(pickedDate, 'EEEE, d MMMM yyyy')}
-            </Typography>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {['Location', 'Employees', 'Contractors', 'Total'].map(h => (
-                    <TableCell
-                      key={h}
-                      align={h === 'Location' ? 'left' : 'right'}
-                      sx={{ fontWeight: 'bold', bgcolor: '#FFC107' }}
-                    >
-                      {h}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {summaryRows.map((r, i) => (
-                  <TableRow key={i}>
-                    <TableCell>{r.location}</TableCell>
-                    <TableCell align="right">{r.employees}</TableCell>
-                    <TableCell align="right">{r.contractors}</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      {r.total}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                    {summaryRows.reduce((sum, r) => sum + r.employees, 0)}
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                    {summaryRows.reduce((sum, r) => sum + r.contractors, 0)}
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                    {summaryRows.reduce((sum, r) => sum + r.total, 0)}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            <Box display="flex" justifyContent="center" sx={{ mt: 2 }}>
-              <Button
-                variant="contained"
-                sx={{ bgcolor: '#FFC107', color: '#000' }}
-                onClick={() => setShowDetails(v => !v)}
-              >
-                {showDetails ? 'Hide Details' : 'Show Details'}
-              </Button>
-              {showDetails && (
-                <Button
-                  variant="outlined"
-                  sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-                  onClick={handleExport}
-                >
-                  Export to Excel
-                </Button>
-              )}
-            </Box>
-          </Paper>
-        )}
-
-        {showDetails && detailRows.length > 0 && (
-          <Paper elevation={3} sx={{ mx: 2, p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Detailed Swipe Records
-            </Typography>
-            <Table size="small">
-              <TableHead>
-                <TableRow sx={{ bgcolor: '#000' }}>
-                  {[
-                    'Sr', 'Date', 'Time', 'Employee ID',
-                    'Name', 'Personnel Type', 'Door', 'Partition'
-                  ].map(h => (
-                    <TableCell key={h} align="center" sx={{ color: '#FFC107', fontWeight: 'bold' }}>
-                      {h}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {detailRows.map((r, i) => (
-                  <TableRow key={i}>
-                    <TableCell align="center">{r.sr}</TableCell>
-                    <TableCell align="center">{r.date}</TableCell>
-                    <TableCell align="center">{r.time}</TableCell>
-                    <TableCell align="center">{r.employeeId}</TableCell>
-                    <TableCell align="center">{r.name}</TableCell>
-                    <TableCell align="center">{r.type}</TableCell>
-                    <TableCell align="center">{r.door}</TableCell>
-                    <TableCell align="center">{r.partition}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
-        )}
-      </Container>
-      <Footer />
-    </>
-  );
-}
+export default doorMap;
