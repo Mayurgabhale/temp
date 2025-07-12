@@ -1,12 +1,10 @@
-please and please slove the problme right now percentage are not show in pie chart pleae fixed the issue
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function PieChartCard({
   title,
-  data,
+  data = [],
   colors = ['#FFC107', '#E0E0E0'],
   height = 300,
   showZeroSlice = false,
@@ -14,9 +12,22 @@ export default function PieChartCard({
   noDataMessage = 'No realtime data',
   totalSeats = 0,
 }) {
+  const [processedData, setProcessedData] = useState([]);
 
+  useEffect(() => {
+    const total = data.reduce((sum, d) => sum + (d?.value || 0), 0);
 
-  const total = data.reduce((sum, d) => sum + d.value, 0);
+    if (total === 0 && showZeroSlice) {
+      // Show dummy data to force chart to render
+      setProcessedData([{ name: 'Available', value: 1 }]);
+    } else if (total > 0) {
+      setProcessedData(data);
+    } else {
+      setProcessedData([]);
+    }
+  }, [data, showZeroSlice]);
+
+  const total = processedData.reduce((sum, d) => sum + d.value, 0);
 
   if (total === 0 && !showZeroSlice) {
     return (
@@ -33,28 +44,17 @@ export default function PieChartCard({
     );
   }
 
-  // If zero, and showZeroSlice==true, show single “Available” slice
-  const renderData = (total === 0 && showZeroSlice)
-    ? [{ name: 'Available', value: 1 }] // dummy slice to force label
-    : data;
-
   return (
     <Card sx={cardStyle(colors[0])}>
       <CardContent sx={{ p: 1 }}>
         <Typography variant="subtitle1" align="center" color="text.primary">
           {title}
         </Typography>
-        {/* <Box sx={{ width:'100%', height }}>
-          <ResponsiveContainer>
-            <PieChart> */}
-        {/* wrap in relative container so we can overlay the total */}
         <Box sx={{ position: 'relative', width: '100%', height }}>
-
           <ResponsiveContainer>
             <PieChart>
-
               <Pie
-                data={renderData}
+                data={processedData}
                 dataKey="value"
                 nameKey="name"
                 innerRadius={70}
@@ -65,28 +65,20 @@ export default function PieChartCard({
                 labelLine={false}
                 label={({ percent }) => (percent > 0 ? `${(percent * 100).toFixed(0)}%` : '')}
               >
-                {renderData.map((_, i) => (
+                {processedData.map((_, i) => (
                   <Cell key={i} fill={colors[i % colors.length]} />
                 ))}
               </Pie>
-              {/* <Tooltip contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }} /> */}
               <Tooltip content={<CustomTooltip />} />
               <Legend
                 verticalAlign="bottom"
                 wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
                 formatter={(value, entry) => `${value}: ${entry.payload.value}`}
               />
-
-
-              {/* </PieChart>
-            
-          </ResponsiveContainer>
-        </Box> */}
-
             </PieChart>
           </ResponsiveContainer>
 
-          {/* centered total */}
+          {/* Centered total */}
           <Box
             component="div"
             sx={{
@@ -100,26 +92,14 @@ export default function PieChartCard({
             <Typography variant="h4" align="center" sx={{ color: colors[0], fontWeight: 'bold' }}>
               {total}
             </Typography>
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-            </Typography>
-
-
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              {/* of {totalSeats} seats */}
-            </Typography>
-
           </Box>
-
-
         </Box>
-
       </CardContent>
     </Card>
   );
 }
 
-
-
+// Custom Tooltip (unchanged)
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length > 0) {
     const data = payload[0].payload;
@@ -135,7 +115,6 @@ const CustomTooltip = ({ active, payload }) => {
       >
         <Typography variant="body2" sx={{ color: '#000' }}><strong>{data.name}</strong></Typography>
         <Typography variant="body2" sx={{ color: '#000' }}>Total: {data.value}</Typography>
-
         {data.Employee !== undefined && (
           <Typography variant="body2" sx={{ color: '#000' }}>Employees: {data.Employee}</Typography>
         )}
@@ -145,45 +124,16 @@ const CustomTooltip = ({ active, payload }) => {
       </Box>
     );
   }
-
   return null;
 };
 
+// Card style
 const cardStyle = borderColor => ({
-  // border: `1px solid ${borderColor}`,
   borderRadius: 2,
   bgcolor: 'rgba(0,0,0,0.4)',
-  // overflow: 'hidden',
   transition: 'transform 0.3s, box-shadow 0.3s',
   '&:hover': {
     transform: 'scale(1.02)',
     boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
-
-
-
-
-( NOTE when i used this code 
-// export async function fetchLiveSummary() {
-//   if (cache.liveSummary) {
-//     return cache.liveSummary;
-//   }
-//   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-//   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-//   const json = await res.json();
-//   cache.liveSummary = json;
-//   return json;
-// }
-
- then percentage are disply but,
-
-
-when i used this code then not show. but is wanto to use this 
-export async function fetchLiveSummary() {
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);   // live data fetch
-  return res.json();
-}
-
   }
 });
-
