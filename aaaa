@@ -1,19 +1,21 @@
-// export async function fetchLiveSummary() {
-//   if (cache.liveSummary) {
-//     return cache.liveSummary;
-//   }
-//   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-//   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-//   const json = await res.json();
-//   cache.liveSummary = json;
-//   return json;
-// }
+let cache = {
+  liveSummary: null,
+};
 
-
-
-i want ot convert this function in to above function
 export async function fetchLiveSummary() {
+  // Return cached result if available
+  if (cache.liveSummary) {
+    return cache.liveSummary;
+  }
+
+  // Fetch from API
   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);   // live data fetch
-  return res.json();
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+
+  const json = await res.json();
+
+  // Store in cache
+  cache.liveSummary = json;
+
+  return json;
 }
