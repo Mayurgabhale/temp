@@ -1,29 +1,10 @@
-<Pie
-  data={renderData}
-  dataKey="value"
-  nameKey="name"
-  innerRadius={70}
-  outerRadius={120}
-  paddingAngle={4}
-  isAnimationActive
-  animationDuration={animationDuration}
-  label={({ percent, x, y }) =>
-    percent !== undefined ? (
-      <text
-        x={x}
-        y={y}
-        fill="#FFFFFF"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={12}
-      >
-        {(percent * 100).toFixed(0)}%
-      </text>
-    ) : null
+export async function fetchLiveSummary() {
+  if (cache.liveSummary) {
+    return cache.liveSummary;
   }
-  labelLine={false}
->
-  {renderData.map((_, i) => (
-    <Cell key={i} fill={colors[i % colors.length]} />
-  ))}
-</Pie>
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.liveSummary = json;
+  return json;
+}
