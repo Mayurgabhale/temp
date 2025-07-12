@@ -1,16 +1,17 @@
-// src/data/buildingCapacities.js
+// src/data/floorCapacities.js
 /**
- * Total capacity per building (for SummaryCards, etc.)
+ * If you chart individual floors rather than buildings,
+ * use these numbers.
  */
-const buildingCapacities = {
-  "Podium Floor (Pune)": 725,
-  "Tower B (Pune)":      303,
-  "2nd Floor (Pune)":    185,
-  "Kuala Lumpur":        600,  // example
-  "Tokyo":               350,  // example
-  "6th Floor":           200,  // Manila
-  "7th Floor":           180,  // Manila
-  "Taguig":              220,  // PI Manila
+const floorCapacities = {
+  "Podium Floor": 725,
+  "Tower B":      303,
+  "2nd Floor":    185,
+  "Kuala Lumpur": 600,
+  "Tokyo":        350,
+  "6th Floor":    200,
+  "7th Floor":    180,
+  "Taguig":       220,
 };
 
-export default buildingCapacities;
+export default floorCapacities;
