@@ -1,10 +1,5 @@
-export async function fetchLiveSummary() {
-  if (cache.liveSummary) {
-    return cache.liveSummary;
-  }
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.liveSummary = json;
-  return json;
-}
+// export async function fetchLiveSummary() {
+//   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+//   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);   // live data fetch
+//   return res.json();
+// }
