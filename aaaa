@@ -9,6 +9,23 @@
 //   return json;
 // }
 
+What is is different between thies two fucntion becaeu 
+i used below fucniton thie two things are not displying please slove the probl e
+ {/* Show % on top of each bar */}
+                <LabelList
+                  dataKey="headcount"
+                  position="top"
+                  formatter={val => `${val}`}
+                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+                />
+
+                {/* Percentage centered inside each bar */}
+                  <LabelList
+                  dataKey="percentage"
+                  position="inside"
+                  formatter={val => `${val}%`}
+                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
+                />
 
 
 export async function fetchLiveSummary() {
