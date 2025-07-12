@@ -1,34 +1,14 @@
-// src/utils/zoneFloorMap.js
+// src/utils/partitionMap.js
 /**
- * Map from zone (e.g. "Red Zone", "Out of office") to the
- * canonical floor name used by your floor‐capacity chart.
+ * How to translate the raw partition codes into the
+ * names your API expects (and your UI shows).
  */
-const zoneFloorMap = {
-  "Red Zone":                 "Podium Floor",
-  "Red Zone - Outer Area":    "Podium Floor",
-  "Yellow Zone":              "Podium Floor",
-  "Yellow Zone - Outer Area": "Podium Floor",
-  "Reception Area":           "Podium Floor",
-  "Green Zone":               "Podium Floor",
-  "Green Zone - Outer Area":  "Podium Floor",
-  "Orange Zone":              "Podium Floor",
-  "Orange Zone - Outer Area": "Podium Floor",
-
-  "2nd Floor, Pune":          "2nd Floor",
-  "2nd Floor, Pune - Outer Area": "2nd Floor",
-
-  "Tower B":                  "Tower B",
-  "Tower B GYM":              "Tower B",
-
-  // Kuala Lumpur, Tokyo, Manila, Taguig…
-  "Kuala Lumpur":             "Kuala Lumpur",
-  "Tokyo":                    "Tokyo",
-  "6th Floor":                "6th Floor",
-  "7th Floor":                "7th Floor",
-  "Taguig":                   "Taguig",
-
-  // true “Out of office” only:
-  "Out of office":            null
+const partitionMap = {
+  "APAC_IN_PUN":     "IN.Pune",
+  "APAC_PH_Manila":  "PH.Quezon",
+  "APAC_PI_Manila":  "PH.Taguig",
+  "APAC_JPN_Tokyo":  "JP.Tokyo",
+  "APAC_MY_KL":      "MY.Kuala Lumpur",
 };
 
-export default zoneFloorMap;
+export default partitionMap;
