@@ -2,27 +2,27 @@
   yAxisId="left"
   dataKey="headcount"
   name="Headcount"
-  barSize={40} // ✅ was 600, too large
-  ...
+  barSize={40} // ✅ smaller
+  isAnimationActive={false} // ✅ for debugging
 >
   {enriched.map((entry, idx) => (
     <Cell key={`cell-${idx}`} fill={entry._color} />
   ))}
 
-  {/* Show headcount on top of each bar */}
+  {/* Top headcount */}
   <LabelList
     dataKey="headcount"
     position="top"
     formatter={(val) => `${val}`}
-    style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+    style={{ fill: '#fff', fontSize: 14, fontWeight: 700 }}
   />
 
-  {/* Show percentage inside each bar */}
+  {/* Inside percentage */}
   <LabelList
     dataKey="percentage"
     position="inside"
-    formatter={(val) => `${val}%`}
-    style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
     valueAccessor={(entry) => entry.percentage}
+    formatter={(val) => `${val}%`}
+    style={{ fill: '#fff', fontSize: 14, fontWeight: 700 }}
   />
 </Bar>
