@@ -1,19 +1,26 @@
-<PieChart width={400} height={400}>
-  <Pie
-    data={[
-      { name: 'Occupied', value: 60 },
-      { name: 'Available', value: 40 },
-    ]}
-    dataKey="value"
-    nameKey="name"
-    outerRadius={120}
-    innerRadius={70}
-    paddingAngle={4}
-    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-    labelLine={false}
-    isAnimationActive={false}
-  >
-    <Cell fill="#FFC107" />
-    <Cell fill="#E0E0E0" />
-  </Pie>
-</PieChart>
+<ResponsiveContainer width="100%" height="100%">
+  <PieChart>
+    <Pie
+      data={renderData}
+      dataKey="value"
+      nameKey="name"
+      innerRadius={70}
+      outerRadius={120}
+      paddingAngle={4}
+      isAnimationActive
+      animationDuration={animationDuration}
+      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+      labelLine={false}
+    >
+      {renderData.map((_, i) => (
+        <Cell key={i} fill={colors[i % colors.length]} />
+      ))}
+    </Pie>
+    <Tooltip content={<CustomTooltip />} />
+    <Legend
+      verticalAlign="bottom"
+      wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
+      formatter={(value, entry) => `${value}: ${entry.payload.value}`}
+    />
+  </PieChart>
+</ResponsiveContainer>
