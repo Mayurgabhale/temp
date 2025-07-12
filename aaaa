@@ -1,21 +1,5 @@
-let cache = {
-  liveSummary: null,
-};
-
 export async function fetchLiveSummary() {
-  // Return cached result if available
-  if (cache.liveSummary) {
-    return cache.liveSummary;
-  }
-
-  // Fetch from API
   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-
-  const json = await res.json();
-
-  // Store in cache
-  cache.liveSummary = json;
-
-  return json;
+  return res.json();
 }
