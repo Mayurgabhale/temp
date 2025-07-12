@@ -1,17 +1,53 @@
-// src/data/floorCapacities.js
-/**
- * If you chart individual floors rather than buildings,
- * use these numbers.
- */
-const floorCapacities = {
-  "Podium Floor": 725,
-  "Tower B":      303,
-  "2nd Floor":    185,
-  "Kuala Lumpur": 600,
-  "Tokyo":        350,
-  "6th Floor":    200,
-  "7th Floor":    180,
-  "Taguig":       220,
+// src/api/occupancy.service.js
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
+
+// Simple in-memory cache
+const cache = {
+  liveSummary: null,
+  history:     new Map(),  // key: partition code or 'global'
 };
 
-export default floorCapacities;
+/**
+ * Fetch live summary (no caching).
+ */
+export async function fetchLiveSummary() {
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Fetch history (global or per-partition) & cache it.
+ * @param {string} [location] — e.g. 'IN.Pune'
+ */
+export async function fetchHistory(location) {
+  const key = location || 'global';
+  if (cache.history.has(key)) {
+    return cache.history.get(key);
+  }
+  const url = location
+    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
+    : `${BASE}/api/occupancy/history`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.history.set(key, json);
+  return json;
+}
+
+export function clearCache() {
+  cache.liveSummary = null;
+  cache.history.clear();
+}
+
+/**
+ * List of APAC partitions for your Dashboard’s selector.
+ */
+export const apacPartitionList = [
+  'IN.Pune',
+  'MY.Kuala Lumpur',
+  'PH.Quezon',
+  'PH.Taguig',
+  'JP.Tokyo'
+];
