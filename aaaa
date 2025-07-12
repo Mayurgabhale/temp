@@ -1,10 +1,12 @@
-<PieChartCard
-  title="Region Split"
-  data={pieData1}
-  colors={['#FFB74D', '#4DB6AC', '#9575CD']}
-  innerRadius={60}
-  outerRadius={120}
-  height={400}
-  showZeroSlice
-  animationDuration={1500}
-/>
+export default function PieChartCard({
+  title,
+  data,
+  colors = ['#FFC107', '#E0E0E0'],
+  height = 300,
+  innerRadius = 70,
+  outerRadius = 120,
+  showZeroSlice = false,
+  animationDuration = 1500,
+  noDataMessage = 'No realtime data',
+  totalSeats = 0,
+}) {
