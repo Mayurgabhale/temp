@@ -1,44 +1,34 @@
-// src/utils/doorMap.js
-
+// src/utils/zoneFloorMap.js
 /**
- * Maps each raw PartitionName2 + Direction key
- * to a zone (e.g. "Red Zone", "Out of office", etc.).
+ * Map from zone (e.g. "Red Zone", "Out of office") to the
+ * canonical floor name used by your floor‐capacity chart.
  */
-const rawZoneMap = {
-  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection":        "Red Zone",
-  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection":                      "Red Zone",
-  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___OutDirection":                     "Red Zone",
-  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___InDirection":      "Red Zone",
-  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___OutDirection":     "Out of office",
-  // … (all your other entries here) …
-  "APAC_JPN_Tokyo_7th FLR Office Entrance___OutDirection":                 "Out of office",
+const zoneFloorMap = {
+  "Red Zone":                 "Podium Floor",
+  "Red Zone - Outer Area":    "Podium Floor",
+  "Yellow Zone":              "Podium Floor",
+  "Yellow Zone - Outer Area": "Podium Floor",
+  "Reception Area":           "Podium Floor",
+  "Green Zone":               "Podium Floor",
+  "Green Zone - Outer Area":  "Podium Floor",
+  "Orange Zone":              "Podium Floor",
+  "Orange Zone - Outer Area": "Podium Floor",
+
+  "2nd Floor, Pune":          "2nd Floor",
+  "2nd Floor, Pune - Outer Area": "2nd Floor",
+
+  "Tower B":                  "Tower B",
+  "Tower B GYM":              "Tower B",
+
+  // Kuala Lumpur, Tokyo, Manila, Taguig…
+  "Kuala Lumpur":             "Kuala Lumpur",
+  "Tokyo":                    "Tokyo",
+  "6th Floor":                "6th Floor",
+  "7th Floor":                "7th Floor",
+  "Taguig":                   "Taguig",
+
+  // true “Out of office” only:
+  "Out of office":            null
 };
 
-/**
- * doorMap: array of objects with explicit partition, door, and in/out-floor values.
- * We split the raw key into partition, door and direction, then look up the zone,
- * and finally translate zone → actual floor name in zoneFloorMap.
- */
-import zoneFloorMap from './zoneFloorMap';
-import partitionMap from './partitionMap';
-
-const doorMap = Object.entries(rawZoneMap).map(([rawKey, zone]) => {
-  // rawKey is like "APAC_IN_PUN_PODIUM_RED_…___InDirection"
-  const [fullName, direction] = rawKey.split('___');
-  // partition is first two tokens, e.g. "APAC_IN_PUN"
-  const [partition, ...doorParts] = fullName.split('_').slice(0, 2).join('_')
-    ? fullName.split('_').reduce((acc, tok, idx) => idx < 3 ? [...acc, tok] : acc, []).join('_').split('_')
-    : fullName.split('_');
-  const partKey = fullName.split('_').slice(0, 3).join('_'); // e.g. "APAC_IN_PUN"
-  const door = fullName.replace(`${partKey}_`, '').trim();
-
-  return {
-    partition: partKey,
-    door,
-    zone,
-    inDirectionFloor: zoneFloorMap[zone],
-    outDirectionFloor: zoneFloorMap[zone],
-  };
-});
-
-export default doorMap;
+export default zoneFloorMap;
