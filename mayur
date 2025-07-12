@@ -1,1 +1,548 @@
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\CompositeChartCard.jsx
 
+
+// src/components/CompositeChartCard.jsx
+
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+  LabelList,
+  Cell
+} from 'recharts';
+
+
+
+const DARK_TO_LIGHT = [
+  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
+  '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
+  ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
+  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
+];
+
+export default function CompositeChartCard({
+  title,
+  data,
+  lineColor = '#fff',
+  height = 300,
+  animationDuration = 1500,
+  animationEasing = 'ease-in-out'
+}) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.secondary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+            No realtime employee data
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+  // Enrich each datum with its usage percentage
+  const enriched = data.map((d, i) => ({
+    ...d,
+    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+  }));
+  const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
+  const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
+  const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
+  return (
+    <Card
+      sx={{
+        // border: `1px solid ${lineColor}`,
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'rgba(0,0,0,0.4)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+        }
+      }}
+    >
+      <CardContent sx={{ p: 1 }}>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          gutterBottom
+          sx={{ color: '#FFC107' }}
+        >
+          {title}
+        </Typography>
+
+
+
+
+
+
+        <Box sx={{ width: '100%', height }}>
+          <ResponsiveContainer>
+            <ComposedChart
+              data={enriched}
+              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+
+
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                tickFormatter={(label, index) => {
+                  const strLabel = String(label);
+                  const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
+                  const floorNum = parseInt(match?.[0], 10);
+
+                  if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
+
+                  const suffix = (n) => {
+                    if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+                    switch (n % 10) {
+                      case 1: return `${n}st`;
+                      case 2: return `${n}nd`;
+                      case 3: return `${n}rd`;
+                      default: return `${n}th`;
+                    }
+                  };
+
+                  return suffix(floorNum);
+                }}
+              />
+
+
+              <YAxis
+                yAxisId="left"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+              />
+
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(255,255,255,0.6)"
+                domain={[0, 100]}
+                tickFormatter={val => `${val}%`}
+              />
+
+              {/* <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
+                formatter={(value, name) => 
+                  name === 'percentage' ? `${value}%` : value
+                }
+              /> */}
+
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
+                // custom content so we can show capacity only on hover
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const datum = payload[0].payload;
+                  return (
+                    <div style={{
+                      backgroundColor: '#FFD666',
+                      border: `1px solid ${lineColor}`,
+                      borderRadius: 4,
+                      padding: 8,
+                    }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+                      <div>Headcount: {datum.headcount}</div>
+                      <div>Usage %: {datum.percentage}%</div>
+                      <div>Seat Capacity: {datum.capacity}</div>
+                    </div>
+                  );
+                }}
+              />
+
+
+              {/* Headcount bars with per-bar colors & percentage labels */}
+              <Bar
+                yAxisId="left"
+                dataKey="headcount"
+                name="Headcount"
+                barSize={700}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              >
+                {enriched.map((entry, idx) => (
+                  <Cell key={`cell-${idx}`} fill={entry._color} />
+                ))}
+
+
+                {/* Show % on top of each bar */}
+                <LabelList
+                  dataKey="headcount"
+                  position="top"
+                  formatter={val => `${val}`}
+                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+                />
+
+                {/* Percentage centered inside each bar */}
+                <LabelList
+                  dataKey="percentage"
+                  position="inside"
+                  formatter={val => `${val}%`}
+                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
+                />
+              </Bar>
+
+
+              {/* Seat Capacity line */}
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="percentage"
+                name="Usage %"
+                stroke={lineColor}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+
+              {/* Optional: draw capacity as second line */}
+              <Line
+                yAxisId="left"
+                type="monotone"
+
+                //  dataKey="capacity"
+                name="Total Seats"
+                stroke="#81C784"
+                strokeDasharray="5 5"
+                dot={false}
+                isAnimationActive
+                animationDuration={animationDuration}
+                animationEasing={animationEasing}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 4,
+            alignItems: 'center',
+            mb: 1,
+            fontWeight: 'bold',
+            fontSize: 16
+          }}
+        >
+          <Box sx={{ color: '#FFD700' /* Yellow */ }}>
+            Total Headcount: {totalHeadcount}
+          </Box>
+          <Box sx={{ color: '#4CAF50' /* Green */ }}>
+            Total Seats: {totalCapacity}
+          </Box>
+          <Box sx={{ color: '#FF4C4C' /* Red */ }}>
+            Usage: {avgUsage}%
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\PieChartCard.jsx
+
+
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+export default function PieChartCard({
+  title,
+  data,
+  colors = ['#FFC107', '#E0E0E0'],
+  height = 300,
+  showZeroSlice = false,
+  animationDuration = 1500,
+  noDataMessage = 'No realtime data',
+  totalSeats = 0,
+}) {
+
+
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+
+  if (total === 0 && !showZeroSlice) {
+    return (
+      <Card sx={cardStyle(colors[0])}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.primary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 2, color: 'text.secondary' }}>
+            {noDataMessage}
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // If zero, and showZeroSlice==true, show single “Available” slice
+  const renderData = (total === 0 && showZeroSlice)
+    ? [{ name: 'Available', value: data[1]?.value || 0 }]
+    : data;
+
+  return (
+    <Card sx={cardStyle(colors[0])}>
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" color="text.primary">
+          {title}
+        </Typography>
+        {/* <Box sx={{ width:'100%', height }}>
+          <ResponsiveContainer>
+            <PieChart> */}
+        {/* wrap in relative container so we can overlay the total */}
+        <Box sx={{ position: 'relative', width: '100%', height }}>
+
+          <ResponsiveContainer>
+            <PieChart>
+
+              <Pie
+                data={renderData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={70}
+                outerRadius={120}
+                paddingAngle={4}
+                isAnimationActive
+                animationDuration={animationDuration}
+                // show percent labels inside each slice
+                label={({ percent, }) => `${(percent * 100).toFixed(0)}%`}
+                
+                
+                labelLine={false}
+
+              >
+                {renderData.map((_, i) => (
+                  <Cell key={i} fill={colors[i % colors.length]} />
+                ))}
+              </Pie>
+              {/* <Tooltip contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }} /> */}
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                verticalAlign="bottom"
+                wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
+                formatter={(value, entry) => `${value}: ${entry.payload.value}`}
+              />
+
+
+              {/* </PieChart>
+            
+          </ResponsiveContainer>
+        </Box> */}
+
+            </PieChart>
+          </ResponsiveContainer>
+
+          {/* centered total */}
+          <Box
+            component="div"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              pointerEvents: 'none'
+            }}
+          >
+            <Typography variant="h4" align="center" sx={{ color: colors[0], fontWeight: 'bold' }}>
+              {total}
+            </Typography>
+            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+            </Typography>
+
+
+            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+              {/* of {totalSeats} seats */}
+            </Typography>
+
+          </Box>
+
+
+        </Box>
+
+      </CardContent>
+    </Card>
+  );
+}
+
+
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length > 0) {
+    const data = payload[0].payload;
+    return (
+      <Box
+        sx={{
+          bgcolor: '#FFEE8C',
+          p: 3,
+          border: '1px solid #FFC107',
+          borderRadius: 1,
+          color: '#FFC107'
+        }}
+      >
+        <Typography variant="body2" sx={{ color: '#000' }}><strong>{data.name}</strong></Typography>
+        <Typography variant="body2" sx={{ color: '#000' }}>Total: {data.value}</Typography>
+
+        {data.Employee !== undefined && (
+          <Typography variant="body2" sx={{ color: '#000' }}>Employees: {data.Employee}</Typography>
+        )}
+        {data.Contractor !== undefined && (
+          <Typography variant="body2" sx={{ color: '#000' }}>Contractors: {data.Contractor}</Typography>
+        )}
+      </Box>
+    );
+  }
+
+  return null;
+};
+
+const cardStyle = borderColor => ({
+  // border: `1px solid ${borderColor}`,
+  borderRadius: 2,
+  bgcolor: 'rgba(0,0,0,0.4)',
+  // overflow: 'hidden',
+  transition: 'transform 0.3s, box-shadow 0.3s',
+  '&:hover': {
+    transform: 'scale(1.02)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+  }
+});
+
+
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\api\occupancy.service.js
+
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3005';
+
+// In-memory cache
+const cache = {
+  liveSummary: null,
+  history: new Map(),  // key: partition code or 'global'
+};
+
+/**
+ * Fetch live summary, caching for session.
+ */
+
+
+
+export async function fetchLiveSummary() {
+  if (cache.liveSummary) {
+    return cache.liveSummary;
+  }
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.liveSummary = json;
+  return json;
+}
+
+
+
+// export async function fetchLiveSummary() {
+//   // always fetch fresh data (no in-memory caching)
+//   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+//   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+//   return res.json();
+// }
+
+
+/**
+ * Fetch history (global or per-partition), caching for session.
+ * @param {string} [location] — partition identifier, e.g. 'LT.Vilnius'
+ */
+export async function fetchHistory(location) {
+  const key = location || 'global';
+  if (cache.history.has(key)) {
+    return cache.history.get(key);
+  }
+  const url = location
+    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
+    : `${BASE}/api/occupancy/history`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.history.set(key, json);
+  return json;
+}
+
+/**
+ * Clear all cached data (if you need to force a fresh fetch).
+ */
+export function clearCache() {
+  cache.liveSummary = null;
+  cache.history.clear();
+}
+
+// --- list of EMEA partitions for Dashboard
+export const partitionList = [
+  'AUT.Vienna',
+  'DU.Abu Dhab',
+  'IE.Dublin',
+  'IT.Rome',
+  'LT.Vilnius',
+  'MA.Casablanca',
+  'RU.Moscow',
+  'UK.London',
+  'ES.Madrid'
+];
+
+in a occupancy.service.js when i used  this  >>>>>    // export async function fetchLiveSummary() {
+                                                //   // always fetch fresh data (no in-memory caching)
+                                                //   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+                                                //   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+                                                //   return res.json();
+                                                // }
+
+the problem is to not disply this two 
+Show % on top of each bar
+Percentage centered inside each bar
+ {/* Show % on top of each bar */}
+                <LabelList
+                  dataKey="headcount"
+                  position="top"
+                  formatter={val => `${val}`}
+                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
+                />
+
+                {/* Percentage centered inside each bar */}
+                  <LabelList
+                  dataKey="percentage"
+                  position="inside"
+                  formatter={val => `${val}%`}
+                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
+                />
+
+whem i used this   export async function fetchLiveSummary() {
+  if (cache.liveSummary) {
+    return cache.liveSummary;
+  }
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.liveSummary = json;
+  return json;
+} is disply 
+
+but  the problme is to live but i want live ok so what is the problem please slove carefully 
