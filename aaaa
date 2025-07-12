@@ -1,25 +1,46 @@
-see this is  my pie chart code add in this carefully 
-
-
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\PieChartCard.jsx
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+const BASE = 'http://your-api-base-url.com'; // 🔁 replace this with your actual base URL
+
 export default function PieChartCard({
   title,
-  data,
   colors = ['#FFC107', '#E0E0E0'],
   height = 300,
   showZeroSlice = false,
   animationDuration = 1500,
   noDataMessage = 'No realtime data',
-  totalSeats = 0,
 }) {
+  const [liveData, setLiveData] = useState([]);
+  const [total, setTotal] = useState(0);
 
+  const fetchLiveSummary = async () => {
+    try {
+      const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+      if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+      const json = await res.json();
 
-  const total = data.reduce((sum, d) => sum + d.value, 0);
+      const occupied = json.occupied || 0;
+      const available = json.available || 0;
+
+      const formatted = [
+        { name: 'Occupied', value: occupied },
+        { name: 'Available', value: available }
+      ];
+
+      setLiveData(formatted);
+      setTotal(occupied + available);
+    } catch (err) {
+      console.error('Live summary fetch error:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveSummary(); // First fetch
+    const interval = setInterval(fetchLiveSummary, 10000); // Every 10 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   if (total === 0 && !showZeroSlice) {
     return (
@@ -36,10 +57,9 @@ export default function PieChartCard({
     );
   }
 
-  // If zero, and showZeroSlice==true, show single “Available” slice
   const renderData = (total === 0 && showZeroSlice)
-    ? [{ name: 'Available', value: data[1]?.value || 0 }]
-    : data;
+    ? [{ name: 'Available', value: liveData[1]?.value || 0 }]
+    : liveData;
 
   return (
     <Card sx={cardStyle(colors[0])}>
@@ -47,51 +67,35 @@ export default function PieChartCard({
         <Typography variant="subtitle1" align="center" color="text.primary">
           {title}
         </Typography>
-        {/* <Box sx={{ width:'100%', height }}>
-          <ResponsiveContainer>
-            <PieChart> */}
-        {/* wrap in relative container so we can overlay the total */}
-        <Box sx={{ position: 'relative', width: '100%', height }}>
 
+        <Box sx={{ position: 'relative', width: '100%', height }}>
           <ResponsiveContainer>
             <PieChart>
-
-             <Pie
-  data={renderData}
-  dataKey="value"
-  nameKey="name"
-  innerRadius={70}
-  outerRadius={120}
-  paddingAngle={4}
-  isAnimationActive
-  animationDuration={animationDuration}
-  labelLine={false}
-  label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
->
+              <Pie
+                data={renderData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={70}
+                outerRadius={120}
+                paddingAngle={4}
+                isAnimationActive
+                animationDuration={animationDuration}
+                labelLine={false}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              >
                 {renderData.map((_, i) => (
                   <Cell key={i} fill={colors[i % colors.length]} />
                 ))}
-
-
               </Pie>
-              {/* <Tooltip contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }} /> */}
               <Tooltip content={<CustomTooltip />} />
               <Legend
                 verticalAlign="bottom"
                 wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
                 formatter={(value, entry) => `${value}: ${entry.payload.value}`}
               />
-
-
-              {/* </PieChart>
-            
-          </ResponsiveContainer>
-        </Box> */}
-
             </PieChart>
           </ResponsiveContainer>
 
-          {/* centered total */}
           <Box
             component="div"
             sx={{
@@ -105,25 +109,13 @@ export default function PieChartCard({
             <Typography variant="h4" align="center" sx={{ color: colors[0], fontWeight: 'bold' }}>
               {total}
             </Typography>
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-            </Typography>
-
-
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              {/* of {totalSeats} seats */}
-            </Typography>
-
+            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }} />
           </Box>
-
-
         </Box>
-
       </CardContent>
     </Card>
   );
 }
-
-
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length > 0) {
@@ -138,14 +130,22 @@ const CustomTooltip = ({ active, payload }) => {
           color: '#FFC107'
         }}
       >
-        <Typography variant="body2" sx={{ color: '#000' }}><strong>{data.name}</strong></Typography>
-        <Typography variant="body2" sx={{ color: '#000' }}>Total: {data.value}</Typography>
+        <Typography variant="body2" sx={{ color: '#000' }}>
+          <strong>{data.name}</strong>
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#000' }}>
+          Total: {data.value}
+        </Typography>
 
         {data.Employee !== undefined && (
-          <Typography variant="body2" sx={{ color: '#000' }}>Employees: {data.Employee}</Typography>
+          <Typography variant="body2" sx={{ color: '#000' }}>
+            Employees: {data.Employee}
+          </Typography>
         )}
         {data.Contractor !== undefined && (
-          <Typography variant="body2" sx={{ color: '#000' }}>Contractors: {data.Contractor}</Typography>
+          <Typography variant="body2" sx={{ color: '#000' }}>
+            Contractors: {data.Contractor}
+          </Typography>
         )}
       </Box>
     );
@@ -155,17 +155,11 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const cardStyle = borderColor => ({
-  // border: `1px solid ${borderColor}`,
   borderRadius: 2,
   bgcolor: 'rgba(0,0,0,0.4)',
-  // overflow: 'hidden',
   transition: 'transform 0.3s, box-shadow 0.3s',
   '&:hover': {
     transform: 'scale(1.02)',
     boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
   }
 });
-
-
-
-
