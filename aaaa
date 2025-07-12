@@ -1,14 +1,16 @@
-// src/utils/partitionMap.js
+// src/data/buildingCapacities.js
 /**
- * How to translate the raw partition codes into the
- * names your API expects (and your UI shows).
+ * Total capacity per building (for SummaryCards, etc.)
  */
-const partitionMap = {
-  "APAC_IN_PUN":     "IN.Pune",
-  "APAC_PH_Manila":  "PH.Quezon",
-  "APAC_PI_Manila":  "PH.Taguig",
-  "APAC_JPN_Tokyo":  "JP.Tokyo",
-  "APAC_MY_KL":      "MY.Kuala Lumpur",
+const buildingCapacities = {
+  "Podium Floor (Pune)": 725,
+  "Tower B (Pune)":      303,
+  "2nd Floor (Pune)":    185,
+  "Kuala Lumpur":        600,  // example
+  "Tokyo":               350,  // example
+  "6th Floor":           200,  // Manila
+  "7th Floor":           180,  // Manila
+  "Taguig":              220,  // PI Manila
 };
 
-export default partitionMap;
+export default buildingCapacities;
