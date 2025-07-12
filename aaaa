@@ -1,3 +1,5 @@
+READ THE ABOVE CODE EACH LINE AND CHEKC WHAT IS THE PROBLME WHY PERCENTAGE ARE NOT SHOW IN PIE CHART, CHECK CAREFULLY 
+
 C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\api\occupancy.service.js
 const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3005';
 
