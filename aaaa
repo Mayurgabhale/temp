@@ -1,33 +1,44 @@
-<Box
-  px={2}
-  py={3}
-  sx={{
-    backgroundColor: 'black',
-    color: '#fff',
-    borderBottom: '4px solid #FFD700',
-    display: 'flex',
-    alignItems: 'center'
-  }}
->
-  {/* Back Button */}
-  <IconButton onClick={() => navigate('/')} sx={{ color: '#fff', mr: 2 }}>
-    <ArrowBackIcon />
-  </IconButton>
+// src/utils/doorMap.js
 
-  {/* Logo in between */}
-  <Box
-    component="img"
-    src="/logo-wu.png"
-    alt="Western Union Logo"
-    sx={{
-      height: 40,
-      width: 'auto',
-      mx: 2  // spacing between button and title
-    }}
-  />
+/**
+ * Maps each raw PartitionName2 + Direction key
+ * to a zone (e.g. "Red Zone", "Out of office", etc.).
+ */
+const rawZoneMap = {
+  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection":        "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection":                      "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___OutDirection":                     "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___InDirection":      "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___OutDirection":     "Out of office",
+  // … (all your other entries here) …
+  "APAC_JPN_Tokyo_7th FLR Office Entrance___OutDirection":                 "Out of office",
+};
 
-  {/* Title */}
-  <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-    Our Leaders
-  </Typography>
-</Box>
+/**
+ * doorMap: array of objects with explicit partition, door, and in/out-floor values.
+ * We split the raw key into partition, door and direction, then look up the zone,
+ * and finally translate zone → actual floor name in zoneFloorMap.
+ */
+import zoneFloorMap from './zoneFloorMap';
+import partitionMap from './partitionMap';
+
+const doorMap = Object.entries(rawZoneMap).map(([rawKey, zone]) => {
+  // rawKey is like "APAC_IN_PUN_PODIUM_RED_…___InDirection"
+  const [fullName, direction] = rawKey.split('___');
+  // partition is first two tokens, e.g. "APAC_IN_PUN"
+  const [partition, ...doorParts] = fullName.split('_').slice(0, 2).join('_')
+    ? fullName.split('_').reduce((acc, tok, idx) => idx < 3 ? [...acc, tok] : acc, []).join('_').split('_')
+    : fullName.split('_');
+  const partKey = fullName.split('_').slice(0, 3).join('_'); // e.g. "APAC_IN_PUN"
+  const door = fullName.replace(`${partKey}_`, '').trim();
+
+  return {
+    partition: partKey,
+    door,
+    zone,
+    inDirectionFloor: zoneFloorMap[zone],
+    outDirectionFloor: zoneFloorMap[zone],
+  };
+});
+
+export default doorMap;
