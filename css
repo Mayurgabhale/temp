@@ -1,19 +1,237 @@
-// src/utils/dateHelpers.js
-export function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric',
-    timeZone: 'Asia/Kolkata' // APAC timezone
-  });
-}
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  Container, Box, Button, Typography, Table, TableHead, TableBody,
+  TableRow, TableCell, Paper, TextField
+} from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
-export function formatTime(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Kolkata'
-  });
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchHistory } from '../api/occupancy.service';
+
+// APAC partition display names
+const apacPartitionNames = {
+  'IN.Pune': 'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon': 'Quezon City',
+  'PH.Taguig': 'Taguig',
+  'JP.Tokyo': 'Tokyo'
+};
+
+export default function History() {
+  const { partition } = useParams();
+  const decodedPartition = partition ? decodeURIComponent(partition) : null;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [pickedDate, setPickedDate] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Summary entry for selected date
+  const summaryEntry = useMemo(() => {
+    if (!data || !pickedDate) return null;
+    const dateStr = format(pickedDate, 'yyyy-MM-dd');
+    return data.summaryByDate.find(r => r.date === dateStr) || null;
+  }, [data, pickedDate]);
+
+  // Build partition rows
+  const partitionRows = useMemo(() => {
+    if (!summaryEntry) return [];
+    
+    return Object.entries(summaryEntry.partitions)
+      .filter(([key]) => !decodedPartition || key === decodedPartition)
+      .map(([key, vals]) => ({
+        partition: apacPartitionNames[key] || key,
+        employee: vals.Employee ?? 0,
+        contractor: vals.Contractor ?? 0,
+        tempBadge: vals.TempBadge ?? 0,
+        total: vals.total ?? 0,
+      }));
+  }, [summaryEntry, decodedPartition]);
+
+  // Build detail rows
+  const detailRows = useMemo(() => {
+    if (!data || !pickedDate) return [];
+    const dateStr = format(pickedDate, 'yyyy-MM-dd');
+    
+    return data.details
+      .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
+      .filter(r => !decodedPartition || r.PartitionName2 === decodedPartition)
+      .filter(r => r.Direction === 'InDirection')
+      .reduce((unique, row) => {
+        const key = `${row.PersonGUID}-${row.PersonnelType}`;
+        if (!unique._seen.has(key)) {
+          unique._seen.add(key);
+          unique.rows.push(row);
+        }
+        return unique;
+      }, { _seen: new Set(), rows: [] }).rows;
+  }, [data, pickedDate, decodedPartition]);
+
+  // Fetch data
+  useEffect(() => {
+    setLoading(true);
+    fetchHistory(decodedPartition)
+      .then(json => setData(json))
+      .finally(() => setLoading(false));
+  }, [decodedPartition]);
+
+  // Export to Excel
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      detailRows.map((r, i) => ({
+        '#': i + 1,
+        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
+        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
+        'Employee ID': r.EmployeeID,
+        Name: r.ObjectName1,
+        'Personnel Type': r.PersonnelType,
+        Door: r.Door,
+        Partition: apacPartitionNames[r.PartitionName2] || r.PartitionName2
+      }))
+    );
+    
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Details');
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (!data) return null;
+
+  return (
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        {pickedDate && summaryEntry ? (
+          <Box display="flex" flexDirection="column" sx={{ px: '20px', mb: 2, gap: '20px' }}>
+            <Box sx={{ maxWidth: 400 }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Select date"
+                  value={pickedDate}
+                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                  renderInput={params => <TextField fullWidth {...params} />}
+                />
+              </LocalizationProvider>
+            </Box>
+
+            <Paper elevation={3} sx={{ p: 3, border: '3px solid #000', borderRadius: 2 }}>
+              <Typography variant="h6" align="center" sx={{ mb: 2, fontWeight: 'bold' }}>
+                {format(pickedDate, 'EEEE, d MMMM, yyyy')}
+              </Typography>
+              
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: '#FFC107' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Employees</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Contractors</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Total</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {partitionRows.map((row, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{row.partition}</TableCell>
+                      <TableCell align="right">{row.employee}</TableCell>
+                      <TableCell align="right">{row.contractor}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{row.total}</TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                      {partitionRows.reduce((s, r) => s + r.employee, 0)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                      {partitionRows.reduce((s, r) => s + r.contractor, 0)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#333', color: '#fff' }}>
+                      {partitionRows.reduce((s, r) => s + r.total, 0)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Paper>
+
+            <Box display="flex" justifyContent="center" gap={2}>
+              <Button
+                variant="contained"
+                sx={{ bgcolor: '#FFC107', color: '#000' }}
+                onClick={() => setShowDetails(v => !v)}
+              >
+                {showDetails ? 'Hide Details' : 'Show Details'}
+              </Button>
+              {showDetails && (
+                <Button
+                  variant="outlined"
+                  sx={{ borderColor: '#FFC107', color: '#FFC107' }}
+                  onClick={handleExport}
+                >
+                  Export to Excel
+                </Button>
+              )}
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ px: '20px', mb: 3 }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select date"
+                value={pickedDate}
+                onChange={d => setPickedDate(d)}
+                renderInput={params => <TextField fullWidth {...params} />}
+              />
+            </LocalizationProvider>
+          </Box>
+        )}
+
+        {showDetails && detailRows.length > 0 && (
+          <Box sx={{ px: '20px', mt: 4 }}>
+            <Paper elevation={3} sx={{ p: 3, border: '2px solid #FFC107', borderRadius: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Detailed Swipe Records
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: '#000' }}>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>#</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Date</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Time</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Employee ID</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Name</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Personnel Type</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Door</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Location</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {detailRows.map((r, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{i + 1}</TableCell>
+                      <TableCell>{format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}</TableCell>
+                      <TableCell>{format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}</TableCell>
+                      <TableCell>{r.EmployeeID}</TableCell>
+                      <TableCell>{r.ObjectName1}</TableCell>
+                      <TableCell>{r.PersonnelType}</TableCell>
+                      <TableCell>{r.Door}</TableCell>
+                      <TableCell>{apacPartitionNames[r.PartitionName2] || r.PartitionName2}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          </Box>
+        )}
+      </Container>
+      <Footer />
+    </>
+  );
 }
