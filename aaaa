@@ -1,12 +1,19 @@
-export default function PieChartCard({
-  title,
-  data,
-  colors = ['#FFC107', '#E0E0E0'],
-  height = 300,
-  innerRadius = 70,
-  outerRadius = 120,
-  showZeroSlice = false,
-  animationDuration = 1500,
-  noDataMessage = 'No realtime data',
-  totalSeats = 0,
-}) {
+// export async function fetchLiveSummary() {
+//   if (cache.liveSummary) {
+//     return cache.liveSummary;
+//   }
+//   const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+//   if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+//   const json = await res.json();
+//   cache.liveSummary = json;
+//   return json;
+// }
+
+
+
+i want ot convert this function in to above function
+export async function fetchLiveSummary() {
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);   // live data fetch
+  return res.json();
+}
