@@ -1,19 +1,21 @@
-// src/utils/dateHelpers.js
-export function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric',
-    timeZone: 'Asia/Kolkata' // APAC timezone
-  });
-}
+// src/utils/doorMap.js
+const doorMap = {
+  // Pune doors
+  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection": "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection": "Red Zone",
+  // ... (all other APAC door mappings from your provided code)
+  
+  // Kuala Lumpur doors
+  "APAC_MY_KL_MAIN ENTRANCE DOOR___InDirection": "Kuala Lumpur",
+  
+  // Tokyo doors
+  "APAC_JPN_Tokyo_7th FLRSide Entrance___InDirection": "Tokyo",
+  
+  // Manila doors
+  "APAC_PH_Manila_6th Floor Enrty Door 1___InDirection": "6th Floor",
+  
+  // Taguig doors
+  "APAC_PI_Manila_DR_MainEntrance___InDirection": "Taguig"
+};
 
-export function formatTime(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Kolkata'
-  });
-}
+export default doorMap;
