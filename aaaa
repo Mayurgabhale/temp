@@ -1,226 +1,174 @@
-// src/pages/History.jsx (APAC Version)
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+// src/pages/PartitionDetail.jsx (APAC Version)
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
-  Container, Box, Button, Typography, Table, TableHead, TableBody,
-  TableRow, TableCell, Paper, TextField
-} from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { format } from 'date-fns';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+  Container, Box, Typography, Button, CircularProgress, Paper
+} from "@mui/material";
+import SummaryCard from "../components/SummaryCard";
+import ChartCard from "../components/ChartCard";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { fetchLiveSummary, fetchHistory } from "../api/occupancy.service";
+import buildingCapacities from "../data/buildingCapacities";
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchHistory } from '../api/occupancy.service';
-
-export default function History() {
+export default function PartitionDetail() {
   const { partition } = useParams();
-  const decodedPartition = partition ? decodeURIComponent(partition) : null;
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [pickedDate, setPickedDate] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-
-  const summaryEntry = useMemo(() => {
-    if (!data || !pickedDate) return null;
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    return data.summaryByDate.find(r => r.date === dateStr) || null;
-  }, [data, pickedDate]);
-
-  const partitionRows = useMemo(() => {
-    if (!summaryEntry) return [];
-    return Object.entries(summaryEntry.partitions)
-      .filter(([key]) => !decodedPartition || key.startsWith(decodedPartition.split('.')[0]))
-      .map(([key, vals]) => ({
-        partition: key,
-        employee: vals.Employee ?? vals.EmployeeCount ?? 0,
-        contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
-        tempBadge: vals.TempBadge ?? 0,
-        total: vals.total ?? 0,
-      }));
-  }, [summaryEntry, decodedPartition]);
-
-  const detailRows = useMemo(() => {
-    if (!data || !pickedDate) return [];
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    return data.details
-      .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
-      .filter(r => !decodedPartition || r.PartitionName2.startsWith(decodedPartition.split('.')[0]))
-      .filter(r => r.Direction === 'InDirection')
-      .reduce((unique, row) => {
-        const key = `${row.PersonGUID}-${row.PersonnelType}`;
-        if (!unique._seen.has(key)) {
-          unique._seen.add(key);
-          unique.rows.push(row);
-        }
-        return unique;
-      }, { _seen: new Set(), rows: [] })
-      .rows;
-  }, [data, pickedDate, decodedPartition]);
+  const navigate = useNavigate();
+  const [liveSummary, setLiveSummary] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState("");
+  
+  const decodedPartition = decodeURIComponent(partition);
 
   useEffect(() => {
-    setLoading(true);
-    fetchHistory(decodedPartition)
-      .then(json => setData(json))
-      .finally(() => setLoading(false));
+    let timer;
+    async function loadLive() {
+      const json = await fetchLiveSummary();
+      setLiveSummary(json);
+      setLastUpdate(new Date().toLocaleTimeString());
+    }
+    loadLive();
+    timer = setInterval(loadLive, 5000);
+    return () => clearInterval(timer);
+  }, [partition]);
+
+  useEffect(() => {
+    setHistoryLoading(true);
+    fetchHistory(decodedPartition).then((json) => {
+      setHistory(json);
+      setHistoryLoading(false);
+    });
   }, [decodedPartition]);
 
-  const handleExport = () => {
-    const ws = XLSX.utils.json_to_sheet(
-      detailRows.map((r, i) => ({
-        '#': i + 1,
-        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
-        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
-        'Employee ID': r.EmployeeID,
-        Name: r.ObjectName1,
-        'Personnel Type': r.PersonnelType,
-        Door: r.Door,
-        Partition: r.PartitionName2
-      }))
-    );
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
+  if (!liveSummary || !history) return <LoadingSpinner />;
+
+  const lastDay = history.summaryByDate.at(-1);
+  const partToday = lastDay?.region || {};
+  const live = liveSummary.realtime[decodedPartition] || {
+    total: 0,
+    Employee: 0,
+    Contractor: 0,
+    floors: {},
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (!data) return null;
+  const floorEntries = Object.entries(live.floors).map(([floor, cnt]) => {
+    const capacity = buildingCapacities[floor] ?? 0;
+    const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+    return {
+      name: floor,
+      Headcount: cnt,
+      Capacity: capacity,
+      Usage: pct,
+    };
+  });
 
   return (
     <>
       <Header />
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        {pickedDate && summaryEntry ? (
-          <Box display="flex" flexDirection="column" sx={{ px: '20px', mb: 2, gap: '20px' }}>
-            <Box sx={{ maxWidth: 400 }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Select date"
-                  value={pickedDate}
-                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                  renderInput={params => <TextField fullWidth {...params} />}
+      <Box component="main" sx={{ pt: 1, pb: 1 }}>
+        <Container maxWidth={false} disableGutters>
+          <Box display="flex" alignItems="center" mb={1} sx={{ px: "20px" }}>
+            <Button size="small" onClick={() => navigate(-1)}>
+              ← Back
+            </Button>
+          </Box>
+
+          <Grid container spacing={2} sx={{ px: "20px", mb: 4 }}>
+            {[
+              {
+                title: "Today's Total",
+                value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
+                icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+                border: '#FFB300',
+              },
+              {
+                title: "Today's Employees",
+                value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
+                icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+                border: '#8BC34A',
+              },
+              {
+                title: "Today's Contractors",
+                value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
+                icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
+                border: '#E57373',
+              },
+              {
+                title: "Realtime Headcount",
+                value: live.total,
+                icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+                border: '#FFD180',
+              },
+              {
+                title: "Realtime Employees",
+                value: live.Employee,
+                icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+                border: '#AED581',
+              },
+              {
+                title: "Realtime Contractors",
+                value: live.Contractor,
+                icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
+                border: '#EF5350',
+              },
+            ].map((card, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <SummaryCard
+                  title={card.title}
+                  total={card.value}
+                  icon={card.icon}
+                  sx={{
+                    height: 140,
+                    border: `2px solid ${card.border}`,
+                  }}
                 />
-              </LocalizationProvider>
-            </Box>
+              </Grid>
+            ))}
+          </Grid>
 
-            <Paper elevation={3} sx={{ p: 3, border: '3px solid #000', borderRadius: 2 }}>
-              <Typography variant="h6" align="center" sx={{ mb: 2, fontWeight: 'bold' }}>
-                {format(pickedDate, 'EEEE, d MMMM, yyyy')}
+          <Box mb={4} sx={{ px: "20px", p: 2, border: "2px solid #FFC107", borderRadius: 2 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+              <Typography variant="h6">Live Floor Occupancy</Typography>
+              <Typography variant="body2" color="textSecondary">
+                Last updated: {lastUpdate}
               </Typography>
-              
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ bgcolor: '#FFC107' }}>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Employees</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Contractors</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Temp Badges</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Total</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {partitionRows.map((row, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{row.partition.split('.')[1]}</TableCell>
-                      <TableCell align="right">{row.employee}</TableCell>
-                      <TableCell align="right">{row.contractor}</TableCell>
-                      <TableCell align="right">{row.tempBadge}</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{row.total}</TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow sx={{ bgcolor: '#f5f5f5' }}>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      {partitionRows.reduce((s, r) => s + r.employee, 0)}
-                    </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      {partitionRows.reduce((s, r) => s + r.contractor, 0)}
-                    </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      {partitionRows.reduce((s, r) => s + r.tempBadge, 0)}
-                    </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#333', color: '#fff' }}>
-                      {partitionRows.reduce((s, r) => s + r.total, 0)}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Paper>
-
-            <Box display="flex" justifyContent="center" gap={2}>
-              <Button
-                variant="contained"
-                sx={{ bgcolor: '#FFC107', color: '#000' }}
-                onClick={() => setShowDetails(v => !v)}
-              >
-                {showDetails ? 'Hide Details' : 'Show Details'}
-              </Button>
-              {showDetails && (
-                <Button
-                  variant="outlined"
-                  sx={{ borderColor: '#FFC107', color: '#FFC107' }}
-                  onClick={handleExport}
-                >
-                  Export to Excel
-                </Button>
-              )}
             </Box>
+            <ChartCard
+              data={floorEntries}
+              dataKey="Headcount"
+              secondaryDataKey="Capacity"
+              chartHeight={320}
+              colors={{ primary: "#28B463", secondary: "#FDDA0D" }}
+              axisProps={{
+                xAxis: { dataKey: "name", interval: 0 },
+                yAxis: { domain: [0, 'dataMax + 20'] },
+              }}
+              tooltipFormatter={(value, name) => 
+                name === 'Headcount' ? [`${value} people`, 'Headcount'] : [`${value} seats`, 'Capacity']
+              }
+            />
           </Box>
-        ) : (
-          <Box sx={{ px: '20px', mb: 3 }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Select date"
-                value={pickedDate}
-                onChange={d => setPickedDate(d)}
-                renderInput={params => <TextField fullWidth {...params} />}
-              />
-            </LocalizationProvider>
-          </Box>
-        )}
 
-        {showDetails && detailRows.length > 0 && (
-          <Box sx={{ px: '20px', mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 3, border: '2px solid #FFC107', borderRadius: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Detailed Swipe Records
-              </Typography>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ bgcolor: '#000' }}>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>#</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Date</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Time</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Employee ID</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Name</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Personnel Type</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Door</TableCell>
-                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Location</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {detailRows.map((r, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{i + 1}</TableCell>
-                      <TableCell>{format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}</TableCell>
-                      <TableCell>{format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}</TableCell>
-                      <TableCell>{r.EmployeeID}</TableCell>
-                      <TableCell>{r.ObjectName1}</TableCell>
-                      <TableCell>{r.PersonnelType}</TableCell>
-                      <TableCell>{r.Door}</TableCell>
-                      <TableCell>{r.PartitionName2.split('.')[1]}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Paper>
+          <Box sx={{ px: "20px", display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <Button
+              variant="contained"
+              sx={{ bgcolor: '#FFC107', color: '#000' }}
+              onClick={() => navigate(`/partition/${partition}/details`)}
+            >
+              View Floor Details
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ borderColor: '#FFC107', color: '#FFC107' }}
+              onClick={() => navigate(`/partition/${partition}/history`)}
+            >
+              View History
+            </Button>
           </Box>
-        )}
-      </Container>
+        </Container>
+      </Box>
       <Footer />
     </>
   );
