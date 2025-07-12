@@ -1,53 +1,117 @@
-// src/api/occupancy.service.js
-const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
+// src/components/Header.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon    from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
-// Simple in-memory cache
-const cache = {
-  liveSummary: null,
-  history:     new Map(),  // key: partition code or 'global'
+import wuLogo          from '../assets/wu-logo.png';
+import indiaFlag       from '../assets/flags/india.png';
+import japanFlag       from '../assets/flags/japan.png';
+import malaysiaFlag    from '../assets/flags/malaysia.png';
+import philippinesFlag from '../assets/flags/philippines.png';
+import taguigFlag      from '../assets/flags/Taguig.png';
+
+import { apacPartitionList as partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+const displayNameMap = {
+  'IN.Pune':           'Pune',
+  'PH.Quezon':         'Quezon',
+  'PH.Taguig':         'Taguig',
+  'JP.Tokyo':          'Tokyo',
+  'MY.Kuala Lumpur':   'Kuala Lumpur',
 };
 
-/**
- * Fetch live summary (no caching).
- */
-export async function fetchLiveSummary() {
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-  return res.json();
+const flagMap = {
+  'IN.Pune':         indiaFlag,
+  'PH.Quezon':       philippinesFlag,
+  'PH.Taguig':       taguigFlag,
+  'JP.Tokyo':        japanFlag,
+  'MY.Kuala Lumpur': malaysiaFlag,
+};
+
+export default function Header() {
+  const navigate = useNavigate();
+  const loc      = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  // Determine current partition from URL
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPartitionPage = parts[0] === 'partition' && Boolean(parts[1]);
+  const currentPartition = isPartitionPage ? decodeURIComponent(parts[1]) : '';
+
+  const isHome = loc.pathname === '/';
+
+  return (
+    <AppBar position="static" sx={{ bgcolor: "#28282B", mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+          <Typography variant="h6" sx={{ color: '#FFC107', mr: 2 }}>
+            Western Union – APAC
+            {currentPartition && ` • ${displayNameMap[currentPartition] || currentPartition}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/IN.Pune/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+          {isPartitionPage && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(currentPartition)}/details`)}
+            >
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={currentPartition}
+            displayEmpty
+            onChange={e => {
+              const p = e.target.value;
+              navigate(p ? `/partition/${encodeURIComponent(p)}` : '/');
+            }}
+            sx={{ bgcolor: 'background.paper', minWidth: 160 }}
+            renderValue={val =>
+              val
+                ? <Box display="flex" alignItems="center">
+                    <Box component="img" src={flagMap[val]} alt={val} sx={{ width: 24, height: 16, mr: 1 }} />
+                    {displayNameMap[val] || val}
+                  </Box>
+                : "— Select Site —"
+            }
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map(p => (
+              <MenuItem key={p} value={p}>
+                {displayNameMap[p] || p}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
 }
-
-/**
- * Fetch history (global or per-partition) & cache it.
- * @param {string} [location] — e.g. 'IN.Pune'
- */
-export async function fetchHistory(location) {
-  const key = location || 'global';
-  if (cache.history.has(key)) {
-    return cache.history.get(key);
-  }
-  const url = location
-    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
-    : `${BASE}/api/occupancy/history`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.history.set(key, json);
-  return json;
-}
-
-export function clearCache() {
-  cache.liveSummary = null;
-  cache.history.clear();
-}
-
-/**
- * List of APAC partitions for your Dashboard’s selector.
- */
-export const apacPartitionList = [
-  'IN.Pune',
-  'MY.Kuala Lumpur',
-  'PH.Quezon',
-  'PH.Taguig',
-  'JP.Tokyo'
-];
