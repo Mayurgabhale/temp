@@ -1,117 +1,227 @@
-// src/components/Header.jsx
-import React, { useEffect, useState } from 'react';
+// src/pages/History.jsx (APAC Version)
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
+  Container, Box, Button, Typography, Table, TableHead, TableBody,
+  TableRow, TableCell, Paper, TextField
 } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import HomeIcon    from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
-import wuLogo          from '../assets/wu-logo.png';
-import indiaFlag       from '../assets/flags/india.png';
-import japanFlag       from '../assets/flags/japan.png';
-import malaysiaFlag    from '../assets/flags/malaysia.png';
-import philippinesFlag from '../assets/flags/philippines.png';
-import taguigFlag      from '../assets/flags/Taguig.png';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchHistory } from '../api/occupancy.service';
 
-import { apacPartitionList as partitionList } from '../api/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+export default function History() {
+  const { partition } = useParams();
+  const decodedPartition = partition ? decodeURIComponent(partition) : null;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [pickedDate, setPickedDate] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
 
-const displayNameMap = {
-  'IN.Pune':           'Pune',
-  'PH.Quezon':         'Quezon',
-  'PH.Taguig':         'Taguig',
-  'JP.Tokyo':          'Tokyo',
-  'MY.Kuala Lumpur':   'Kuala Lumpur',
-};
+  const summaryEntry = useMemo(() => {
+    if (!data || !pickedDate) return null;
+    const dateStr = format(pickedDate, 'yyyy-MM-dd');
+    return data.summaryByDate.find(r => r.date === dateStr) || null;
+  }, [data, pickedDate]);
 
-const flagMap = {
-  'IN.Pune':         indiaFlag,
-  'PH.Quezon':       philippinesFlag,
-  'PH.Taguig':       taguigFlag,
-  'JP.Tokyo':        japanFlag,
-  'MY.Kuala Lumpur': malaysiaFlag,
-};
+  const partitionRows = useMemo(() => {
+    if (!summaryEntry) return [];
+    return Object.entries(summaryEntry.partitions)
+      .filter(([key]) => !decodedPartition || key.startsWith(decodedPartition.split('.')[0]))
+      .map(([key, vals]) => ({
+        partition: key,
+        employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+        contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+        tempBadge: vals.TempBadge ?? 0,
+        total: vals.total ?? 0,
+      }));
+  }, [summaryEntry, decodedPartition]);
 
-export default function Header() {
-  const navigate = useNavigate();
-  const loc      = useLocation();
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
+  const detailRows = useMemo(() => {
+    if (!data || !pickedDate) return [];
+    const dateStr = format(pickedDate, 'yyyy-MM-dd');
+    return data.details
+      .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
+      .filter(r => !decodedPartition || r.PartitionName2.startsWith(decodedPartition.split('.')[0]))
+      .filter(r => r.Direction === 'InDirection')
+      .reduce((unique, row) => {
+        const key = `${row.PersonGUID}-${row.PersonnelType}`;
+        if (!unique._seen.has(key)) {
+          unique._seen.add(key);
+          unique.rows.push(row);
+        }
+        return unique;
+      }, { _seen: new Set(), rows: [] })
+      .rows;
+  }, [data, pickedDate, decodedPartition]);
 
   useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
+    setLoading(true);
+    fetchHistory(decodedPartition)
+      .then(json => setData(json))
+      .finally(() => setLoading(false));
+  }, [decodedPartition]);
 
-  // Determine current partition from URL
-  const parts = loc.pathname.split('/').filter(Boolean);
-  const isPartitionPage = parts[0] === 'partition' && Boolean(parts[1]);
-  const currentPartition = isPartitionPage ? decodeURIComponent(parts[1]) : '';
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      detailRows.map((r, i) => ({
+        '#': i + 1,
+        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
+        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
+        'Employee ID': r.EmployeeID,
+        Name: r.ObjectName1,
+        'Personnel Type': r.PersonnelType,
+        Door: r.Door,
+        Partition: r.PartitionName2
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Details');
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
+  };
 
-  const isHome = loc.pathname === '/';
+  if (loading) return <LoadingSpinner />;
+  if (!data) return null;
 
   return (
-    <AppBar position="static" sx={{ bgcolor: "#28282B", mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-          <Typography variant="h6" sx={{ color: '#FFC107', mr: 2 }}>
-            Western Union – APAC
-            {currentPartition && ` • ${displayNameMap[currentPartition] || currentPartition}`}
-          </Typography>
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        {pickedDate && summaryEntry ? (
+          <Box display="flex" flexDirection="column" sx={{ px: '20px', mb: 2, gap: '20px' }}>
+            <Box sx={{ maxWidth: 400 }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Select date"
+                  value={pickedDate}
+                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                  renderInput={params => <TextField fullWidth {...params} />}
+                />
+              </LocalizationProvider>
+            </Box>
 
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
+            <Paper elevation={3} sx={{ p: 3, border: '3px solid #000', borderRadius: 2 }}>
+              <Typography variant="h6" align="center" sx={{ mb: 2, fontWeight: 'bold' }}>
+                {format(pickedDate, 'EEEE, d MMMM, yyyy')}
+              </Typography>
+              
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: '#FFC107' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Employees</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Contractors</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Temp Badges</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Total</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {partitionRows.map((row, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{row.partition.split('.')[1]}</TableCell>
+                      <TableCell align="right">{row.employee}</TableCell>
+                      <TableCell align="right">{row.contractor}</TableCell>
+                      <TableCell align="right">{row.tempBadge}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{row.total}</TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                      {partitionRows.reduce((s, r) => s + r.employee, 0)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                      {partitionRows.reduce((s, r) => s + r.contractor, 0)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                      {partitionRows.reduce((s, r) => s + r.tempBadge, 0)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#333', color: '#fff' }}>
+                      {partitionRows.reduce((s, r) => s + r.total, 0)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Paper>
 
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/IN.Pune/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-          {isPartitionPage && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(currentPartition)}/details`)}
-            >
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
+            <Box display="flex" justifyContent="center" gap={2}>
+              <Button
+                variant="contained"
+                sx={{ bgcolor: '#FFC107', color: '#000' }}
+                onClick={() => setShowDetails(v => !v)}
+              >
+                {showDetails ? 'Hide Details' : 'Show Details'}
+              </Button>
+              {showDetails && (
+                <Button
+                  variant="outlined"
+                  sx={{ borderColor: '#FFC107', color: '#FFC107' }}
+                  onClick={handleExport}
+                >
+                  Export to Excel
+                </Button>
+              )}
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ px: '20px', mb: 3 }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select date"
+                value={pickedDate}
+                onChange={d => setPickedDate(d)}
+                renderInput={params => <TextField fullWidth {...params} />}
+              />
+            </LocalizationProvider>
+          </Box>
+        )}
 
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={currentPartition}
-            displayEmpty
-            onChange={e => {
-              const p = e.target.value;
-              navigate(p ? `/partition/${encodeURIComponent(p)}` : '/');
-            }}
-            sx={{ bgcolor: 'background.paper', minWidth: 160 }}
-            renderValue={val =>
-              val
-                ? <Box display="flex" alignItems="center">
-                    <Box component="img" src={flagMap[val]} alt={val} sx={{ width: 24, height: 16, mr: 1 }} />
-                    {displayNameMap[val] || val}
-                  </Box>
-                : "— Select Site —"
-            }
-          >
-            <MenuItem value="">— Select Site —</MenuItem>
-            {partitionList.map(p => (
-              <MenuItem key={p} value={p}>
-                {displayNameMap[p] || p}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-      </Toolbar>
-    </AppBar>
+        {showDetails && detailRows.length > 0 && (
+          <Box sx={{ px: '20px', mt: 4 }}>
+            <Paper elevation={3} sx={{ p: 3, border: '2px solid #FFC107', borderRadius: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Detailed Swipe Records
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: '#000' }}>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>#</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Date</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Time</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Employee ID</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Name</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Personnel Type</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Door</TableCell>
+                    <TableCell sx={{ color: '#FFC107', fontWeight: 'bold' }}>Location</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {detailRows.map((r, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{i + 1}</TableCell>
+                      <TableCell>{format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}</TableCell>
+                      <TableCell>{format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}</TableCell>
+                      <TableCell>{r.EmployeeID}</TableCell>
+                      <TableCell>{r.ObjectName1}</TableCell>
+                      <TableCell>{r.PersonnelType}</TableCell>
+                      <TableCell>{r.Door}</TableCell>
+                      <TableCell>{r.PartitionName2.split('.')[1]}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          </Box>
+        )}
+      </Container>
+      <Footer />
+    </>
   );
 }
