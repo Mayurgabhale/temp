@@ -1,6 +1,24 @@
 in apac check each line carefully and find out error and slov careflly check each file code 
 
 
+
+
+
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of undefined (reading 'partitions')
+TypeError: Cannot read properties of undefined (reading 'partitions')
+    at PartitionDetail (http://localhost:3000/static/js/src_pages_PartitionDetail_jsx.chunk.js:840:29)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
+    at beginWork (http://localhost:3000/static/js/bundle.js:20250:16)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15742:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22323:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:22216:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:22200:7)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21964:42)
 //C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\api\occupancy.service.js
 
 
