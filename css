@@ -1,41 +1,39 @@
-<Box sx={{ flex: '0 0 200px' }}>
-  <LocalizationProvider dateAdapter={AdapterDateFns}>
-    <DatePicker
-      label="Select date"
-      value={pickedDate}
-      onChange={(d) => {
-        setPickedDate(d);
-        setShowDetails(false);
-      }}
-      renderInput={(params) => (
-        <TextField
-          fullWidth
-          {...params}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              color: '#FFC107',
-              '& fieldset': {
-                borderColor: '#FFC107',
-              },
-              '&:hover fieldset': {
-                borderColor: '#FFC107',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#FFC107',
-              },
+<LocalizationProvider dateAdapter={AdapterDateFns}>
+  <DatePicker
+    label="Select date"
+    value={pickedDate}
+    onChange={(d) => {
+      setPickedDate(d);
+      setShowDetails(false);
+    }}
+    renderInput={(params) => (
+      <TextField
+        fullWidth
+        {...params}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: '#FFC107', // 🟡 Border
             },
-            '& .MuiInputLabel-root': {
-              color: '#FFC107',
+            '&:hover fieldset': {
+              borderColor: '#FFC107', // 🟡 Hover Border
             },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: '#FFC107',
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFC107', // 🟡 Focused Border
             },
-            '& .MuiSvgIcon-root': {
-              color: '#FFC107',
-            },
-          }}
-        />
-      )}
-    />
-  </LocalizationProvider>
-</Box>
+            color: '#FFC107', // 🟡 Input text color
+          },
+          '& .MuiInputLabel-root': {
+            color: '#FFC107', // 🟡 Label color
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFC107', // 🟡 Focused Label
+          },
+          '& .MuiSvgIcon-root': {
+            color: '#FFC107', // 🟡 Calendar icon
+          },
+        }}
+      />
+    )}
+  />
+</LocalizationProvider>
