@@ -1,18 +1,5 @@
 <Marker key={i} coordinates={m.coords} onClick={() => onClickSite(selected)}>
-  {/* City label (rendered first so it appears *under* the icon) */}
-  {m.showLabel && (
-    <text
-      textAnchor="middle"
-      y={-r - 2}
-      fill={m.color}
-      fontSize={5 * zoom}
-      fontWeight="bold"
-    >
-      {m.name}
-    </text>
-  )}
-
-  {/* Icon rendered *after* to appear on top */}
+  {/* Icon - rendered first so it stays behind */}
   <svg
     width={8 * zoom}
     height={8 * zoom}
@@ -24,4 +11,17 @@
     <path d="M8 0a5 5 0 0 0-5 5c0 4.25 5 11 5 11s5-6.75 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
     {m.tooltip && <title>{m.tooltip}</title>}
   </svg>
+
+  {/* Text - rendered last so it's on top */}
+  {m.showLabel && (
+    <text
+      textAnchor="middle"
+      y={-r - 2}
+      fill={m.color}
+      fontSize={5 * zoom}
+      fontWeight="bold"
+    >
+      {m.name}
+    </text>
+  )}
 </Marker>
