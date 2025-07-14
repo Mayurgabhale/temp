@@ -13,3 +13,79 @@ TypeError: Cannot read properties of undefined (reading 'Employee')
     at workLoopSync (http://localhost:3000/static/js/bundle.js:22216:38)
     at renderRootSync (http://localhost:3000/static/js/bundle.js:22200:7)
     at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21964:42)
+
+
+
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\api\occupancy.service.js
+
+
+
+
+// src/api/occupancy.service.js
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
+
+// In-memory cache
+const cache = {
+  liveSummary: null,
+  history: new Map(),  // key: partition code or 'global'
+};
+
+/**
+ * Fetch live summary (always fresh).
+ */
+export async function fetchLiveSummary() {
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Fetch history (global or per-partition), with in-memory caching.
+ * @param {string} [location] — e.g. 'IN.Pune'
+ */
+export async function fetchHistory(location) {
+  const key = location || 'global';
+  if (cache.history.has(key)) {
+    return cache.history.get(key);
+  }
+  const url = location
+    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
+    : `${BASE}/api/occupancy/history`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.history.set(key, json);
+  return json;
+}
+
+/** Clear in-memory caches */
+export function clearCache() {
+  cache.liveSummary = null;
+  cache.history.clear();
+}
+
+// APAC partition list for selector
+export const partitionList = [
+  'IN.Pune',
+  'MY.Kuala Lumpur',
+  'PH.Quezon',
+  'PH.Taguig',
+  'JP.Tokyo'
+];
+
+
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\services\occupancy.service.js
+
+
+    //src/services/occupancy.service.js
+
+// APAC partition list
+export const partitionList = [
+  'IN.Pune',
+  'MY.Kuala Lumpur',
+  'PH.Quezon',
+  'PH.Taguig',
+  'JP.Tokyo'
+];
+
