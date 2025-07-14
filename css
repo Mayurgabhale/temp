@@ -1,17 +1,29 @@
-// Only date picker view
-          <Box sx={{ px: '20px', mb: 3 , borderColor: '#FFC107'}}>
-            <LocalizationProvider dateAdapter={AdapterDateFns} color={'white'}>
-              <DatePicker
-                label="Select date"
-                value={pickedDate}
-                onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                renderInput={params => <TextField fullWidth {...params} />}
-                
-              />
-            </LocalizationProvider>
-            {!pickedDate && (
-              <Typography variant="body1" color="#ffff" sx={{ mt: 2 }}>
-                Please pick a date to view region summary.
-              </Typography>
-            )}
-          </Box>
+<Box sx={{ px: '20px', mb: 3, border: '1px solid #FFC107', bgcolor: '#1e1e1e' }}>
+  <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <DatePicker
+      label="Select date"
+      value={pickedDate}
+      onChange={(d) => {
+        setPickedDate(d);
+        setShowDetails(false);
+      }}
+      slotProps={{
+        textField: {
+          fullWidth: true,
+          InputLabelProps: {
+            style: { color: '#fff' }
+          },
+          InputProps: {
+            style: { color: '#fff' }
+          }
+        }
+      }}
+    />
+  </LocalizationProvider>
+
+  {!pickedDate && (
+    <Typography variant="body1" color="#fff" sx={{ mt: 2 }}>
+      Please pick a date to view region summary.
+    </Typography>
+  )}
+</Box>
