@@ -1,29 +1,720 @@
-<Box sx={{ px: '20px', mb: 3, border: '1px solid #FFC107', bgcolor: '#1e1e1e' }}>
-  <LocalizationProvider dateAdapter={AdapterDateFns}>
-    <DatePicker
-      label="Select date"
-      value={pickedDate}
-      onChange={(d) => {
-        setPickedDate(d);
-        setShowDetails(false);
-      }}
-      slotProps={{
-        textField: {
-          fullWidth: true,
-          InputLabelProps: {
-            style: { color: '#fff' }
-          },
-          InputProps: {
-            style: { color: '#fff' }
-          }
-        }
-      }}
-    />
-  </LocalizationProvider>
+in apac check each line carefully and find out error and slov careflly check each file code 
 
-  {!pickedDate && (
-    <Typography variant="body1" color="#fff" sx={{ mt: 2 }}>
-      Please pick a date to view region summary.
-    </Typography>
-  )}
-</Box>
+
+//C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\api\occupancy.service.js
+
+
+
+
+
+
+
+// src/api/occupancy.service.js
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
+
+// In-memory cache
+const cache = {
+  liveSummary: null,
+  history: new Map(),  // key: partition code or 'global'
+};
+
+/**
+ * Fetch live summary (always fresh).
+ */
+export async function fetchLiveSummary() {
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Fetch history (global or per-partition), with in-memory caching.
+ * @param {string} [location] — e.g. 'IN.Pune'
+ */
+export async function fetchHistory(location) {
+  const key = location || 'global';
+  if (cache.history.has(key)) {
+    return cache.history.get(key);
+  }
+  const url = location
+    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
+    : `${BASE}/api/occupancy/history`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
+  const json = await res.json();
+  cache.history.set(key, json);
+  return json;
+}
+
+/** Clear in-memory caches */
+export function clearCache() {
+  cache.liveSummary = null;
+  cache.history.clear();
+}
+
+// APAC partition list for selector
+export const partitionList = [
+  'IN.Pune',
+  'MY.Kuala Lumpur',
+  'PH.Quezon',
+  'PH.Taguig',
+  'JP.Tokyo'
+];
+
+
+
+
+//C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetail.jsx
+
+import React, { useEffect, useState } from "react";
+import {
+  Container, Box, Typography, Button, CircularProgress
+} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import SummaryCard from "../components/SummaryCard";
+import ChartCard from "../components/ChartCard";
+import LoadingSpinner from "../components/LoadingSpinner";
+
+import { fetchLiveSummary, fetchHistory } from "../api/occupancy.service";
+import buildingCapacities from "../data/buildingCapacities";
+import { partitionMap } from "../utils/doorMap";
+
+export default function PartitionDetail() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
+  const code = partitionMap[partition] || null;
+
+  const [liveSummary, setLiveSummary]       = useState(null);
+  const [historyData, setHistoryData]       = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [lastUpdate, setLastUpdate]         = useState("");
+
+  // Poll live
+  useEffect(() => {
+    if (!code) return;
+    let alive = true;
+    async function load() {
+      const json = await fetchLiveSummary();
+      if (!alive) return;
+      setLiveSummary(json);
+      setLastUpdate(new Date().toLocaleTimeString());
+    }
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { alive = false; clearInterval(iv); };
+  }, [code]);
+
+  // Fetch history
+  useEffect(() => {
+    if (!code) return;
+    setHistoryLoading(true);
+    fetchHistory(code)
+      .then(json => setHistoryData(json))
+      .finally(() => setHistoryLoading(false));
+  }, [code]);
+
+  if (!code || !liveSummary || !historyData) return <LoadingSpinner />;
+
+  const lastDay = historyData.summaryByDate.at(-1);
+  const partToday = (lastDay.partitions && lastDay.partitions[code]) || { total:0, Employee:0, Contractor:0 };
+
+  const live = liveSummary.realtime[code] || { total:0, Employee:0, Contractor:0, floors:{} };
+
+  const floorEntries = Object.entries(live.floors).map(([floor, cnt]) => {
+    const cap = buildingCapacities[floor.trim()] || 0;
+    const pct = cap ? Math.round((cnt / cap)*100) : 0;
+    return {
+      name: floor.trim(),
+      Headcount: cnt,
+      Capacity: cap,
+      breakdown: { Headcount: cnt, "Total Seat": cap, Usage:`${pct}%` },
+    };
+  });
+
+  const cards = [
+    {
+      title: "Today's Total Headcount",
+      value: historyLoading ? <CircularProgress size={20}/> : partToday.total,
+      icon: <i className="fa-solid fa-users" style={{ color:'#E57373', fontSize:25 }}/>,
+      border:'#FFD666'
+    },
+    {
+      title: "Today's Employees Count",
+      value: historyLoading ? <CircularProgress size={20}/> : partToday.Employee,
+      icon: <i className="bi bi-people" style={{ color:'#81C784', fontSize:25 }}/>,
+      border:'#81C784'
+    },
+    {
+      title: "Today's Contractors Count",
+      value: historyLoading ? <CircularProgress size={20}/> : partToday.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ color:'#64B5F6', fontSize:25 }}/>,
+      border:'#FFE599'
+    },
+    {
+      title: "Realtime Headcount",
+      value: live.total,
+      icon: <i className="fa-solid fa-users" style={{ color:'#BA68C8', fontSize:25 }}/>,
+      border:'#FFF2CC'
+    },
+    {
+      title: "Realtime Employees Count",
+      value: live.Employee,
+      icon: <i className="bi bi-people" style={{ color:'#FFB74D', fontSize:25 }}/>,
+      border:'#FFD666'
+    },
+    {
+      title: "Realtime Contractors Count",
+      value: live.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ color:'#4DB6AC', fontSize:25 }}/>,
+      border:'#FFE599'
+    },
+  ];
+
+  return (
+    <>
+      <Header />
+
+      <Box component="main" sx={{ pt:1, pb:1 }}>
+        <Container disableGutters maxWidth={false}>
+          <Box mb={1} sx={{ px:2 }}>
+            <Button size="small" onClick={() => navigate(-1)}>← Back</Button>
+          </Box>
+
+          <Box display="flex" flexWrap="wrap" gap={1} mb={3} sx={{ px:2 }}>
+            {cards.map(c => (
+              <Box key={c.title} sx={{ flex:'1 1 calc(16.66% - 8px)' }}>
+                <SummaryCard
+                  title={c.title}
+                  total={c.value}
+                  stats={[]}
+                  icon={c.icon}
+                  sx={{ height:140, border:`2px solid ${c.border}` }}
+                />
+              </Box>
+            ))}
+          </Box>
+
+          <Box sx={{ px:2, p:2, border:'2px solid #FFC107', background:'rgba(0,0,0,0.4)' }}>
+            <Box display="flex" justifyContent="space-between" mb={1}>
+              <Typography variant="h6" sx={{ color:'#FFC107' }}>
+                Live Floor Headcount vs Capacity
+              </Typography>
+              <Typography variant="body2" sx={{ color:'#FFC107' }}>
+                Last updated: {lastUpdate}
+              </Typography>
+            </Box>
+
+            <ChartCard
+              data={floorEntries}
+              dataKey="Headcount"
+              chartHeight={320}
+              colors={{ head:'#28B463', cap:'#FDDA0D' }}
+              axisProps={{
+                xAxis:{ tick:{ fill:'#fff' } },
+                yAxis:{ tick:{ fill:'#fff' } },
+              }}
+            />
+          </Box>
+        </Container>
+      </Box>
+
+      <Footer />
+    </>
+  );
+}
+
+
+
+
+
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\utils\doorMap.js
+// src/utils/doorMap.js
+
+// 1) raw door → zone
+const doorMap = {
+  "APAC_IN_PUN_PODIUM_RED_IDF ROOM-02-RESTRICTED DOOR___InDirection":           "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___InDirection":                         "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 1 (RED)___OutDirection":                        "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___InDirection":         "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_MAIN LIFT LOBBY ENTRY 1-DOOR___OutDirection":        "Out of office",
+  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___InDirection":                        "Red Zone",
+  "APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)___OutDirection":                       "Red Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___InDirection":     "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW___OutDirection":    "Reception Area",
+  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___InDirection": "Red Zone",
+  "APAC_IN_PUN_PODIUM_RED_RECREATION AREA FIRE EXIT 1-DOOR NEW___OutDirection":"Yellow Zone - Outer Area",
+
+  // Podium / Yellow
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_MDF RESTRICTED DOOR___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_IT STORE ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_REPRO STORE-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_CONTROL PANEL ROOM-DOOR RESTRICTED DOOR___InDirection": "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_PREACTION ROOM-DOOR RESTRICTED DOOR___InDirection":      "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_TESTING LAB-DOOR RESTRICTED DOOR___InDirection":         "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR___OutDirection":                    "Reception Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___InDirection":                 "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_MAIN LIFT LOBBY-DOOR NEW___OutDirection":                "Out of office",
+  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___InDirection":                            "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_ST 1 DOOR 2 (YELLOW)___OutDirection":                           "Yellow Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___InDirection":                     "Yellow Zone",
+  "APAC_IN_PUN_PODIUM_YELLOW_FIRE EXIT 1-DOOR NEW___OutDirection":                    "Yellow Zone - Outer Area",
+
+  // Podium / Green
+  "APAC_IN_PUN_PODIUM_GREEN-_IDF ROOM 1-RESTRICTED DOOR___InDirection":              "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_UPS ENTRY 1-DOOR RESTRICTED DOOR___InDirection":          "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_UPS ENTRY 2-DOOR RESTRICTED DOOR___InDirection":          "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_LOCKER HR STORE 3-DOOR RESTRICTED DOOR___InDirection":    "Green Zone",
+  "APAC_IN_PUN_PODIUM_ST4 DOOR 2 (GREEN)___InDirection":                              "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN-MAIN LIFT LOBBY-DOOR___InDirection":                      "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN-MAIN LIFT LOBBY-DOOR___OutDirection":                     "Green Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_ST3 DOOR 2 (GREEN)___InDirection":                              "Green Zone",
+  "APAC_IN_PUN_PODIUM_ST3 DOOR 2 (GREEN)___OutDirection":                             "Green Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_GREEN_RECEPTION ENTRY-DOOR___InDirection":                     "Green Zone",
+  "APAC_IN_PUN_PODIUM_GREEN_RECEPTION ENTRY-DOOR___OutDirection":                    "Reception Area",
+
+  // Podium / Orange
+  "APAC_IN_PUN_PODIUM_ST4 DOOR 1 (ORANGE)___InDirection":                             "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_RECEPTION ENTRY-DOOR___InDirection":                    "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_RECEPTION ENTRY-DOOR___OutDirection":                   "Reception Area",
+  "APAC_IN_PUN_PODIUM_ST3_DOOR 1 (ORANGE)___InDirection":                            "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ST3_DOOR 1 (ORANGE)___OutDirection":                           "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_MAIN LIFT LOBBY-DOOR___InDirection":                     "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_MAIN LIFT LOBBY-DOOR___OutDirection":                    "Orange Zone - Outer Area",
+  "APAC_IN_PUN_PODIUM_ORANGE-IDF ROOM 3-RESTRICTED DOOR___InDirection":               "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_KITCHENETTE FIRE EXIT-DOOR NEW___InDirection":          "Orange Zone",
+  "APAC_IN_PUN_PODIUM_ORANGE_KITCHENETTE FIRE EXIT-DOOR NEW___OutDirection":         "Orange Zone - Outer Area",
+
+  // Podium / GSOC door
+  "APAC_IN_PUN_PODIUM_GSOC DOOR RESTRICTED DOOR___InDirection":                       "Yellow Zone",
+
+  // Podium main entries
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM RIGHT ENTRY-DOOR NEW___InDirection":                "Reception Area",
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM RIGHT ENTRY-DOOR NEW___OutDirection":               "Assembly Area",
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM LEFT ENTRY-DOOR NEW___InDirection":                 "Reception Area",
+  "APAC_IN_PUN_PODIUM_MAIN PODIUM LEFT ENTRY-DOOR NEW___OutDirection":                "Assembly Area",
+
+  // Podium / Turnstiles
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR___InDirection":                           "Reception Area",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR___InDirection":                           "Reception Area",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR___InDirection":                           "Reception Area",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4-DOOR___InDirection":                           "Reception Area",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2 -OUT DOOR___OutDirection":                     "Out of office",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3 -OUT DOOR___OutDirection":                     "Out of office",
+  "APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4 -OUT DOOR___OutDirection":                     "Out of office",
+
+  // 2nd Floor / Pune
+  "APAC_IN_PUN_2NDFLR_IDF ROOM_10:05:86 RESTRICTED DOOR___InDirection":                "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_UPS/ELEC ROOM RESTRICTED DOOR___InDirection":                    "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_RECPTION TO WORKSTATION DOOR___InDirection":                     "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_RECPTION TO WORKSTATION DOOR___OutDirection":                    "Out of office",
+  "APAC_IN_PUN_2NDFLR_LIFTLOBBY TO RECEPTION EMTRY DOOR___InDirection":                 "2nd Floor, Pune",
+  "APAC_IN_PUN_2NDFLR_LIFTLOBBY TO RECEPTION EMTRY DOOR___OutDirection":                "2nd Floor, Pune",
+
+  // Tower B / Pune
+  "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR___InDirection":                             "Tower B",
+  "APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR___OutDirection":                            "Out of office",
+  "APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR___InDirection":                                 "Tower B",
+  "APAC_IN_PUN_PODIUM_TOWER B_LIFT LOBBY DOOR___OutDirection":                          "Out of office",
+  "APAC_IN_PUN_TOWER B_ST6_GYM SIDE DOOR___InDirection":                               "Tower B",
+  "APAC_IN_PUN_TOWER B_ST6_GYM SIDE DOOR___OutDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_ST6_WKS SIDE DOOR___InDirection":                               "Tower B",
+  "APAC_IN_PUN_TOWER B_ST6_WKS SIDE DOOR___OutDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_KAPIL DEV DOOR___InDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_KAPIL DEV DOOR___OutDirection":                             "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_WKS SIDE DOOR___InDirection":                               "Tower B",
+  "APAC_IN_PUN_TOWER B_ST5_WKS SIDE DOOR___OutDirection":                              "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION LEFT DOOR___InDirection":                             "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION LEFT DOOR___OutDirection":                            "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR___InDirection":                            "Tower B",
+  "APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR___OutDirection":                           "Tower B",
+  "APAC_IN_PUN_TOWER B_IBMS ROOM___InDirection":                                       "Tower B",
+  "APAC_IN_PUN_TOWER B_UPS ROOM___InDirection":                                        "Tower B",
+  "APAC_IN_PUN_TOWER B_MDF ROOM___InDirection":                                        "Tower B",
+  "APAC_IN_PUN_TOWER B_PAC ROOM___InDirection":                                        "Tower B",
+  "APAC_IN_PUN_TOWER B_IT STORE ROOM___InDirection":                                   "Tower B",
+  "APAC_IN_PUN_TOWER B_GYM ROOM___InDirection":                                        "Tower B GYM",
+  "APAC_IN_PUN_TOWER B_GYM ROOM___OutDirection":                                       "Tower B GYM",
+  "APAC_IN_PUN_TOWER B_SITE OPS STORE___InDirection":                                 "Tower B",
+
+  // Kuala Lumpur (MY)
+  "APAC_MY_KL_MAIN ENTRANCE DOOR___InDirection":    "Kuala Lumpur",
+  "APAC_MY_KL_MAIN ENTRANCE DOOR___OutDirection":  "Out of office",
+  "APAC_MY_KL_INTERIOR RECEPTION DOOR___InDirection":"Kuala Lumpur",
+  "APAC_MY_KL_INTERIOR RECEPTION DOOR___OutDirection":"Kuala Lumpur",
+  "APAC_MY_KL_SIDE ENTRANCE DOOR NEW___InDirection":"Kuala Lumpur",
+  "APAC_MY_KL_SIDE ENTRANCE DOOR NEW___OutDirection":"Kuala Lumpur",
+  "APAC_MY_KL_PANTRY ENTRANCE DOOR NEW___InDirection":"Kuala Lumpur",
+  "APAC_MY_KL_PANTRY ENTRANCE DOOR NEW___OutDirection":"Kuala Lumpur",
+  "APAC_MY_KL_SERVER ROOM DOOR___InDirection":     "Kuala Lumpur",
+  "APAC_MY_KL_SERVER ROOM DOOR___OutDirection":    "Kuala Lumpur",
+
+  // Tokyo (JP)
+  "APAC_JPN_Tokyo_7th FLRSide Entrance___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLRSide Entrance___OutDirection":"Out of office",
+  "APAC_JPN_Tokyo_7th FLR_IT Room___InDirection":     "Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_IT Room___OutDirection":    "Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Main Entrance___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Main Entrance___OutDirection":"Out of office",
+  "APAC_JPN_Tokyo_7th FLR_Office Entrance___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Office Entrance___OutDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Side Entrance to Back Office___InDirection":"Tokyo",
+  "APAC_JPN_Tokyo_7th FLR_Side Entrance to Back Office___OutDirection":"Out of office",
+
+  // Manila (PH, 6th & 7th)
+  "APAC_PH_Manila_6th Floor Enrty Door 1___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor Enrty Door 1___OutDirection":"Out of office",
+  "APAC_PH_Manila_6th Floor Open Office 2___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor Open Office 2___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Entry Door 2___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Entry Door 2___OutDirection":"Out of office",
+  "APAC_PH_Manila_6th Floor_Entry Door 3___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Entry Door 3___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Exit Corridor___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Exit Corridor___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_IDF Restricted Door___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_IDF Restricted Door___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Mothers Room___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Mothers Room___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Print Area___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_Print Area___OutDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_UPS/Switch Restricted Door___InDirection":"6th Floor",
+  "APAC_PH_Manila_6th Floor_UPS/Switch Restricted Door___OutDirection":"6th Floor",
+  "APAC_PH_Manila_7th Floor_Directors Office-708___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Directors Office-708___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Exit Corridore-704___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Exit Corridore-704___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_IT Work Room  725___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_IT Work Room  725___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_MDF-726 Restricted Door___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_MDF-726 Restricted Door___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 1-721___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 1-721___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 2-721___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Open Office Door 2-721___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Pantry-720a___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Pantry-720a___OutDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Recption Door 1-701___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Recption Door 1-701___OutDirection":"Out of office",
+  "APAC_PH_Manila_7th Floor_Recption Door 2-701___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Recption Door 2-701___OutDirection":"Out of office",
+  "APAC_PH_Manila_7th Floor_Security Room-723___InDirection":"7th Floor",
+  "APAC_PH_Manila_7th Floor_Security Room-723___OutDirection":"7th Floor",
+
+  // Taguig (PI Manila DR)
+  "APAC_PI_Manila_DR_MainEntrance___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_MainEntrance___OutDirection":"Out of office",
+  "APAC_PI_Manila_DR_OfficeLobby___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_OfficeLobby___OutDirection":"Out of office",
+  "APAC_PI_Manila_DR_Server Restricted Door___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_Server Restricted Door___OutDirection":"Taguig",
+  "APAC_PI_Manila_DR_StorageRm___InDirection":"Taguig",
+  "APAC_PI_Manila_DR_StorageRm___OutDirection":"Taguig",
+  "APAC_PI_Manila_Emerg Exit Dr- Lobby___InDirection":"Taguig",
+  "APAC_PI_Manila_Emerg Exit Dr- Lobby___OutDirection":"Taguig",
+  "APAC_PI_Manila_Emgerg DR_Storage RM___InDirection":"Taguig",
+  "APAC_PI_Manila_Emgerg DR_Storage RM___OutDirection":"Taguig"
+};
+
+
+// 2) zone → floor
+const zoneFloorMap = {
+  "Red Zone":                 "Podium Floor",
+  "Red Zone - Outer Area":    "Podium Floor",
+  "Yellow Zone":              "Podium Floor",
+  "Yellow Zone - Outer Area": "Podium Floor",
+  "Reception Area":           "Podium Floor",
+  "Green Zone":               "Podium Floor",
+  "Green Zone - Outer Area":  "Podium Floor",
+  "Orange Zone":              "Podium Floor",
+  "Orange Zone - Outer Area": "Podium Floor",
+
+  "2nd Floor, Pune":          "2nd Floor",
+  "2nd Floor, Pune - Outer Area": "2nd Floor",
+
+  "Tower B":                  "Tower B",
+  "Tower B - Outer Area":     "Tower B",
+  "Tower B GYM":              "Tower B",
+  "Tower B GYM - Outer Area": "Tower B",
+
+  "Kuala Lumpur":             "Kuala Lumpur",
+
+  "6th Floor":                "6th Floor",
+  "7th Floor":                "7th Floor",
+
+  "Tokyo":                    "Tokyo",
+  "Taguig":                   "Taguig",
+
+  "Out of office":            null,
+};
+
+// 3) URL segment → partitions[] key
+const partitionMap = {
+  Pune:       "APAC_IN_PUN",
+  "Quezon":   "APAC_PH_Manila",
+  Taguig:     "APAC_PI_Manila",
+  "Kuala Lumpur": "APAC_MY_KL",
+  Tokyo:      "APAC_JPN_Tokyo",
+};
+
+export { doorMap, zoneFloorMap, partitionMap };
+
+// src/utils/floorLookup.js
+
+import { doorMap, zoneFloorMap } from './doorMap';
+
+/**
+ * Given a partition code (e.g. "APAC_IN_PUN"), a raw door string,
+ * and a swipe direction, return the floor name. Falls back to
+ * "Unmapped" if nothing matches.
+ */
+export function lookupFloor(partition, door, direction) {
+  // Build the exact key you used in doorMap.js
+  const key = `${partition}_${door}___${direction}`;
+  
+  // Get the zone (e.g. "Red Zone")
+  const zone = doorMap[key];
+  if (!zone) {
+    return 'Unmapped';
+  }
+
+  // Map zone → floor (e.g. "Podium Floor")
+  const floor = zoneFloorMap[zone];
+  return floor ?? 'Unmapped';
+}
+
+
+    C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\services\occupancy.service.js
+
+//src/services/occupancy.service.js
+
+// APAC partition list
+export const partitionList = [
+  'Pune',
+  'Quezon City',
+  'JP.Tokyo',
+  'MY.Kuala Lumpur',
+  'Taguig City'
+];
+
+
+
+
+//C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetailDetails.jsx
+
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  Container, Box, Typography, Button, TextField,
+  Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody
+} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
+import DataTable from "../components/DataTable";
+
+import { fetchLiveSummary } from "../api/occupancy.service";
+import { lookupFloor } from "../utils/floorLookup";
+
+export default function PartitionDetailDetails() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
+
+  const [details, setDetails]       = useState([]);
+  const [liveCounts, setLiveCounts] = useState({});
+  const [loading, setLoading]       = useState(true);
+  const [lastUpdate, setLastUpdate] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedFloor, setExpandedFloor] = useState(null);
+
+  // load once
+  useEffect(() => {
+    let active = true;
+    fetchLiveSummary().then(json => {
+      if (!active) return;
+      setLiveCounts(json.realtime[partition]?.floors || {});
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+        .map(r => ({ ...r, floor: lookupFloor(r.PartitionName2, r.Door, r.Direction) }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+      setLoading(false);
+    });
+    return () => { active = false };
+  }, [partition]);
+
+  // poll
+  useEffect(() => {
+    const iv = setInterval(async () => {
+      const json = await fetchLiveSummary();
+      setLiveCounts(json.realtime[partition]?.floors || {});
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+        .map(r => ({ ...r, floor: lookupFloor(r.PartitionName2, r.Door, r.Direction) }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(iv);
+  }, [partition]);
+
+  // group floors
+  const floorMap = useMemo(() => {
+    const m = {};
+    Object.keys(liveCounts).forEach(f => m[f] = []);
+    details.forEach(r => {
+      if (!m[r.floor]) m[r.floor] = [];
+      m[r.floor].push(r);
+    });
+    return m;
+  }, [details, liveCounts]);
+
+  // filter/sort
+  const displayed = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return Object.entries(floorMap)
+      .filter(([fl, emps]) => {
+        if (!term) return true;
+        if (fl.toLowerCase().includes(term)) return true;
+        return emps.some(r =>
+          r.ObjectName1.toLowerCase().includes(term) ||
+          r.EmployeeID.toLowerCase().includes(term)
+        );
+      })
+      .sort(([a],[b]) => (liveCounts[b]||0) - (liveCounts[a]||0));
+  }, [floorMap, liveCounts, searchTerm]);
+
+  const columns = [
+    { field:"EmployeeID",     headerName:"Emp ID"      },
+    { field:"ObjectName1",    headerName:"Name"        },
+    { field:"LocaleMessageTime", headerName:"Swipe Time" },
+    { field:"PersonnelType",  headerName:"Type"        },
+    { field:"CardNumber",     headerName:"Card"        },
+    { field:"Door",           headerName:"Door"        },
+  ];
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <Box sx={{ px:2, py:8 }}><LoadingSpinner/></Box>
+        <Footer />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Header />
+
+      <Box sx={{ pt:1, pb:1, background:'rgba(0,0,0,0.6)' }}>
+        <Container disableGutters maxWidth={false}>
+          <Box display="flex" alignItems="center" mb={2} sx={{ px:2 }}>
+            <Button size="small" onClick={()=>navigate(-1)} sx={{ color:'#FFC107' }}>
+              ← Back to Overview
+            </Button>
+          </Box>
+
+          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px:2 }}>
+            <Typography variant="h6" sx={{ color:'#FFC107' }}>
+              Floor Details
+            </Typography>
+            <Typography variant="body2" sx={{ color:'#FFC107' }}>
+              Last updated: {lastUpdate}
+            </Typography>
+            <TextField
+              size="small"
+              placeholder="Search floor / emp…"
+              value={searchTerm}
+              onChange={e=>setSearchTerm(e.target.value)}
+              sx={{
+                '& .MuiInputBase-input': { color:'#FFC107' },
+                '& .MuiOutlinedInput-root fieldset': { borderColor:'#FFC107' }
+              }}
+            />
+          </Box>
+
+          <Box display="flex" flexWrap="wrap" width="100%" sx={{ px:2 }}>
+            {displayed.map(([floor, emps]) => (
+              <Box key={floor} sx={{ width:'50%', p:2 }}>
+                <Paper sx={{
+                  border:'2px solid #FFC107',
+                  p:2,
+                  background:'rgba(0,0,0,0.4)'
+                }}>
+                  <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ color:'#FFC107' }}>
+                    {floor} (Total {liveCounts[floor]||0})
+                  </Typography>
+
+                  <TableContainer component={Paper} variant="outlined" sx={{ mb:1, background:'rgba(0,0,0,0.4)' }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow sx={{ bgcolor:'#000' }}>
+                          {["Emp ID","Name","Swipe Time","Type","Card","Door"].map(h=>(
+                            <TableCell key={h} sx={{ color:'#FFC107', border:'1px solid #FFC107', fontWeight:'bold' }}>
+                              {h}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {emps.slice(0,10).map((r,i)=>(
+                          <TableRow key={i}>
+                            <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.EmployeeID}</TableCell>
+                            <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.ObjectName1}</TableCell>
+                            <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>
+                              {new Date(r.LocaleMessageTime).toLocaleTimeString()}
+                            </TableCell>
+                            <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.PersonnelType}</TableCell>
+                            <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.CardNumber}</TableCell>
+                            <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.Door}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+
+                  <Button size="small"
+                    onClick={()=>setExpandedFloor(f=>f===floor?null:floor)}
+                    sx={{ color:'#FFC107' }}
+                  >
+                    {expandedFloor===floor?'Hide':'See more…'}
+                  </Button>
+                </Paper>
+              </Box>
+            ))}
+          </Box>
+
+          {expandedFloor && (
+            <Box sx={{ px:2, mt:2 }}>
+              <Typography variant="h6" sx={{ color:'#FFC107' }} gutterBottom>
+                {expandedFloor} — All Entries
+              </Typography>
+              <DataTable
+                columns={columns}
+                rows={floorMap[expandedFloor].map(r=>({
+                  ...r,
+                  LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+                }))}
+              />
+            </Box>
+          )}
+        </Container>
+      </Box>
+
+      <Footer />
+    </>
+  );
+}
+
+
+
+
+
+
