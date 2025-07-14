@@ -1,39 +1,12 @@
-<LocalizationProvider dateAdapter={AdapterDateFns}>
-  <DatePicker
-    label="Select date"
-    value={pickedDate}
-    onChange={(d) => {
-      setPickedDate(d);
-      setShowDetails(false);
-    }}
-    renderInput={(params) => (
-      <TextField
-        fullWidth
-        {...params}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: '#FFC107', // 🟡 Border
-            },
-            '&:hover fieldset': {
-              borderColor: '#FFC107', // 🟡 Hover Border
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: '#FFC107', // 🟡 Focused Border
-            },
-            color: '#FFC107', // 🟡 Input text color
-          },
-          '& .MuiInputLabel-root': {
-            color: '#FFC107', // 🟡 Label color
-          },
-          '& .MuiInputLabel-root.Mui-focused': {
-            color: '#FFC107', // 🟡 Focused Label
-          },
-          '& .MuiSvgIcon-root': {
-            color: '#FFC107', // 🟡 Calendar icon
-          },
-        }}
-      />
-    )}
-  />
-</LocalizationProvider>
+ {/* Date picker */}
+            <Box sx={{ flex: '0 0 200px', borderColor: 'white' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ flex: '0 0 200px', borderColor: 'white' }}>
+                <DatePicker
+                  label="Select date"
+                  value={pickedDate}
+                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                  renderInput={params => <TextField fullWidth {...params} />}
+                  sx={{ flex: '0 0 200px', borderColor: 'white' }}
+                />
+              </LocalizationProvider>
+            </Box>
