@@ -1,10 +1,46 @@
- <Box sx={{ flex:'0 0 200px', borderColor:'white' }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Select date"
-                  value={pickedDate}
-                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                  renderInput={params => <TextField fullWidth {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
+import { TextField } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+
+<Box sx={{ flex: '0 0 200px', borderColor: 'white' }}>
+  <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <DatePicker
+      label="Select date"
+      value={pickedDate}
+      onChange={(d) => {
+        setPickedDate(d);
+        setShowDetails(false);
+      }}
+      renderInput={(params) => (
+        <TextField
+          fullWidth
+          {...params}
+          sx={{
+            '& .MuiInputBase-root': {
+              color: '#FFC107', // input text color (yellow)
+              borderColor: '#FFC107',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFC107', // default border
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFC107', // hover border
+            },
+            '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFC107', // focused border
+            },
+            '& .MuiInputLabel-root': {
+              color: '#FFC107', // label color
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: '#FFC107', // label color when focused
+            },
+            '& .MuiSvgIcon-root': {
+              color: '#FFC107', // calendar icon color
+            }
+          }}
+        />
+      )}
+    />
+  </LocalizationProvider>
+</Box>
