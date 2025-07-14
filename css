@@ -1,25 +1,24 @@
- {/* Markers */}
-          {markers.map((m, i) => {
-            const r = 1 * zoom;
-            return (
-              <Marker key={i} coordinates={m.coords} onClick={() => onClickSite(selected)}>
-                <circle r={r} fill={m.color} stroke="#fff" strokeWidth={1}>
-                  {m.tooltip && <title>{m.tooltip}</title>}
-                </circle>
-                {m.showLabel && (
-                  <text
-                    textAnchor="middle"
-                    y={-r - 2}
-                    fill={m.color}
-                    fontSize={4 * zoom}
-                    fontWeight="bold"
-                  >
-                    {m.name}
-                  </text>
-                )}
-              </Marker>
-
-
-
-
-                       in this page in circle i want to add this location icon <i class="bi bi-geo-alt"></i> means location point show this location icon dont make any change just add this loation icon carefllly
+<Marker key={i} coordinates={m.coords} onClick={() => onClickSite(selected)}>
+  <svg
+    width={8 * zoom}
+    height={8 * zoom}
+    viewBox="0 0 16 16"
+    fill={m.color}
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ transform: 'translate(-8px, -16px)' }}
+  >
+    <path d="M8 0a5 5 0 0 0-5 5c0 4.25 5 11 5 11s5-6.75 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+    {m.tooltip && <title>{m.tooltip}</title>}
+  </svg>
+  {m.showLabel && (
+    <text
+      textAnchor="middle"
+      y={-r - 2}
+      fill={m.color}
+      fontSize={4 * zoom}
+      fontWeight="bold"
+    >
+      {m.name}
+    </text>
+  )}
+</Marker>
