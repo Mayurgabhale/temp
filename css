@@ -1,3 +1,23 @@
+<Tooltip 
+  contentStyle={{ backgroundColor:'#FFEE8C', borderColor: colors[0] }}
+  formatter={(value, name, props) => {
+    const { emp = 0, cont = 0 } = props.payload || {};
+    return [
+      `Total: ${value}`,
+      `Employees: ${emp}, Contractors: ${cont}`
+    ];
+  }}
+/>
+
+<Legend verticalAlign="bottom" wrapperStyle={{ color:'rgba(255,255,255,0.8)' }} />
+
+
+
+
+
+
+
+
 In tooltip Brazil total is displayed but, add employee and contractors also in tooltip on hovover and also in legend display total like Brazil:3
 Read file carefully and update
 
