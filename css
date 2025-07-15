@@ -227,15 +227,14 @@ export default function PieChartCard({
             <PieChart>
 
               <Pie
-                data={renderData}
+                 data={renderData}
                 dataKey="value"
                 nameKey="name"
                 innerRadius={70}
                 outerRadius={120}
                 paddingAngle={4}
-                isAnimationActive={false}
-                animationDuration={0}
-                animationEasing='linear'
+                isAnimationActive
+                animationDuration={animationDuration}
               // show percent labels inside each slice
               label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
               labelLine={false}
@@ -337,3 +336,10 @@ const cardStyle = borderColor => ({
   }
 });
 
+
+
+
+in a pie chart one is the big issue 
+when i add this   isAnimationActive then percentage labe               label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+ this is not show 
+and when i remove isAnimationActive this then percentage is blink, i my require is to the percentage is show every time not blink, read the above file code careflly and slove the issue caractly
