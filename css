@@ -1,3 +1,15 @@
+
+
+label={({ name, percent }) => {
+  const item = renderData.find(d => d.name === name);
+  return item ? `${(item.percent * 100).toFixed(0)}%` : '';
+}}
+
+
+
+
+
+
 const renderData = useMemo(() => {
   const rawData = (total === 0 && showZeroSlice)
     ? [{ name: 'Available', value: data[1]?.value || 0 }]
