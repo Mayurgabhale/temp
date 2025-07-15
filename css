@@ -1,3 +1,14 @@
+const lastDay = Array.isArray(historyData?.summaryByDate) && historyData.summaryByDate.length > 0
+  ? historyData.summaryByDate.at(-1)
+  : null;
+
+const partToday = lastDay?.partitions?.[code] || { total: 0, Employee: 0, Contractor: 0 };
+
+
+
+
+
+
 
 
 
