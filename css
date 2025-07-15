@@ -1,3 +1,5 @@
+
+
 import React, { useMemo } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -14,6 +16,7 @@ export default function PieChartCard({
 }) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
+  // ✅ Always call hooks before any early return
   const renderData = useMemo(() => {
     const rawData = (total === 0 && showZeroSlice)
       ? [{ name: 'Available', value: data[1]?.value || 0 }]
@@ -27,6 +30,7 @@ export default function PieChartCard({
     }));
   }, [JSON.stringify(data), total, showZeroSlice]);
 
+  // ✅ Now we can return early safely
   if (total === 0 && !showZeroSlice) {
     return (
       <Card sx={cardStyle(colors[0])}>
@@ -41,8 +45,6 @@ export default function PieChartCard({
       </Card>
     );
   }
-
-  const isAsiaPacific = title.toLowerCase().includes('asia-pacific');
 
   return (
     <Card sx={cardStyle(colors[0])}>
@@ -61,8 +63,8 @@ export default function PieChartCard({
                 innerRadius={60}
                 outerRadius={120}
                 paddingAngle={4}
-                isAnimationActive
-                animationDuration={animationDuration}
+                isAnimationActive={false}
+                animationDuration={0}
                 label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                 labelLine={false}
               >
@@ -70,31 +72,12 @@ export default function PieChartCard({
                   <Cell key={i} fill={colors[i % colors.length]} />
                 ))}
               </Pie>
-
-              {isAsiaPacific ? (
-                <>
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend
-                    verticalAlign="bottom"
-                    wrapperStyle={{ color: 'rgba(18, 17, 17, 0.8)' }}
-                    formatter={(value, entry) => `${value}: ${entry.payload.value}`}
-                  />
-                </>
-              ) : (
-                <>
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }}
-                  />
-                  <Legend
-                    verticalAlign="bottom"
-                    wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
-                  />
-                </>
-              )}
+              <Tooltip contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }} />
+              <Legend verticalAlign="bottom" wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }} />
             </PieChart>
           </ResponsiveContainer>
 
-          {/* Centered total */}
+          {/* Centered Total */}
           <Box
             component="div"
             sx={{
@@ -115,45 +98,9 @@ export default function PieChartCard({
   );
 }
 
-// ✅ Custom tooltip only used for "Asia-Pacific"
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length > 0) {
-    const data = payload[0].payload;
-
-    return (
-      <Box
-        sx={{
-          bgcolor: '#FFEE8C',
-          p: 2,
-          border: '1px solid #FFC107',
-          borderRadius: 1,
-          color: '#000',
-          minWidth: 120
-        }}
-      >
-        <Typography variant="subtitle2" sx={{ color: '#000' }}>
-          <strong>{data.name}</strong>
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#000' }}>Total: {data.value}</Typography>
-
-        {data.emp !== undefined && (
-          <Typography variant="body2" sx={{ color: '#000' }}>Employees: {data.emp}</Typography>
-        )}
-        {data.cont !== undefined && (
-          <Typography variant="body2" sx={{ color: '#000' }}>Contractors: {data.cont}</Typography>
-        )}
-      </Box>
-    );
-  }
-
-  return null;
-};
-
 const cardStyle = borderColor => ({
-  border: `1px solid ${borderColor}`,
   borderRadius: 2,
   bgcolor: 'rgba(0,0,0,0.4)',
-  overflow: 'hidden',
   transition: 'transform 0.3s, box-shadow 0.3s',
   '&:hover': {
     transform: 'scale(1.02)',
