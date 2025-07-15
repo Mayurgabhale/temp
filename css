@@ -1,17 +1,3 @@
-import React, { useMemo } from 'react'; // Add useMemo if not already imported
-
-const renderData = useMemo(() => {
-  const rawData = (total === 0 && showZeroSlice)
-    ? [{ name: 'Available', value: data[1]?.value || 0 }]
-    : data;
-
-  const sum = rawData.reduce((acc, d) => acc + d.value, 0);
-
-  return rawData.map(d => ({
-    ...d,
-    percent: sum > 0 ? d.value / sum : 0
-  }));
-}, [JSON.stringify(data), total, showZeroSlice]);
 
 
 
@@ -19,31 +5,22 @@ const renderData = useMemo(() => {
 
 
 
+Compiled with problems:
+×
+ERROR
+[eslint] 
+src\components\PieChartCard.jsx
+  Line 133:22:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+Search for the keywords to learn more about each error.
 
 
-
-const renderData = useMemo(() => {
-  const rawData = (total === 0 && showZeroSlice)
-    ? [{ name: 'Available', value: data[1]?.value || 0 }]
-    : data;
-
-  return rawData.map(d => ({
-    ...d,
-    percent: total > 0 ? d.value / total : 0,
-  }));
-}, [JSON.stringify(data), total, showZeroSlice]); // compare actual values, not just reference
-
-
-
-
-
-same blink issue for below cod also slove it same above 
 
 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
+import { useMemo } from 'react'; 
 export default function PieChartCard({
   title,
   data,
@@ -74,9 +51,19 @@ export default function PieChartCard({
   }
 
   // If zero, and showZeroSlice==true, show single “Available” slice
-  const renderData = (total === 0 && showZeroSlice)
+  const renderData = useMemo(() => {
+  const rawData = (total === 0 && showZeroSlice)
     ? [{ name: 'Available', value: data[1]?.value || 0 }]
     : data;
+
+  const sum = rawData.reduce((acc, d) => acc + d.value, 0);
+
+  return rawData.map(d => ({
+    ...d,
+    percent: sum > 0 ? d.value / sum : 0
+  }));
+}, [JSON.stringify(data), total, showZeroSlice]);
+
 
   return (
     <Card sx={cardStyle(colors[0])}>
