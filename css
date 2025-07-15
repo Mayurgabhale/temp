@@ -1,3 +1,21 @@
+data={smallOnes.map(p => ({
+  name: displayNameMap[p.name],
+  value: p.total,
+  emp: p.Employee,
+  cont: p.Contractor
+}))}
+
+
+
+
+
+
+
+
+
+
+
+
 // src/components/PieChartCard.jsx
 
 import React from 'react';
