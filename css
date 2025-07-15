@@ -1,3 +1,16 @@
+const asiaPacData = useMemo(() =>
+  combinedRegions.map(r => ({
+    name: r.name.replace(/^.*\./, ''),
+    value: r.total,
+    emp: r.Employee,
+    cont: r.Contractor
+  })),
+  [combinedRegions]
+);
+
+
+
+
 // src/pages/Dashboard.jsx
 import React from 'react';
 import {
