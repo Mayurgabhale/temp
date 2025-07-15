@@ -1,3 +1,38 @@
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length > 0) {
+    const data = payload[0].payload;
+
+    return (
+      <Box
+        sx={{
+          bgcolor: '#FFEE8C',
+          p: 2,
+          border: '1px solid #FFC107',
+          borderRadius: 1,
+          color: '#000',
+          minWidth: 120
+        }}
+      >
+        <Typography variant="subtitle2"><strong>{data.name}</strong></Typography>
+        <Typography variant="body2">Value: {data.value}</Typography>
+
+        {data.Employee !== undefined && (
+          <Typography variant="body2">Employees: {data.Employee}</Typography>
+        )}
+        {data.Contractor !== undefined && (
+          <Typography variant="body2">Contractors: {data.Contractor}</Typography>
+        )}
+      </Box>
+    );
+  }
+
+  return null;
+};
+
+
+
+
+
 
 
 
