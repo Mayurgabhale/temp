@@ -1,3 +1,43 @@
+
+useEffect(() => {
+  let active = true;
+  const load = async () => {
+    const json = await fetchLiveSummary();
+    if (!active) return;
+
+    // DEBUG: Check the data
+    console.log("Raw details", json.details);
+
+    const det = json.details
+      .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+      .map(r => {
+        console.log("Record:", r); // ADD THIS
+        return {
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction)
+        };
+      });
+
+    setDetails(det);
+    setLiveCounts(json.realtime[partition]?.floors || {});
+    setLastUpdate(new Date().toLocaleTimeString());
+    setLoading(false);
+  };
+  load();
+  const iv = setInterval(load, 1000);
+  return () => clearInterval(iv);
+}, [partition]);
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
