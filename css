@@ -1,26 +1,7 @@
-
-
-
-
-
-
-
-Compiled with problems:
-×
-ERROR
-[eslint] 
-src\components\PieChartCard.jsx
-  Line 133:22:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-
-
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useMemo } from 'react'; 
+
 export default function PieChartCard({
   title,
   data,
@@ -31,10 +12,23 @@ export default function PieChartCard({
   noDataMessage = 'No realtime data',
   totalSeats = 0,
 }) {
-
-
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
+  // ✅ Always call hooks before any early return
+  const renderData = useMemo(() => {
+    const rawData = (total === 0 && showZeroSlice)
+      ? [{ name: 'Available', value: data[1]?.value || 0 }]
+      : data;
+
+    const sum = rawData.reduce((acc, d) => acc + d.value, 0);
+
+    return rawData.map(d => ({
+      ...d,
+      percent: sum > 0 ? d.value / sum : 0
+    }));
+  }, [JSON.stringify(data), total, showZeroSlice]);
+
+  // ✅ Now we can return early safely
   if (total === 0 && !showZeroSlice) {
     return (
       <Card sx={cardStyle(colors[0])}>
@@ -42,7 +36,7 @@ export default function PieChartCard({
           <Typography variant="subtitle1" align="center" color="text.primary">
             {title}
           </Typography>
-          <Typography variant="body2" align="center" sx={{ mt:4, color:'text.secondary' }}>
+          <Typography variant="body2" align="center" sx={{ mt: 4, color: 'text.secondary' }}>
             {noDataMessage}
           </Typography>
         </CardContent>
@@ -50,35 +44,16 @@ export default function PieChartCard({
     );
   }
 
-  // If zero, and showZeroSlice==true, show single “Available” slice
-  const renderData = useMemo(() => {
-  const rawData = (total === 0 && showZeroSlice)
-    ? [{ name: 'Available', value: data[1]?.value || 0 }]
-    : data;
-
-  const sum = rawData.reduce((acc, d) => acc + d.value, 0);
-
-  return rawData.map(d => ({
-    ...d,
-    percent: sum > 0 ? d.value / sum : 0
-  }));
-}, [JSON.stringify(data), total, showZeroSlice]);
-
-
   return (
     <Card sx={cardStyle(colors[0])}>
-      <CardContent sx={{ p:1 }}>
+      <CardContent sx={{ p: 1 }}>
         <Typography variant="subtitle1" align="center" color="text.primary">
           {title}
         </Typography>
-        {/* <Box sx={{ width:'100%', height }}>
-          <ResponsiveContainer>
-            <PieChart> */}
-        {/* wrap in relative container so we can overlay the total */}
+
         <Box sx={{ position: 'relative', width: '100%', height }}>
           <ResponsiveContainer>
             <PieChart>
-
               <Pie
                 data={renderData}
                 dataKey="value"
@@ -88,28 +63,19 @@ export default function PieChartCard({
                 paddingAngle={4}
                 isAnimationActive={false}
                 animationDuration={0}
-              // show percent labels inside each slice
-              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-              labelLine={false}
-
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                labelLine={false}
               >
                 {renderData.map((_, i) => (
                   <Cell key={i} fill={colors[i % colors.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor:'#FFEE8C', borderColor:colors[0] }} />
-              <Legend verticalAlign="bottom" wrapperStyle={{ color:'rgba(255,255,255,0.8)' }} sx={{ mt:7}} />
-           
-           
-            {/* </PieChart>
-            
-          </ResponsiveContainer>
-        </Box> */}
-
+              <Tooltip contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }} />
+              <Legend verticalAlign="bottom" wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }} />
             </PieChart>
           </ResponsiveContainer>
 
-          {/* centered total */}
+          {/* Centered Total */}
           <Box
             component="div"
             sx={{
@@ -123,34 +89,19 @@ export default function PieChartCard({
             <Typography variant="h4" align="center" sx={{ color: colors[0], fontWeight: 'bold' }}>
               {total}
             </Typography>
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              </Typography>
-              
-
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              {/* of {totalSeats} seats */}
-            </Typography>
-
           </Box>
         </Box>
-
       </CardContent>
     </Card>
   );
 }
 
 const cardStyle = borderColor => ({
-  // border: `1px solid ${borderColor}`,
   borderRadius: 2,
   bgcolor: 'rgba(0,0,0,0.4)',
-  // overflow: 'hidden',
   transition: 'transform 0.3s, box-shadow 0.3s',
   '&:hover': {
     transform: 'scale(1.02)',
     boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
   }
 });
-
-
-
-
