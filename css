@@ -1,3 +1,17 @@
+const lastDay = history?.summaryByDate?.at(-1);
+const partToday = lastDay?.region || {
+  total: 0,
+  Employee: 0,
+  Contractor: 0,
+  TempBadge: 0,
+};
+
+
+
+
+
+
+
 
 Uncaught runtime errors:
 ×
