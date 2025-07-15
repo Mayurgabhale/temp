@@ -1,3 +1,57 @@
+
+const regions = data?.realtime || {};
+
+const partitions = useMemo(() => (
+  partitionList
+    .map(name => {
+      const key = Object.keys(regions).find(k => k.includes(name));
+      const p = key && regions[key] ? regions[key] : {};
+      return {
+        name,
+        total: p.total || 0,
+        Employee: p.Employee || 0,
+        Contractor: p.Contractor || 0,
+        floors: p.floors || {},
+        flag: flagMap[name] || null
+      };
+    })
+    .sort((a, b) => b.total - a.total)
+), [regions]);
+
+const pune = partitions.find(p => p.name === 'Pune');
+const quezonCity = partitions.find(p => p.name === 'Quezon City');
+
+const combinedRegions = useMemo(() =>
+  partitions.filter(p =>
+    ['JP.Tokyo', 'MY.Kuala Lumpur', 'Taguig City'].includes(p.name)
+  ),
+  [partitions]
+);
+
+const quezonData = useMemo(() => [
+  { name: 'Employees', value: quezonCity?.Employee || 0 },
+  { name: 'Contractors', value: quezonCity?.Contractor || 0 }
+], [quezonCity?.Employee, quezonCity?.Contractor]);
+
+const asiaPacData = useMemo(() =>
+  combinedRegions.map(r => ({
+    name: r.name.replace(/^.*\./, ''),
+    value: r.total
+  })),
+  [combinedRegions]
+);
+
+
+
+
+
+
+
+
+
+
+
+
 // src/pages/Dashboard.jsx
 import React from 'react';
 import {
