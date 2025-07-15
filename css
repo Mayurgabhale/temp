@@ -1,4 +1,11 @@
-
+// Extract live partition data
+const live = liveSummary?.realtime?.[partition] || {
+  total: 0,
+  Employee: 0,
+  Contractor: 0,
+  TempBadge: 0,
+  floors: {},
+};
 
 
 
