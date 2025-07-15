@@ -1,3 +1,20 @@
+const quezonData = useMemo(() => [
+  { name: 'Employees', value: quezonCity?.Employee || 0 },
+  { name: 'Contractors', value: quezonCity?.Contractor || 0 }
+], [quezonCity?.Employee, quezonCity?.Contractor]);
+
+...
+
+<PieChartCard
+  data={quezonData}
+  colors={['#4CAF50', '#F44336']}
+  height={290}
+  showZeroSlice
+  sx={{ border: 'none' }}
+/>
+
+
+
 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
