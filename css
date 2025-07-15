@@ -1,23 +1,19 @@
-const floorMap = Object.keys(live.floors).length
-  ? live.floors
-  : { "Floor 1": 0 }; // default for APAC
 
-const floorEntries = Object.entries(floorMap).map(([floor, cnt]) => {
-  const name     = floor.trim();
-  const capacity = buildingCapacities[name] ?? 0;
-  const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
-
-  return {
-    name,
-    Headcount: cnt,
-    Capacity:  capacity,
-    breakdown: {
-      Headcount: cnt,
-      "Total Seat": capacity,
-      Usage: pct + "%",
-    },
-  };
-});
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of undefined (reading 'region')
+TypeError: Cannot read properties of undefined (reading 'region')
+    at PartitionDetail (http://localhost:3000/src_pages_PartitionDetail_jsx.d9a178ea63a67412c953.hot-update.js:292:29)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
+    at beginWork (http://localhost:3000/static/js/bundle.js:20250:16)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15742:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22323:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:22216:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:22200:7)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21964:42)
 
 
 
@@ -25,10 +21,11 @@ const floorEntries = Object.entries(floorMap).map(([floor, cnt]) => {
 
 
 
+//C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetail.jsx
 
-//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\pages\PartitionDetail.jsx
 
-// src/pages/PartitionDetail.jsx
+
+
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -211,243 +208,3 @@ export default function PartitionDetail() {
     </>
   );
 }
-
-
-
-
-//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components\ChartCard.jsx
-
-// src/components/ChartCard.jsx
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import {
-  AreaChart,
-  Area,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  Legend,
-  LabelList,
-  ReferenceLine,
-} from 'recharts';
-import dayjs from 'dayjs';
-
-export default function ChartCard({
-  title,
-  data = [],
-  dataKey = 'value',
-  chartHeight = 350,
-  colors = { head: '#FFC107', cap: '#000000' },
-  animateDuration = 800,
-  showCrosshair = true,
-  timeFormat = 'HH:mm:ss',
-  axisProps = {},
-  tooltipFormatter = null,
-  disableLegendToggle = false,     // prevent hiding via legend click
-}) {
-  const [hidden, setHidden] = useState({});
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [replayKey, setReplayKey] = useState(0);
-  const containerRef = useRef();
-
-  if (!Array.isArray(data) || !data.length) {
-    return (
-      <Card sx={{ mb: 2 }}>
-        <CardContent sx={{ textAlign: 'center' }}>
-          <Typography variant="h6">{title}</Typography>
-          <Typography variant="body2">No data to display.</Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const hasCapacity = data[0].Capacity != null;
-
-  // Prevent toggling series off
-  const handleLegendClick = o => {
-    if (disableLegendToggle) return;
-    const { dataKey } = o;
-    setHidden(prev => ({ ...prev, [dataKey]: !prev[dataKey] }));
-  };
-
-  // Clicking chart area will replay animations
-  const handleChartClick = () => {
-    setReplayKey(k => k + 1);
-  };
-
-  return (
-    <Card sx={{ mb: 2 }}>
-      <CardContent>
-        {/* Title */}
-        <Typography variant="h6" gutterBottom sx={{ color: colors.head }}>
-          {title}
-        </Typography>
-
-        {/* Chart */}
-        <Box
-          ref={containerRef}
-          sx={{ width: '100%', height: chartHeight, cursor: 'pointer' }}
-          onClick={handleChartClick}
-        >
-          <ResponsiveContainer key={replayKey}>
-            <AreaChart
-              data={data}
-              margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-              onMouseMove={e => {
-                if (e && e.activeTooltipIndex != null) {
-                  setActiveIndex(e.activeTooltipIndex);
-                }
-              }}
-            >
-              {/* Gradients */}
-              <defs>
-                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="50%" stopColor={colors.head} stopOpacity={0.4} />
-                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-
-              {/* Grid */}
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-
-              {/* Crosshair */}
-              {showCrosshair && activeIndex != null && data[activeIndex] && (
-                <ReferenceLine
-                  x={data[activeIndex].name}
-                  stroke={colors.head}
-                  strokeOpacity={0.5}
-                />
-              )}
-
-              {/* X Axis */}
-              <XAxis
-                dataKey="name"
-                tick={{ fill: '#000', fontWeight: 600 }}
-                tickFormatter={t =>
-                  typeof t === 'number' ? dayjs(t).format(timeFormat) : t
-                }
-                label={{
-                
-                  position: 'insideBottomRight',
-                  offset: -10,
-                  fill: '#000',
-                  fontWeight: 600,
-                }}
-                {...axisProps.xAxis}
-              />
-
-              {/* Y Axis */}
-              <YAxis
-                tick={{ fill: '#fff', fontWeight: 600 }}
-                label={{
-                  value: 'Count',
-                  angle: -90,
-                  position: 'insideLeft',
-                  fill: '#000',
-                  fontWeight: 600,
-                }}
-                {...axisProps.yAxis}
-              />
-
-              {/* Tooltip */}
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#fff',
-                  border: `1px solid ${colors.head}`,
-                  padding: '0.5rem',
-                }}
-                cursor={showCrosshair}
-                isAnimationActive={false}
-                content={({ active, payload }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const { breakdown = {}, name } = payload[0].payload;
-                  return (
-                    <Box sx={{ backgroundColor: '#fff', border: `1px solid ${colors.head}`, p:1, borderRadius:1 }}>
-                      <Typography variant="subtitle2" sx={{ color: colors.head, mb: 0.5 }}>
-                        {name}
-                      </Typography>
-                      {Object.entries(breakdown).map(([key,val])=>(
-                        <Typography key={key} variant="body2" sx={{ color: '#000' }}>
-                          {key}: {val}
-                        </Typography>
-                      ))}
-                    </Box>
-                  );
-                }}
-              />
-
-              {/* Legend */}
-              <Legend
-                wrapperStyle={{ color: '#000' }}
-                onClick={handleLegendClick}
-                iconType="square"
-              />
-
-              {/* Capacity Area */}
-              {hasCapacity && !hidden.Capacity && (
-                <Area
-                  type="monotone"
-                  dataKey="Capacity"
-                  name="Total Seat"
-                  stroke={colors.cap}
-                  fill={`${colors.cap}33`}
-                  dot={false}
-                  isAnimationActive
-                  animationDuration={animateDuration}
-                >
-                  <LabelList
-                    dataKey="Capacity"
-                    position="top"
-                    style={{ fill: colors.cap, fontSize: 12, fontWeight: 600 }}
-                  />
-                </Area>
-              )}
-
-              {/* Headcount Area */}
-              {!hidden.Headcount && (
-                <Area
-                  type="monotone"
-                  dataKey={hasCapacity ? 'Headcount' : dataKey}
-                  name="Usage"
-                  stroke={colors.head}
-                  fill="url(#colorHead)"
-                  dot={false}
-                  isAnimationActive
-                  animationDuration={animateDuration}
-                >
-                  <LabelList
-                    dataKey={hasCapacity ? 'Headcount' : dataKey}
-                    position="top"
-                    style={{ fill: '#2ecc71', fontSize: 15, fontWeight: 600 }}
-                  />
-                </Area>
-              )}
-
-              {/* Overlay Line */}
-              {!hidden.Headcount && (
-                <Line
-                  type="monotone"
-                  dataKey={hasCapacity ? 'Headcount' : dataKey}
-                  stroke={colors.head}
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive
-                  animationDuration={animateDuration}
-                  activeDot={{ r: 6, stroke: '#000', strokeWidth: 2 }}
-                />
-              )}
-            </AreaChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
-
-
-
-
- 
