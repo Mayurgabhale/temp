@@ -1,3 +1,31 @@
+const pieData1 = useMemo(() => {
+    return summaryItems
+      .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+      .map(item => ({
+        name: item.label,
+        value: item.total,
+        Employee: item.emp,
+        Contractor: item.cont
+      }));
+  }, [summaryItems]);
+
+  const pieData2 = useMemo(() => {
+    return summaryItems
+      .filter(item => ['Abu Dhabi', 'Vienna', 'Casablanca', 'London', 'Madrid'].includes(item.label))
+      .map(item => ({
+        name: item.label,
+        value: item.total,
+        Employee: item.emp,
+        Contractor: item.cont
+      }));
+  }, [summaryItems]);
+
+
+
+
+
+
+
 pie chart are blink every seconds what's is the issue check it and find out carefully full both file
 
 
