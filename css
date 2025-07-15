@@ -1,235 +1,472 @@
-// Extract live partition data
-const live = liveSummary?.realtime?.[partition] || {
-  total: 0,
-  Employee: 0,
-  Contractor: 0,
-  TempBadge: 0,
-  floors: {},
-};
-
-
-
-
-
-
-rameId: 1244}
-PartitionDetail.jsx:281 Uncaught ReferenceError: live is not defined
-    at PartitionDetail (PartitionDetail.jsx:281:1)
-    at react-stack-bottom-frame (react-dom-client.development.js:23863:1)
-    at renderWithHooks (react-dom-client.development.js:5529:1)
-    at updateFunctionComponent (react-dom-client.development.js:8897:1)
-    at beginWork (react-dom-client.development.js:10522:1)
-    at runWithFiberInDEV (react-dom-client.development.js:1518:1)
-    at performUnitOfWork (react-dom-client.development.js:15130:1)
-    at workLoopSync (react-dom-client.development.js:14956:1)
-    at renderRootSync (react-dom-client.development.js:14936:1)
-    at performWorkOnRoot (react-dom-client.development.js:14462:1)
-
-
-
-Compiled with problems:
-×
-ERROR
-[eslint] 
-src\pages\PartitionDetail.jsx
-  Line 281:24:  'live' is not defined  no-undef
-  Line 282:20:  'live' is not defined  no-undef
-  Line 337:14:  'live' is not defined  no-undef
-  Line 343:14:  'live' is not defined  no-undef
-  Line 349:14:  'live' is not defined  no-undef
-
-Search for the keywords to learn more about each error.
-
-
-
-
-
-
-//C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetail.jsx
-
-
-
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Container,
-  Box,
-  Typography,
-  Button,
-  CircularProgress,
-} from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+  Container, Box, Typography, Button, TextField,
+  TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
+} from '@mui/material';
 
-import SummaryCard from "../components/SummaryCard";
-import ChartCard from "../components/ChartCard";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import LoadingSpinner from "../components/LoadingSpinner";
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import DataTable from '../components/DataTable';
+import { fetchLiveSummary } from '../api/occupancy.service';
+import { lookupFloor } from '../utils/floorLookup';
 
-import { fetchLiveSummary, fetchHistory } from "../api/occupancy.service";
-import { lookupFloor } from "../utils/floorLookup";
-
-import buildingCapacities from "../data/buildingCapacities";
-
-import GroupIcon from "@mui/icons-material/Group";
-import TrackChangesIcon from "@mui/icons-material/TrackChanges";
-import PeopleIcon from "@mui/icons-material/People";
-import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
-
-export default function PartitionDetail() {
+export default function PartitionDetailDetails() {
   const { partition } = useParams();
   const navigate = useNavigate();
 
-  const [liveSummary, setLiveSummary] = useState(null);
-  const [history, setHistory] = useState(null);
-  const [historyLoading, setHistoryLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState("");
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState('');
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(null);
 
-  // Auto‐refresh live summary
+  // Load & refresh
   useEffect(() => {
-    let timer;
-    async function loadLive() {
+    let active = true;
+    const load = async () => {
       const json = await fetchLiveSummary();
-      setLiveSummary(json);
+      if (!active) return;
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === 'InDirection')
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction)
+        }));
+      setDetails(det);
       setLastUpdate(new Date().toLocaleTimeString());
-    }
-    loadLive();
-    timer = setInterval(loadLive, 1000);
-    return () => clearInterval(timer);
+      setLoading(false);
+    };
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { active = false; clearInterval(iv); };
   }, [partition]);
 
-  // Load historical summary once
-  useEffect(() => {
-    setHistoryLoading(true);
-    fetchHistory(partition).then((json) => {
-      setHistory(json);
-      setHistoryLoading(false);
-    });
-  }, [partition]);
+  const floorMap = useMemo(() => {
+    return details.reduce((m, r) => {
+      m[r.floor] = m[r.floor] || [];
+      m[r.floor].push(r);
+      return m;
+    }, {});
+  }, [details]);
 
-  if (!liveSummary || !history) return <LoadingSpinner />;
+ 
 
-  // Totals for cards
-  const lastDay = history?.summaryByDate?.at(-1);
-const partToday = lastDay?.region || {
-  total: 0,
-  Employee: 0,
-  Contractor: 0,
-  TempBadge: 0,
-};
-
-  // Build floorEntries with capacity
-  const floorEntries = live.floors
-  ? Object.entries(live.floors).map(([floor, cnt]) => {
-      const name = floor.trim();
-      const capacity = buildingCapacities[name] ?? 0;
-      const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
-
-      return {
-        name,
-        Headcount: cnt,
-        Capacity: capacity,
-        breakdown: {
-          Headcount: cnt,
-          'Total Seat': capacity,
-          Usage: pct + '%',
-        },
-      };
+  const displayed = useMemo(() => {
+  const term = search.toLowerCase();
+  return Object.entries(floorMap)
+    .map(([floor, emps]) => {
+      const filteredEmps = emps.filter(e =>
+        floor.toLowerCase().includes(term) ||
+        e.ObjectName1?.toLowerCase().includes(term) ||
+        e.EmployeeID?.toString().toLowerCase().includes(term)
+      );
+      return [floor, filteredEmps];
     })
-  : [];
+    .filter(([, filteredEmps]) => filteredEmps.length > 0);
+}, [floorMap, search]);
 
+  if (loading) {
+    return <>
+      <Header />
+      <Box p={4}><LoadingSpinner /></Box>
+      <Footer />
+    </>;
+  }
 
   return (
     <>
       <Header />
+      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 2 }}>
 
-      <Box component="main" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth={false} disableGutters>
-          {/* Back button */}
-          <Box display="flex" alignItems="center" mb={1} sx={{ px: "20px" }}>
-            <Button size="small" onClick={() => navigate(-1)}>
-              ← Back
-            </Button>
-          </Box>
+        <Box mb={1}><Button size="small" onClick={() => navigate(-1)}>← Back to Overview</Button></Box>
 
-          {/* Six‐card partition summary */}
-         <Box display="flex" flexWrap="wrap" gap={1} mb={1}>
-  {[
-    {
-      title: "Today's Total Headcount",
-      value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
-      icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
-      border: '#FFB300',
-    },
-    {
-      title: "Today's Employees Count",
-      value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
-      icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
-      border: '#8BC34A',
-    },
-    {
-      title: "Today's Contractors Count",
-      value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
-      icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
-      border: '#E57373',
-    },
-    {
-      title: "Realtime Headcount",
-      value: live.total,
-      icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
-      border: '#FFD180',
-    },
-    {
-      title: "Realtime Employees Count",
-      value: live.Employee,
-      icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
-      border: '#AED581',
-    },
-    {
-      title: "Realtime Contractors Count",
-      value: live.Contractor,
-      icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
-      border: '#EF5350',
-    },
-  ].map((card) => (
-    <Box key={card.title} sx={{ flex: "1 1 calc(16.66% - 8px)" }}>
-      <SummaryCard
-        title={card.title}
-        total={card.value}
-        stats={[]}
-        icon={card.icon}
-        sx={{
-          height: 140,
-          border: `2px solid ${card.border}`,
-        }}
-      />
-    </Box>
-  ))}
-</Box>
-          {/* Floor‐capacity chart */}
-          <Box mb={4} sx={{ px: "20px", p: 2, border: "2px solid #FFC107" }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-              <Typography variant="h6">Live Floor Headcount against Occupancy</Typography>
-              <Typography variant="body2" color="textSecondary">
-                Last updated: {lastUpdate}
-              </Typography>
-            </Box>
+        <Box display="flex" alignItems="center" flexWrap="wrap" gap={0.5} mb={2}>
+          {/* Title */}
+          <Typography variant="h6">Floor Details</Typography>
 
-            <ChartCard
-              data={floorEntries}
-              dataKey="Headcount"
-              chartHeight={320}
-              colors={{ head: "#28B463", cap: "#FDDA0D" }}
-              axisProps={{
-                xAxis: { angle: -0, textAnchor: "end", tick: { fill: "#fff" } },
-                yAxis: { tick: { fill: "#fff" } },
+          {/* Last updated text */}
+          <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+            Last updated: {lastUpdate}
+          </Typography>
+
+          {/* Search field */}
+          <TextField
+            size="small"
+            placeholder="Search floor / emp…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            sx={{ ml: 1 }}
+          />
+        </Box>
+
+        <Box display="flex" flexWrap="wrap">
+  {[...displayed]
+    .sort((a, b) => b[1].length - a[1].length) // Priority: most rows first
+    .map(([floor, emps]) => {
+      const isExpanded = expanded === floor;
+      const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
+
+      return (
+        <Box
+          key={floor}
+          sx={{
+            width: { xs: '100%', sm: '50%' },
+            p: 1,
+            boxSizing: 'border-box',
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ fontWeight: 'bold' }}
+          >
+            {floor} (Total {emps.length})
+          </Typography>
+
+          {/* Smart height layout */}
+          <Box
+            sx={{
+              border: '2px solid #FFC107',
+              borderRadius: 1,
+              p: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 120,
+              maxHeight: isExpanded ? 600 : 'auto',
+            }}
+          >
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{
+                overflowY: 'auto',
+                flexGrow: 1,
               }}
+            >
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map((h, idx, arr) => (
+                      <TableCell
+                        key={h}
+                        sx={{
+                          fontWeight: 'bold',
+                          py: 0.5,
+                          whiteSpace: 'nowrap',
+                          borderRight: idx !== arr.length - 1 ? '1px solid #ccc' : 'none',
+                          borderBottom: '1px solid #ccc',
+                        }}
+                      >
+                        {h}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {visibleEmps.map((r, i) => (
+                    <TableRow key={i}>
+                      {[
+                        r.EmployeeID,
+                        r.ObjectName1,
+                        new Date(r.LocaleMessageTime).toLocaleTimeString(),
+                        r.PersonnelType,
+                        r.CardNumber,
+                        r.Door,
+                      ].map((val, idx, arr) => (
+                        <TableCell
+                          key={idx}
+                          sx={{
+                            py: 0.5,
+                            minWidth: [50, 120, 100, 80, 100, 100][idx],
+                            whiteSpace: 'nowrap',
+                            borderRight: idx !== arr.length - 1 ? '1px solid #eee' : 'none',
+                          }}
+                        >
+                          {val}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {emps.length > 10 && (
+              <Box textAlign="right" mt={1}>
+                <Button
+                  size="small"
+                  onClick={() => setExpanded(isExpanded ? null : floor)}
+                >
+                  {isExpanded ? 'Hide' : 'See more…'}
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      );
+    })}
+</Box>
+
+        {expanded && (
+          <Box mt={2}>
+            <Typography variant="h6" gutterBottom>{expanded} — All Entries</Typography>
+            <DataTable
+              columns={[
+                { field: 'EmployeeID', headerName: 'ID' },
+                { field: 'ObjectName1', headerName: 'Name' },
+                { field: 'LocaleMessageTime', headerName: 'Time' },
+                { field: 'PersonnelType', headerName: 'Type' },
+                { field: 'CardNumber', headerName: 'Card' },
+                { field: 'Door', headerName: 'Door' }
+              ]}
+              rows={floorMap[expanded].map(r => ({
+                ...r,
+                LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+              }))}
             />
           </Box>
-        </Container>
-      </Box>
-
+        )}
+      </Container>
       <Footer />
     </>
   );
 }
+
+
+
+
+chekc above code and find out below code
+                why not show card number in below cod means apac file carefully 
+
+
+
+
+  //C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetailDetails.jsx
+
+  import React, { useEffect, useState, useMemo } from "react";
+  import {
+    Container, Box, Typography, Button, TextField,
+    Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody
+  } from "@mui/material";
+  import { useParams, useNavigate } from "react-router-dom";
+
+  import Header from "../components/Header";
+  import Footer from "../components/Footer";
+  import LoadingSpinner from "../components/LoadingSpinner";
+  import DataTable from "../components/DataTable";
+
+  import { fetchLiveSummary } from "../api/occupancy.service";
+  import { lookupFloor } from "../utils/floorLookup";
+
+  export default function PartitionDetailDetails() {
+    const { partition } = useParams();
+    const navigate = useNavigate();
+
+    const [details, setDetails]       = useState([]);
+    const [liveCounts, setLiveCounts] = useState({});
+    const [loading, setLoading]       = useState(true);
+    const [lastUpdate, setLastUpdate] = useState("");
+    const [search, setSearchTerm] = useState("");
+    const [expandedFloor, setExpandedFloor] = useState(null);
+
+    // load once
+    useEffect(() => {
+      let active = true;
+      fetchLiveSummary().then(json => {
+        if (!active) return;
+        setLiveCounts(json.realtime[partition]?.floors || {});
+        const det = json.details
+          .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+          .map(r => ({ ...r, floor: lookupFloor(r.PartitionName2, r.Door, r.Direction) }));
+        setDetails(det);
+        setLastUpdate(new Date().toLocaleTimeString());
+        setLoading(false);
+      });
+      return () => { active = false };
+    }, [partition]);
+
+    // poll
+    useEffect(() => {
+      const iv = setInterval(async () => {
+        const json = await fetchLiveSummary();
+        setLiveCounts(json.realtime[partition]?.floors || {});
+        const det = json.details
+          .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+          .map(r => ({ ...r, floor: lookupFloor(r.PartitionName2, r.Door, r.Direction) }));
+        setDetails(det);
+        setLastUpdate(new Date().toLocaleTimeString());
+      }, 1000);
+      return () => clearInterval(iv);
+    }, [partition]);
+
+    // group floors
+    const floorMap = useMemo(() => {
+      const m = {};
+      Object.keys(liveCounts).forEach(f => m[f] = []);
+      details.forEach(r => {
+        if (!m[r.floor]) m[r.floor] = [];
+        m[r.floor].push(r);
+      });
+      return m;
+    }, [details, liveCounts]);
+
+    // filter/sort
+    // const displayed = useMemo(() => {
+    //   const term = searchTerm.toLowerCase();
+    //   return Object.entries(floorMap)
+    //     .filter(([fl, emps]) => {
+    //       if (!term) return true;
+    //       if (fl.toLowerCase().includes(term)) return true;
+    //       return emps.some(r =>
+    //         r.ObjectName1.toLowerCase().includes(term) ||
+    //         r.EmployeeID.toLowerCase().includes(term)
+    //       );
+    //     })
+    //     .sort(([a],[b]) => (liveCounts[b]||0) - (liveCounts[a]||0));
+    // }, [floorMap, liveCounts, searchTerm]);
+
+
+    const displayed = useMemo(() => {
+  const term = search.toLowerCase();
+  return Object.entries(floorMap)
+    .map(([floor, emps]) => {
+      const filteredEmps = emps.filter(e =>
+        floor.toLowerCase().includes(term) ||
+        e.ObjectName1?.toLowerCase().includes(term) ||
+        e.EmployeeID?.toString().toLowerCase().includes(term)
+      );
+      return [floor, filteredEmps];
+    })
+    .filter(([, filteredEmps]) => filteredEmps.length > 0);
+}, [floorMap, search]);
+
+    const columns = [
+      { field:"EmployeeID",     headerName:"Emp ID"      },
+      { field:"ObjectName1",    headerName:"Name"        },
+      { field:"LocaleMessageTime", headerName:"Swipe Time" },
+      { field:"PersonnelType",  headerName:"Type"        },
+      { field:"CardNumber",     headerName:"Card"        },
+      { field:"Door",           headerName:"Door"        },
+    ];
+
+    if (loading) {
+      return (
+        <>
+          <Header />
+          <Box sx={{ px:2, py:8 }}><LoadingSpinner/></Box>
+          <Footer />
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Header />
+
+        <Box sx={{ pt:1, pb:1, background:'rgba(0,0,0,0.6)' }}>
+          <Container disableGutters maxWidth={false}>
+            <Box display="flex" alignItems="center" mb={2} sx={{ px:2 }}>
+              <Button size="small" onClick={()=>navigate(-1)} sx={{ color:'#FFC107' }}>
+                ← Back to Overview
+              </Button>
+            </Box>
+
+            <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px:2 }}>
+              <Typography variant="h6" sx={{ color:'#FFC107' }}>
+                Floor Details
+              </Typography>
+              <Typography variant="body2" sx={{ color:'#FFC107' }}>
+                Last updated: {lastUpdate}
+              </Typography>
+              <TextField
+                size="small"
+                placeholder="Search floor / emp…"
+                value={search}
+                onChange={e=>setSearchTerm(e.target.value)}
+                sx={{
+                  '& .MuiInputBase-input': { color:'#FFC107' },
+                  '& .MuiOutlinedInput-root fieldset': { borderColor:'#FFC107' }
+                }}
+              />
+            </Box>
+
+            <Box display="flex" flexWrap="wrap" width="100%" sx={{ px:2 }}>
+              {displayed.map(([floor, emps]) => (
+                <Box key={floor} sx={{ width:'50%', p:2 }}>
+                  <Paper sx={{
+                    border:'2px solid #FFC107',
+                    p:2,
+                    background:'rgba(0,0,0,0.4)'
+                  }}>
+                    <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ color:'#FFC107' }}>
+                      {floor} (Total {liveCounts[floor]||0})
+                    </Typography>
+
+                    <TableContainer component={Paper} variant="outlined" sx={{ mb:1, background:'rgba(0,0,0,0.4)' }}>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow sx={{ bgcolor:'#000' }}>
+                            {["Emp ID","Name","Swipe Time","Type","Card","Door"].map(h=>(
+                              <TableCell key={h} sx={{ color:'#FFC107', border:'1px solid #FFC107', fontWeight:'bold' }}>
+                                {h}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {emps.slice(0,10).map((r,i)=>(
+                            <TableRow key={i}>
+                              <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.EmployeeID}</TableCell>
+                              <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.ObjectName1}</TableCell>
+                              <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>
+                                {new Date(r.LocaleMessageTime).toLocaleTimeString()}
+                              </TableCell>
+                              <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.PersonnelType}</TableCell>
+                              <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.CardNumber}</TableCell>
+                              <TableCell sx={{ color:'#fff', border:'1px solid #FFC107' }}>{r.Door}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+
+                    <Button size="small"
+                      onClick={()=>setExpandedFloor(f=>f===floor?null:floor)}
+                      sx={{ color:'#FFC107' }}
+                    >
+                      {expandedFloor===floor?'Hide':'See more…'}
+                    </Button>
+                  </Paper>
+                </Box>
+              ))}
+            </Box>
+
+            {expandedFloor && (
+              <Box sx={{ px:2, mt:2 }}>
+                <Typography variant="h6" sx={{ color:'#FFC107' }} gutterBottom>
+                  {expandedFloor} — All Entries
+                </Typography>
+                <DataTable
+                  columns={columns}
+                  rows={floorMap[expandedFloor].map(r=>({
+                    ...r,
+                    LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+                  }))}
+                />
+              </Box>
+            )}
+          </Container>
+        </Box>
+
+        <Footer />
+      </>
+    );
+  }
+
+
+
+
+
