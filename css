@@ -1,5 +1,80 @@
+slove the issuse correct and fast
 
-<Pie
+
+Compiled with problems:
+×
+ERROR
+[eslint] 
+src\components\PieChartCard.jsx
+  Line 211:22:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+Search for the keywords to learn more about each error.
+
+
+
+// ...............................................
+
+
+import React from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useMemo } from 'react';
+export default function PieChartCard({
+  title,
+  data,
+  colors = ['#FFC107', '#E0E0E0'],
+  height = 300,
+  showZeroSlice = false,
+  animationDuration = 1500,
+  noDataMessage = 'No realtime data',
+  totalSeats = 0,
+}) {
+
+
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+
+  if (total === 0 && !showZeroSlice) {
+    return (
+      <Card sx={cardStyle(colors[0])}>
+        <CardContent>
+          <Typography variant="subtitle1" align="center" color="text.primary">
+            {title}
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 4, color: 'text.secondary' }}>
+            {noDataMessage}
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // If zero, and showZeroSlice==true, show single “Available” slice
+  const renderData = useMemo(() => {
+    const rawData = (total === 0 && showZeroSlice)
+      ? [{ name: 'Available', value: data[1]?.value || 0 }]
+      : data;
+
+    return rawData.map(d => ({
+      ...d,
+      percent: total > 0 ? d.value / total : 0,
+    }));
+  }, [data, total, showZeroSlice]);
+
+  return (
+    <Card sx={cardStyle(colors[0])}>
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="subtitle1" align="center" color="text.primary">
+          {title}
+        </Typography>
+        {/* <Box sx={{ width:'100%', height }}>
+          <ResponsiveContainer>
+            <PieChart> */}
+        {/* wrap in relative container so we can overlay the total */}
+        <Box sx={{ position: 'relative', width: '100%', height }}>
+          <ResponsiveContainer>
+            <PieChart>
+
+              <Pie
   data={renderData}
   dataKey="value"
   nameKey="name"
@@ -20,27 +95,95 @@
 </Pie>
 
 
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                verticalAlign="bottom"
+                wrapperStyle={{ color: 'rgba(18, 17, 17, 0.8)' }}
+                formatter={(value, entry) => `${value}: ${entry.payload.value}`}
+              />
+
+
+              {/* </PieChart>
+            
+          </ResponsiveContainer>
+        </Box> */}
+
+            </PieChart>
+          </ResponsiveContainer>
+
+          {/* centered total */}
+          <Box
+            component="div"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              pointerEvents: 'none'
+            }}
+          >
+            <Typography variant="h4" align="center" sx={{ color: colors[0], fontWeight: 'bold' }}>
+              {total}
+            </Typography>
+            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+            </Typography>
+
+
+            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+              {/* of {totalSeats} seats */}
+            </Typography>
+
+          </Box>
+        </Box>
+
+      </CardContent>
+    </Card>
+  );
+}
 
 
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length > 0) {
+    const data = payload[0].payload;
 
-label={({ name, percent }) => {
-  const item = renderData.find(d => d.name === name);
-  return item ? `${(item.percent * 100).toFixed(0)}%` : '';
-}}
+    return (
+      <Box
+        sx={{
+          bgcolor: '#FFEE8C',
+          p: 2,
+          border: '1px solid #FFC107',
+          borderRadius: 1,
+          color: '#000',
+          minWidth: 120
+        }}
+      >
+        <Typography variant="subtitle2" sx={{ color: '#000' }}><strong>{data.name}</strong></Typography>
+        <Typography variant="body2" sx={{ color: '#000' }}> {data.value}</Typography>
+
+        {data.Employee !== undefined && (
+          <Typography variant="body2" sx={{ color: '#000' }}>Employees: {data.Employee}</Typography>
+        )}
+        {data.Contractor !== undefined && (
+          <Typography variant="body2" sx={{ color: '#000' }}>Contractors: {data.Contractor}</Typography>
+        )}
+      </Box>
+    );
+  }
+
+  return null;
+};
 
 
+const cardStyle = borderColor => ({
+  // border: `1px solid ${borderColor}`,
+  borderRadius: 2,
+  bgcolor: 'rgba(0,0,0,0.4)',
+  // overflow: 'hidden',
+  transition: 'transform 0.3s, box-shadow 0.3s',
+  '&:hover': {
+    transform: 'scale(1.02)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
+  }
+});
 
-
-
-
-const renderData = useMemo(() => {
-  const rawData = (total === 0 && showZeroSlice)
-    ? [{ name: 'Available', value: data[1]?.value || 0 }]
-    : data;
-
-  return rawData.map(d => ({
-    ...d,
-    percent: total > 0 ? d.value / total : 0,
-  }));
-}, [data, total, showZeroSlice]);
