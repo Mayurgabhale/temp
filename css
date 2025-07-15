@@ -1,8 +1,3 @@
-const lastDay = Array.isArray(historyData?.summaryByDate) && historyData.summaryByDate.length > 0
-  ? historyData.summaryByDate.at(-1)
-  : null;
-
-const partToday = lastDay?.partitions?.[code] || { total: 0, Employee: 0, Contractor: 0 };
 
 
 
@@ -12,168 +7,169 @@ const partToday = lastDay?.partitions?.[code] || { total: 0, Employee: 0, Contra
 
 
 
+//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\pages\PartitionDetail.jsx
 
-http://localhost:3000/partition/Pune
-
-
-Uncaught runtime errors:
-×
-ERROR
-Cannot read properties of undefined (reading 'partitions')
-TypeError: Cannot read properties of undefined (reading 'partitions')
-    at PartitionDetail (http://localhost:3000/static/js/src_pages_PartitionDetail_jsx.chunk.js:840:29)
-    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
-    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
-    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
-    at beginWork (http://localhost:3000/static/js/bundle.js:20250:16)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15742:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22323:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:22216:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:22200:7)
-    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21964:42)
-
-
-
-
-//C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetail.jsx
-
+// src/pages/PartitionDetail.jsx
 import React, { useEffect, useState } from "react";
 import {
-  Container, Box, Typography, Button, CircularProgress
+  Container,
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import SummaryCard from "../components/SummaryCard";
 import ChartCard from "../components/ChartCard";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 import { fetchLiveSummary, fetchHistory } from "../api/occupancy.service";
+import { lookupFloor } from "../utils/floorLookup";
+
 import buildingCapacities from "../data/buildingCapacities";
-import { partitionMap } from "../utils/doorMap";
+
+import GroupIcon from "@mui/icons-material/Group";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+import PeopleIcon from "@mui/icons-material/People";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 
 export default function PartitionDetail() {
   const { partition } = useParams();
   const navigate = useNavigate();
-  const code = partitionMap[partition] || null;
 
-  const [liveSummary, setLiveSummary]       = useState(null);
-  const [historyData, setHistoryData]       = useState(null);
+  const [liveSummary, setLiveSummary] = useState(null);
+  const [history, setHistory] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(true);
-  const [lastUpdate, setLastUpdate]         = useState("");
+  const [lastUpdate, setLastUpdate] = useState("");
 
-  // Poll live
+  // Auto‐refresh live summary
   useEffect(() => {
-    if (!code) return;
-    let alive = true;
-    async function load() {
+    let timer;
+    async function loadLive() {
       const json = await fetchLiveSummary();
-      if (!alive) return;
       setLiveSummary(json);
       setLastUpdate(new Date().toLocaleTimeString());
     }
-    load();
-    const iv = setInterval(load, 1000);
-    return () => { alive = false; clearInterval(iv); };
-  }, [code]);
+    loadLive();
+    timer = setInterval(loadLive, 1000);
+    return () => clearInterval(timer);
+  }, [partition]);
 
-  // Fetch history
+  // Load historical summary once
   useEffect(() => {
-    if (!code) return;
     setHistoryLoading(true);
-    fetchHistory(code)
-      .then(json => setHistoryData(json))
-      .finally(() => setHistoryLoading(false));
-  }, [code]);
+    fetchHistory(partition).then((json) => {
+      setHistory(json);
+      setHistoryLoading(false);
+    });
+  }, [partition]);
 
-  if (!code || !liveSummary || !historyData) return <LoadingSpinner />;
+  if (!liveSummary || !history) return <LoadingSpinner />;
 
-  const lastDay = historyData.summaryByDate.at(-1);
-  const partToday = (lastDay.partitions && lastDay.partitions[code]) || { total:0, Employee:0, Contractor:0 };
+  // Totals for cards
+  const lastDay = history.summaryByDate.at(-1);
+  const partToday = lastDay.region;
+  const live = liveSummary.realtime[partition] || {
+    total: 0,
+    Employee: 0,
+    Contractor: 0,
+    TempBadge: 0,
+    floors: {},
+  };
 
-  const live = liveSummary.realtime[code] || { total:0, Employee:0, Contractor:0, floors:{} };
-
+  // Build floorEntries with capacity
   const floorEntries = Object.entries(live.floors).map(([floor, cnt]) => {
-    const cap = buildingCapacities[floor.trim()] || 0;
-    const pct = cap ? Math.round((cnt / cap)*100) : 0;
+    const name     = floor.trim();
+    const capacity = buildingCapacities[name] ?? 0;
+    const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
     return {
-      name: floor.trim(),
+      name,
       Headcount: cnt,
-      Capacity: cap,
-      breakdown: { Headcount: cnt, "Total Seat": cap, Usage:`${pct}%` },
+      Capacity:  capacity,
+      breakdown: {
+        Headcount: cnt,
+      'Total Seat': capacity,           // renamed
+       Usage:        pct + '%',          // renamed
+      },
     };
   });
-
-  const cards = [
-    {
-      title: "Today's Total Headcount",
-      value: historyLoading ? <CircularProgress size={20}/> : partToday.total,
-      icon: <i className="fa-solid fa-users" style={{ color:'#E57373', fontSize:25 }}/>,
-      border:'#FFD666'
-    },
-    {
-      title: "Today's Employees Count",
-      value: historyLoading ? <CircularProgress size={20}/> : partToday.Employee,
-      icon: <i className="bi bi-people" style={{ color:'#81C784', fontSize:25 }}/>,
-      border:'#81C784'
-    },
-    {
-      title: "Today's Contractors Count",
-      value: historyLoading ? <CircularProgress size={20}/> : partToday.Contractor,
-      icon: <i className="fa-solid fa-circle-user" style={{ color:'#64B5F6', fontSize:25 }}/>,
-      border:'#FFE599'
-    },
-    {
-      title: "Realtime Headcount",
-      value: live.total,
-      icon: <i className="fa-solid fa-users" style={{ color:'#BA68C8', fontSize:25 }}/>,
-      border:'#FFF2CC'
-    },
-    {
-      title: "Realtime Employees Count",
-      value: live.Employee,
-      icon: <i className="bi bi-people" style={{ color:'#FFB74D', fontSize:25 }}/>,
-      border:'#FFD666'
-    },
-    {
-      title: "Realtime Contractors Count",
-      value: live.Contractor,
-      icon: <i className="fa-solid fa-circle-user" style={{ color:'#4DB6AC', fontSize:25 }}/>,
-      border:'#FFE599'
-    },
-  ];
 
   return (
     <>
       <Header />
 
-      <Box component="main" sx={{ pt:1, pb:1 }}>
-        <Container disableGutters maxWidth={false}>
-          <Box mb={1} sx={{ px:2 }}>
-            <Button size="small" onClick={() => navigate(-1)}>← Back</Button>
+      <Box component="main" sx={{ pt: 1, pb: 1 }}>
+        <Container maxWidth={false} disableGutters>
+          {/* Back button */}
+          <Box display="flex" alignItems="center" mb={1} sx={{ px: "20px" }}>
+            <Button size="small" onClick={() => navigate(-1)}>
+              ← Back
+            </Button>
           </Box>
 
-          <Box display="flex" flexWrap="wrap" gap={1} mb={3} sx={{ px:2 }}>
-            {cards.map(c => (
-              <Box key={c.title} sx={{ flex:'1 1 calc(16.66% - 8px)' }}>
-                <SummaryCard
-                  title={c.title}
-                  total={c.value}
-                  stats={[]}
-                  icon={c.icon}
-                  sx={{ height:140, border:`2px solid ${c.border}` }}
-                />
-              </Box>
-            ))}
-          </Box>
-
-          <Box sx={{ px:2, p:2, border:'2px solid #FFC107', background:'rgba(0,0,0,0.4)' }}>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <Typography variant="h6" sx={{ color:'#FFC107' }}>
-                Live Floor Headcount vs Capacity
-              </Typography>
-              <Typography variant="body2" sx={{ color:'#FFC107' }}>
+          {/* Six‐card partition summary */}
+         <Box display="flex" flexWrap="wrap" gap={1} mb={1}>
+  {[
+    {
+      title: "Today's Total Headcount",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
+      icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+      border: '#FFB300',
+    },
+    {
+      title: "Today's Employees Count",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
+      icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+      border: '#8BC34A',
+    },
+    {
+      title: "Today's Contractors Count",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
+      border: '#E57373',
+    },
+    {
+      title: "Realtime Headcount",
+      value: live.total,
+      icon: <i className="fa-solid fa-users" style={{ fontSize: 25, color: '#FFB300' }} />,
+      border: '#FFD180',
+    },
+    {
+      title: "Realtime Employees Count",
+      value: live.Employee,
+      icon: <i className="bi bi-people" style={{ fontSize: 25, color: '#EF5350' }} />,
+      border: '#AED581',
+    },
+    {
+      title: "Realtime Contractors Count",
+      value: live.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ fontSize: 25, color: '#8BC34A' }} />,
+      border: '#EF5350',
+    },
+  ].map((card) => (
+    <Box key={card.title} sx={{ flex: "1 1 calc(16.66% - 8px)" }}>
+      <SummaryCard
+        title={card.title}
+        total={card.value}
+        stats={[]}
+        icon={card.icon}
+        sx={{
+          height: 140,
+          border: `2px solid ${card.border}`,
+        }}
+      />
+    </Box>
+  ))}
+</Box>
+          {/* Floor‐capacity chart */}
+          <Box mb={4} sx={{ px: "20px", p: 2, border: "2px solid #FFC107" }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+              <Typography variant="h6">Live Floor Headcount against Occupancy</Typography>
+              <Typography variant="body2" color="textSecondary">
                 Last updated: {lastUpdate}
               </Typography>
             </Box>
@@ -182,10 +178,10 @@ export default function PartitionDetail() {
               data={floorEntries}
               dataKey="Headcount"
               chartHeight={320}
-              colors={{ head:'#28B463', cap:'#FDDA0D' }}
+              colors={{ head: "#28B463", cap: "#FDDA0D" }}
               axisProps={{
-                xAxis:{ tick:{ fill:'#fff' } },
-                yAxis:{ tick:{ fill:'#fff' } },
+                xAxis: { angle: -0, textAnchor: "end", tick: { fill: "#fff" } },
+                yAxis: { tick: { fill: "#fff" } },
               }}
             />
           </Box>
@@ -198,161 +194,241 @@ export default function PartitionDetail() {
 }
 
 
-// src/components/Header.jsx — APAC Edition
 
-import React, { useEffect, useState } from 'react';
+
+//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components\ChartCard.jsx
+
+// src/components/ChartCard.jsx
+import React, { useState, useRef } from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  IconButton
-} from '@mui/material';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+  AreaChart,
+  Area,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+  LabelList,
+  ReferenceLine,
+} from 'recharts';
+import dayjs from 'dayjs';
 
-import HomeIcon    from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import InfoIcon    from '@mui/icons-material/Info';
+export default function ChartCard({
+  title,
+  data = [],
+  dataKey = 'value',
+  chartHeight = 350,
+  colors = { head: '#FFC107', cap: '#000000' },
+  animateDuration = 800,
+  showCrosshair = true,
+  timeFormat = 'HH:mm:ss',
+  axisProps = {},
+  tooltipFormatter = null,
+  disableLegendToggle = false,     // prevent hiding via legend click
+}) {
+  const [hidden, setHidden] = useState({});
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [replayKey, setReplayKey] = useState(0);
+  const containerRef = useRef();
 
-import WuLogo        from '../assets/wu-logo.png';
-import IndiaFlag     from '../assets/flags/india.png';
-import MalaysiaFlag  from '../assets/flags/malaysia.png';
-import PhilippinesFlag from '../assets/flags/philippines.png';
-import TaguigFlag    from '../assets/flags/Taguig.png';
-import JapanFlag     from '../assets/flags/japan.png';
-import DefaultFlag   from '../assets/flags/default.png';
+  if (!Array.isArray(data) || !data.length) {
+    return (
+      <Card sx={{ mb: 2 }}>
+        <CardContent sx={{ textAlign: 'center' }}>
+          <Typography variant="h6">{title}</Typography>
+          <Typography variant="body2">No data to display.</Typography>
+        </CardContent>
+      </Card>
+    );
+  }
 
-import { partitionList }    from '../services/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+  const hasCapacity = data[0].Capacity != null;
 
-// Friendly display names
-const displayNameMap = {
-  'IN.Pune':         'Pune',
-  'MY.Kuala Lumpur': 'Kuala Lumpur',
-  'PH.Quezon':       'Quezon City',
-  'PH.Taguig':       'Taguig',
-  'JP.Tokyo':        'Tokyo',
-};
+  // Prevent toggling series off
+  const handleLegendClick = o => {
+    if (disableLegendToggle) return;
+    const { dataKey } = o;
+    setHidden(prev => ({ ...prev, [dataKey]: !prev[dataKey] }));
+  };
 
-// Flag lookup by partition code
-const flagMap = {
-  'IN.Pune':         IndiaFlag,
-  'MY.Kuala Lumpur': MalaysiaFlag,
-  'PH.Quezon':       PhilippinesFlag,
-  'PH.Taguig':       TaguigFlag,
-  'JP.Tokyo':        JapanFlag,
-};
-
-export default function Header() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const { data }  = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  // Update timestamp on each new live-data push
-  // useEffect(() => {
-  //   if (data) {
-  //     setLastUpdate(new Date().toLocaleTimeString());
-  //   }
-  // }, [data]);
-
-  // Parse path to detect /partition/:code and any trailing "history" or "details"
-  const segments        = location.pathname.split('/').filter(Boolean);
-  const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
-  const currentCode     = isPartitionPage ? decodeURIComponent(segments[1]) : '';
-  const extraSegments   = isPartitionPage ? segments.slice(2) : [];
-
-  // Choose flag (or default)
-  const selectedFlag = flagMap[currentCode] || DefaultFlag;
-
-  // Preserve any /history or /details suffix when changing region
-  const handlePartitionChange = (newCode) => {
-    const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-    const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-    navigate(base + suffix);
+  // Clicking chart area will replay animations
+  const handleChartClick = () => {
+    setReplayKey(k => k + 1);
   };
 
   return (
-    <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
-      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        
-        {/* Left: Logo + Title + Nav Icons */}
-        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-          
-          <Typography variant="h6" sx={{ color: '#FFC107', mr: 3, fontWeight: 600 }}>
-            APAC Live Occupancy
-            {currentCode && ` • ${displayNameMap[currentCode] || currentCode}`}
-          </Typography>
+    <Card sx={{ mb: 2 }}>
+      <CardContent>
+        {/* Title */}
+        <Typography variant="h6" gutterBottom sx={{ color: colors.head }}>
+          {title}
+        </Typography>
 
-          <Typography
-            variant="caption"
-            sx={{
-              color: '#FFC107',
-              ml: 2,
-              opacity: data ? 1 : 0,
-              transition: 'opacity 0.8s'
-            }}
-          >
-            {lastUpdate}
-          </Typography>
+        {/* Chart */}
+        <Box
+          ref={containerRef}
+          sx={{ width: '100%', height: chartHeight, cursor: 'pointer' }}
+          onClick={handleChartClick}
+        >
+          <ResponsiveContainer key={replayKey}>
+            <AreaChart
+              data={data}
+              margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+              onMouseMove={e => {
+                if (e && e.activeTooltipIndex != null) {
+                  setActiveIndex(e.activeTooltipIndex);
+                }
+              }}
+            >
+              {/* Gradients */}
+              <defs>
+                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="50%" stopColor={colors.head} stopOpacity={0.4} />
+                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
+                </linearGradient>
+              </defs>
 
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}`
-              : '/' }
-            color="inherit"
-          >
-            <HomeIcon />
-          </IconButton>
+              {/* Grid */}
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
 
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}/history`
-              : '/history' }
-            color="inherit"
-          >
-            <HistoryIcon />
-          </IconButton>
+              {/* Crosshair */}
+              {showCrosshair && activeIndex != null && data[activeIndex] && (
+                <ReferenceLine
+                  x={data[activeIndex].name}
+                  stroke={colors.head}
+                  strokeOpacity={0.5}
+                />
+              )}
 
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}/details`
-              : '/partition/Pune/details' }
-            color="inherit"
-          >
-            <InfoIcon />
-          </IconButton>
+              {/* X Axis */}
+              <XAxis
+                dataKey="name"
+                tick={{ fill: '#000', fontWeight: 600 }}
+                tickFormatter={t =>
+                  typeof t === 'number' ? dayjs(t).format(timeFormat) : t
+                }
+                label={{
+                
+                  position: 'insideBottomRight',
+                  offset: -10,
+                  fill: '#000',
+                  fontWeight: 600,
+                }}
+                {...axisProps.xAxis}
+              />
+
+              {/* Y Axis */}
+              <YAxis
+                tick={{ fill: '#fff', fontWeight: 600 }}
+                label={{
+                  value: 'Count',
+                  angle: -90,
+                  position: 'insideLeft',
+                  fill: '#000',
+                  fontWeight: 600,
+                }}
+                {...axisProps.yAxis}
+              />
+
+              {/* Tooltip */}
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: `1px solid ${colors.head}`,
+                  padding: '0.5rem',
+                }}
+                cursor={showCrosshair}
+                isAnimationActive={false}
+                content={({ active, payload }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const { breakdown = {}, name } = payload[0].payload;
+                  return (
+                    <Box sx={{ backgroundColor: '#fff', border: `1px solid ${colors.head}`, p:1, borderRadius:1 }}>
+                      <Typography variant="subtitle2" sx={{ color: colors.head, mb: 0.5 }}>
+                        {name}
+                      </Typography>
+                      {Object.entries(breakdown).map(([key,val])=>(
+                        <Typography key={key} variant="body2" sx={{ color: '#000' }}>
+                          {key}: {val}
+                        </Typography>
+                      ))}
+                    </Box>
+                  );
+                }}
+              />
+
+              {/* Legend */}
+              <Legend
+                wrapperStyle={{ color: '#000' }}
+                onClick={handleLegendClick}
+                iconType="square"
+              />
+
+              {/* Capacity Area */}
+              {hasCapacity && !hidden.Capacity && (
+                <Area
+                  type="monotone"
+                  dataKey="Capacity"
+                  name="Total Seat"
+                  stroke={colors.cap}
+                  fill={`${colors.cap}33`}
+                  dot={false}
+                  isAnimationActive
+                  animationDuration={animateDuration}
+                >
+                  <LabelList
+                    dataKey="Capacity"
+                    position="top"
+                    style={{ fill: colors.cap, fontSize: 12, fontWeight: 600 }}
+                  />
+                </Area>
+              )}
+
+              {/* Headcount Area */}
+              {!hidden.Headcount && (
+                <Area
+                  type="monotone"
+                  dataKey={hasCapacity ? 'Headcount' : dataKey}
+                  name="Usage"
+                  stroke={colors.head}
+                  fill="url(#colorHead)"
+                  dot={false}
+                  isAnimationActive
+                  animationDuration={animateDuration}
+                >
+                  <LabelList
+                    dataKey={hasCapacity ? 'Headcount' : dataKey}
+                    position="top"
+                    style={{ fill: '#2ecc71', fontSize: 15, fontWeight: 600 }}
+                  />
+                </Area>
+              )}
+
+              {/* Overlay Line */}
+              {!hidden.Headcount && (
+                <Line
+                  type="monotone"
+                  dataKey={hasCapacity ? 'Headcount' : dataKey}
+                  stroke={colors.head}
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive
+                  animationDuration={animateDuration}
+                  activeDot={{ r: 6, stroke: '#000', strokeWidth: 2 }}
+                />
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
         </Box>
-
-        {/* Right: Region Selector + Flag */}
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={currentCode}
-            displayEmpty
-            onChange={e => handlePartitionChange(e.target.value)}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
-            renderValue={val =>
-              val ? displayNameMap[val] || val : '— Select Region —'
-            }
-          >
-            <MenuItem value="">— Select Region —</MenuItem>
-            {partitionList.map(code => (
-              <MenuItem key={code} value={code}>
-                {displayNameMap[code] || code}
-              </MenuItem>
-            ))}
-          </Select>
-          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
-        </Box>
-      </Toolbar>
-    </AppBar>
+      </CardContent>
+    </Card>
   );
 }
 
+
+
+
+ 
