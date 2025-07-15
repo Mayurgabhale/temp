@@ -1,65 +1,19 @@
-
 import React, { useMemo } from 'react';
-// …
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box
+} from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
-export default function PieChartCard({ title, data, colors, height, … }) {
-  // compute total / renderData / etc.
-
-+ const chart = useMemo(() => (
-      <ResponsiveContainer>
-        <PieChart>
-          <Pie
-            data={renderData}
-            dataKey="value"
-            nameKey="name"
-            innerRadius={70}
-            outerRadius={120}
-            paddingAngle={4}
-            isAnimationActive={false}
-            animationDuration={0}
-            animationEasing="linear"
-            label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-            labelLine={false}
-          >
-            {renderData.map((_, i) => (
-              <Cell key={i} fill={colors[i % colors.length]} />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          <Legend
-            verticalAlign="bottom"
-            formatter={(value, entry) => `${value}: ${entry.payload.value}`}
-          />
-        </PieChart>
-      </ResponsiveContainer>
-+ ), [renderData, colors]);
-
-  return (
-    <Card sx={cardStyle(colors[0])}>
-      {/* … */}
-      <Box sx={{ position: 'relative', width: '100%', height }}>
--       <ResponsiveContainer>…</ResponsiveContainer>
-+       {chart}
-        {/* center total */}
-      </Box>
-    </Card>
-  );
-}
-
-
-
-
-
-
-
-
-
-
-
-import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import React, { useMemo } from 'react';
 export default function PieChartCard({
   title,
   data,
@@ -70,8 +24,6 @@ export default function PieChartCard({
   noDataMessage = 'No realtime data',
   totalSeats = 0,
 }) {
-
-
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
   if (total === 0 && !showZeroSlice) {
@@ -81,7 +33,7 @@ export default function PieChartCard({
           <Typography variant="subtitle1" align="center" color="text.primary">
             {title}
           </Typography>
-          <Typography variant="body2" align="center" sx={{ mt:4, color:'text.secondary' }}>
+          <Typography variant="body2" align="center" sx={{ mt: 4, color: 'text.secondary' }}>
             {noDataMessage}
           </Typography>
         </CardContent>
@@ -89,61 +41,52 @@ export default function PieChartCard({
     );
   }
 
-  // If zero, and showZeroSlice==true, show single “Available” slice
   const renderData = (total === 0 && showZeroSlice)
     ? [{ name: 'Available', value: data[1]?.value || 0 }]
     : data;
 
+  // 🧠 Memoized chart rendering
+  const chart = useMemo(() => (
+    <ResponsiveContainer>
+      <PieChart>
+        <Pie
+          data={renderData}
+          dataKey="value"
+          nameKey="name"
+          innerRadius={70}
+          outerRadius={120}
+          paddingAngle={4}
+          isAnimationActive={false}
+          animationDuration={0}
+          animationEasing="linear"
+          label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+          labelLine={false}
+        >
+          {renderData.map((_, i) => (
+            <Cell key={i} fill={colors[i % colors.length]} />
+          ))}
+        </Pie>
+        <Tooltip content={<CustomTooltip />} />
+        <Legend
+          verticalAlign="bottom"
+          wrapperStyle={{ color: 'rgba(18, 17, 17, 0.8)' }}
+          formatter={(value, entry) => `${value}: ${entry.payload.value}`}
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  ), [renderData, colors]);
+
   return (
     <Card sx={cardStyle(colors[0])}>
-      <CardContent sx={{ p:1 }}>
+      <CardContent sx={{ p: 1 }}>
         <Typography variant="subtitle1" align="center" color="text.primary">
           {title}
         </Typography>
-        {/* <Box sx={{ width:'100%', height }}>
-          <ResponsiveContainer>
-            <PieChart> */}
-        {/* wrap in relative container so we can overlay the total */}
+
         <Box sx={{ position: 'relative', width: '100%', height }}>
-          <ResponsiveContainer>
-            <PieChart>
+          {chart}
 
-              <Pie
-                data={renderData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={70}
-                outerRadius={120}
-                paddingAngle={4}
-                isAnimationActive={false}
-                animationDuration={0}
-                animationEasing='linear'
-              // show percent labels inside each slice
-              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-              labelLine={false}
-
-              >
-                {renderData.map((_, i) => (
-                  <Cell key={i} fill={colors[i % colors.length]} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                 verticalAlign="bottom"
-                 wrapperStyle={{ color: 'rgba(18, 17, 17, 0.8)' }}
-                 formatter={(value, entry) => `${value}: ${entry.payload.value}`}
-               />
-
-           
-            {/* </PieChart>
-            
-          </ResponsiveContainer>
-        </Box> */}
-
-            </PieChart>
-          </ResponsiveContainer>
-
-          {/* centered total */}
+          {/* Centered total */}
           <Box
             component="div"
             sx={{
@@ -158,24 +101,16 @@ export default function PieChartCard({
               {total}
             </Typography>
             <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              </Typography>
-              
-
-            <Typography variant="caption" align="center" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              {/* of {totalSeats} seats */}
+              {/* Optional description */}
             </Typography>
-
           </Box>
         </Box>
-
       </CardContent>
     </Card>
   );
 }
 
-
-
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length > 0) {
     const data = payload[0].payload;
 
@@ -190,14 +125,14 @@ const CustomTooltip = ({ active, payload, label }) => {
           minWidth: 120
         }}
       >
-        <Typography variant="subtitle2" sx={{color: '#000'}}><strong>{data.name}</strong></Typography>
-        <Typography variant="body2" sx={{color: '#000'}}> {data.value}</Typography>
+        <Typography variant="subtitle2" sx={{ color: '#000' }}><strong>{data.name}</strong></Typography>
+        <Typography variant="body2" sx={{ color: '#000' }}>{data.value}</Typography>
 
         {data.Employee !== undefined && (
-          <Typography variant="body2" sx={{color: '#000'}}>Employees: {data.Employee}</Typography>
+          <Typography variant="body2" sx={{ color: '#000' }}>Employees: {data.Employee}</Typography>
         )}
         {data.Contractor !== undefined && (
-          <Typography variant="body2" sx={{color: '#000'}}>Contractors: {data.Contractor}</Typography>
+          <Typography variant="body2" sx={{ color: '#000' }}>Contractors: {data.Contractor}</Typography>
         )}
       </Box>
     );
@@ -206,20 +141,12 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-
-const cardStyle = borderColor => ({
-  // border: `1px solid ${borderColor}`,
+const cardStyle = (borderColor) => ({
   borderRadius: 2,
   bgcolor: 'rgba(0,0,0,0.4)',
-  // overflow: 'hidden',
   transition: 'transform 0.3s, box-shadow 0.3s',
   '&:hover': {
     transform: 'scale(1.02)',
     boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
   }
 });
-
-
-
-
-
