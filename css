@@ -1,4 +1,28 @@
 
+<Pie
+  data={renderData}
+  dataKey="value"
+  nameKey="name"
+  innerRadius={70}
+  outerRadius={120}
+  paddingAngle={4}
+  isAnimationActive={true}
+  animationDuration={animationDuration}
+  label={({ name }) => {
+    const item = renderData.find(d => d.name === name);
+    return item ? `${(item.percent * 100).toFixed(0)}%` : '';
+  }}
+  labelLine={false}
+>
+  {renderData.map((_, i) => (
+    <Cell key={i} fill={colors[i % colors.length]} />
+  ))}
+</Pie>
+
+
+
+
+
 
 label={({ name, percent }) => {
   const item = renderData.find(d => d.name === name);
