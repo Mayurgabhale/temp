@@ -1,3 +1,27 @@
+import React, { useMemo } from 'react'; // Add useMemo if not already imported
+
+const renderData = useMemo(() => {
+  const rawData = (total === 0 && showZeroSlice)
+    ? [{ name: 'Available', value: data[1]?.value || 0 }]
+    : data;
+
+  const sum = rawData.reduce((acc, d) => acc + d.value, 0);
+
+  return rawData.map(d => ({
+    ...d,
+    percent: sum > 0 ? d.value / sum : 0
+  }));
+}, [JSON.stringify(data), total, showZeroSlice]);
+
+
+
+
+
+
+
+
+
+
 const renderData = useMemo(() => {
   const rawData = (total === 0 && showZeroSlice)
     ? [{ name: 'Available', value: data[1]?.value || 0 }]
