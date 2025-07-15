@@ -1,3 +1,19 @@
+const renderData = useMemo(() => {
+  const rawData = (total === 0 && showZeroSlice)
+    ? [{ name: 'Available', value: data[1]?.value || 0 }]
+    : data;
+
+  return rawData.map(d => ({
+    ...d,
+    percent: total > 0 ? d.value / total : 0,
+  }));
+}, [JSON.stringify(data), total, showZeroSlice]); // compare actual values, not just reference
+
+
+
+
+
+
 
 
 import React, { useMemo } from 'react';
