@@ -1,3 +1,14 @@
+
+<Tooltip
+  content={title === 'Asia-Pacific' ? <CustomTooltip /> : undefined}
+  contentStyle={{ backgroundColor: '#FFEE8C', borderColor: colors[0] }}
+/>
+
+
+
+
+
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || payload.length === 0) return null;
 
