@@ -1,4 +1,23 @@
+const floorMap = Object.keys(live.floors).length
+  ? live.floors
+  : { "Floor 1": 0 }; // default for APAC
 
+const floorEntries = Object.entries(floorMap).map(([floor, cnt]) => {
+  const name     = floor.trim();
+  const capacity = buildingCapacities[name] ?? 0;
+  const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+  return {
+    name,
+    Headcount: cnt,
+    Capacity:  capacity,
+    breakdown: {
+      Headcount: cnt,
+      "Total Seat": capacity,
+      Usage: pct + "%",
+    },
+  };
+});
 
 
 
