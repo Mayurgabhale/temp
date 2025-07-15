@@ -1,3 +1,61 @@
+
+import React, { useMemo } from 'react';
+// …
+
+export default function PieChartCard({ title, data, colors, height, … }) {
+  // compute total / renderData / etc.
+
++ const chart = useMemo(() => (
+      <ResponsiveContainer>
+        <PieChart>
+          <Pie
+            data={renderData}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={70}
+            outerRadius={120}
+            paddingAngle={4}
+            isAnimationActive={false}
+            animationDuration={0}
+            animationEasing="linear"
+            label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+            labelLine={false}
+          >
+            {renderData.map((_, i) => (
+              <Cell key={i} fill={colors[i % colors.length]} />
+            ))}
+          </Pie>
+          <Tooltip content={<CustomTooltip />} />
+          <Legend
+            verticalAlign="bottom"
+            formatter={(value, entry) => `${value}: ${entry.payload.value}`}
+          />
+        </PieChart>
+      </ResponsiveContainer>
++ ), [renderData, colors]);
+
+  return (
+    <Card sx={cardStyle(colors[0])}>
+      {/* … */}
+      <Box sx={{ position: 'relative', width: '100%', height }}>
+-       <ResponsiveContainer>…</ResponsiveContainer>
++       {chart}
+        {/* center total */}
+      </Box>
+    </Card>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
 // src/pages/Dashboard.jsx
 
 import React, { useEffect, useState } from 'react';
