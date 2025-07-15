@@ -8,6 +8,26 @@ const partToday = lastDay?.region || {
 
 
 
+const floorEntries = live.floors
+  ? Object.entries(live.floors).map(([floor, cnt]) => {
+      const name = floor.trim();
+      const capacity = buildingCapacities[name] ?? 0;
+      const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+      return {
+        name,
+        Headcount: cnt,
+        Capacity: capacity,
+        breakdown: {
+          Headcount: cnt,
+          'Total Seat': capacity,
+          Usage: pct + '%',
+        },
+      };
+    })
+  : [];
+
+
 
 
 
