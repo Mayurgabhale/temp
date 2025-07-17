@@ -1,5 +1,21 @@
 
 
+<CompositeChartCard
+  data={floors.map(([f, h]) => ({
+    name: f,
+    headcount: h,
+    capacity: buildingCapacities[f] || 0
+  }))}
+  lineColor={palette15[0]}
+  height={250}
+  sx={{ border: 'none' }}
+  breakdownMap={puneBreakdown} // 👈 This must be included
+/>
+
+
+
+
+
 const renderTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const item = payload[0]?.payload;
