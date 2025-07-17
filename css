@@ -1,23 +1,9 @@
-import floorCapacities from '../data/floorCapacities';
+const puneFloors = realtimeData?.['IN.Pune']?.floors ?? {};
+const puneDetails = realtimeData?.details ?? [];
 
-// Enrich floors with personnel type breakdown
-function enrichFloorsWithTypes(partition, floors, allDetails) {
-  return Object.entries(floors).map(([floorName, headcount]) => {
-    const peopleOnFloor = allDetails.filter(
-      (p) => p.PartitionName2 === partition && p.Door.includes(floorName)
-    );
+const puneEnriched = enrichFloorsWithTypes('IN.Pune', puneFloors, puneDetails);
 
-    return {
-      name: floorName,
-      headcount,
-      capacity: floorCapacities?.[partition]?.[floorName] ?? 0,
-      employee: peopleOnFloor.filter(p => p.PersonnelType === 'Employee').length,
-      contractors: peopleOnFloor.filter(p => p.PersonnelType === 'Contractor').length,
-      visitor: peopleOnFloor.filter(p => p.PersonnelType === 'Visitor').length,
-      propertyMgmt: peopleOnFloor.filter(p => p.PersonnelType === 'Property Management').length,
-      tempBadge: peopleOnFloor.filter(p => p.PersonnelType === 'Temp Badge').length,
-      live: peopleOnFloor.length,
-      total: headcount,
-    };
-  });
-}
+<CompositeChartCard
+  title="Pune Floor Breakdown"
+  data={puneEnriched}
+/>
