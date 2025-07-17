@@ -1,3 +1,41 @@
+const chartConfigs = [
+  {
+    key: 'Pune',
+    title: 'Pune',
+    body: pune?.total === 0 ? (
+      <>No Pune data</>
+    ) : (
+      <CompositeChartCard
+        data={puneEnriched} // ✅ use enriched data
+        lineColor={palette15[0]}
+        height={250}
+        sx={{ border: 'none' }}
+      />
+    )
+  },
+  {
+    key: 'quezon',
+    title: 'Quezon City',
+    body: quezonCity?.total === 0 ? (
+      <>No Quezon City data</>
+    ) : (
+      <CompositeChartCard
+        data={quezonEnriched} // ✅ use enriched data
+        lineColor={palette15[1]}
+        height={250}
+        sx={{ border: 'none' }}
+      />
+    )
+  }
+];
+
+
+
+
+
+
+
+
 {
   "success": true,
   "today": {
