@@ -1,4 +1,30 @@
 
+function enrichFloorsWithTypes(partition, floors, allDetails) {
+  return Object.entries(floors).map(([floorName, headcount]) => {
+    const peopleOnFloor = allDetails.filter(
+      (p) => p.PartitionName2 === partition && p.Door.includes(floorName)
+    );
+
+    return {
+      name: floorName,
+      headcount,
+      capacity: floorCapacities?.[partition]?.[floorName] ?? 0,
+      employee: peopleOnFloor.filter(p => p.PersonnelType === 'Employee').length,
+      contractors: peopleOnFloor.filter(p => p.PersonnelType === 'Contractor').length,
+      visitor: peopleOnFloor.filter(p => p.PersonnelType === 'Visitor').length,
+      propertyMgmt: peopleOnFloor.filter(p => p.PersonnelType === 'Property Management').length,
+      tempBadge: peopleOnFloor.filter(p => p.PersonnelType === 'Temp Badge').length,
+      live: peopleOnFloor.length,
+      total: headcount,
+    };
+  });
+}
+
+
+
+
+
+
 
 
 
