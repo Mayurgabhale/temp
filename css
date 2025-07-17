@@ -1,3 +1,20 @@
+<CompositeChartCard
+  data={floors.map(([f, h]) => ({
+    name: f,
+    headcount: h,
+    capacity: buildingCapacities[f] || 0
+  }))}
+  lineColor={palette15[0]}
+  height={250}
+  sx={{ border: 'none' }}
+  breakdownMap={puneBreakdown}  // <- add this
+/>
+
+
+
+
+
+
 
 const puneBreakdown = useMemo(() => {
   const breakdown = { Employee: 0, Contractor: 0, Visitor: 0, "Property Management": 0, "Temp Badge": 0 };
