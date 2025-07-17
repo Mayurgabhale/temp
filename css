@@ -1,27 +1,4 @@
-
-const puneFloors = data?.realtime?.['IN.Pune']?.floors || {};
-const puneDetails = data?.details || [];
-const puneEnriched = enrichFloorsWithTypes('IN.Pune', puneFloors, puneDetails);
-
-const chartConfigs = [
-  {
-    key: 'pune',
-    title: 'Pune',
-    body: pune?.total === 0
-      ? (
-        <Typography color="white" align="center" py={6}>
-          No Pune data
-        </Typography>
-      )
-      : (
-        <CompositeChartCard
-          data={puneEnriched}
-          lineColor={palette15[0]}
-          height={250}
-          sx={{ border: 'none' }}
-        />
-      )
-  },
+REad below code careflyy in the tooltip only total value are display and other are not disply, whati is the issue check careflly
 
 
 
@@ -30,18 +7,6 @@ const chartConfigs = [
 
 
 
-
-const puneFloors = realtimeData?.['IN.Pune']?.floors ?? {};
-const puneDetails = realtimeData?.details ?? [];
-
-const puneEnriched = enrichFloorsWithTypes('IN.Pune', puneFloors, puneDetails);
-
-<CompositeChartCard
-  title="Pune Floor Breakdown"
-  data={puneEnriched}
-/>
-
-Where to add above code say me excatly
 
 
 // src/pages/Dashboard.jsx
@@ -179,31 +144,30 @@ export default function Dashboard() {
     );
   }
 
-  const floors = Object.entries(pune?.floors || {});
+const puneFloors = data?.realtime?.['Pune']?.floors || {};
+const puneDetails = data?.details || [];
+const puneEnriched = enrichFloorsWithTypes('Pune', puneFloors, puneDetails);
 
-  const chartConfigs = [
-    {
-      key: 'pune',
-      title: 'Pune',
-      body: pune?.total === 0
-        ? (
-          <Typography color="white" align="center" py={6}>
-            No Pune data
-          </Typography>
-        )
-        : (
-          <CompositeChartCard
-            data={floors.map(([f, h]) => ({
-              name: f,
-              headcount: h,
-              capacity: buildingCapacities[f] || 0
-            }))}
-            lineColor={palette15[0]}
-            height={250}
-            sx={{ border: 'none' }}
-          />
-        )
-    },
+const chartConfigs = [
+  {
+    key: 'Pune',
+    title: 'Pune',
+    body: pune?.total === 0
+      ? (
+        <Typography color="white" align="center" py={6}>
+          No Pune data
+        </Typography>
+      )
+      : (
+        <CompositeChartCard
+          data={puneEnriched}
+          lineColor={palette15[0]}
+          height={250}
+          sx={{ border: 'none' }}
+        />
+      )
+  },
+
     // {
     //   key: 'quezon',
     //   title: 'Quezon City',
