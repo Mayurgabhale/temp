@@ -1,53 +1,5 @@
-<Tooltip
-  contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
-  content={({ active, payload, label }) => {
-    if (!active || !payload || !payload.length) return null;
-    const datum = payload[0].payload;
-    return (
-      <div style={{
-        backgroundColor: '#FFD666',
-        border: `1px solid ${lineColor}`,
-        borderRadius: 4,
-        padding: 8,
-      }}>
-        <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
-        <div>Live: {datum.live}</div>
-        <div>Employee: {datum.employee}</div>
-        <div>Contractors: {datum.contractors}</div>
-        <div>Property Mgmt: {datum.propertyMgmt}</div>
-        <div>Visitor: {datum.visitor}</div>
-        <div>Temp Badge: {datum.tempBadge}</div>
-        <div>Total: {datum.total}</div>
-      </div>
-    );
-  }}
-/>
-
-
-
-
-
-
-
-
-live
-employee
-contractors
-property management 
-visitor
-temp badge
-total 
-
-
-
-
-
-IN composite chart add above in tooltip and remove 
-this 
- <div>Usage %: {datum.percentage}%</div>
-                      <div>Seat Capacity: {datum.capacity}</div>
 // src/components/CompositeChartCard.jsx
- 
+
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
@@ -66,16 +18,16 @@ import {
 
 import buildingCapacities from '../data/buildingCapacities';
 import floorCapacities from '../data/floorCapacities';
- 
- 
- 
+
+
+
 const DARK_TO_LIGHT = [
   '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
   '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
   ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
   '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
 ];
- 
+
 export default function CompositeChartCard({
   title,
   data,
@@ -120,7 +72,7 @@ export default function CompositeChartCard({
           boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
         }
       }}
-    >    
+    >
       <CardContent sx={{ p: 1 }}>
         <Typography
           variant="subtitle1"
@@ -130,7 +82,7 @@ export default function CompositeChartCard({
         >
           {title}
         </Typography>
- 
+
         <Box sx={{ width: '100%', height }}>
           <ResponsiveContainer>
             <ComposedChart
@@ -138,8 +90,8 @@ export default function CompositeChartCard({
               margin={{ top: 15, right: 20, left: 0, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
- 
- 
+
+
               <XAxis
                 dataKey="name"
                 tickLine={false}
@@ -149,9 +101,9 @@ export default function CompositeChartCard({
                   const strLabel = String(label);
                   const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
                   const floorNum = parseInt(match?.[0], 10);
- 
+
                   if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
- 
+
                   const suffix = (n) => {
                     if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
                     switch (n % 10) {
@@ -161,19 +113,19 @@ export default function CompositeChartCard({
                       default: return `${n}th`;
                     }
                   };
- 
+
                   return suffix(floorNum);
                 }}
               />
- 
- 
+
+
               <YAxis
                 yAxisId="left"
                 tickLine={false}
                 axisLine={false}
                 stroke="rgba(255,255,255,0.6)"
               />
- 
+
               <YAxis
                 yAxisId="right"
                 orientation="right"
@@ -183,15 +135,15 @@ export default function CompositeChartCard({
                 domain={[0, 100]}
                 tickFormatter={val => `${val}%`}
               />
- 
+
               {/* <Tooltip
                 contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
                 formatter={(value, name) =>
                   name === 'percentage' ? `${value}%` : value
                 }
               /> */}
- 
-              <Tooltip
+
+              {/* <Tooltip
                 contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
                 // custom content so we can show capacity only on hover
                 content={({ active, payload, label }) => {
@@ -211,9 +163,35 @@ export default function CompositeChartCard({
                     </div>
                   );
                 }}
+              /> */}
+
+
+              <Tooltip
+                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const datum = payload[0].payload;
+                  return (
+                    <div style={{
+                      backgroundColor: '#000',
+                      border: `1px solid ${lineColor}`,
+                      borderRadius: 4,
+                      padding: 8,
+                    }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+                      <div>Live: {datum.live}</div>
+                      <div>Employee: {datum.employee}</div>
+                      <div>Contractors: {datum.contractors}</div>
+                      <div>Property Mgmt: {datum.propertyMgmt}</div>
+                      <div>Visitor: {datum.visitor}</div>
+                      <div>Temp Badge: {datum.tempBadge}</div>
+                      <div>Total: {datum.total}</div>
+                    </div>
+                  );
+                }}
               />
- 
- 
+
+
               {/* Headcount bars with per-bar colors & percentage labels */}
               <Bar
                 yAxisId="left"
@@ -222,13 +200,13 @@ export default function CompositeChartCard({
                 barSize={700}
                 isAnimationActive={false}
                 animationDuration={0}
-                // animationEasing={animationEasing}
+              // animationEasing={animationEasing}
               >
                 {enriched.map((entry, idx) => (
                   <Cell key={`cell-${idx}`} fill={entry._color} />
                 ))}
- 
- 
+
+
                 {/* Show % on top of each bar */}
                 <LabelList
                   dataKey="headcount"
@@ -236,7 +214,7 @@ export default function CompositeChartCard({
                   formatter={val => `${val}`}
                   style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
                 />
- 
+
                 {/* Percentage centered inside each bar */}
                 <LabelList
                   dataKey="percentage"
@@ -245,8 +223,8 @@ export default function CompositeChartCard({
                   style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
                 />
               </Bar>
- 
- 
+
+
               {/* Seat Capacity line */}
               <Line
                 yAxisId="right"
@@ -260,12 +238,12 @@ export default function CompositeChartCard({
                 animationDuration={animationDuration}
                 animationEasing={animationEasing}
               />
- 
+
               {/* Optional: draw capacity as second line */}
               <Line
                 yAxisId="left"
                 type="monotone"
- 
+
                 //  dataKey="capacity"
                 name="Total Seats"
                 stroke="#81C784"
@@ -301,13 +279,4 @@ export default function CompositeChartCard({
         </Box>
       </CardContent>
     </Card>
-  );
-}
-
-
-
-// ////////////
-
-// ////////
-
-
+  )
