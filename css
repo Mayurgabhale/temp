@@ -1,5 +1,5 @@
 const handlePartitionChange = (newCode) => {
-  if (newCode === 'IN.Pune') {
+  if (newCode === 'Pune') {
     window.location.href = 'http://10.199.22.57:3000/';
     return;
   }
