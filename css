@@ -1,23 +1,142 @@
-const enriched = data.map((d, i) => ({
-  ...d,
-  percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-  _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length],
+{
+  "success": true,
+  "today": {
+    "total": 981,
+    "Employee": 863,
+    "Contractor": 118
+  },
+  "realtime": {
+    "Pune": {
+      "total": 580,
+      "Employee": 516,
+      "Contractor": 64,
+      "floors": {
+        "Podium Floor": 399,
+        "Tower B": 115,
+        "2nd Floor": 63
+      }
+    },
+    "Quezon City": {
+      "total": 151,
+      "Employee": 132,
+      "Contractor": 19,
+      "floors": {
+        "7th Floor": 107,
+        "6th Floor": 44
+      }
+    },
+    "Taguig City": {
+      "total": 12,
+      "Employee": 10,
+      "Contractor": 2,
+      "floors": {
+        "Taguig": 12
+      }
+    },
+    "MY.Kuala Lumpur": {
+      "total": 4,
+      "Employee": 3,
+      "Contractor": 1,
+      "floors": {
+        "Kuala Lumpur": 4
+      }
+    },
+    "JP.Tokyo": {
+      "total": 7,
+      "Employee": 6,
+      "Contractor": 1,
+      "floors": {
+        "Tokyo": 7
+      }
+    }
+  },
+  "unmapped": [],
+  "details": [
+    {
 
-  // Ensure these fields are defined for the tooltip
-  live: d.live ?? 0,
-  employee: d.employee ?? 0,
-  contractors: d.contractors ?? 0,
-  propertyMgmt: d.propertyMgmt ?? 0,
-  visitor: d.visitor ?? 0,
-  tempBadge: d.tempBadge ?? 0,
-  total: d.total ?? 0
-}));
+
+     "details": [
+    {
+      "ObjectName1": "Unavane, Aditya",
+      "Door": "APAC_IN_PUN_2NDFLR_RECPTION TO WORKSTATION DOOR_10:05:4B",
+      "PersonnelType": "Employee",
+      "EmployeeID": "328923",
+      "CardNumber": "620146",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-17T12:17:56.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "F4980CD9-374E-4408-BD7B-001F7D12F8AD"
+    },
+    {
+      "ObjectName1": "Sarkaniya, Harish",
+      "Door": "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW",
+      "PersonnelType": "Contractor",
+      "EmployeeID": "W0024571",
+      "CardNumber": "615794",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-17T12:09:42.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "51A95852-C14E-4BB4-8F31-0057A87F67C7"
+    },
+
+         {
+      "ObjectName1": "Sarkaniya, Harish",
+      "Door": "APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW",
+      "PersonnelType": "Contractor",
+      "EmployeeID": "W0024571",
+      "CardNumber": "615794",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-17T12:09:42.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "51A95852-C14E-4BB4-8F31-0057A87F67C7"
+    },
+    {
 
 
+        {
+      "ObjectName1": "Consencino, Geraldine",
+      "Door": "APAC_PH_Manila_7th Floor_Recption Door 1-701",
+      "PersonnelType": "Property Management",
+      "EmployeeID": "",
+      "CardNumber": "418429",
+      "PartitionName2": "Quezon City",
+      "LocaleMessageTime": "2025-07-17T06:40:13.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "EC54EA4C-EE1A-43FD-A59D-00F410DBB11D"
+    },
+    {
+      "ObjectName1": "San Juan, Leilanie Pauco",
+      "Door": "APAC_PH_Manila_6th Floor Enrty Door 1",
+      "Pe
 
 
+         {
+      "ObjectName1": "Pune, VIS_PUN_166",
+      "Door": "APAC_IN_PUN_PODIUM_ST4 DOOR 2 (GREEN)",
+      "PersonnelType": "Visitor",
+      "EmployeeID": "",
+      "CardNumber": "418978",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-17T12:00:50.000Z",
+      "Direction": "InDirection",
+      "PersonGUID": "610D1168-9D46-4154-88F6-0DB884FE4961"
+    },
+    {
 
 
+        },
+    {
+      "ObjectName1": "India, TEMP_PUN_001",
+      "Door": "APAC_IN_PUN-PODIUM_P-1 TURNSTILE 3 -OUT DOOR",
+      "PersonnelType": "Temp Badge",
+      "EmployeeID": "",
+      "CardNumber": "411101",
+      "PartitionName2": "Pune",
+      "LocaleMessageTime": "2025-07-17T07:02:45.000Z",
+      "Direction": "OutDirection",
+      "PersonGUID": "1E3639F4-4F63-459E-95CB-4F08CCB4742E"
+    },
+    {
 
 
 
