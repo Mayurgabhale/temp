@@ -1,15 +1,19 @@
+  // ✅ Always call hooks before any early return
+  const renderData = useMemo(() => {
+    const rawData = (total === 0 && showZeroSlice)
+      ? [{ name: 'Available', value: data[1]?.value || 0 }]
+      : data;
 
-Compiled with problems:
-×
-ERROR
-[eslint] 
-src\components\CompositeChartCard.jsx
-  Line 63:18:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+    const sum = rawData.reduce((acc, d) => acc + d.value, 0);
 
-Search for the keywords to learn more about each error.
+    return rawData.map(d => ({
+      ...d,
+      percent: sum > 0 ? d.value / sum : 0
+    }));
+  }, [JSON.stringify(data), total, showZeroSlice]);
 
 
-// src/components/CompositeChartCard.jsx
+      // src/components/CompositeChartCard.jsx
 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
@@ -48,6 +52,19 @@ export default function CompositeChartCard({
   animationDuration = 1500,
   animationEasing = 'ease-in-out'
 }) {
+
+  
+const enriched = useMemo(() => {
+  return data.map((d, i) => ({
+    ...d,
+    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+  }));
+}, [data]);
+
+
+
+
   if (!Array.isArray(data) || data.length === 0) {
     return (
       <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
@@ -71,13 +88,6 @@ export default function CompositeChartCard({
 
 
 
-const enriched = useMemo(() => {
-  return data.map((d, i) => ({
-    ...d,
-    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
-  }));
-}, [data]);
 
 
 
