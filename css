@@ -1,3 +1,35 @@
+<Tooltip
+  contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
+  content={({ active, payload, label }) => {
+    if (!active || !payload || !payload.length) return null;
+    const datum = payload[0].payload;
+    return (
+      <div style={{
+        backgroundColor: '#FFD666',
+        border: `1px solid ${lineColor}`,
+        borderRadius: 4,
+        padding: 8,
+      }}>
+        <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+        <div>Live: {datum.live}</div>
+        <div>Employee: {datum.employee}</div>
+        <div>Contractors: {datum.contractors}</div>
+        <div>Property Mgmt: {datum.propertyMgmt}</div>
+        <div>Visitor: {datum.visitor}</div>
+        <div>Temp Badge: {datum.tempBadge}</div>
+        <div>Total: {datum.total}</div>
+      </div>
+    );
+  }}
+/>
+
+
+
+
+
+
+
+
 live
 employee
 contractors
