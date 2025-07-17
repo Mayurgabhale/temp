@@ -1,3 +1,18 @@
+import { useMemo } from 'react'; // make sure this is already imported
+
+const enriched = useMemo(() => {
+  return data.map((d, i) => ({
+    ...d,
+    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+  }));
+}, [data]);
+
+
+
+
+
+
 tickFormatter={(label) => {
   const strLabel = String(label || '');
   const match = strLabel.match(/\d+/);
