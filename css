@@ -1,4 +1,23 @@
 
+const puneBreakdown = useMemo(() => {
+  if (!pune || !pune.floors || !data?.realtime?.['Pune']?.allDetails) return {};
+  const enriched = enrichFloorsWithTypes('Pune', pune.floors, data.realtime['Pune'].allDetails);
+  return enriched.reduce((acc, curr) => {
+    const { name, employee, contractors, visitor, propertyMgmt, tempBadge } = curr;
+    acc[name] = {
+      Employee: employee,
+      Contractor: contractors,
+      Visitor: visitor,
+      'Property Management': propertyMgmt,
+      'Temp Badge': tempBadge
+    };
+    return acc;
+  }, {});
+}, [pune, data]);
+
+
+
+
 
 Compiled with problems:
 ×
