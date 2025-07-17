@@ -1,4 +1,35 @@
 
+const puneBreakdown = useMemo(() => {
+  const breakdown = { Employee: 0, Contractor: 0, Visitor: 0, "Property Management": 0, "Temp Badge": 0 };
+  for (const person of data?.details || []) {
+    if (person.PartitionName2 === "Pune" && person.PersonnelType) {
+      if (breakdown[person.PersonnelType] !== undefined) {
+        breakdown[person.PersonnelType]++;
+      }
+    }
+  }
+  const total = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
+  return { Pune: { ...breakdown, Total: total } };
+}, [data?.details]);
+
+if (error) {
+  return (
+    <Box width="100vw" py={4}>
+      <Typography color="error" align="center">
+        Error loading live data
+      </Typography>
+    </Box>
+  );
+}
+
+
+
+
+
+
+
+
+
 
 
 
