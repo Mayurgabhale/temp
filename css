@@ -43,45 +43,7 @@
 
 
 
-
-<Box
-  sx={{
-    p: 2,
-    mb: 2,
-    border: "2px solid #FFC107",
-    borderRadius: 2,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  }}
->
-  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-    <Typography variant="h6" gutterBottom>
-      Quezon City Composite Chart
-    </Typography>
-    <Typography variant="body2" color="textSecondary">
-      Last updated: {liveSummary?.lastUpdate || "N/A"}
-    </Typography>
-  </Box>
-
-  <CompositeChartCard
-    title="Quezon City Composite Chart"
-    data={[
-      {
-        name: "Quezon City (6thFloor)",
-        headcount: liveSummary?.realtime?.["Quezon City"]?.floors?.["6th Floor"] ?? 0,
-        capacity: buildingCapacities?.["Quezon City (6thFloor)"] ?? 0,
-      },
-      {
-        name: "Quezon City (7thFloor)",
-        headcount: liveSummary?.realtime?.["Quezon City"]?.floors?.["7th Floor"] ?? 0,
-        capacity: buildingCapacities?.["Quezon City (7thFloor)"] ?? 0,
-      },
-    ]}
-  />
-</Box>
-
-
-
-          // src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx
 import React from 'react';
 import {
   Container, Box, Typography, Skeleton,
@@ -414,6 +376,9 @@ export default function Dashboard() {
             </Box>
           ))}
         </Box>
+
+
+        
       </Container>
       <Footer />
 
