@@ -1,3 +1,54 @@
+function normalizeRealtimeFloors(floorsData, partitionName) {
+  return Object.entries(floorsData).map(([floorName, headcount]) => {
+    const floorCap = floorCapacities?.[partitionName]?.[floorName] ?? 0;
+
+    return {
+      name: floorName,
+      headcount,
+      capacity: floorCap,
+      employee: 0,         // Default unless you can split types per floor
+      contractors: 0,
+      propertyMgmt: 0,
+      visitor: 0,
+      tempBadge: 0,
+      live: 0,
+      total: headcount
+    };
+  });
+}
+
+
+<Tooltip
+  content={({ active, payload, label }) => {
+    if (!active || !payload || !payload.length) return null;
+    const datum = payload[0].payload;
+    return (
+      <div style={{ backgroundColor: '#000', color: '#fff', padding: 8 }}>
+        <div><strong>{label}</strong></div>
+        <div>Live: {datum.live}</div>
+        <div>Employee: {datum.employee}</div>
+        <div>Contractors: {datum.contractors}</div>
+        <div>Property Mgmt: {datum.propertyMgmt}</div>
+        <div>Visitor: {datum.visitor}</div>
+        <div>Temp Badge: {datum.tempBadge}</div>
+        <div>Total: {datum.total}</div>
+      </div>
+    );
+  }}
+/>
+
+
+
+
+
+
+
+
+
+
+
+
+........
 {
   "success": true,
   "today": {
