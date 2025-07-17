@@ -4,20 +4,12 @@
     if (!active || !payload || !payload.length) return null;
     const datum = payload[0].payload;
 
-    // Static breakdown for Pune (you can later parameterize this if needed)
-    const isPune = label?.toLowerCase().includes('podium') || label?.toLowerCase().includes('2nd') || label?.toLowerCase().includes('tower');
-    const breakdown = isPune ? (
-      <>
-        <hr style={{ margin: '6px 0', borderColor: '#ccc' }} />
-        <div><strong>Breakdown:</strong></div>
-        <div>Employee: 507</div>
-        <div>Contractor: 78</div>
-        <div>Property Mgmt: 22</div>
-        <div>Temp Badge: 4</div>
-        <div>Visitor: 10</div>
-        <div>Total: 621</div>
-      </>
-    ) : null;
+    // Match region key based on bar name (like "Podium Floor", "2nd Floor", etc.)
+    const matchedRegion = Object.keys(breakdownMap).find(region =>
+      label.toLowerCase().includes(region.toLowerCase())
+    );
+
+    const breakdown = breakdownMap[matchedRegion];
 
     return (
       <div style={{
@@ -30,7 +22,16 @@
         <div>Headcount: {datum.headcount}</div>
         <div>Usage %: {datum.percentage}%</div>
         <div>Seat Capacity: {datum.capacity}</div>
-        {breakdown}
+
+        {breakdown && (
+          <>
+            <hr style={{ margin: '6px 0', borderColor: '#ccc' }} />
+            <div><strong>Breakdown:</strong></div>
+            {Object.entries(breakdown).map(([k, v]) => (
+              <div key={k}>{k}: {v}</div>
+            ))}
+          </>
+        )}
       </div>
     );
   }}
