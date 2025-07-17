@@ -1,19 +1,4 @@
-  // ✅ Always call hooks before any early return
-  const renderData = useMemo(() => {
-    const rawData = (total === 0 && showZeroSlice)
-      ? [{ name: 'Available', value: data[1]?.value || 0 }]
-      : data;
-
-    const sum = rawData.reduce((acc, d) => acc + d.value, 0);
-
-    return rawData.map(d => ({
-      ...d,
-      percent: sum > 0 ? d.value / sum : 0
-    }));
-  }, [JSON.stringify(data), total, showZeroSlice]);
-
-
-      // src/components/CompositeChartCard.jsx
+// src/components/CompositeChartCard.jsx
 
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
