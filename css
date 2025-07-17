@@ -1,3 +1,36 @@
+
+const puneFloors = data?.realtime?.['IN.Pune']?.floors || {};
+const puneDetails = data?.details || [];
+const puneEnriched = enrichFloorsWithTypes('IN.Pune', puneFloors, puneDetails);
+
+const chartConfigs = [
+  {
+    key: 'pune',
+    title: 'Pune',
+    body: pune?.total === 0
+      ? (
+        <Typography color="white" align="center" py={6}>
+          No Pune data
+        </Typography>
+      )
+      : (
+        <CompositeChartCard
+          data={puneEnriched}
+          lineColor={palette15[0]}
+          height={250}
+          sx={{ border: 'none' }}
+        />
+      )
+  },
+
+
+
+
+
+
+
+
+
 const puneFloors = realtimeData?.['IN.Pune']?.floors ?? {};
 const puneDetails = realtimeData?.details ?? [];
 
