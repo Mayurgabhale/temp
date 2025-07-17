@@ -19,6 +19,23 @@ const handlePartitionChange = (newCode) => {
 
 
 
+<Select
+  size="small"
+  value={selectedRegion}
+  displayEmpty
+  onChange={e => handlePartitionChange(e.target.value)}
+  sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
+  renderValue={val =>
+    val ? displayNameMap[val] || val : '— Select Region —'
+  }
+>
+
+
+
+
+
+
+
 http://localhost:3006/partition/Pune
 
 
