@@ -1,5 +1,27 @@
 
 
+const enriched = data.map((item) => {
+  const headcount = item.headcount || 0;
+  const capacity = item.capacity || 0;
+  const percentage = capacity > 0 ? Math.round((headcount / capacity) * 100) : 0;
+
+  const breakdown = breakdownMap?.[item.name] || {};
+
+  return {
+    ...item,
+    headcount,
+    capacity,
+    percentage,
+    ...breakdown  // ← Add this line to include breakdown data in each point
+  };
+});
+
+
+
+
+
+
+
 
 import React, { useMemo } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
