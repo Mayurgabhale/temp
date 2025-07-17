@@ -1,42 +1,18 @@
 
 
-const handlePartitionChange = (newCode) => {
-  setSelectedRegion(newCode);
-
-  if (newCode === 'IN.Pune') {
-    window.location.replace('http://10.199.22.57:3000/');
-    return;
-  }
-
-  const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-  navigate(base + suffix);
-};
 
 
 
+Compiled with problems:
+×
+ERROR
+[eslint] 
+src\components\Header.jsx
+  Line 79:3:    'setSelectedRegion' is not defined  no-undef
+  Line 165:10:  'selectedRegion' is not defined     no-undef
 
+Search for the keywords to learn more about each error.
 
-
-
-<Select
-  size="small"
-  value={selectedRegion}
-  displayEmpty
-  onChange={e => handlePartitionChange(e.target.value)}
-  sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
-  renderValue={val =>
-    val ? displayNameMap[val] || val : '— Select Region —'
-  }
->
-
-
-
-
-
-
-
-http://localhost:3006/partition/Pune
 
 
 
@@ -118,8 +94,10 @@ export default function Header() {
 
 
   const handlePartitionChange = (newCode) => {
+  setSelectedRegion(newCode);
+
   if (newCode === 'IN.Pune') {
-    window.location.href = 'http://10.199.22.57:3000/';
+    window.location.replace('http://10.199.22.57:3000/');
     return;
   }
 
@@ -127,6 +105,8 @@ export default function Header() {
   const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
   navigate(base + suffix);
 };
+
+
 
   return (
     <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
@@ -186,7 +166,7 @@ export default function Header() {
 
         {/* Right: Region Selector + Flag */}
         <Box display="flex" alignItems="center">
-          <Select
+          {/* <Select
             size="small"
             value={currentCode}
             displayEmpty
@@ -195,7 +175,20 @@ export default function Header() {
             renderValue={val =>
               val ? displayNameMap[val] || val : '— Select Region —'
             }
-          >
+          > */}
+
+
+          <Select
+  size="small"
+  value={selectedRegion}
+  displayEmpty
+  onChange={e => handlePartitionChange(e.target.value)}
+  sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
+  renderValue={val =>
+    val ? displayNameMap[val] || val : '— Select Region —'
+  }
+>
+
             <MenuItem value="">— Select Region —</MenuItem>
             {partitionList.map(code => (
               <MenuItem key={code} value={code}>
@@ -210,6 +203,3 @@ export default function Header() {
   );
 }
 
-
-
-// http://10.199.22.57:3000/
