@@ -1,3 +1,44 @@
+
+export default function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  // Parse path to detect /partition/:code and any trailing "history" or "details"
+  const segments = location.pathname.split('/').filter(Boolean);
+  const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
+  const currentCode = isPartitionPage ? decodeURIComponent(segments[1]) : '';
+  const extraSegments = isPartitionPage ? segments.slice(2) : [];
+
+  // ✅ Now it's safe to use currentCode in a hook
+  const [selectedRegion, setSelectedRegion] = useState(currentCode);
+
+  // Choose flag (or default)
+  const selectedFlag = flagMap[currentCode] || DefaultFlag;
+
+  const handlePartitionChange = (newCode) => {
+    setSelectedRegion(newCode);
+
+    if (newCode === 'IN.Pune') {
+      window.location.replace('http://10.199.22.57:3000/');
+      return;
+    }
+
+    const base = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+    const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+    navigate(base + suffix);
+  };
+
+
+
+
+
+
+
+
+.....
+
 Uncaught runtime errors:
 ×
 ERROR
