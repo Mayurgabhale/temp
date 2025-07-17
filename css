@@ -1,30 +1,7 @@
 
-
-const handlePartitionChange = (newCode) => {
-  if (newCode === 'IN.Pune') {
-    window.open('http://10.199.22.57:3000/', '_blank');
-    return;
-  }
-
-  const base = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-  navigate(base + suffix);
-};
-
-
-
-url is open but we want open in new tab ok
-
-
-
-
-const handlePartitionChange = (newCode) => {
-  if (newCode === 'Pune') {
-    window.location.href = 'http://10.199.22.57:3000/';
-    return;
-  }
-
-  const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-  navigate(base + suffix);
-};
+employee
+contractors
+property management 
+visitor
+temp badge
+total 
