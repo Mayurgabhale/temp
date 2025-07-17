@@ -1,28 +1,18 @@
-
-
-
-
-
-export default function Header() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const { data }  = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState(currentCode); // ✅ Add this line
-
-
-
-
-Compiled with problems:
+Uncaught runtime errors:
 ×
 ERROR
-[eslint] 
-src\components\Header.jsx
-  Line 79:3:    'setSelectedRegion' is not defined  no-undef
-  Line 165:10:  'selectedRegion' is not defined     no-undef
-
-Search for the keywords to learn more about each error.
-
+Cannot access 'currentCode' before initialization
+ReferenceError: Cannot access 'currentCode' before initialization
+    at Header (http://localhost:3006/static/js/src_components_Footer_jsx-src_components_Header_jsx.chunk.js:473:95)
+    at react-stack-bottom-frame (http://localhost:3006/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3006/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3006/static/js/bundle.js:19664:17)
+    at beginWork (http://localhost:3006/static/js/bundle.js:20250:16)
+    at runWithFiberInDEV (http://localhost:3006/static/js/bundle.js:15742:68)
+    at performUnitOfWork (http://localhost:3006/static/js/bundle.js:22323:93)
+    at workLoopSync (http://localhost:3006/static/js/bundle.js:22216:38)
+    at renderRootSync (http://localhost:3006/static/js/bundle.js:22200:7)
+    at performWorkOnRoot (http://localhost:3006/static/js/bundle.js:21964:42)
 
 
 
@@ -40,44 +30,53 @@ import {
 } from '@mui/material';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
-import HomeIcon    from '@mui/icons-material/Home';
+import HomeIcon from '@mui/icons-material/Home';
 import HistoryIcon from '@mui/icons-material/History';
-import InfoIcon    from '@mui/icons-material/Info';
+import InfoIcon from '@mui/icons-material/Info';
 
-import WuLogo        from '../assets/wu-logo.png';
-import IndiaFlag     from '../assets/flags/india.png';
-import MalaysiaFlag  from '../assets/flags/malaysia.png';
+import WuLogo from '../assets/wu-logo.png';
+import IndiaFlag from '../assets/flags/india.png';
+import MalaysiaFlag from '../assets/flags/malaysia.png';
 import PhilippinesFlag from '../assets/flags/philippines.png';
-import TaguigFlag    from '../assets/flags/Taguig.png';
-import JapanFlag     from '../assets/flags/japan.png';
-import DefaultFlag   from '../assets/flags/default.png';
+import TaguigFlag from '../assets/flags/Taguig.png';
+import JapanFlag from '../assets/flags/japan.png';
+import DefaultFlag from '../assets/flags/default.png';
 
-import { partitionList }    from '../services/occupancy.service';
+import { partitionList } from '../services/occupancy.service';
 import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
 // Friendly display names
 const displayNameMap = {
-  'IN.Pune':         'Pune',
+  'IN.Pune': 'Pune',
   'MY.Kuala Lumpur': 'Kuala Lumpur',
-  'PH.Quezon':       'Quezon City',
-  'PH.Taguig':       'Taguig',
-  'JP.Tokyo':        'Tokyo',
+  'PH.Quezon': 'Quezon City',
+  'PH.Taguig': 'Taguig',
+  'JP.Tokyo': 'Tokyo',
 };
 
 // Flag lookup by partition code
 const flagMap = {
-  'IN.Pune':         IndiaFlag,
+  'IN.Pune': IndiaFlag,
   'MY.Kuala Lumpur': MalaysiaFlag,
-  'PH.Quezon':       PhilippinesFlag,
-  'PH.Taguig':       TaguigFlag,
-  'JP.Tokyo':        JapanFlag,
+  'PH.Quezon': PhilippinesFlag,
+  'PH.Taguig': TaguigFlag,
+  'JP.Tokyo': JapanFlag,
 };
 
 export default function Header() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const { data }  = useLiveOccupancy(1000);
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const { data } = useLiveOccupancy(1000);
+  // const [lastUpdate, setLastUpdate] = useState('');
+
+
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { data } = useLiveOccupancy(1000);
   const [lastUpdate, setLastUpdate] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState(currentCode); // ✅ Add this line
+
 
   // Update timestamp on each new live-data push
   // useEffect(() => {
@@ -87,10 +86,10 @@ export default function Header() {
   // }, [data]);
 
   // Parse path to detect /partition/:code and any trailing "history" or "details"
-  const segments        = location.pathname.split('/').filter(Boolean);
+  const segments = location.pathname.split('/').filter(Boolean);
   const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
-  const currentCode     = isPartitionPage ? decodeURIComponent(segments[1]) : '';
-  const extraSegments   = isPartitionPage ? segments.slice(2) : [];
+  const currentCode = isPartitionPage ? decodeURIComponent(segments[1]) : '';
+  const extraSegments = isPartitionPage ? segments.slice(2) : [];
 
   // Choose flag (or default)
   const selectedFlag = flagMap[currentCode] || DefaultFlag;
@@ -104,28 +103,28 @@ export default function Header() {
 
 
   const handlePartitionChange = (newCode) => {
-  setSelectedRegion(newCode);
+    setSelectedRegion(newCode);
 
-  if (newCode === 'IN.Pune') {
-    window.location.replace('http://10.199.22.57:3000/');
-    return;
-  }
+    if (newCode === 'IN.Pune') {
+      window.location.replace('http://10.199.22.57:3000/');
+      return;
+    }
 
-  const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-  navigate(base + suffix);
-};
+    const base = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+    const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+    navigate(base + suffix);
+  };
 
 
 
   return (
     <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
       <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        
+
         {/* Left: Logo + Title + Nav Icons */}
         <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
           <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-          
+
           <Typography variant="h6" sx={{ color: '#FFC107', mr: 3, fontWeight: 600 }}>
             APAC Live Occupancy
             {currentCode && ` • ${displayNameMap[currentCode] || currentCode}`}
@@ -145,9 +144,9 @@ export default function Header() {
 
           <IconButton
             component={Link}
-            to={ isPartitionPage
+            to={isPartitionPage
               ? `/partition/${encodeURIComponent(currentCode)}`
-              : '/' }
+              : '/'}
             color="inherit"
           >
             <HomeIcon />
@@ -155,9 +154,9 @@ export default function Header() {
 
           <IconButton
             component={Link}
-            to={ isPartitionPage
+            to={isPartitionPage
               ? `/partition/${encodeURIComponent(currentCode)}/history`
-              : '/history' }
+              : '/history'}
             color="inherit"
           >
             <HistoryIcon />
@@ -165,9 +164,9 @@ export default function Header() {
 
           <IconButton
             component={Link}
-            to={ isPartitionPage
+            to={isPartitionPage
               ? `/partition/${encodeURIComponent(currentCode)}/details`
-              : '/partition/Pune/details' }
+              : '/partition/Pune/details'}
             color="inherit"
           >
             <InfoIcon />
@@ -189,15 +188,15 @@ export default function Header() {
 
 
           <Select
-  size="small"
-  value={selectedRegion}
-  displayEmpty
-  onChange={e => handlePartitionChange(e.target.value)}
-  sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
-  renderValue={val =>
-    val ? displayNameMap[val] || val : '— Select Region —'
-  }
->
+            size="small"
+            value={selectedRegion}
+            displayEmpty
+            onChange={e => handlePartitionChange(e.target.value)}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
+            renderValue={val =>
+              val ? displayNameMap[val] || val : '— Select Region —'
+            }
+          >
 
             <MenuItem value="">— Select Region —</MenuItem>
             {partitionList.map(code => (
