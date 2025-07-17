@@ -139,8 +139,6 @@
     {
 
 
-
-
 // src/components/CompositeChartCard.jsx
 
 import React from 'react';
@@ -194,14 +192,32 @@ export default function CompositeChartCard({
     );
   }
   // Enrich each datum with its usage percentage
-  const enriched = data.map((d, i) => ({
-    ...d,
-    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
-  }));
+  // const enriched = data.map((d, i) => ({
+  //   ...d,
+  //   percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+  //   _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+  // }));
+
+const enriched = data.map((d, i) => ({
+  ...d,
+  percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+  _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length],
+
+  // Ensure these fields are defined for the tooltip
+  live: d.live ?? 0,
+  employee: d.employee ?? 0,
+  contractors: d.contractors ?? 0,
+  propertyMgmt: d.propertyMgmt ?? 0,
+  visitor: d.visitor ?? 0,
+  tempBadge: d.tempBadge ?? 0,
+  total: d.total ?? 0
+}));
+
   const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
   const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
   const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
+
+
   return (
     <Card
       sx={{
@@ -422,4 +438,13 @@ export default function CompositeChartCard({
         </Box>
       </CardContent>
     </Card>
-  )
+  );
+}
+
+
+
+// ////////////
+
+// ////////
+
+
