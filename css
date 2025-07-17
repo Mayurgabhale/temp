@@ -1,5 +1,24 @@
 
 
+const handlePartitionChange = (newCode) => {
+  if (newCode === 'IN.Pune') {
+    window.location.href = 'http://10.199.22.57:3000/';
+    return;
+  }
+
+  const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+  navigate(base + suffix);
+};
+
+
+
+
+
+
+
+
+
 http://10.199.22.57:3000/
 // src/components/Header.jsx — APAC Edition
 
