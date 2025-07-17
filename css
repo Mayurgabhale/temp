@@ -1,3 +1,8 @@
+url is open but we want open in new tab ok
+
+
+
+
 const handlePartitionChange = (newCode) => {
   if (newCode === 'Pune') {
     window.location.href = 'http://10.199.22.57:3000/';
