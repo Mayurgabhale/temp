@@ -1,4 +1,63 @@
 
+const renderTooltip = ({ active, payload }) => {
+  if (!active || !payload?.length) return null;
+  const item = payload[0]?.payload;
+  if (!item) return null;
+
+  const { name, headcount, capacity, percentage } = item;
+
+  const breakdownEntries = Object.entries(item).filter(
+    ([key]) =>
+      !['name', 'headcount', 'capacity', 'percentage', '_color'].includes(key)
+  );
+
+  return (
+    <div
+      style={{
+        backgroundColor: '#1a1a1a',
+        color: '#FFD100',
+        border: '1px solid var(--wu-yellow)',
+        borderRadius: 4,
+        padding: '0.75rem',
+        minWidth: 180
+      }}
+    >
+      <div style={{ marginBottom: 4, fontSize: '1rem' }}>
+        <strong>{name}</strong>
+      </div>
+      <div style={{ marginBottom: 6, fontWeight: 'bold', fontSize: '0.9rem' }}>
+        Headcount: {headcount} / {capacity} ({percentage}%)
+      </div>
+      {breakdownEntries.map(([type, value]) => (
+        <div
+          key={type}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: 2,
+            color: '#fff',
+            fontSize: '0.85rem'
+          }}
+        >
+          <span style={{ opacity: 0.8 }}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </span>
+          <span style={{ fontWeight: 'bold' }}>{value}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+
+
 // C:\Users\W0024618\Desktop\swipeData\client\src\components\FloorOccupancyChart.jsx
 
 
