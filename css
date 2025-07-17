@@ -1,25 +1,7 @@
-
-
-const handlePartitionChange = (newCode) => {
-  if (newCode === 'IN.Pune') {
-    window.location.href = 'http://10.199.22.57:3000/';
-    return;
-  }
-
-  const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-  navigate(base + suffix);
-};
+http://localhost:3006/partition/Pune
 
 
 
-
-
-
-
-
-
-http://10.199.22.57:3000/
 // src/components/Header.jsx — APAC Edition
 
 import React, { useEffect, useState } from 'react';
@@ -90,11 +72,23 @@ export default function Header() {
   const selectedFlag = flagMap[currentCode] || DefaultFlag;
 
   // Preserve any /history or /details suffix when changing region
+  // const handlePartitionChange = (newCode) => {
+  //   const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+  //   const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+  //   navigate(base + suffix);
+  // };
+
+
   const handlePartitionChange = (newCode) => {
-    const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-    const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-    navigate(base + suffix);
-  };
+  if (newCode === 'IN.Pune') {
+    window.location.href = 'http://10.199.22.57:3000/';
+    return;
+  }
+
+  const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+  const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+  navigate(base + suffix);
+};
 
   return (
     <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
