@@ -1,3 +1,49 @@
+{/* Quezon City Composite Floor-Wise Chart */}
+<Box
+  sx={{
+    p: 2,
+    mb: 4,
+    border: "2px solid #FFC107",
+    borderRadius: 2,
+    backgroundColor: "rgba(0,0,0,0.4)",
+  }}
+>
+  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+    <Typography variant="h6" gutterBottom sx={{ color: '#FFC107' }}>
+      Quezon City Floor-Wise Composite Chart
+    </Typography>
+    <Typography variant="body2" color="textSecondary">
+      Last updated: {data?.lastUpdate || "N/A"}
+    </Typography>
+  </Box>
+
+  <CompositeChartCard
+    title="Quezon City Composite Chart"
+    data={[
+      {
+        name: "Quezon City (6thFloor)",
+        headcount: data?.realtime?.["Quezon City"]?.floors?.["6th Floor"] ?? 0,
+        capacity: buildingCapacities?.["Quezon City (6thFloor)"] ?? 0,
+      },
+      {
+        name: "Quezon City (7thFloor)",
+        headcount: data?.realtime?.["Quezon City"]?.floors?.["7th Floor"] ?? 0,
+        capacity: buildingCapacities?.["Quezon City (7thFloor)"] ?? 0,
+      },
+    ]}
+  />
+</Box>
+
+
+
+
+
+
+
+
+
+
+
 <Box
   sx={{
     p: 2,
