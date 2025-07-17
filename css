@@ -3,6 +3,16 @@
 
 
 
+export default function Header() {
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { data }  = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState(currentCode); // ✅ Add this line
+
+
+
+
 Compiled with problems:
 ×
 ERROR
