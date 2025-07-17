@@ -1,3 +1,23 @@
+
+const puneBreakdown = useMemo(() => {
+  const breakdown = { Employee: 0, Contractor: 0, Visitor: 0, "Property Management": 0, "Temp Badge": 0 };
+  for (const person of data?.details || []) {
+    if (person.PartitionName2 === "Pune" && person.PersonnelType) {
+      if (breakdown[person.PersonnelType] !== undefined) {
+        breakdown[person.PersonnelType]++;
+      }
+    }
+  }
+  const total = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
+  return { Pune: { ...breakdown, Total: total } };
+}, [data?.details]);
+
+
+
+
+
+...
+
 <Tooltip
   contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
   content={({ active, payload, label }) => {
