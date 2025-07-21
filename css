@@ -1,3 +1,77 @@
+
+slove this error without any fututre arry, careflly
+
+
+Compiled with problems:
+×
+ERROR in ./src/components/ERTOverview.jsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\W0024618\Desktop\swipeData\client\src\components\ERTOverview.jsx: Unexpected token, expected "," (49:16)
+
+  47 |           baseLocationByRole[role].includes(filterZone)
+  48 |         )
+> 49 |     : membersRaw;
+     |                 ^
+  50 |
+  51 |   return (
+  52 |     <Card className="shadow-sm mb-3" key={role}>
+    at constructor (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:360:19)
+    at FlowParserMixin.raise (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:6613:19)
+    at FlowParserMixin.unexpected (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:6633:16)
+    at FlowParserMixin.expect (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:6914:12)
+    at FlowParserMixin.parseCallExpressionArguments (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:11154:14)
+    at FlowParserMixin.parseCoverCallAndAsyncArrowHead (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:11097:29)
+    at FlowParserMixin.parseSubscript (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:11031:19)
+    at FlowParserMixin.parseSubscript (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:3656:18)
+    at FlowParserMixin.parseSubscripts (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:11005:19)
+    at FlowParserMixin.parseSubscripts (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:3622:18)
+    at FlowParserMixin.parseExprSubscripts (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10996:17)
+    at FlowParserMixin.parseUpdate (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10977:21)
+    at FlowParserMixin.parseMaybeUnary (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10957:23)
+    at FlowParserMixin.parseMaybeUnaryOrPrivate (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10810:61)
+    at FlowParserMixin.parseExprOps (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10815:23)
+    at FlowParserMixin.parseMaybeConditional (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10792:23)
+    at FlowParserMixin.parseMaybeAssign (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10745:21)
+    at FlowParserMixin.parseMaybeAssign (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:3555:18)
+    at C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10714:39
+    at FlowParserMixin.allowInAnd (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12334:12)
+    at FlowParserMixin.parseMaybeAssignAllowIn (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10714:17)
+    at FlowParserMixin.tryParseConditionalConsequent (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:3027:29)
+    at FlowParserMixin.parseConditional (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:2988:14)
+    at FlowParserMixin.parseMaybeConditional (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10796:17)
+    at FlowParserMixin.parseMaybeAssign (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10745:21)
+    at FlowParserMixin.parseMaybeAssign (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:3555:18)
+    at C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10714:39
+    at FlowParserMixin.allowInAnd (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12329:16)
+    at FlowParserMixin.parseMaybeAssignAllowIn (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:10714:17)
+    at FlowParserMixin.parseVar (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13260:91)
+    at FlowParserMixin.parseVarStatement (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13106:10)
+    at FlowParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12727:23)
+    at FlowParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12644:17)
+    at FlowParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:2922:24)
+    at FlowParserMixin.parseStatementListItem (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12624:17)
+    at FlowParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13192:61)
+    at FlowParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13185:10)
+    at FlowParserMixin.parseBlock (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13173:10)
+    at FlowParserMixin.parseFunctionBody (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12018:24)
+    at FlowParserMixin.parseFunctionBody (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:2899:11)
+    at FlowParserMixin.parseFunctionBodyAndFinish (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12004:10)
+    at FlowParserMixin.parseFunctionBodyAndFinish (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:2907:18)
+    at C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13317:12
+    at FlowParserMixin.withSmartMixTopicForbiddingContext (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12311:14)
+    at FlowParserMixin.parseFunction (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13316:10)
+    at FlowParserMixin.parseFunctionStatement (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:13001:17)
+    at FlowParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12668:21)
+    at FlowParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12644:17)
+    at FlowParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:2922:24)
+    at FlowParserMixin.parseModuleItem (C:\Users\W0024618\Desktop\swipeData\client\node_modules\@babel\parser\lib\index.js:12621:17)
+ERROR
+[eslint] 
+src\components\ERTOverview.jsx
+  Line 49:16:  Parsing error: Unexpected token, expected "," (49:16)
+
+
+
 import React, { useState, useMemo } from 'react';
 import { Card, Row, Col, Badge, Button } from 'react-bootstrap';
 import {
