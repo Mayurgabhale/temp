@@ -1,3 +1,22 @@
+<Box
+  sx={{
+    position: 'sticky',
+    top: 0,
+    zIndex: 5,
+    display: 'inline-flex',     // ✅ shrink to content
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 2,
+    mx: 'auto',                 // ✅ center the whole box
+    backgroundColor: 'transparent', // ✅ no fill
+    padding: 8,                 // optional: slight spacing around cards
+  }}
+>
+
+
+
+
 
 
 
