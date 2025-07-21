@@ -1,45 +1,45 @@
-{markers.map((m, i) => {
-  const r = 1 * zoom;
-  return (
-    <Marker
-      key={i}
-      coordinates={m.coords}
-      onClick={() => {
-        // Open link to homepage (or you can customize it per marker)
-        window.open('http://localhost:3000/', '_blank'); // opens in new tab
-      }}
-      style={{ cursor: 'pointer' }} // optional: make it look clickable
-    >
-      {/* Icon - rendered first so it stays behind */}
-      <svg
-        width={4 * zoom}
-        height={4 * zoom}
-        viewBox="0 0 16 16"
-        fill={m.color}
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ transform: 'translate(-8px, -16px)' }}
-      >
-        <path d="M8 0a5 5 0 0 0-5 5c0 4.25 5 11 5 11s5-6.75 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
-        {m.tooltip && <title>{m.tooltip}</title>}
-      </svg>
+ {markers.map((m, i) => {
+            const r = 1 * zoom;
+            return (
+              <Marker
+                key={i}
+                coordinates={m.coords}
+                onClick={() => {
+                  // Open link to homepage (or you can customize it per marker)
+                  window.open('http://localhost:3000/', '_blank'); // opens in new tab
+                }}
+                style={{ cursor: 'pointer' }} // optional: make it look clickable
+              >
+                {/* Icon - rendered first so it stays behind */}
+                <svg
+                  width={5 * zoom}
+                  height={5 * zoom}
+                  viewBox="0 0 16 16"
+                  fill={m.color}
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ transform: 'translate(-8px, -16px)' }}
+                >
+                  <path d="M8 0a5 5 0 0 0-5 5c0 4.25 5 11 5 11s5-6.75 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
+                  {m.tooltip && <title>{m.tooltip}</title>}
+                </svg>
 
-      {/* Text - rendered last so it's on top */}
-      {m.showLabel && (
-        <text
-          textAnchor="middle"
-          y={-12 * zoom}
-          fill={m.color}
-          fontSize={3 * zoom}
-          fontWeight="bold"
-          style={{
-            paintOrder: 'stroke',
-            strokeWidth: 1,
-            strokeLinejoin: 'round',
-          }}
-        >
-          {m.name}
-        </text>
-      )}
-    </Marker>
-  );
-})}
+                {/* Text - rendered last so it's on top */}
+                {m.showLabel && (
+                  <text
+                    textAnchor="middle"
+                    y={-12 * zoom}
+                    fill={m.color}
+                    fontSize={5 * zoom}
+                    fontWeight="bold"
+                    style={{
+                      paintOrder: 'stroke',
+                      strokeWidth: 1,
+                      strokeLinejoin: 'round',
+                    }}
+                  >
+                    {m.name}
+                  </text>
+                )}
+              </Marker>
+            );
+          })}
