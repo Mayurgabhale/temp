@@ -1,5 +1,44 @@
 
 
+
+ // region cards config
+  const REGION_CARDS = [
+    {
+      key: 'apac',
+      label: 'APAC',
+      url: 'http://10.199.22.57:3000/',
+      bgColor: 'black',
+      textColor: '#FF9500',         // orange
+    },
+    {
+      key: 'emea',
+      label: 'EMEA',
+      url: 'http://10.199.22.57:3001/',
+      bgColor: 'black',
+      textColor: '#34C759',         // green
+    },
+    {
+      key: 'laca',
+      label: 'LACA',
+      url: 'http://10.199.22.57:3003/',
+      bgColor: 'black',
+      textColor: '#007AFF',         // blue
+    },
+    {
+      key: 'namer',
+      label: 'NAMER',
+      url: 'http://10.199.22.57:3002/',
+      bgColor: 'black',
+      textColor: '#AF52DE',         // magenta
+    },
+  ];
+
+THIS ABOUVE CARD 200,80 IS CORRECT BUT OTHER SPACACE 
+
+EXAMPLE   ..................... |apac| |emea| |laca| |namer| ........................  THIS ARE CARD 
+.. IS THE COLOR THIS .. SPACE  I WANT TRANSPERNT 
+
+IN THIS 
 // src/pages/GlobalPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
