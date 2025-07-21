@@ -1,32 +1,17 @@
-const apacList = [
-  { name: 'Pune, India', coords: [73.8567, 18.5204], url: 'http://localhost:3000/pune' },
-  { name: 'Quezon City, Philippines', coords: [121.0509, 14.6760], url: 'http://localhost:3000/Quezon City' },
-  { name: 'Tokyo, Japan', coords: [139.6917, 35.6895], url: 'http://localhost:3000/Tokyo' },
-  { name: 'Taguig City, Philippines', coords: [121.0437, 14.5547], url: 'http://localhost:3000/Tokyo' },
-  { name: 'Kuala Lumpur, Malaysia', coords: [101.6869, 3.1390], url: 'http://localhost:3000/Kuala Lumpu' },
-];
+const markers = REGION_COUNTRIES[selected].map((m, idx) => {
+  const [city] = m.name.split(',');
+  const isSecondary = SECONDARY_OFFSETS[m.name] !== undefined;
+  const offset = SECONDARY_OFFSETS[m.name] || [0, 0];
+  const coords = isSecondary
+    ? [m.coords[0] + offset[0], m.coords[1] + offset[1]]
+    : m.coords;
 
-const lacaList = [
-  { name: 'San José, Costa Rica', coords: [-84.0907, 9.9281], url: 'http://localhost:3000/San José' },
-  { name: 'Mexico City, Mexico', coords: [-99.1332, 19.4326], url: 'http://localhost:3000/Mexico City' },
-  { name: 'Buenos Aires, Argentina', coords: [-58.3816, -34.6037], url: 'http://localhost:3000/Buenos Aires' },
-  { name: 'Panama City, Panama', coords: [-79.5167, 8.9833], url: 'http://localhost:3000/Panama City' },
-  { name: 'Lima, Peru', coords: [-77.0428, -12.0464], url: 'http://localhost:3000/Lima' },
-  { name: 'Brasília, Brazil', coords: [-47.8825, -15.7942], url: 'http://localhost:3000/Brasília' },
-];
-
-const emeaList = [
-  { name: 'Dubai, UAE', coords: [55.2708, 25.2048], url: 'http://localhost:3000/Dubai' },
-  { name: 'London, UK', coords: [-0.1278, 51.5074], url: 'http://localhost:3000/London' },
-  { name: 'Dublin, Ireland', coords: [-6.2603, 53.3498], url: 'http://localhost:3000/Dublin' },
-  { name: 'Moscow, Russia', coords: [37.6173, 55.7558], url: 'http://localhost:3000/Moscow' },
-  { name: 'Casablanca, Morocco', coords: [-7.5898, 33.5731], url: 'http://localhost:3000/Casablanca' },
-  { name: 'Vilnius, Lithuania', coords: [25.2797, 54.6872], url: 'http://localhost:3000/Vilnius' },
-];
-
-const namerList = [
-  { name: 'Denver, USA', coords: [-104.9903, 39.7392], url: 'http://localhost:3000/Denver' },
-  { name: 'New York, USA', coords: [-74.0060, 40.7128], url: 'http://localhost:3000/New York' },
-  { name: 'Miami, USA', coords: [-80.1918, 25.7617], url: 'http://localhost:3000/Miami' },
-  { name: 'Austin, USA', coords: [-97.7431, 30.2672], url: 'http://localhost:3000/Austin' },
-];
+  return {
+    name: city.trim(),
+    coords,
+    color: brands[idx % brands.length],
+    showLabel: !isSecondary,
+    tooltip: isSecondary ? city.trim() : null,
+    url: m.url, // ✅ Include URL from the data
+  };
+});
