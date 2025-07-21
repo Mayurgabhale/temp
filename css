@@ -4,36 +4,13 @@
     position: 'sticky',
     top: 0,
     zIndex: 5,
-    display: 'flex',
-    justifyContent: 'center',      // ✅ center cards
+    display: 'inline-flex',      // ✅ inline-flex so it shrinks to fit content
+    justifyContent: 'center',
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: 2,
     p: 2,
-    width: '100%',                 // container can be full width
-  }}
->
-
-
-
-
-<Box
-  key={region.key}
-  onClick={() => { window.location.href = region.url; }}
-  sx={{
-    cursor: 'pointer',
-    backgroundColor: 'transparent',
-    color: region.textColor,
-    paddingX: 2,              // ✅ horizontal padding instead of fixed width
-    paddingY: 1,
-    fontWeight: 'bold',
-    borderRadius: 2,
-    border: '1px solid #FFCC00',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxShadow: 3,
-    '&:hover': { opacity: 0.9 },
+    mx: 'auto',                  // ✅ center the container horizontally
+    backgroundColor: 'transparent', // ✅ no background
   }}
 >
