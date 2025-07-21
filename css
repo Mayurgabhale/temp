@@ -1,305 +1,307 @@
-<Box
-  sx={{
-    position: 'sticky',
-    top: 0,
-    zIndex: 5,
-    display: 'inline-flex',     // ✅ shrink to content
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 2,
-    mx: 'auto',                 // ✅ center the whole box
-    backgroundColor: 'transparent', // ✅ no fill
-    padding: 8,                 // optional: slight spacing around cards
-  }}
->
+// C:\Users\W0024618\Desktop\swipeData\client\src\components\ERTOverview.jsx
+
+import React, { useState, useMemo } from 'react';
+import { Card, Row, Col, Badge, Button } from 'react-bootstrap';
+import {
+  FaHome,
+  FaBuilding,
+  FaLayerGroup,
+  FaEnvelopeOpenText,
+  FaMobileAlt,
+  FaMapMarkerAlt
+} from 'react-icons/fa';
+
+const firstColumnRoles = [
+  'Site Head',
+  'BCM Team / Site Operations',
+  'HR',
+  'Incident Controller'
+];
+
+const baseLocationByRole = {
+  'Site Head':                  'Podium Floor – Red Zone',
+  'HR':                          'Podium Floor – Red Zone',
+  'Incident Controller':        'Podium Floor – Red Zone',
+  'First Aid Team':             'Podium Floor – Green Zone',
+  'ERT Team Leader':            'Podium Floor – Green Zone',
+  'BCM Team / Site Operations': 'Podium Floor – Red Zone'
+};
 
 
-
-
-
-
-
- // region cards config
-  const REGION_CARDS = [
-    {
-      key: 'apac',
-      label: 'APAC',
-      url: 'http://10.199.22.57:3000/',
-      bgColor: 'black',
-      textColor: '#FF9500',         // orange
-    },
-    {
-      key: 'emea',
-      label: 'EMEA',
-      url: 'http://10.199.22.57:3001/',
-      bgColor: 'black',
-      textColor: '#34C759',         // green
-    },
-    {
-      key: 'laca',
-      label: 'LACA',
-      url: 'http://10.199.22.57:3003/',
-      bgColor: 'black',
-      textColor: '#007AFF',         // blue
-    },
-    {
-      key: 'namer',
-      label: 'NAMER',
-      url: 'http://10.199.22.57:3002/',
-      bgColor: 'black',
-      textColor: '#AF52DE',         // magenta
-    },
-  ];
-
-THIS ABOUVE CARD 200,80 IS CORRECT BUT OTHER SPACACE 
-
-EXAMPLE   ..................... |apac| |emea| |laca| |namer| ........................  THIS ARE CARD 
-.. IS THE COLOR THIS .. SPACE  I WANT TRANSPERNT 
-
-IN THIS 
-// src/pages/GlobalPage.jsx
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, CircularProgress } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
-import MapChart from '../components/MapChart.jsx';
-import Footer from '../components/Footer.jsx';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
-export default function GlobalPage() {
-  const navigate = useNavigate();
-  const [counts, setCounts] = useState(null);
-  const [selected, setSelected] = useState('global');
-
-  // load counts once
-  useEffect(() => {
-    axios
-      .get('http://localhost:3008/api/occupancy/live-summary')
-      .then((res) => setCounts(res.data))
-      .catch(() => setCounts({}));
-  }, []);
-
-  if (!counts) {
-    return (
-      <Box display="flex" justifyContent="center" mt={6}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-
-
-
-  // region cards config
-  const REGION_CARDS = [
-    {
-      key: 'apac',
-      label: 'APAC',
-      url: 'http://10.199.22.57:3000/',
-      bgColor: 'black',
-      textColor: '#FF9500',         // orange
-    },
-    {
-      key: 'emea',
-      label: 'EMEA',
-      url: 'http://10.199.22.57:3001/',
-      bgColor: 'black',
-      textColor: '#34C759',         // green
-    },
-    {
-      key: 'laca',
-      label: 'LACA',
-      url: 'http://10.199.22.57:3003/',
-      bgColor: 'black',
-      textColor: '#007AFF',         // blue
-    },
-    {
-      key: 'namer',
-      label: 'NAMER',
-      url: 'http://10.199.22.57:3002/',
-      bgColor: 'black',
-      textColor: '#AF52DE',         // magenta
-    },
-  ];
+/**
+ * Render any role’s Card, filtering by filterZone.
+ */
+function renderRoleCard(role, membersRaw, filterZone) {
+const members = filterZone
+  ? membersRaw.filter(m =>
+      // only show “present” folks when a floor is selected
+      m.present && (
+        // either their live zone matches...
+        (m.zone && m.zone.includes(filterZone)) ||
+        // ...or their base‐location for that role does
+        baseLocationByRole[role].includes(filterZone)
+      )
+    )
+  : membersRaw;
 
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateRows: 'auto auto 1fr auto',
-        height: '100vh',
-        backgroundColor: 'background.default',
-      }}
-    >
-      {/* Header */}
-      <Box
-        px={2}
-        py={3}
-        sx={{
-          backgroundColor: 'black',
-          color: '#fff',
-          borderBottom: '4px solid #FFD700',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Box
-          component="img"
-          src="/wu-head-logo.png"
-          alt="WU Logo"
-          sx={{ height: { xs: 40, md: 60 }, mr: 2 }}
-        />
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-          Global Headcount Dashboard
-        </Typography>
-      </Box>
+    <Card key={role} className="mb-2 shadow-sm">
+      <Card.Header style={{ borderBottom: '1px solid #FFD700', fontWeight: 'bold' }}>
+        {role}
+      </Card.Header>
+      <Card.Body>
+        {members.length > 0 ? members.map((m, i) => {
+          const location = m.present ? (m.zone || 'Unknown Zone') : baseLocationByRole[role];
+          return (
+            <div key={i} className="mb-2 pb-2 border-bottom" style={{ borderColor: '#FFD700' }}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span style={{ fontWeight: 'bold' }}>{m.name}</span>
+                <Badge bg={m.present ? 'success' : 'danger'} pill>
+                  {m.present ? 'Available' : 'Away'}
+                </Badge>
+              </div>
+              <div className="small mt-1">
+                <FaEnvelopeOpenText className="me-1" style={{ color: '#FFD100' }} />
+                <a href={`mailto:${m.email}`} style={{ color: '#C9CC3F', textDecoration: 'none' }}>
+                  {m.email}
+                </a>
+                <br />
+                <FaMobileAlt className="me-1" style={{ color: '#009E60' }} />
+                <span style={{ color: '#009E60' }}>{m.phone}</span>
+                <br />
+                <FaMapMarkerAlt className="me-1" style={{ color: '#A80000' }} />
+                <span style={{ color: '#EE4B2B' }}>{location}</span>
+              </div>
+            </div>
+          );
+        })
+        : <div className="text-muted">No members</div>}
+      </Card.Body>
+    </Card>
+  );
+}
 
-      {/* Region Cards */}
+export default function ERTOverview({ ertStatus }) {
+  const [filterZone, setFilterZone] = useState(null);
+  const [showAllMembers, setShowAllMembers] = useState(false);
 
-      {/* <Box
-    sx={{
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    flexWrap: 'wrap',
-    p: 2,
-    gap: 2,
-  }}
-> */}
+  const allMembers = useMemo(() => {
+    const list = [];
+    Object.entries(ertStatus).forEach(([role, members]) => {
+      members.forEach(m => list.push({ role, ...m }));
+    });
+    return list;
+  }, [ertStatus]);
 
+  const floorCounts = useMemo(() => {
+    const counts = { 'Podium Floor': 0, '2nd Floor': 0, 'Tower B': 0 };
+    allMembers.forEach(m => {
+      if (!m.present) return;
+      const z = m.zone?.toLowerCase() || '';
+      if (z.includes('2nd'))        counts['2nd Floor']++;
+      else if (z.includes('tower b')) counts['Tower B']++;
+      else                           counts['Podium Floor']++;
+    });
+    return counts;
+  }, [allMembers]);
 
-      {/* Region Cards (sticky) */}
-      <Box
-        sx={{
-          position: 'sticky',     // stick in place
-          top: 0,                 // flush under the header
-          zIndex: 5,              // above the map
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'stretch',
-          flexWrap: 'wrap',
-          p: 0.5,
-          gap: 2,
-          width:'auto'
-        }}
-      >
+  const ertLeaders = useMemo(() => {
+    const raw = (ertStatus['ERT Team Leader'] || []).map(m => ({ role: 'ERT Team Leader', ...m }));
+    const filtered = filterZone
+      ? raw.filter(m =>
+          m.present && (
+            (m.zone && m.zone.includes(filterZone)) ||
+            baseLocationByRole['ERT Team Leader'].includes(filterZone)
+          )
+        )
+      : raw;
 
-        {REGION_CARDS.map(region => (
-          
-          <Box
-            key={region.key}
-            onClick={() => { window.location.href = region.url; }}
-            sx={{
-              cursor: 'pointer',
-              backgroundColor: 'transparent',
-              color: region.textColor,
-              width: 200,
-              height: 80,
-              fontWeight: 'bold',
-              borderRadius: 2,
-              border: '1px solid #FFCC00',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              boxShadow: 3,
-              '&:hover': { opacity: 0.9 },
-            }}
-          >
+    const order = [
+      'Vishal Chaudhari',
+      'Vinit Kumar',
+      'Sonu Pandey',
+      'Sagar Jamdade',
+      'Rangare, Bhupendra Babu',
+      'Satish Bhoyane'
+    ];
 
-         
+    return filtered.sort((a, b) => {
+      const pa = a.present ? 1 : 0, pb = b.present ? 1 : 0;
+      if (pa !== pb) return pb - pa;
+      const ia = order.indexOf(a.name), ib = order.indexOf(b.name);
+      if (ia !== -1 || ib !== -1) {
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [ertStatus, filterZone]);
 
-            <Typography
-              variant="subtitle1"             // larger than subtitle2
-              sx={{
-                fontWeight: 'bold',
-                color: region.textColor,
-                fontSize: { xs: '1.3rem', md: '1.4rem' },  // responsive bump
-              }}
-            >
-              {region.label}
-            </Typography>
-            <Typography
-              variant="h3"                     // larger than h4
-              sx={{
-                mt: 0.5,
-                color: region.textColor,
-                fontSize: { xs: '1.5rem', md: '2rem' },    // explicit sizes
-                lineHeight: 1,
-              }}
-            >
-              {counts[region.key] ?? '0'}
-            </Typography>
+  const ertMembers = useMemo(() => {
+    const members = (ertStatus['ERT Team Members'] || []).map(m => ({
+      role: 'ERT Team Members',
+      name: m.Name || m.name,
+      baseLocation: m['Base Location'] || m.Floor || m.zone,
+      liveLocation: m.zone,
+      email: m.Email || m.email,
+      phone: m.Phone || m.phone,
+      present: m.present
+    }));
 
-          </Box>
+    const filtered = filterZone
+      ? members.filter(m =>
+          m.present && (
+            (m.liveLocation && m.liveLocation.includes(filterZone)) ||
+            m.baseLocation.includes(filterZone)
+          )
+        )
+      : members;
 
-        ))}
+    filtered.sort((a, b) => {
+      const pa = a.present ? 1 : 0, pb = b.present ? 1 : 0;
+      if (pa !== pb) return pb - pa;
+      return a.name.localeCompare(b.name);
+    });
+    return showAllMembers ? filtered : filtered.slice(0, 8);
+  }, [ertStatus, filterZone, showAllMembers]);
 
+  const floorIcons = {
+    'Podium Floor': <FaHome size={24} style={{ color: '#F88379' }} />,
+    '2nd Floor':    <FaBuilding size={24} style={{ color: '#FF5733' }} />,
+    'Tower B':      <FaLayerGroup size={24} style={{ color: '#F33A6A' }} />
+  };
 
-        {/* VIP icon card stays the same */}
-        <Box
-          onClick={() => navigate('/vip')}
-          sx={{
-            cursor: 'pointer',
-            backgroundColor: 'black',
-            color: '#FFD700',
-            width: 100,
-            height: 90,
-            borderRadius: 2,
-            border: '1px solid #FFCC00',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxShadow: 3,
-            '&:hover': { opacity: 0.9 },
-          }}
-        >
-          <StarIcon fontSize="large" />
-          <Typography variant="caption" sx={{ mt: 0.5, color: '#FFD700' }}>
-            Our Leader
-          </Typography>
-        </Box>
-      </Box>
+  return (
+    <div className="mt-0">
 
-      {/* Map — row #3 */}
-      {/* <Box sx={{ width: '100%', overflow: 'hidden' }}>
-        <MapChart selected={selected} onClickSite={(r) => setSelected(r)} />
-      </Box> */}
+      {/* Floor Filters */}
+      <Row className="g-2 mb-3">
+        <Col xs={12} sm={3}>
+          <Card className="text-center shadow-sm h-100">
+            <Card.Body className="d-flex flex-column align-items-center justify-content-center py-3 h-100">
+              <FaLayerGroup size={32} color="#007bff" className="mb-2" />
+              <h5 className="mb-1" style={{ fontWeight: 'bold' }}>Total</h5>
+              <h2 className="m-0">
+                {Object.values(floorCounts).reduce((sum, c) => sum + c, 0)}
+              </h2>
+            </Card.Body>
+          </Card>
+        </Col>
+        {['Podium Floor', '2nd Floor', 'Tower B'].map(floor => {
+          const count = floorCounts[floor] || 0;
+          const isSelected = filterZone === floor;
+          return (
+            <Col key={floor} xs={12} sm={3}>
+              <Card
+                className={`text-center shadow-sm h-100 ${isSelected ? 'border-primary' : ''}`}
+                style={{ cursor: 'pointer' }}
+                onClick={() => setFilterZone(prev => prev === floor ? null : floor)}
+              >
+                <Card.Body className="d-flex flex-column align-items-center justify-content-center py-3 h-100">
+                  {floorIcons[floor]}
+                  <h5 className="mb-1" style={{ fontWeight: 'bold' }}>{floor}</h5>
+                  <h2 className="m-0">{count}</h2>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
 
+      {/* Three-column layout */}
+      <Row className="g-3">
 
+        {/* LEFT COLUMN: Fixed roles */}
+        <Col xs={12} sm={4}>
+          {firstColumnRoles.map(role =>
+            renderRoleCard(role, ertStatus[role] || [], filterZone)
+          )}
+        </Col>
 
-      {/* Map — always fill the 3rd grid row */}
-      <Box
-        sx={{
-          gridRow: 3,          // place in the third grid row
-          width: '100%',
-          height: '600',      // fill all available vertical space
-         maxWidth: '100%',         // never exceed parent
-         maxHeight: '100%',        // never exceed parent
-          overflow: 'hidden',  // no scrollbars
-           mx: 'auto',
-        }}
-      >
+        {/* MIDDLE COLUMN: ERT Team Leaders */}
+        <Col xs={12} sm={4}>
+          <Card className="shadow-sm mb-3">
+            <Card.Header style={{ borderBottom: '1px solid #FFD700', fontWeight: 'bold' }}>
+              ERT Team Leader
+            </Card.Header>
+            <Card.Body>
+              {ertLeaders.map((m, i) => {
+                const location = m.present
+                  ? m.zone || 'Unknown Zone'
+                  : baseLocationByRole['ERT Team Leader'];
+                return (
+                  <div key={i} className="mb-4 pb-4 border-bottom" style={{ borderColor: '#FFD700' }}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span style={{ fontWeight: 'bold' }}>{m.name}</span>
+                      <Badge bg={m.present ? 'success' : 'danger'} pill>
+                        {m.present ? 'Available' : 'Away'}
+                      </Badge>
+                    </div>
+                    <div className="small mt-1">
+                      <FaEnvelopeOpenText className="me-1" style={{ color: '#FFD100' }} />
+                      <a href={`mailto:${m.email}`} style={{ color: '#C9CC3F', textDecoration: 'none' }}>
+                        {m.email}
+                      </a>
+                      <br />
+                      <FaMobileAlt className="me-1" style={{ color: '#009E60' }} />
+                      <span style={{ color: '#009E60' }}>{m.phone}</span>
+                      <br />
+                      <FaMapMarkerAlt className="me-1" style={{ color: '#A80000' }} />
+                      <span style={{ color: '#EE4B2B' }}>{location}</span>
+                    </div>
+                  </div>
+                );
+              })}
+              {!ertLeaders.length && <div className="text-muted">No Team Leaders</div>}
+            </Card.Body>
+          </Card>
+        </Col>
 
-      
+        {/* RIGHT COLUMN: ERT Team Members */}
+        <Col xs={12} sm={4}>
+          <Card className="shadow-sm">
+            <Card.Header style={{ borderBottom: '1px solid #FFD700', fontWeight: 'bold' }}>
+              ERT Team Members
+            </Card.Header>
+            <Card.Body>
+              {ertMembers.map((m, i) => {
+                const location = m.present ? m.liveLocation || 'Unknown Zone' : m.baseLocation;
+                return (
+                  <div key={i} className="mb-2 pb-2 border-bottom" style={{ borderColor: '#FFD700' }}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span style={{ fontWeight: 'bold' }}>{m.name}</span>
+                      <Badge bg={m.present ? 'success' : 'danger'} pill>
+                        {m.present ? 'Available' : 'Away'}
+                      </Badge>
+                    </div>
+                    <div className="small mt-1">
+                      <FaEnvelopeOpenText className="me-1" style={{ color: '#FFD100' }} />
+                      <a href={`mailto:${m.email}`} style={{ color: '#C9CC3F', textDecoration: 'none' }}>
+                        {m.email}
+                      </a>
+                      <br />
+                      <FaMobileAlt className="me-1" style={{ color: '#009E60' }} />
+                      <span style={{ color: '#009E60' }}>{m.phone}</span>
+                      <br />
+                      <FaMapMarkerAlt className="me-1" style={{ color: '#A80000' }} />
+                      <span style={{ color: '#EE4B2B' }}>{location}</span>
+                    </div>
+                  </div>
+                );
+              })}
+              {!ertMembers.length && <div className="text-muted">No members</div>}
+              <div className="text-center mt-2">
+                <Button variant="link" size="sm" onClick={() => setShowAllMembers(prev => !prev)}>
+                  {showAllMembers ? 'Show Less' : 'More Details'}
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
 
-
-      
-        <MapChart
-          selected={selected}
-          onClickSite={r => setSelected(r)}
-          initialZoom={1.8}
-        />
-      </Box>
-
-
-
-      {/* Footer */}
-      <Footer />
-    </Box>
+      </Row>
+    </div>
   );
 }
 
