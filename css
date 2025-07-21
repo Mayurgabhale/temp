@@ -1,16 +1,247 @@
-<Box
-  sx={{
-    gridRow: 2,
-    position: 'sticky',
-    top: 0,
-    zIndex: 5,
-    display: 'inline-flex',      // ✅ inline-flex so it shrinks to fit content
+
+
+// src/pages/GlobalPage.jsx
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, CircularProgress } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import MapChart from '../components/MapChart.jsx';
+import Footer from '../components/Footer.jsx';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+export default function GlobalPage() {
+  const navigate = useNavigate();
+  const [counts, setCounts] = useState(null);
+  const [selected, setSelected] = useState('global');
+
+  // load counts once
+  useEffect(() => {
+    axios
+      .get('http://localhost:3008/api/occupancy/live-summary')
+      .then((res) => setCounts(res.data))
+      .catch(() => setCounts({}));
+  }, []);
+
+  if (!counts) {
+    return (
+      <Box display="flex" justifyContent="center" mt={6}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+
+
+
+  // region cards config
+  const REGION_CARDS = [
+    {
+      key: 'apac',
+      label: 'APAC',
+      url: 'http://10.199.22.57:3000/',
+      bgColor: 'black',
+      textColor: '#FF9500',         // orange
+    },
+    {
+      key: 'emea',
+      label: 'EMEA',
+      url: 'http://10.199.22.57:3001/',
+      bgColor: 'black',
+      textColor: '#34C759',         // green
+    },
+    {
+      key: 'laca',
+      label: 'LACA',
+      url: 'http://10.199.22.57:3003/',
+      bgColor: 'black',
+      textColor: '#007AFF',         // blue
+    },
+    {
+      key: 'namer',
+      label: 'NAMER',
+      url: 'http://10.199.22.57:3002/',
+      bgColor: 'black',
+      textColor: '#AF52DE',         // magenta
+    },
+  ];
+
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateRows: 'auto auto 1fr auto',
+        height: '100vh',
+        backgroundColor: 'background.default',
+      }}
+    >
+      {/* Header */}
+      <Box
+        px={2}
+        py={3}
+        sx={{
+          backgroundColor: 'black',
+          color: '#fff',
+          borderBottom: '4px solid #FFD700',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Box
+          component="img"
+          src="/wu-head-logo.png"
+          alt="WU Logo"
+          sx={{ height: { xs: 40, md: 60 }, mr: 2 }}
+        />
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+          Global Headcount Dashboard
+        </Typography>
+      </Box>
+
+      {/* Region Cards */}
+
+      {/* <Box
+    sx={{
+    display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
     flexWrap: 'wrap',
-    gap: 2,
     p: 2,
-    mx: 'auto',                  // ✅ center the container horizontally
-    backgroundColor: 'transparent', // ✅ no background
+    gap: 2,
   }}
->
+> */}
+
+
+      {/* Region Cards (sticky) */}
+      <Box
+        sx={{
+          position: 'sticky',     // stick in place
+          top: 0,                 // flush under the header
+          zIndex: 5,              // above the map
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'stretch',
+          flexWrap: 'wrap',
+          p: 0.5,
+          gap: 2,
+          width:'auto'
+        }}
+      >
+
+        {REGION_CARDS.map(region => (
+          
+          <Box
+            key={region.key}
+            onClick={() => { window.location.href = region.url; }}
+            sx={{
+              cursor: 'pointer',
+              backgroundColor: 'transparent',
+              color: region.textColor,
+              width: 200,
+              height: 80,
+              fontWeight: 'bold',
+              borderRadius: 2,
+              border: '1px solid #FFCC00',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: 3,
+              '&:hover': { opacity: 0.9 },
+            }}
+          >
+
+         
+
+            <Typography
+              variant="subtitle1"             // larger than subtitle2
+              sx={{
+                fontWeight: 'bold',
+                color: region.textColor,
+                fontSize: { xs: '1.3rem', md: '1.4rem' },  // responsive bump
+              }}
+            >
+              {region.label}
+            </Typography>
+            <Typography
+              variant="h3"                     // larger than h4
+              sx={{
+                mt: 0.5,
+                color: region.textColor,
+                fontSize: { xs: '1.5rem', md: '2rem' },    // explicit sizes
+                lineHeight: 1,
+              }}
+            >
+              {counts[region.key] ?? '0'}
+            </Typography>
+
+          </Box>
+
+        ))}
+
+
+        {/* VIP icon card stays the same */}
+        <Box
+          onClick={() => navigate('/vip')}
+          sx={{
+            cursor: 'pointer',
+            backgroundColor: 'black',
+            color: '#FFD700',
+            width: 100,
+            height: 90,
+            borderRadius: 2,
+            border: '1px solid #FFCC00',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            boxShadow: 3,
+            '&:hover': { opacity: 0.9 },
+          }}
+        >
+          <StarIcon fontSize="large" />
+          <Typography variant="caption" sx={{ mt: 0.5, color: '#FFD700' }}>
+            Our Leader
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Map — row #3 */}
+      {/* <Box sx={{ width: '100%', overflow: 'hidden' }}>
+        <MapChart selected={selected} onClickSite={(r) => setSelected(r)} />
+      </Box> */}
+
+
+
+      {/* Map — always fill the 3rd grid row */}
+      <Box
+        sx={{
+          gridRow: 3,          // place in the third grid row
+          width: '100%',
+          height: '600',      // fill all available vertical space
+         maxWidth: '100%',         // never exceed parent
+         maxHeight: '100%',        // never exceed parent
+          overflow: 'hidden',  // no scrollbars
+           mx: 'auto',
+        }}
+      >
+
+      
+
+
+      
+        <MapChart
+          selected={selected}
+          onClickSite={r => setSelected(r)}
+          initialZoom={1.8}
+        />
+      </Box>
+
+
+
+      {/* Footer */}
+      <Footer />
+    </Box>
+  );
+}
+
