@@ -1,3 +1,46 @@
+label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  const zoneName = pieData[index].name;
+  const count = pieData[index].count;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#000"
+        fontSize="0.8rem"
+        fontWeight="bold"
+        dy={-8} // shift zone name up
+      >
+        {zoneName.length > 18 ? zoneName.slice(0, 16) + '…' : zoneName}
+      </text>
+      <text
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#000"
+        fontSize="0.75rem"
+        dy={8} // shift count down
+      >
+        {count}
+      </text>
+    </g>
+  );
+}}
+
+
+
+
+
+
+
+
+
+
 
 
 label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
