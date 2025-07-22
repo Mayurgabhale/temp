@@ -1,4 +1,22 @@
 
+
+
+// Enrich each datum with its usage percentage
+  const enriched = data.map((d, i) => ({
+    ...d,
+    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
+    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
+  }));
+  const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
+  const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
+  const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
+  return (
+
+
+
+
+
+
 const pieData1 = useMemo(() => {
   return summaryItems
     .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
