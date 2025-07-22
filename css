@@ -1,4 +1,90 @@
 label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  const zoneName = pieData[index].name;
+  const count = pieData[index].count;
+
+  // Split long zone names into two lines manually
+  const splitIndex = zoneName.length > 18 ? zoneName.lastIndexOf(' ', Math.floor(zoneName.length / 2)) : -1;
+  const line1 = splitIndex > 0 ? zoneName.slice(0, splitIndex) : zoneName;
+  const line2 = splitIndex > 0 ? zoneName.slice(splitIndex + 1) : null;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      {line2 ? (
+        <>
+          <text
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="#000"
+            fontSize="0.5rem"
+            fontWeight="800"
+            dy={-10}
+          >
+            {line1}
+          </text>
+          <text
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="#000"
+            fontSize="0.5rem"
+            fontWeight="800"
+            dy={2}
+          >
+            {line2}
+          </text>
+          <text
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="#000"
+            fontSize="0.75rem"
+            dy={14}
+          >
+            {count}
+          </text>
+        </>
+      ) : (
+        <>
+          <text
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="#000"
+            fontSize="0.5rem"
+            fontWeight="800"
+            dy={-8}
+          >
+            {zoneName}
+          </text>
+          <text
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="#000"
+            fontSize="0.75rem"
+            dy={8}
+          >
+            {count}
+          </text>
+        </>
+      )}
+    </g>
+  );
+}}
+
+
+
+
+
+
+
+
+
+
+
+
+label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
                   const RADIAN = Math.PI / 180;
                   const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
                   const x = cx + radius * Math.cos(-midAngle * RADIAN);
