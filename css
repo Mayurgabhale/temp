@@ -1,5 +1,36 @@
 
 
+label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  const zoneName = pieData[index].name;
+  const grad = ZONE_GRADIENTS[zoneName];
+  const color = grad ? grad[0] : SOLID_COLORS[index % SOLID_COLORS.length];
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill={color}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize="0.9rem"
+      fontWeight="bold"
+      style={{ textShadow: '0 0 4px rgba(0,0,0,0.6)' }}
+    >
+      {zoneName}
+    </text>
+  );
+}}
+
+
+
+
+
+
 
 // src/components/SummaryChart.jsx
 
