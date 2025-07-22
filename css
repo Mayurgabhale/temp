@@ -1,90 +1,95 @@
 
-
 // src/pages/FloorDetailsPage.jsx
 
-import React from 'react';
-import { Container, Row, Col, Card, Table } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Row, Col, Card, Table, Form } from 'react-bootstrap';
 
 export default function FloorDetailsPage({ floorData = [] }) {
+  const [search, setSearch] = useState('');
+
   if (!floorData.length) {
-    return <p className="text-center mt-4">No floor details available.</p>;
+    return <p className="text-center mt-4 text-white">No floor details available.</p>;
   }
 
   return (
     <Container fluid className="py-4">
-      {/* <h2 className="mb-4 text-dark">Floor Details</h2> */}
+      {/* 🔍 Search Input */}
+      <Form.Group className="mb-3" controlId="search" style={{ maxWidth: 300 }}>
+        <Form.Control
+          type="text"
+          placeholder="Search by Name or ID"
+          value={search}
+          onChange={(e) => setSearch(e.target.value.toLowerCase())}
+          style={{
+            backgroundColor: '#1c1c1c',
+            color: '#f0f0f0',
+            border: '1px solid #555',
+          }}
+        />
+      </Form.Group>
+
       <Row xs={1} md={2} lg={3} className="g-4">
-        {floorData.map(({ floor, total, occupants }) => (
-          <Col key={floor}>
-            <Card className="h-100 border-warning">
-              <Card.Header className="bg-warning text-dark">
-                <strong>{floor}</strong> — Total: {total}
-              </Card.Header>
-              <Card.Body style={{ overflowY: 'auto', maxHeight: 300, backgroundColor: '#1c1c1c', }}>
+        {floorData.map(({ floor, total, occupants }) => {
+          const filtered = occupants.filter(
+            (emp) =>
+              emp.ObjectName1?.toLowerCase().includes(search) ||
+              emp.EmployeeID?.toString().includes(search)
+          );
 
-                {/* <Table striped bordered hover size="sm" className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Name</th>
-                      <th>Swipe Time</th>
-                      <th>Type</th>
-                      <th>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr key={`${emp.EmployeeID}-${idx}`}>
-                        <td>{emp.ObjectName1}</td>
-                        <td>{emp.Swipe_Time}</td>
-                        <td>{emp.PersonnelType}</td>
-                        <td>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table> */}
-
-
-
-                <Table
-                  striped
-                  bordered
-                  hover
-                  size="sm"
-                  className="mb-0"
-                  style={{ backgroundColor: '#1c1c1c', color: '#f0f0f0' }}
+          return (
+            <Col key={floor}>
+              <Card className="h-100 border-warning">
+                <Card.Header className="bg-warning text-dark">
+                  <strong>{floor}</strong> — Total: {filtered.length}
+                </Card.Header>
+                <Card.Body
+                  style={{
+                    overflowY: 'auto',
+                    maxHeight: 300,
+                    backgroundColor: '#1c1c1c',
+                  }}
                 >
-                  <thead style={{ backgroundColor: '#333', color: '#fff' }}>
-                    <tr>
-                      <th>Name</th>
-                      <th>Swipe Time</th>
-                      <th>Type</th>
-                      <th>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr
-                        key={`${emp.EmployeeID}-${idx}`}
-                        style={{
-                          backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                          color: '#e0e0e0'
-                        }}
-                      >
-                        <td>{emp.ObjectName1}</td>
-                        <td>{emp.Swipe_Time}</td>
-                        <td>{emp.PersonnelType}</td>
-                        <td>{emp.Door}</td>
+                  <Table
+                    size="sm"
+                    className="mb-0"
+                    style={{
+                      backgroundColor: '#1c1c1c',
+                      color: '#f0f0f0',
+                      borderCollapse: 'collapse',
+                      width: '100%',
+                    }}
+                  >
+                    <thead style={{ backgroundColor: '#333', color: '#fff' }}>
+                      <tr>
+                        <th style={{ border: '1px solid #444' }}>Name</th>
+                        <th style={{ border: '1px solid #444' }}>Swipe Time</th>
+                        <th style={{ border: '1px solid #444' }}>Type</th>
+                        <th style={{ border: '1px solid #444' }}>Door Name</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-
-
-
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+                    </thead>
+                    <tbody>
+                      {filtered.map((emp, idx) => (
+                        <tr
+                          key={`${emp.EmployeeID}-${idx}`}
+                          style={{
+                            backgroundColor:
+                              idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
+                            color: '#e0e0e0',
+                          }}
+                        >
+                          <td style={{ border: '1px solid #444' }}>{emp.ObjectName1}</td>
+                          <td style={{ border: '1px solid #444' }}>{emp.Swipe_Time}</td>
+                          <td style={{ border: '1px solid #444' }}>{emp.PersonnelType}</td>
+                          <td style={{ border: '1px solid #444' }}>{emp.Door}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
       </Row>
     </Container>
   );
