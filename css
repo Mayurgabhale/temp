@@ -1,3 +1,23 @@
+
+<div
+  key={i}
+  className="mb-3 pb-2"
+  style={{ borderBottom: '0.5px solid black' }}
+>
+  <div className="d-flex justify-content-between align-items-center">
+    <span style={{ fontWeight: '500' }}>{m.name}</span>
+    <Badge bg={m.present ? 'success' : 'danger'} pill>
+      {m.present ? 'Available' : 'Away'}
+    </Badge>
+  </div>
+</div>
+
+
+
+
+
+
+
  <div key={i} className="mb-3 pb-2 border-bottom" style={{ borderColor: '#595959X' }}>
                     <div className="d-flex justify-content-between align-items-center">
                       <span style={{ fontWeight: '500' }}>{m.name}</span>
