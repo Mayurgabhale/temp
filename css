@@ -1,3 +1,34 @@
+label={({ cx, cy, midAngle, outerRadius, index }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 10; // slightly outside the slice
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  const zoneName = pieData[index].name;
+  const count = pieData[index].count;
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="#FFD100"
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      fontSize="0.7rem"
+      fontWeight="bold"
+    >
+      {`${zoneName.length > 18 ? zoneName.slice(0, 16) + '…' : zoneName} (${count})`}
+    </text>
+  );
+}}
+
+
+
+
+
+
+
+
 
 
 
