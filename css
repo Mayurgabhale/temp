@@ -1,4 +1,14 @@
-
+<Table
+  striped
+  bordered
+  hover
+  size="sm"
+  className="mb-0"
+  style={{
+    backgroundColor: '#1c1c1c',
+    color: '#f0f0f0',
+  }}
+>
 
 
 // src/pages/FloorDetailsPage.jsx
