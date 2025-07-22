@@ -1,4 +1,60 @@
 
+const pieData1 = useMemo(() => {
+  return summaryItems
+    .filter(item => ['Dublin', 'Rome', 'Moscow'].includes(item.label))
+    .map(item => {
+      const capacity = capacityMap[item.label] || 100;
+      const percentage = item.total && capacity ? ((item.total / capacity) * 100).toFixed(1) : 0;
+
+      return {
+        name: item.label,
+        value: item.total,
+        Employee: item.emp,
+        Contractor: item.cont,
+        capacity,
+        percentage,
+      };
+    });
+}, [summaryItems]);
+
+
+
+
+
+
+
+const pieData2 = useMemo(() => {
+  return summaryItems
+    .filter(item => ['Abu Dhabi', 'Vienna', 'Casablanca', 'London', 'Madrid'].includes(item.label))
+    .map(item => {
+      const capacity = capacityMap[item.label] || 100;
+      const percentage = item.total && capacity ? ((item.total / capacity) * 100).toFixed(1) : 0;
+
+      return {
+        name: item.label,
+        value: item.total,
+        Employee: item.emp,
+        Contractor: item.cont,
+        capacity,
+        percentage,
+      };
+    });
+}, [summaryItems]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // src/components/CompositeChartCard.jsx
 
