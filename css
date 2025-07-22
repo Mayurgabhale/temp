@@ -1,257 +1,46 @@
-// src/pages/FloorDetailsPage.jsx
-
+// src/components/FloorDetailsTable.jsx
 import React from 'react';
-import { Container, Row, Col, Card, Table } from 'react-bootstrap';
+import './FloorDetailsTable.css';
 
-export default function FloorDetailsPage({ floorData = [] }) {
-  if (!floorData.length) {
-    return <p className="text-center mt-4 text-white">No floor details available.</p>;
+export default function FloorDetailsTable({ data = [] }) {
+  if (!Array.isArray(data) || data.length === 0 || !data[0].floor) {
+    return <p>No floor detail data available.</p>;
   }
 
   return (
-    <Container fluid className="py-4">
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {floorData.map(({ floor, total, occupants }) => (
-          <Col key={floor}>
-            <Card className="h-100 border-warning">
-              <Card.Header className="bg-warning text-dark">
-                <strong>{floor}</strong> — Total: {total}
-              </Card.Header>
+    <div className="floor-cards">
+      {data.map(({ floor, total, occupants }) => (
+        <div key={floor} className="floor-card">
+          <div className="floor-header">
+            <h3>{floor}</h3>
+            <span className="floor-badge">{total}</span>
+          </div>
 
-              <Card.Body
-                style={{
-                  overflowY: 'auto',
-                  maxHeight: 300,
-                  backgroundColor: '#1c1c1c',
-                  padding: 0,
-                }}
-              >
-                <Table
-                  size="sm"
-                  className="mb-0"
-                  style={{
-                    backgroundColor: '#1c1c1c',
-                    color: '#f0f0f0',
-                    borderCollapse: 'collapse',
-                    width: '100%',
-                  }}
-                >
-                  <thead>
-                    <tr style={{ backgroundColor: '#333', color: '#fff' }}>
-                      <th style={{ border: '1px solid #444' }}>Name</th>
-                      <th style={{ border: '1px solid #444' }}>Swipe Time</th>
-                      <th style={{ border: '1px solid #444' }}>Type</th>
-                      <th style={{ border: '1px solid #444' }}>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr
-                        key={`${emp.EmployeeID}-${idx}`}
-                        style={{
-                          backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                          color: '#e0e0e0',
-                        }}
-                      >
-                        <td style={{ border: '1px solid #444' }}>{emp.ObjectName1}</td>
-                        <td style={{ border: '1px solid #444' }}>{emp.Swipe_Time}</td>
-                        <td style={{ border: '1px solid #444' }}>{emp.PersonnelType}</td>
-                        <td style={{ border: '1px solid #444' }}>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </Container>
+          <table className="floor-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Swipe Time</th>
+                <th>Type</th>
+                <th>Door Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {occupants.map((emp, i) => (
+                <tr key={`${emp.EmployeeID}-${i}`}>
+                  <td>{emp.ObjectName1}</td>
+                  <td>{emp.EmployeeID}</td>                 
+                  <td>{emp.Swipe_Time}</td>
+                  <td>{emp.PersonnelType}</td>
+                  <td>{emp.Door}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
   );
 }
-
-
-
-
-
-
-
-// src/pages/FloorDetailsPage.jsx
-
-import React from 'react';
-import { Container, Row, Col, Card, Table } from 'react-bootstrap';
-
-export default function FloorDetailsPage({ floorData = [] }) {
-  if (!floorData.length) {
-    return <p className="text-center mt-4">No floor details available.</p>;
-  }
-
-  return (
-    <Container fluid className="py-4">
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {floorData.map(({ floor, total, occupants }) => (
-          <Col key={floor}>
-            <Card className="h-100 border-warning">
-              <Card.Header className="bg-warning text-dark">
-                <strong>{floor}</strong> — Total: {total}
-              </Card.Header>
-
-              <Card.Body
-                style={{
-                  overflowY: 'auto',
-                  maxHeight: 300,
-                  backgroundColor: '#1c1c1c',
-                  padding: 0,
-                }}
-              >
-                <Table
-                  bordered
-                  hover
-                  size="sm"
-                  className="mb-0"
-                  style={{
-                    backgroundColor: '#1c1c1c',
-                    color: '#f0f0f0',
-                    borderColor: '#444',
-                  }}
-                >
-                  <thead style={{ backgroundColor: '#333', color: '#fff' }}>
-                    <tr>
-                      <th style={{ borderColor: '#444' }}>Name</th>
-                      <th style={{ borderColor: '#444' }}>Swipe Time</th>
-                      <th style={{ borderColor: '#444' }}>Type</th>
-                      <th style={{ borderColor: '#444' }}>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr
-                        key={`${emp.EmployeeID}-${idx}`}
-                        style={{
-                          backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                          color: '#e0e0e0',
-                        }}
-                      >
-                        <td style={{ borderColor: '#444' }}>{emp.ObjectName1}</td>
-                        <td style={{ borderColor: '#444' }}>{emp.Swipe_Time}</td>
-                        <td style={{ borderColor: '#444' }}>{emp.PersonnelType}</td>
-                        <td style={{ borderColor: '#444' }}>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </Container>
-  );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// src/pages/FloorDetailsPage.jsx
-
-import React from 'react';
-import { Container, Row, Col, Card, Table } from 'react-bootstrap';
-
-export default function FloorDetailsPage({ floorData = [] }) {
-  if (!floorData.length) {
-    return <p className="text-center mt-4">No floor details available.</p>;
-  }
-
-  return (
-    <Container fluid className="py-4">
-      {/* <h2 className="mb-4 text-dark">Floor Details</h2> */}
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {floorData.map(({ floor, total, occupants }) => (
-          <Col key={floor}>
-            <Card className="h-100 border-warning">
-              <Card.Header className="bg-warning text-dark">
-                <strong>{floor}</strong> — Total: {total}
-              </Card.Header>
-              <Card.Body style={{ overflowY: 'auto', maxHeight: 300, backgroundColor: '#1c1c1c', }}>
-
-                {/* <Table striped bordered hover size="sm" className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Name</th>
-                      <th>Swipe Time</th>
-                      <th>Type</th>
-                      <th>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr key={`${emp.EmployeeID}-${idx}`}>
-                        <td>{emp.ObjectName1}</td>
-                        <td>{emp.Swipe_Time}</td>
-                        <td>{emp.PersonnelType}</td>
-                        <td>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table> */}
-
-
-
-                <Table
-                  striped
-                  bordered
-                  hover
-                  size="sm"
-                  className="mb-0"
-                  style={{ backgroundColor: '#1c1c1c', color: '#f0f0f0' }}
-                >
-                  <thead style={{ backgroundColor: '#333', color: '#fff' }}>
-                    <tr>
-                      <th>Name</th>
-                      <th>Swipe Time</th>
-                      <th>Type</th>
-                      <th>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr
-                        key={`${emp.EmployeeID}-${idx}`}
-                        style={{
-                          backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                          color: '#e0e0e0'
-                        }}
-                      >
-                        <td>{emp.ObjectName1}</td>
-                        <td>{emp.Swipe_Time}</td>
-                        <td>{emp.PersonnelType}</td>
-                        <td>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-
-
-
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </Container>
-  );
-}
-
-
 
