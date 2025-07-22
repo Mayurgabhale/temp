@@ -1,3 +1,55 @@
+// // src/pages/FloorDetailsPage.jsx
+// import React from 'react';
+// import { Container, Row, Col, Card, Table } from 'react-bootstrap';
+// import FloorDetailsTable from '../components/FloorDetailsTable';
+
+// export default function FloorDetailsPage({ floorData = [] }) {
+//   if (!floorData.length) {
+//     return <p className="text-center mt-4">No floor details available.</p>;
+//   }
+
+//   return (
+//     <Container fluid className="py-4">
+//       <h2 className="mb-4">Floor Details</h2>
+//       <Row xs={1} md={2} lg={3} className="g-4">
+//         {floorData.map(({ floor, total, occupants }) => (
+//           <Col key={floor}>
+//             <Card border="primary" className="h-100">
+//               <Card.Header>
+//                 <strong>{floor}</strong> — Total: {total}
+//               </Card.Header>
+//               <Card.Body style={{ overflowY: 'auto', maxHeight: 300 }}>
+//                 <Table striped bordered hover size="sm" className="mb-0">
+//                   <thead>
+//                     <tr>
+//                       <th>Name</th>
+//                       <th>Swipe Time</th>
+//                       <th>Type</th>
+//                       <th>Door Name</th>
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {occupants.map((emp, idx) => (
+//                       <tr key={`${emp.EmployeeID}-${idx}`}>
+//                         <td>{emp.ObjectName1}</td>
+//                         <td>{emp.Swipe_Time}</td>
+//                         <td>{emp.PersonnelType}</td>
+//                         <td>{emp.Door}</td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </Table>
+//               </Card.Body>
+//             </Card>
+//           </Col>
+//         ))}
+//       </Row>
+//     </Container>
+//   );
+// }
+
+
+
 
 // src/pages/FloorDetailsPage.jsx
 
@@ -6,11 +58,12 @@ import { Container, Row, Col, Card, Table } from 'react-bootstrap';
 
 export default function FloorDetailsPage({ floorData = [] }) {
   if (!floorData.length) {
-    return <p className="text-center mt-4 text-white">No floor details available.</p>;
+    return <p className="text-center mt-4">No floor details available.</p>;
   }
 
   return (
     <Container fluid className="py-4">
+      {/* <h2 className="mb-4 text-dark">Floor Details</h2> */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {floorData.map(({ floor, total, occupants }) => (
           <Col key={floor}>
@@ -18,31 +71,45 @@ export default function FloorDetailsPage({ floorData = [] }) {
               <Card.Header className="bg-warning text-dark">
                 <strong>{floor}</strong> — Total: {total}
               </Card.Header>
+              <Card.Body style={{ overflowY: 'auto', maxHeight: 300, backgroundColor: '#1c1c1c', }}>
 
-              <Card.Body
-                style={{
-                  overflowY: 'auto',
-                  maxHeight: 300,
-                  backgroundColor: '#1c1c1c',
-                  padding: 0,
-                }}
-              >
+                {/* <Table striped bordered hover size="sm" className="mb-0">
+                  <thead className="table-light">
+                    <tr>
+                      <th>Name</th>
+                      <th>Swipe Time</th>
+                      <th>Type</th>
+                      <th>Door Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {occupants.map((emp, idx) => (
+                      <tr key={`${emp.EmployeeID}-${idx}`}>
+                        <td>{emp.ObjectName1}</td>
+                        <td>{emp.Swipe_Time}</td>
+                        <td>{emp.PersonnelType}</td>
+                        <td>{emp.Door}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table> */}
+
+
+
                 <Table
+                  striped
+                  bordered
+                  hover
                   size="sm"
                   className="mb-0"
-                  style={{
-                    backgroundColor: '#1c1c1c',
-                    color: '#f0f0f0',
-                    borderCollapse: 'collapse',
-                    width: '100%',
-                  }}
+                  style={{ backgroundColor: '#1c1c1c', color: '#f0f0f0' }}
                 >
-                  <thead>
-                    <tr style={{ backgroundColor: '#333', color: '#fff' }}>
-                      <th style={{ border: '1px solid #444' }}>Name</th>
-                      <th style={{ border: '1px solid #444' }}>Swipe Time</th>
-                      <th style={{ border: '1px solid #444' }}>Type</th>
-                      <th style={{ border: '1px solid #444' }}>Door Name</th>
+                  <thead style={{ backgroundColor: '#333', color: '#fff' }}>
+                    <tr>
+                      <th>Name</th>
+                      <th>Swipe Time</th>
+                      <th>Type</th>
+                      <th>Door Name</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -51,17 +118,20 @@ export default function FloorDetailsPage({ floorData = [] }) {
                         key={`${emp.EmployeeID}-${idx}`}
                         style={{
                           backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                          color: '#e0e0e0',
+                          color: '#e0e0e0'
                         }}
                       >
-                        <td style={{ border: '1px solid #444' }}>{emp.ObjectName1}</td>
-                        <td style={{ border: '1px solid #444' }}>{emp.Swipe_Time}</td>
-                        <td style={{ border: '1px solid #444' }}>{emp.PersonnelType}</td>
-                        <td style={{ border: '1px solid #444' }}>{emp.Door}</td>
+                        <td>{emp.ObjectName1}</td>
+                        <td>{emp.Swipe_Time}</td>
+                        <td>{emp.PersonnelType}</td>
+                        <td>{emp.Door}</td>
                       </tr>
                     ))}
                   </tbody>
                 </Table>
+
+
+
               </Card.Body>
             </Card>
           </Col>
@@ -70,5 +140,6 @@ export default function FloorDetailsPage({ floorData = [] }) {
     </Container>
   );
 }
+
 
 
