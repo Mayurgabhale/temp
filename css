@@ -1,96 +1,68 @@
+import React, { useState } from 'react';
+import './FloorDetailsTable.css';
 
+export default function FloorDetailsTable({ data = [] }) {
+  const [searchTerm, setSearchTerm] = useState('');
 
-
-
-// src/pages/FloorDetailsPage.jsx
-
-import React from 'react';
-import { Container, Row, Col, Card, Table } from 'react-bootstrap';
-
-export default function FloorDetailsPage({ floorData = [] }) {
-  if (!floorData.length) {
-    return <p className="text-center mt-4">No floor details available.</p>;
+  if (!Array.isArray(data) || data.length === 0 || !data[0].floor) {
+    return <p>No floor detail data available.</p>;
   }
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
   return (
-    <Container fluid className="py-4">
-      {/* <h2 className="mb-4 text-dark">Floor Details</h2> */}
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {floorData.map(({ floor, total, occupants }) => (
-          <Col key={floor}>
-            <Card className="h-100 border-warning">
-              <Card.Header className="bg-warning text-dark">
-                <strong>{floor}</strong> — Total: {total}
-              </Card.Header>
-              <Card.Body style={{ overflowY: 'auto', maxHeight: 300, backgroundColor: '#1c1c1c', }}>
+    <div className="floor-cards">
+      {/* 🔍 Search Input */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Name or Employee ID"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
 
-                {/* <Table striped bordered hover size="sm" className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Name</th>
-                      <th>Swipe Time</th>
-                      <th>Type</th>
-                      <th>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr key={`${emp.EmployeeID}-${idx}`}>
-                        <td>{emp.ObjectName1}</td>
-                        <td>{emp.Swipe_Time}</td>
-                        <td>{emp.PersonnelType}</td>
-                        <td>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table> */}
+      {data.map(({ floor, total, occupants }) => {
+        const filteredOccupants = occupants.filter((emp) => {
+          const name = emp.ObjectName1?.toLowerCase() || '';
+          const id = emp.EmployeeID?.toString() || '';
+          return name.includes(searchTerm) || id.includes(searchTerm);
+        });
 
+        return (
+          <div key={floor} className="floor-card">
+            <div className="floor-header">
+              <h3>{floor}</h3>
+              <span className="floor-badge">{filteredOccupants.length}</span>
+            </div>
 
-
-                <Table
-                  striped
-                  bordered
-                  hover
-                  size="sm"
-                  className="mb-0"
-                  style={{ backgroundColor: '#1c1c1c', color: '#f0f0f0' }}
-                >
-                  <thead style={{ backgroundColor: '#333', color: '#fff' }}>
-                    <tr>
-                      <th>Name</th>
-                      <th>Swipe Time</th>
-                      <th>Type</th>
-                      <th>Door Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {occupants.map((emp, idx) => (
-                      <tr
-                        key={`${emp.EmployeeID}-${idx}`}
-                        style={{
-                          backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                          color: '#e0e0e0'
-                        }}
-                      >
-                        <td>{emp.ObjectName1}</td>
-                        <td>{emp.Swipe_Time}</td>
-                        <td>{emp.PersonnelType}</td>
-                        <td>{emp.Door}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-
-
-
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </Container>
+            <table className="floor-table dark-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>ID</th>
+                  <th>Swipe Time</th>
+                  <th>Type</th>
+                  <th>Door Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOccupants.map((emp, i) => (
+                  <tr key={`${emp.EmployeeID}-${i}`}>
+                    <td>{emp.ObjectName1}</td>
+                    <td>{emp.EmployeeID}</td>
+                    <td>{emp.Swipe_Time}</td>
+                    <td>{emp.PersonnelType}</td>
+                    <td>{emp.Door}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
+    </div>
   );
 }
-
-
-
