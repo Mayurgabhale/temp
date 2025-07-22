@@ -1,3 +1,22 @@
+<tbody>
+  {occupants.map((emp, idx) => (
+    <tr
+      key={`${emp.EmployeeID}-${idx}`}
+      style={{
+        backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
+        color: '#e0e0e0'
+      }}
+    >
+      <td>{emp.ObjectName1}</td>
+      <td>{emp.Swipe_Time}</td>
+      <td>{emp.PersonnelType}</td>
+      <td>{emp.Door}</td>
+    </tr>
+  ))}
+</tbody>
+
+
+
 
 
 
