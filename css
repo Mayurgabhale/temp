@@ -1,3 +1,80 @@
+// src/pages/FloorDetailsPage.jsx
+
+import React from 'react';
+import { Container, Row, Col, Card, Table } from 'react-bootstrap';
+
+export default function FloorDetailsPage({ floorData = [] }) {
+  if (!floorData.length) {
+    return <p className="text-center mt-4 text-white">No floor details available.</p>;
+  }
+
+  return (
+    <Container fluid className="py-4">
+      <Row xs={1} md={2} lg={3} className="g-4">
+        {floorData.map(({ floor, total, occupants }) => (
+          <Col key={floor}>
+            <Card className="h-100 border-warning">
+              <Card.Header className="bg-warning text-dark">
+                <strong>{floor}</strong> — Total: {total}
+              </Card.Header>
+
+              <Card.Body
+                style={{
+                  overflowY: 'auto',
+                  maxHeight: 300,
+                  backgroundColor: '#1c1c1c',
+                  padding: 0,
+                }}
+              >
+                <Table
+                  size="sm"
+                  className="mb-0"
+                  style={{
+                    backgroundColor: '#1c1c1c',
+                    color: '#f0f0f0',
+                    borderCollapse: 'collapse',
+                    width: '100%',
+                  }}
+                >
+                  <thead>
+                    <tr style={{ backgroundColor: '#333', color: '#fff' }}>
+                      <th style={{ border: '1px solid #444' }}>Name</th>
+                      <th style={{ border: '1px solid #444' }}>Swipe Time</th>
+                      <th style={{ border: '1px solid #444' }}>Type</th>
+                      <th style={{ border: '1px solid #444' }}>Door Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {occupants.map((emp, idx) => (
+                      <tr
+                        key={`${emp.EmployeeID}-${idx}`}
+                        style={{
+                          backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
+                          color: '#e0e0e0',
+                        }}
+                      >
+                        <td style={{ border: '1px solid #444' }}>{emp.ObjectName1}</td>
+                        <td style={{ border: '1px solid #444' }}>{emp.Swipe_Time}</td>
+                        <td style={{ border: '1px solid #444' }}>{emp.PersonnelType}</td>
+                        <td style={{ border: '1px solid #444' }}>{emp.Door}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
+  );
+}
+
+
+
+
+
+
 
 // src/pages/FloorDetailsPage.jsx
 
