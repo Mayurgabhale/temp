@@ -1,4 +1,47 @@
 label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 10; // Outside the slice
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  const zoneName = pieData[index].name;
+  const count = pieData[index].count;
+
+  // Split zone name by hyphen or space intelligently
+  let [line1, line2] = zoneName.split(/-\s+|(?<=\s)\s+/);
+  if (!line2) {
+    // If split didn't work well, just truncate for safety
+    line1 = zoneName.length > 16 ? zoneName.slice(0, 16) : zoneName;
+    line2 = zoneName.length > 16 ? zoneName.slice(16) : '';
+  }
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+        fill="#FFD100"
+        fontSize="0.6rem"
+        fontWeight="bold"
+      >
+        <tspan x={x} dy="-0.9em">{line1}</tspan>
+        {line2 && <tspan x={x} dy="1.2em">{line2}</tspan>}
+        <tspan x={x} dy="1.2em">({count})</tspan>
+      </text>
+    </g>
+  );
+}}
+
+
+
+
+
+
+
+
+
+
+label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
                   const RADIAN = Math.PI / 180;
                   const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
                   const x = cx + radius * Math.cos(-midAngle * RADIAN);
