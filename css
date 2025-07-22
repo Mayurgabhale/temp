@@ -1,120 +1,53 @@
-label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-  const RADIAN = Math.PI / 180;
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-  const zoneName = pieData[index].name;
-  const count = pieData[index].count;
+// src/pages/FloorDetailsPage.jsx
 
-  // Split long zone names into two lines manually
-  const splitIndex = zoneName.length > 18 ? zoneName.lastIndexOf(' ', Math.floor(zoneName.length / 2)) : -1;
-  const line1 = splitIndex > 0 ? zoneName.slice(0, splitIndex) : zoneName;
-  const line2 = splitIndex > 0 ? zoneName.slice(splitIndex + 1) : null;
+import React from 'react';
+import { Container, Row, Col, Card, Table } from 'react-bootstrap';
+
+export default function FloorDetailsPage({ floorData = [] }) {
+  if (!floorData.length) {
+    return <p className="text-center mt-4">No floor details available.</p>;
+  }
 
   return (
-    <g transform={`translate(${x},${y})`}>
-      {line2 ? (
-        <>
-          <text
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="#000"
-            fontSize="0.5rem"
-            fontWeight="800"
-            dy={-10}
-          >
-            {line1}
-          </text>
-          <text
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="#000"
-            fontSize="0.5rem"
-            fontWeight="800"
-            dy={2}
-          >
-            {line2}
-          </text>
-          <text
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="#000"
-            fontSize="0.75rem"
-            dy={14}
-          >
-            {count}
-          </text>
-        </>
-      ) : (
-        <>
-          <text
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="#000"
-            fontSize="0.5rem"
-            fontWeight="800"
-            dy={-8}
-          >
-            {zoneName}
-          </text>
-          <text
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="#000"
-            fontSize="0.75rem"
-            dy={8}
-          >
-            {count}
-          </text>
-        </>
-      )}
-    </g>
+    <Container fluid className="py-4">
+      {/* <h2 className="mb-4 text-dark">Floor Details</h2> */}
+      <Row xs={1} md={2} lg={3} className="g-4">
+        {floorData.map(({ floor, total, occupants }) => (
+          <Col key={floor}>
+            <Card className="h-100 border-warning">
+              <Card.Header className="bg-warning text-dark">
+                <strong>{floor}</strong> — Total: {total}
+              </Card.Header>
+              <Card.Body style={{ overflowY: 'auto', maxHeight: 300 }}>
+                <Table striped bordered hover size="sm" className="mb-0">
+                  <thead className="table-light">
+                    <tr>
+                      <th>Name</th>
+                      <th>Swipe Time</th>
+                      <th>Type</th>
+                      <th>Door Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {occupants.map((emp, idx) => (
+                      <tr key={`${emp.EmployeeID}-${idx}`}>
+                        <td>{emp.ObjectName1}</td>
+                        <td>{emp.Swipe_Time}</td>
+                        <td>{emp.PersonnelType}</td>
+                        <td>{emp.Door}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
-}}
+}
 
 
 
-
-
-
-
-
-
-
-
-
-label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-                  const RADIAN = Math.PI / 180;
-                  const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
-                  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-                  const zoneName = pieData[index].name;
-                  const count = pieData[index].count;
-
-                  return (
-                    <g transform={`translate(${x},${y})`}>
-                      <text
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fill="#000"
-                        fontSize="0.5rem"
-                        fontWeight="800"
-
-                        dy={-8} // shift zone name up
-                      >
-                        {zoneName.length > 18 ? zoneName.slice(0, 16) + '…' : zoneName}
-                      </text>
-                      <text
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fill="#000"
-                        fontSize="0.75rem"
-                        dy={8} // shift count down
-                      >
-                        {count}
-                      </text>
-                    </g>
-                  );
-                }}
