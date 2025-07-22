@@ -36,11 +36,6 @@ label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
 
 
 
-
-
-
-
-
 label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
                   const RADIAN = Math.PI / 180;
                   const radius = innerRadius + (outerRadius - innerRadius) * 0.4; // Shift inward
@@ -75,3 +70,4 @@ label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
                     </g>
                   );
                 }}
+
