@@ -1,3 +1,42 @@
+<Table
+  striped
+  bordered
+  hover
+  size="sm"
+  className="mb-0"
+  style={{ backgroundColor: '#1c1c1c', color: '#f0f0f0' }}
+>
+  <thead style={{ backgroundColor: '#333', color: '#fff' }}>
+    <tr>
+      <th>Name</th>
+      <th>Swipe Time</th>
+      <th>Type</th>
+      <th>Door Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {occupants.map((emp, idx) => (
+      <tr
+        key={`${emp.EmployeeID}-${idx}`}
+        style={{ backgroundColor: '#2a2a2a', color: '#e0e0e0' }}
+      >
+        <td>{emp.ObjectName1}</td>
+        <td>{emp.Swipe_Time}</td>
+        <td>{emp.PersonnelType}</td>
+        <td>{emp.Door}</td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
+
+
+
+
+
+
+
+
+
 <tr
   key={`${emp.EmployeeID}-${idx}`}
   style={{ backgroundColor: '#2a2a2a', color: '#e0e0e0' }}
