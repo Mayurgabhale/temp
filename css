@@ -1,3 +1,30 @@
+const t = dayjs(d.LocaleMessageTime, 'YYYY-MM-DDTHH:mm:ss'); // Or use a precise format if needed
+
+
+
+
+
+
+
+if (!vipList.some(v => v.name.trim().toLowerCase() === d.ObjectName1.trim().toLowerCase())) return;
+
+
+
+
+
+
+
+const nameKey = vipList.find(v => v.name.trim().toLowerCase() === d.ObjectName1.trim().toLowerCase())?.name;
+if (!nameKey) return;
+
+const t = dayjs(d.LocaleMessageTime);
+if (!map[nameKey] || t.isAfter(map[nameKey].__time)) {
+  map[nameKey] = { ...d, __time: t };
+}
+
+
+
+
 
 
 // src/components/VipGrid.jsx
