@@ -1,6 +1,116 @@
-const REGION_CARDS = [
-    { key: 'apac',  label: 'APAC',  url: 'http://10.199.22.57:3000/', textColor: '#FF9500' },
-    { key: 'emea',  label: 'EMEA',  url: 'http://10.199.22.57:3001/', textColor: '#34C759' },
-    { key: 'laca',  label: 'LACA',  url: 'http://10.199.22.57:3003/', textColor: '#007AFF' },
-    { key: 'namer', label: 'NAMER', url: 'http://10.199.22.57:3002/', textColor: '#AF52DE' },
+
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, CircularProgress } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import MapChart from '../components/MapChart.jsx';
+import Footer   from '../components/Footer.jsx';
+import axios    from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+export default function GlobalPage() {
+  const navigate = useNavigate();
+  const [counts, setCounts] = useState(null);
+  const [selected, setSelected] = useState('global');
+
+  useEffect(() => {
+    // Hit the exact backend route you have:
+    axios.get('/api/headcount')
+      .then(res => setCounts(res.data))
+      .catch(err => {
+        console.error('Failed to fetch headcounts', err);
+        setCounts({ apac: 0, emea: 0, laca: 0, namer: 0 });
+      });
+  }, []);
+
+  if (!counts) {
+    return (
+      <Box display="flex" justifyContent="center" mt={6}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  const REGION_CARDS = [
+    { key: 'apac',  label: 'APAC',  url: 'http://10.199.22.57:3000/', textColor: '#FF6B00' },
+    { key: 'emea',  label: 'EMEA',  url: 'http://10.199.22.57:3001/', textColor: '#3E8B57' },
+    { key: 'laca',  label: 'LACA',  url: 'http://10.199.22.57:3003/', textColor: '#2563EB' },
+    { key: 'namer', label: 'NAMER', url: 'http://10.199.22.57:3002/', textColor: '#7C3AED' },
   ];
+
+  return (
+    <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto 1fr auto', height: '100vh' }}>
+      {/* Header */}
+      <Box
+        px={2} py={3}
+        sx={{
+          backgroundColor: 'black', color: '#fff',
+          borderBottom: '4px solid #FFD700',
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+        }}
+      >
+        <Box component="img" src="/wu-head-logo.png" alt="WU Logo"
+             sx={{ height: { xs: 40, md: 60 }, mr: 2 }} />
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+          Global Headcount Dashboard
+        </Typography>
+      </Box>
+
+      {/* Region Cards */}
+      <Box
+        sx={{
+          position: 'sticky', top: 2, zIndex: 5,
+          display: 'flex', justifyContent: 'center', flexWrap: 'wrap',
+          p: 2, gap: 2, backgroundColor: 'transparent',
+        }}
+      >
+        {REGION_CARDS.map(region => (
+          <Box key={region.key}
+            onClick={() => { window.location.href = region.url; }}
+            sx={{
+              cursor: 'pointer', width: 200, height: 80,
+              display: 'flex', flexDirection: 'column',
+              justifyContent: 'center', alignItems: 'center',
+              border: '1px solid #FFCC00', borderRadius: 2,
+              boxShadow: 3,
+              color: region.textColor,
+              '&:hover': { opacity: 0.9 },
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: region.textColor }}>
+              {region.label}
+            </Typography>
+            <Typography variant="h3" sx={{ color: region.textColor }}>
+              {typeof counts[region.key] === 'number' ? counts[region.key] : 0}
+            </Typography>
+          </Box>
+        ))}
+
+        {/* VIP card */}
+        <Box onClick={() => navigate('/vip')}
+             sx={{
+               cursor: 'pointer',
+               display: 'flex', flexDirection: 'column',
+               justifyContent: 'center', alignItems: 'center',
+               width: 100, height: 80,
+               backgroundColor: 'black', color: '#FFD700',
+               border: '1px solid #FFCC00', borderRadius: 2,
+               boxShadow: 3,
+               '&:hover': { opacity: 0.9 },
+             }}>
+          <StarIcon fontSize="large" />
+          <Typography variant="caption">Our Leader</Typography>
+        </Box>
+      </Box>
+
+      {/* Map */}
+      <Box sx={{ gridRow: 3, width: '100%', height: '100%', overflow: 'hidden' }}>
+        <MapChart selected={selected} onClickSite={r => setSelected(r)} initialZoom={1.8} />
+      </Box>
+
+      {/* Footer */}
+      {/* <Footer /> */}
+    </Box>
+  );
+}
+
+
