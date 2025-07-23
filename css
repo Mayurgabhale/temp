@@ -1,3 +1,21 @@
+
+const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
+  const name     = floor.trim();
+  const capacity = buildingCapacities[name] || 0;
+  const pct      = capacity ? Math.round(cnt / capacity * 100) : 0;
+  return {
+    name,
+    headcount: cnt,
+    capacity,
+    percentage: pct
+  };
+});
+
+
+
+
+
+
 C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\ChartCard.jsx
 
 
