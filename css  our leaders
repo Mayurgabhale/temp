@@ -1,3 +1,20 @@
+const latestByVip = React.useMemo(() => {
+  const map = {};
+  liveDetails.forEach(d => {
+    const vipId = String(d.vipId); // ✅ force it to be a string
+    const { time, location, region } = d;
+    const t = dayjs(time);
+    if (!map[vipId] || t.isAfter(map[vipId].__time)) {
+      map[vipId] = { location, region, __time: t };
+    }
+  });
+  return map;
+}, [liveDetails]);
+
+
+
+
+
 http://localhost:3008/api/vip/live-summary
 {
   "details": [
