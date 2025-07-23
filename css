@@ -1,0 +1,180 @@
+
+
+
+
+// src/components/Header.jsx — APAC Edition
+
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton
+} from '@mui/material';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+
+import HomeIcon    from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import InfoIcon    from '@mui/icons-material/Info';
+
+import WuLogo        from '../assets/wu-logo.png';
+import IndiaFlag     from '../assets/flags/india.png';
+import MalaysiaFlag  from '../assets/flags/malaysia.png';
+import PhilippinesFlag from '../assets/flags/philippines.png';
+import TaguigFlag    from '../assets/flags/Taguig.png';
+import JapanFlag     from '../assets/flags/japan.png';
+import DefaultFlag   from '../assets/flags/default.png';
+
+import { partitionList }    from '../services/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+// Friendly display names
+const displayNameMap = {
+  'IN.Pune':         'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon':       'Quezon City',
+  'PH.Taguig':       'Taguig',
+  'JP.Tokyo':        'Tokyo',
+};
+
+// Flag lookup by partition code
+const flagMap = {
+  'IN.Pune':         IndiaFlag,
+  'MY.Kuala Lumpur': MalaysiaFlag,
+  'PH.Quezon':       PhilippinesFlag,
+  'PH.Taguig':       TaguigFlag,
+  'JP.Tokyo':        JapanFlag,
+};
+
+export default function Header() {
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { data }  = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  // Update timestamp on each new live-data push
+  // useEffect(() => {
+  //   if (data) {
+  //     setLastUpdate(new Date().toLocaleTimeString());
+  //   }
+  // }, [data]);
+
+  // Parse path to detect /partition/:code and any trailing "history" or "details"
+  const segments        = location.pathname.split('/').filter(Boolean);
+  const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
+  const currentCode     = isPartitionPage ? decodeURIComponent(segments[1]) : '';
+  const extraSegments   = isPartitionPage ? segments.slice(2) : [];
+
+  // Choose flag (or default)
+  const selectedFlag = flagMap[currentCode] || DefaultFlag;
+
+  // Preserve any /history or /details suffix when changing region
+  const handlePartitionChange = (newCode) => {
+    const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+    const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+    navigate(base + suffix);
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
+      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+
+        {/* Left: Logo + Title + Nav Icons */}
+        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
+
+          <Typography variant="h6" sx={{ color: '#FFC107', mr: 3, fontWeight: 600 }}>
+            APAC Live Headcount
+            {currentCode && ` • ${displayNameMap[currentCode] || currentCode}`}
+          </Typography>
+
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#FFC107',
+              ml: 2,
+              opacity: data ? 1 : 0,
+              transition: 'opacity 0.8s'
+            }}
+          >
+            {lastUpdate}
+          </Typography>
+
+          <IconButton
+            component={Link}
+            to={ isPartitionPage
+              ? `/partition/${encodeURIComponent(currentCode)}`
+              : '/' }
+            color="inherit"
+          >
+            <HomeIcon />
+          </IconButton>
+
+          <IconButton
+            component={Link}
+            to={ isPartitionPage
+              ? `/partition/${encodeURIComponent(currentCode)}/history`
+              : '/history' }
+            color="inherit"
+          >
+            <HistoryIcon />
+          </IconButton>
+
+          <IconButton
+            component={Link}
+            to={ isPartitionPage
+              ? `/partition/${encodeURIComponent(currentCode)}/details`
+              : '/partition/Pune/details' }
+            color="inherit"
+          >
+            <InfoIcon />
+          </IconButton>
+        </Box>
+
+        {/* Right: Region Selector + Flag */}
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={currentCode}
+            displayEmpty
+            onChange={e => handlePartitionChange(e.target.value)}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
+            renderValue={val =>
+              val ? displayNameMap[val] || val : '— Select Region —'
+            }
+          >
+            <MenuItem value="">— Select Region —</MenuItem>
+            {partitionList.map(code => (
+              <MenuItem key={code} value={code}>
+                {displayNameMap[code] || code}
+              </MenuItem>
+            ))}
+          </Select>
+          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+
+Read above code and apply same logic below code for in above code just only this wiht 0 error 
+
+          {/* ✅ Static Vilnius button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* ✅ Dynamic partition button shown when inside any partition */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+              <ListAltIcon />
+            </IconButton>
+          )}
