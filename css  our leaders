@@ -1,0 +1,133 @@
+// src/components/VipGrid.jsx
+// frontend/src/components/VipGrid.jsx
+import React, { useState, useEffect } from 'react';
+import { Box, Card, CardMedia, CardContent, Typography, CircularProgress } from '@mui/material';
+import axios from 'axios';
+import dayjs from 'dayjs';
+// JSON import now points to src/config
+import vipList from '../config/vip.json' assert { type: 'json' };
+
+export default function VipGrid() {
+  const [liveDetails, setLiveDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get('/vip')    // ← hits your Vite proxy rule for "/vip"
+      .then(res => setLiveDetails(res.data.details || []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+  
+  // Build a map: vipId → latest swipe record
+  const latestByVip = React.useMemo(() => {
+    const map = {};
+    liveDetails.forEach(d => {
+      const { vipId, time, location, region } = d;
+      const t = dayjs(time);
+      if (!map[vipId] || t.isAfter(map[vipId].__time)) {
+        map[vipId] = { location, region, __time: t };
+      }
+    });
+    return map;
+  }, [liveDetails]);
+
+  if (loading) {
+    return (
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          md: 'repeat(3, 1fr)',
+          lg: 'repeat(5, 1fr)',
+          xl: 'repeat(7, 1fr)',
+        },
+        gap: { xs: 5, sm: 2, md: 3 },
+        pb: 0,
+      }}
+    >
+      {vipList.map(vip => {
+        const record = latestByVip[vip.id];
+        const hasSwipe = Boolean(record);
+        const location = hasSwipe ? record.location : '';
+        const timeDisplay = hasSwipe
+          ? record.__time.format('hh:mm A')
+          : '';
+
+        return (
+          <Card
+            key={vip.id}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              p: { xs: 1, sm: 5 },
+              bgcolor: 'background.paper',
+            }}
+          >
+            <CardMedia
+              component="img"
+              image={vip.photo}
+              alt={vip.name}
+              sx={{
+                width: { xs: 80, sm: 120, md: 140 },
+                height: { xs: 80, sm: 120, md: 140 },
+                objectFit: 'cover',
+                borderRadius: '50%',
+                border: hasSwipe
+                  ? '4px solid #FFD700'
+                  : '4px solid transparent',
+                mb: { xs: 0.5, sm: 1 },
+              }}
+            />
+            <CardContent sx={{ textAlign: 'center', p: { xs: 0.5, sm: 1 } }}>
+              <Typography
+                variant="subtitle1"
+                noWrap
+                sx={{
+                  color: '#FFD700',
+                  fontWeight: 600,
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                }}
+              >
+                {vip.name}
+              </Typography>
+
+              {hasSwipe && (
+                <>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#90EE90',
+                      mt: { xs: 0.25, sm: 0.5 },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    }}
+                  >
+                    {location}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: { xs: '0.6875rem', sm: '0.75rem' },
+                    }}
+                  >
+                    Last swipe at {timeDisplay}
+                  </Typography>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
+    </Box>
+  );
+}
