@@ -16,7 +16,22 @@ const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
 
 
 
-
+Floor: "7th Floor" → name: "7th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "1st Floor" → name: "1st", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "8th Floor" → name: "8th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "5th Floor" → name: "5th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "10th Floor" → name: "10th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "9th Floor" → name: "9th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "3rd Floor" → name: "3rd", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "2nd Floor" → name: "2nd", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "6th Floor" → name: "6th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "4th Floor" → name: "4th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "7th Floor" → name: "7th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "1st Floor" → name: "1st", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "8th Floor" → name: "8th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "5th Floor" → name: "5th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "10th Floor" → name: "10th", capacity: 0, percentage: 0
+PartitionDetail.jsx:428 Floor: "9th Floor" → name: "9th", capacity: 0, percentage: 0
 
 
 
