@@ -1,2 +1,29 @@
+const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
+  const rawName = floor.trim();                   // original floor name
+  const name = rawName.split(' ')[0];             // extract first word (e.g. "London Floor 1" → "London")
+  const capacity = buildingCapacities[name] || 0; // match with buildingCapacities.js
+  const percentage = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+  console.log(`Floor: "${floor}" → name: "${name}", capacity: ${capacity}, percentage: ${percentage}`);
+
+  return {
+    name: rawName,         // keep full name for chart X-axis
+    headcount: cnt,
+    capacity,
+    percentage
+  };
+});
+
+
+
+
+
+
+
+
+
+
+
+
 <div>Usage %: {datum.percentage}%</div>
 <div>Seat Capacity: {datum.capacity}</div>
