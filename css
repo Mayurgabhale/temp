@@ -1,4 +1,36 @@
 
+<Area
+  type="monotone"
+  dataKey={dataKey}
+  stroke={colors.head}
+  fill="url(#colorHead)"
+  hide={hidden[dataKey]}
+/>
+
+<Area
+  type="monotone"
+  dataKey="percentage"
+  stroke="transparent"
+  fill="transparent"
+  hide={hidden["percentage"]}
+/>
+
+<Area
+  type="monotone"
+  dataKey="capacity"
+  stroke="transparent"
+  fill="transparent"
+  hide={hidden["capacity"]}
+/>
+
+
+
+
+
+
+
+
+
 const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
   const name     = floor.trim();
   const capacity = buildingCapacities[name] || 0;
