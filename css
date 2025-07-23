@@ -1,4 +1,40 @@
 
+
+
+<Area
+  type="monotone"
+  dataKey={dataKey}
+  stroke={colors.head}
+  fill="url(#colorHead)"
+  hide={hidden[dataKey]}
+>
+  <LabelList
+    dataKey={dataKey}
+    position="top"
+    fill="#fff"
+    fontSize={12}
+    formatter={(value) => `${value}`}
+  />
+</Area>
+
+
+
+
+
+
+
+
+<Brush
+  dataKey="name"
+  height={20}
+  stroke={colors.head}
+  startIndex={0}
+  endIndex={data.length - 1}
+/>
+
+
+
+
 import React, { useState } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import {
