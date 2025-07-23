@@ -1,37 +1,137 @@
-const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
-  const rawName = floor.trim();                   // original floor name
-  const name = rawName.split(' ')[0];             // extract first word (e.g. "London Floor 1" → "London")
-  const capacity = buildingCapacities[name] || 0; // match with buildingCapacities.js
-  const percentage = capacity ? Math.round((cnt / capacity) * 100) : 0;
 
-  console.log(`Floor: "${floor}" → name: "${name}", capacity: ${capacity}, percentage: ${percentage}`);
 
-  return {
-    name: rawName,         // keep full name for chart X-axis
-    headcount: cnt,
-    capacity,
-    percentage
+
+
+
+// made changes by mayur
+
+
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid, Legend, Brush
+} from 'recharts';
+import dayjs from 'dayjs';
+
+export default function ChartCard({
+  data = [],
+  dataKey = 'value',
+  colors = { head: '#FFC107', cap: '#B0BEC5' },
+  chartHeight = 300,
+  title = ''
+}) {
+  // Hook must be called unconditionally
+  const [hidden, setHidden] = useState({});
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <Card>
+        <CardContent>
+          <Typography>No data to display.</Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const handleLegend = o => {
+    const key = o.dataKey;
+    setHidden(h => ({ ...h, [key]: !h[key] }));
   };
-});
+
+  return (
+    <Card>
+      <CardContent>
+        {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
+        <Box sx={{ width: '100%', height: chartHeight }}>
+          <ResponsiveContainer>
+            <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+              <defs>
+                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={colors.head} stopOpacity={0.8} />
+                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              {/* <CartesianGrid strokeDasharray="3 3" /> */}
+              <XAxis
+                dataKey="name"
+                tickFormatter={t =>
+                  typeof t === 'number' ? dayjs(t).format('HH:mm:ss') : t
+                }
+              />
+              <YAxis />
+              {/* <Tooltip /> */}
+
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#FFD666',
+                  border: `1px solid ${colors.head}`,
+                  borderRadius: 4,
+                  padding: 8,
+                  color: '#000'
+                }}
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const datum = payload[0].payload;
+                  return (
+                    <div style={{
+                      backgroundColor: '#FFD666',
+                      border: `1px solid ${colors.head}`,
+                      borderRadius: 4,
+                      padding: 8,
+                      color: '#000'
+                    }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+                      <div>Headcount: {datum.headcount}</div>
+                      <div>Usage %: {datum.percentage}%</div>
+                      <div>Seat Capacity: {datum.capacity}</div>
+                    </div>
+                  );
+                }}
+              />
+              <Legend onClick={handleLegend} />
+              {/* <Area
+                type="monotone"
+                dataKey={dataKey}
+                stroke={colors.head}
+                fill="url(#colorHead)"
+                hide={hidden[dataKey]}
+              /> */}
+              <Area
+                type="monotone"
+                dataKey={dataKey}
+                stroke={colors.head}
+                fill="url(#colorHead)"
+                hide={hidden[dataKey]}
+              />
+
+              <Area
+                type="monotone"
+                dataKey="percentage"
+                stroke="transparent"
+                fill="transparent"
+                hide={hidden["percentage"]}
+              />
+
+              <Area
+                type="monotone"
+                dataKey="capacity"
+                stroke="transparent"
+                fill="transparent"
+                hide={hidden["capacity"]}
+              />
 
 
 
-Floor: "7th Floor" → name: "7th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "1st Floor" → name: "1st", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "8th Floor" → name: "8th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "5th Floor" → name: "5th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "10th Floor" → name: "10th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "9th Floor" → name: "9th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "3rd Floor" → name: "3rd", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "2nd Floor" → name: "2nd", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "6th Floor" → name: "6th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "4th Floor" → name: "4th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "7th Floor" → name: "7th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "1st Floor" → name: "1st", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "8th Floor" → name: "8th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "5th Floor" → name: "5th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "10th Floor" → name: "10th", capacity: 0, percentage: 0
-PartitionDetail.jsx:428 Floor: "9th Floor" → name: "9th", capacity: 0, percentage: 0
+              <Brush dataKey="name" height={20} stroke={colors.head} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
 
 
 
@@ -40,5 +140,6 @@ PartitionDetail.jsx:428 Floor: "9th Floor" → name: "9th", capacity: 0, percent
 
 
 
-<div>Usage %: {datum.percentage}%</div>
-<div>Seat Capacity: {datum.capacity}</div>
+
+
+
