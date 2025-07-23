@@ -1,3 +1,21 @@
+liveDetails.forEach(d => {
+  const matchedVip = vipList.find(v => v.name.trim().toLowerCase() === d.ObjectName1.trim().toLowerCase());
+  if (!matchedVip) return;
+
+  const t = dayjs(d.LocaleMessageTime);
+  const vipName = matchedVip.name;
+
+  if (!map[vipName] || t.isAfter(map[vipName].__time)) {
+    map[vipName] = { ...d, __time: t };
+  }
+});
+
+
+
+
+
+
+
 C:\Users\W0024618\Desktop\global-page\src\components\VipGrid.jsx
 
 
