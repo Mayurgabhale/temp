@@ -1,3 +1,20 @@
+const name = floor.trim();
+const normalizedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(); // E.g., "london" → "London"
+const capacity = buildingCapacities[normalizedName] || 0;
+const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+return {
+  name,
+  headcount: cnt,
+  capacity,
+  percentage: pct
+};
+
+
+
+
+
+
+
 C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
 
 const seatCapacities = {
