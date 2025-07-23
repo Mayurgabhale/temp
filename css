@@ -1,141 +1,122 @@
 
 
+// src/components/VipGrid.jsx
+import React, { useState, useEffect } from 'react';
+import {
+  Box, Card, CardMedia, CardContent,
+  Typography, CircularProgress
+} from '@mui/material';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import vipList from '../config/vip.json';
 
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Table, Form } from 'react-bootstrap';
+export default function VipGrid() {
+  const [liveDetails, setLiveDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-export default function FloorDetailsPage({ floorData = [] }) {
-  const [search, setSearch] = useState('');
+  // Fetch swipes
+  useEffect(() => {
+    axios.get('http://10.199.22.57:3007/api/occupancy/live-summary')
+      .then(r => setLiveDetails(r.data.details || []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
-  if (!floorData.length) {
-    return <p className="text-center mt-4 text-white">No floor details available.</p>;
+  // Latest swipe per VIP
+  const latestByVip = React.useMemo(() => {
+    const map = {};
+    liveDetails.forEach(d => {
+      if (!vipList.some(v => v.name === d.ObjectName1)) return;
+      const t = dayjs(d.LocaleMessageTime);
+      if (!map[d.ObjectName1] || t.isAfter(map[d.ObjectName1].__time)) {
+        map[d.ObjectName1] = { ...d, __time: t };
+      }
+    });
+    return map;
+  }, [liveDetails]);
+
+  if (loading) {
+    return <Box sx={{ textAlign: 'center', mt: 4 }}><CircularProgress/></Box>;
   }
 
   return (
-    <Container fluid className="py-4">
-      {/* 🔧 Scoped placeholder style */}
-      <style>{`
-        .search-input::placeholder {
-          color: #ffffff !important;
-          opacity: 0.6;
-        }
-        ::-webkit-scrollbar {
-          width: 8px;
-        }
-        ::-webkit-scrollbar-thumb {
-          background-color: #444;
-        }
-        ::-webkit-scrollbar-track {
-          background-color: #1c1c1c;
-        }
+    <Box
+      sx={{
+        display: 'grid',
+        // responsive columns: 1 on xs, up to 7 on xl
+        gridTemplateColumns: {
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          md: 'repeat(3, 1fr)',
+          lg: 'repeat(5, 1fr)',
+          xl: 'repeat(7, 1fr)',
+        },
+        gap: { xs: 5, sm: 2, md: 3 },
+        pb: 0,
+      }}
+    >
+      {vipList.map(vip => {
+        const last = latestByVip[vip.name];
+        const hasSwipe = Boolean(last);
+        const location = hasSwipe
+          ? (last.floor || last.PartitionName2 || 'Unknown')
+          : '';
 
-.dark-row-even {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-}
-.dark-row-odd {
-  background-color: #3a3a3a !important;
-  color: #ffffff !important;
-}
-
-
-
-        tbody td {
-        background-color: #000;
-        }
-
-
-
-      `}</style>
-
-      {/* 🔍 Search Input */}
-      <Form.Group className="mb-3" controlId="search" style={{ maxWidth: 300 }}>
-        <Form.Control
-          type="text"
-          placeholder="Search by Name or ID"
-          value={search}
-          onChange={(e) => setSearch(e.target.value.toLowerCase())}
-          className="search-input"
-          style={{
-            backgroundColor: '#1c1c1c',
-            color: '#ffffff',
-            border: '1px solid #ffffff',
-          }}
-        />
-      </Form.Group>
-
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {floorData
-          .map(({ floor, total, occupants }) => {
-            const filtered = occupants.filter(
-              (emp) =>
-                emp.ObjectName1?.toLowerCase().includes(search) ||
-                emp.EmployeeID?.toString().includes(search)
-            );
-
-            // Show only matching floor if search is active
-            if (search && filtered.length === 0) return null;
-
-            return (
-              <Col key={floor}>
-                <Card className="h-100 border-warning">
-                  <Card.Header className="bg-warning text-dark">
-                    <strong>{floor}</strong> — Total: {filtered.length}
-                  </Card.Header>
-                  <Card.Body
-                    style={{
-                      overflowY: 'auto',
-                      maxHeight: 600,
-                      backgroundColor: '#000',
-                      padding: 0,
-                    }}
-                  >
-                    <Table
-                      size="sm"
-                      className="mb-0"
-                      style={{
-                        backgroundColor: '#1c1c1c',
-                        color: '#f0f0f0',
-                        width: '100%',
-                      }}
-                      bordered
-                      hover
-                      responsive
-                    >
-                      <thead style={{ backgroundColor: '#2c2c2c', color: '#ffffff' }}>
-                        <tr>
-                          <th style={{ border: '1px solid #444' }}>Name</th>
-                          <th style={{ border: '1px solid #444' }}>Swipe Time</th>
-                          <th style={{ border: '1px solid #444' }}>Type</th>
-                          <th style={{ border: '1px solid #444' }}>Door Name</th>
-                        </tr>
-                      </thead>
-                      <tbody style={{ backgroundColor: '#000', color: '#ffffff' }}>
-                        {filtered.map((emp, idx) => (
-                          <tr
-                            key={`${emp.EmployeeID}-${idx}`}
-                            style={{
-                              // backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                              // color: '#ffffff',
-                              backgroundColor:'#000'
-                            }}
-
-                             className={idx % 2 === 0 ? 'dark-row-even' : 'dark-row-odd'}
-                          >
-                            <td style={{ border: '1px solid #444' }}>{emp.ObjectName1}</td>
-                            <td style={{ border: '1px solid #444' }}>{emp.Swipe_Time}</td>
-                            <td style={{ border: '1px solid #444' }}>{emp.PersonnelType}</td>
-                            <td style={{ border: '1px solid #444' }}>{emp.Door}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
-      </Row>
-    </Container>
+        return (
+          <Card
+            key={vip.id}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              p: { xs: 1, sm: 5  },
+              bgcolor: 'background.paper',
+            }}
+          >
+            <CardMedia
+              component="img"
+              image={vip.photo}
+              alt={vip.name}
+              sx={{
+                width: { xs: 80, sm: 120, md: 140 },
+                height: { xs: 80, sm: 120, md: 140 },
+                objectFit: 'cover',
+                borderRadius: '50%',
+                border: hasSwipe
+                  ? '4px solid #FFD700'
+                  : '4px solid transparent',
+                mb: { xs: 0.5, sm: 1 },
+              }}
+            />
+            <CardContent sx={{ textAlign: 'center', p: { xs: 0.5, sm: 1 } }}>
+              <Typography
+                variant="subtitle1"
+                noWrap
+                sx={{
+                  color: '#FFD700',
+                  fontWeight: 600,
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                }}
+              >
+                {vip.name}
+              </Typography>
+              {hasSwipe && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#90EE90',
+                    mt: { xs: 0.25, sm: 0.5 },
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  }}
+                >
+                  {location}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
+    </Box>
   );
 }
+
