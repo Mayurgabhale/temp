@@ -1,3 +1,82 @@
+http://localhost:3008/api/vip/live-summary
+{
+  "details": [
+    {
+      "vipId": "326131",
+      "name": "Pandey, Sonu",
+      "time": "2025-07-23T14:00:22.000Z",
+      "location": "Pune",
+      "region": "apac"
+    }
+  ]
+}
+
+
+
+C:\Users\W0024618\Desktop\global-page\frontend\vite.config.js
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  root: '.',               // serve from this folder
+  base: '/',               // public root
+  publicDir: path.resolve(__dirname, '../public'),
+  resolve: {
+    alias: {
+      // optional: import with '@/...' instead of '../../...'
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  plugins: [react()],
+  server: {
+    port: 5173,
+    proxy: {
+      // all /api/* → backend:3008/api/*
+      '/api': {
+        target: 'http://localhost:3008',
+        changeOrigin: true,
+        secure: false,
+      },
+      // /vip → backend:3008/api/vip/live-summary
+      '/vip': {
+        target: 'http://localhost:3008/api/vip',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/vip/, '/live-summary'),
+      },
+    },
+  },
+  build: {
+    outDir: path.resolve(__dirname, 'dist'),
+    emptyOutDir: true,
+  },
+});
+
+
+C:\Users\W0024618\Desktop\global-page\frontend\src\config\vip.json
+
+[
+  { "name": "McGranahan, Devin B",          "id": "321028", "photo": "/vip/321028.jpg" },
+  { "name": "Adams, Benjamin Carlton",      "id": "322038", "photo": "/vip/322038.jpg" },
+  { "name": "Axelrod, Cherie Z",            "id": "248793", "photo": "/vip/248793.jpg" },
+  { "name": "Hawksworth, Benjamin Scott",   "id": "325209", "photo": "/vip/325209.jpg" },
+  { "name": "Pogodzinski, Shelley",         "id": "321159", "photo": "/vip/321159.jpg" },
+  { "name": "Garcia, Mauricio",             "id": "235774", "photo": "/vip/235774.jpg" },
+  { "name": "Graniello Batlle, Irma Sofia", "id": "328260", "photo": "/vip/328260.jpg" },
+  { "name": "Narayanan, Ramya",             "id": "321792", "photo": "/vip/321792.jpg" },
+  { "name": "Cagwin, Matthew L",            "id": "322360", "photo": "/vip/322360.jpg" },
+  { "name": "Holdridge, Adam",              "id": "318514", "photo": "/vip/318514.jpg" },
+  { "name": "Angelini, Giovanni",           "id": "244783", "photo": "/vip/244783.jpg" },
+  { "name": "Whalen, Karen",                "id": "324994", "photo": "/vip/324994.jpg" },
+  { "name": "Jawad, Wissam",                "id": "325036", "photo": "/vip/325036.jpg" },
+  { "name": "Rupczynski, Robert",           "id": "322311", "photo": "/vip/322311.jpg" },
+  { "name": "Pandey, Sonu",                 "id": "326131", "photo": "/vip/326131.jpg" }
+]
+
+
+
 // src/components/VipGrid.jsx
 // frontend/src/components/VipGrid.jsx
 import React, { useState, useEffect } from 'react';
@@ -131,3 +210,98 @@ export default function VipGrid() {
     </Box>
   );
 }
+
+
+
+
+
+// src/pages/VipPage.jsx
+
+
+import React from 'react';
+import { Box, IconButton, Typography } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import VipGrid from '../components/VipGrid.jsx';
+import Footer from '../components/Footer.js';
+import { useNavigate } from 'react-router-dom';
+
+export default function VipPage() {
+  const navigate = useNavigate();
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        backgroundColor: 'background.default',
+      }}
+    >
+      {/* Sticky Header */}
+      <Box
+        component="header"
+        px={{ xs: 1, sm: 2, md: 3 }}
+        py={{ xs: 1, sm: 2 }}
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1100,
+          backgroundColor: 'black',
+          color: '#fff',
+          borderBottom: '4px solid #FFD700',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        {/* Back Button */}
+        <IconButton
+          onClick={() => navigate('/')}
+          sx={{ color: '#fff', mr: { xs: 0.5, sm: 1, md: 2 } }}
+        >
+          <ArrowBackIcon fontSize="small" />
+        </IconButton>
+
+        {/* Logo */}
+        <Box
+          component="img"
+          src="/wu-head-logo.png"
+          alt="Western Union Logo"
+          sx={{
+            height: { xs: 24, sm: 30, md: 36 },
+            width: 'auto',
+            mx: { xs: 0.5, sm: 1, md: 2 },
+          }}
+        />
+
+        {/* Title */}
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 'bold',
+            color: 'primary.main',
+            fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Our Leaders
+        </Typography>
+      </Box>
+
+      {/* Responsive Grid Container */}
+      <Box
+        component="main"
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          p: { xs: 1, sm: 2 },
+        }}
+      >
+        <VipGrid />
+      </Box>
+
+      {/* Footer */}
+      <Footer />
+    </Box>
+  );
+}
+
