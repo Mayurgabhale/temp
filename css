@@ -1,17 +1,3 @@
-.dark-row-even {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-}
-.dark-row-odd {
-  background-color: #3a3a3a !important;
-  color: #ffffff !important;
-}
-
-
-
-<tr className={idx % 2 === 0 ? 'dark-row-even' : 'dark-row-odd'}>
-
-
 
 
 
@@ -43,9 +29,23 @@ export default function FloorDetailsPage({ floorData = [] }) {
           background-color: #1c1c1c;
         }
 
+.dark-row-even {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+.dark-row-odd {
+  background-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+
+
         tbody td {
         background-color: #000;
         }
+
+
+
       `}</style>
 
       {/* 🔍 Search Input */}
@@ -98,7 +98,6 @@ export default function FloorDetailsPage({ floorData = [] }) {
                         color: '#f0f0f0',
                         width: '100%',
                       }}
-                      backgroundColor='#1c1c1c'
                       bordered
                       hover
                       responsive
@@ -116,9 +115,12 @@ export default function FloorDetailsPage({ floorData = [] }) {
                           <tr
                             key={`${emp.EmployeeID}-${idx}`}
                             style={{
-                              backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
-                              color: '#ffffff',
+                              // backgroundColor: idx % 2 === 0 ? '#2a2a2a' : '#3a3a3a',
+                              // color: '#ffffff',
+                              backgroundColor:'#000'
                             }}
+
+                             className={idx % 2 === 0 ? 'dark-row-even' : 'dark-row-odd'}
                           >
                             <td style={{ border: '1px solid #444' }}>{emp.ObjectName1}</td>
                             <td style={{ border: '1px solid #444' }}>{emp.Swipe_Time}</td>
