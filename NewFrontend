@@ -1,1 +1,3826 @@
-          <StarIcon fontSize="large" border ='1px solid red ' />
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+
+</head>
+
+<body>
+
+    <button id="scrollToTopBtn" title="Go to top">
+        <i class="bi bi-chevron-double-up"></i>
+    </button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside id="sidebar">
+            <h2><i class="fas fa-globe"></i> Regions</h2>
+            <button class="region-button" data-region="global"><i class="fas fa-globe"></i> Global</button>
+            <button class="region-button" data-region="apac"><i class="fas fa-map-marker-alt"></i> APAC</button>
+            <button class="region-button" data-region="emea"><i class="fas fa-map-marker-alt"></i> EMEA</button>
+            <button class="region-button" data-region="laca"><i class="fas fa-map-marker-alt"></i> LACA</button>
+            <button class="region-button" data-region="namer"><i class="fas fa-map-marker-alt"></i> NAMER</button>
+
+            <button class="nav-button" onclick="location.href='trend.html'"><i class="fas fa-chart-line"></i> View Trend
+                Analysis</button>
+            <button class="nav-button" onclick="location.href='summary.html'"><i class="fas fa-table"></i> View Devices
+                Summary</button>
+
+            <div id="countdown" class="countdown-timer">Loading Timer...</div>
+
+            <div class="filter-buttons">
+                <button id="filter-all" class="status-filter active" data-status="all"><i
+                        class="fas fa-layer-group"></i> All Devices</button>
+                <button id="filter-online" class="status-filter" data-status="online"><i class="fas fa-wifi"></i> Online
+                    Devices</button>
+                <button id="filter-offline" class="status-filter" data-status="offline"><i
+                        class="fas fa-plug-circle-xmark"></i> Offline Devices</button>
+            </div>
+
+            <label for="device-filter">Filter by Device Type:</label>
+            <select id="device-filter">
+                <option value="all">All</option>
+                <option value="cameras">Cameras</option>
+                <option value="archivers">Archivers</option>
+                <option value="controllers">Controllers</option>
+                <option value="servers">Servers</option>
+            </select>
+
+            <label for="city-filter">Filter by Location:</label>
+            <select id="city-filter">
+                <option value="all">All Cities</option>
+            </select>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="content">
+
+            <div id="region-title" class="dashboard-header">
+               <img src="images/FooterLogo.png" alt="">
+            </div>
+            <!-- <h1 id="region-title">🌐 Global Summary</h1> -->
+
+
+
+            <div class="summary">
+                <div class="card">
+                    <h3><i class="fas fa-microchip"></i> Total Devices</h3>
+                    <div class="card-status status-total">
+                        Total
+                        <span id="total-devices">Loading...</span>
+                    </div>
+                    <div class="card-status status-online">
+                        Online
+                        <span id="online-devices">Loading...</span>
+                    </div>
+                    <div class="card-status status-offline">
+                        Offline
+                        <span id="offline-devices">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-video"></i> Cameras</h3>
+                    <div class="card-status status-total">
+                        Total
+                        <span id="camera-total">Loading...</span>
+                    </div>
+                    <div class="card-status status-online">
+                        Online
+                        <span id="camera-online">Loading...</span>
+                    </div>
+                    <div class="card-status status-offline">
+                        Offline
+                        <span id="camera-offline">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-database"></i> Archivers</h3>
+                    <div class="card-status status-total">
+                        Total
+                        <span id="archiver-total">Loading...</span>
+                    </div>
+                    <div class="card-status status-online">
+                        Online
+                        <span id="archiver-online">Loading...</span>
+                    </div>
+                    <div class="card-status status-offline">
+                        Offline
+                        <span id="archiver-offline">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-id-card"></i> Controllers</h3>
+                    <div class="card-status status-total">
+                        Total
+                        <span id="controller-total">Loading...</span>
+                    </div>
+                    <div class="card-status status-online">
+                        Online
+                        <span id="controller-online">Loading...</span>
+                    </div>
+                    <div class="card-status status-offline">
+                        Offline
+                        <span id="controller-offline">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-server"></i> Servers</h3>
+                    <div class="card-status status-total">
+                        Total
+                        <span id="server-total">Loading...</span>
+                    </div>
+                    <div class="card-status status-online">
+                        Online
+                        <span id="server-online">Loading...</span>
+                    </div>
+                    <div class="card-status status-offline">
+                        Offline
+                        <span id="server-offline">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="section-divider">
+
+  
+            <!-- Device Details -->
+            <section id="details-section" class="details-section">
+                <div class="details-header">
+                    <h2><i class="fas fa-microchip"></i> Device Details</h2>
+                    <input type="text" id="device-search" placeholder="🔍 Search by IP, Location, City..." />
+                </div>
+
+                <div id="device-details" class="device-grid">Loading...</div>
+                <div id="details-container" class="device-grid"></div>
+            </section>
+
+        </main>
+    </div>
+
+
+    <!-- Modal -->
+    <div id="modal">
+        <div class="modal-content">
+            <span id="close-modal">&times;</span>
+            <h3 id="modal-title">Device Details</h3>
+            <ul id="modal-body"></ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo" />
+        <p style="color: white;">&copy; 2025 VisionWatch | Powered by <strong style="color: #fbc531;">Western Union Services India Pvt Ltd.</strong></p>
+        <p style="color: white;">Contact:
+            <a href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">Email</a> |
+            <a href="tel:+912067632394">+91 20 67632394</a>
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
+
+// C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
+
+const baseUrl = "http://localhost:80/api/regions";
+let refreshInterval = 300000; // 5 minutes
+let pingInterval = 60000; // 30 seconds
+let countdownTime = refreshInterval / 1000; // Convert to seconds
+let currentRegion = "global";
+let deviceDetailsCache = {}; // Store previous details to prevent redundant updates
+let latestDetails = null; // Cache the latest fetched details
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetchData("global"); // Load initial data
+    startAutoRefresh("global");
+
+    document.querySelectorAll(".region-button").forEach((button) => {
+        button.addEventListener("click", () => {
+            const region = button.getAttribute("data-region");
+            document.getElementById("region-title").textContent = `${region.toUpperCase()} Summary`;
+            switchRegion(region);
+        });
+    });
+
+    document.getElementById("close-modal").addEventListener("click", () => {
+        document.getElementById("modal").style.display = "none";
+    });
+});
+
+function switchRegion(region) {
+    clearExistingIntervals(); // Avoid interval duplication
+    currentRegion = region;
+    deviceDetailsCache = {};
+    fetchData(region);
+    startAutoRefresh(region);
+}
+
+// **Auto-refresh mechanism**
+function startAutoRefresh(regionName) {
+    fetchData(regionName); // Fetch initial data
+
+    clearExistingIntervals();
+
+    // Start countdown timer
+    window.countdownTimer = setInterval(() => {
+        document.getElementById("countdown").innerText = `Refreshing in ${countdownTime} seconds`;
+        countdownTime--;
+        if (countdownTime < 0) countdownTime = refreshInterval / 1000;
+    }, 1000);
+
+    // Refresh summary & details every 5 minutes
+    window.refreshTimer = setInterval(() => {
+        fetchData(regionName);
+        countdownTime = refreshInterval / 1000;
+    }, refreshInterval);
+
+    // Ping devices every 30 seconds using history API
+    window.pingTimer = setInterval(() => {
+        pingAllDevices(regionName);
+    }, pingInterval);
+}
+
+function clearExistingIntervals() {
+    clearInterval(window.countdownTimer);
+    clearInterval(window.refreshTimer);
+    clearInterval(window.pingTimer);
+}
+
+// **Fetch summary and details together**
+function fetchData(regionName) {
+    Promise.all([
+        fetch(`${baseUrl}/summary/${regionName}`).then(res => res.json()),
+        fetch(`${baseUrl}/details/${regionName}`).then(res => res.json())
+    ])
+        .then(([summary, details]) => {
+            console.log("Summary Data:", summary);
+            console.log("Details Data:", details);
+
+            updateSummary(summary);
+
+            if (JSON.stringify(details) !== JSON.stringify(deviceDetailsCache)) {
+                updateDetails(details);
+                deviceDetailsCache = details; // Update cache
+            }
+            // Cache details for pinging
+            latestDetails = details;
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+}
+
+/*
+   Updated pingAllDevices:
+   Instead of calling a non-existent ping endpoint, we now use the history API to fetch 
+   device history and update each device’s status by updating the separate status dot and text.
+*/
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("IP copied: " + text);
+    }).catch(err => {
+        console.error("Copy failed", err);
+    });
+}
+
+function pingAllDevices(regionName) {
+    let details = latestDetails;
+    if (!details || !details.details) return;
+
+    fetch("http://localhost/api/devices/history")
+        .then(response => response.json())
+        .then(historyData => {
+            let statusChanged = false;
+
+            for (const [key, devices] of Object.entries(details.details)) {
+                if (!Array.isArray(devices) || devices.length === 0) continue;
+
+                devices.forEach((device) => {
+                    const ip = device.ip_address || "N/A";
+                    const card = document.querySelector(`[data-ip="${ip}"]`);
+                    if (!card) return;
+
+                    // Determine new status from history API if available.
+                    const historyArray = historyData[ip];
+                    let newStatus = (device.status || "offline").toLowerCase();
+                    if (Array.isArray(historyArray) && historyArray.length > 0) {
+                        const latestEntry = historyArray[historyArray.length - 1];
+                        newStatus = (latestEntry.status || "offline").toLowerCase();
+                    }
+                    const currentStatus = card.dataset.status;
+
+                    // Update UI: update the dot and the text.
+                    const statusDot = card.querySelector(".status-dot");
+                    const statusText = card.querySelector(".status-text");
+                    if (statusDot) {
+                        statusDot.style.backgroundColor = newStatus === "online" ? "green" : "red";
+                        statusDot.classList.remove("online-dot", "offline-dot");
+                        statusDot.classList.add(newStatus === "online" ? "online-dot" : "offline-dot");
+                    }
+                    else {
+                        console.warn(`Status dot element not found for IP: ${ip}`);
+                    }
+                    if (statusText) {
+                        const textColor = newStatus === "online" ? "green" : "red";
+
+                        statusText.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                        statusText.style.color = textColor;
+                        statusText.style.backgroundColor = "transparent";
+                        statusText.style.padding = "0";
+                        statusText.style.borderRadius = "0";
+                    } else {
+                        console.warn(`Status text element not found for IP: ${ip}`);
+                    }
+
+                    if (newStatus !== currentStatus) {
+                        statusChanged = true;
+                        card.dataset.status = newStatus;
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                if (statusChanged) {
+                    fetchData(regionName);
+                }
+            }, 5000);
+        })
+        .catch(error => {
+            console.error("Error fetching device history:", error);
+        });
+}
+
+function updateSummary(data) {
+    document.getElementById("total-devices").textContent = data.summary?.totalDevices || "0";
+    document.getElementById("online-devices").textContent = data.summary?.totalOnlineDevices || "0";
+    document.getElementById("offline-devices").textContent = data.summary?.totalOfflineDevices || "0";
+
+    document.getElementById("camera-total").textContent = data.summary?.cameras?.total || "0";
+    document.getElementById("camera-online").textContent = data.summary?.cameras?.online || "0";
+    document.getElementById("camera-offline").textContent = data.summary?.cameras?.offline || "0";
+
+    document.getElementById("archiver-total").textContent = data.summary?.archivers?.total || "0";
+    document.getElementById("archiver-online").textContent = data.summary?.archivers?.online || "0";
+    document.getElementById("archiver-offline").textContent = data.summary?.archivers?.offline || "0";
+
+    document.getElementById("controller-total").textContent = data.summary?.controllers?.total || "0";
+    document.getElementById("controller-online").textContent = data.summary?.controllers?.online || "0";
+    document.getElementById("controller-offline").textContent = data.summary?.controllers?.offline || "0";
+
+    document.getElementById("server-total").textContent = data.summary?.servers?.total || "0";
+    document.getElementById("server-online").textContent = data.summary?.servers?.online || "0";
+    document.getElementById("server-offline").textContent = data.summary?.servers?.offline || "0";
+}
+
+/*
+   Updated updateDetails:
+   Each device card is built with separate elements for the status dot and status text.
+   This ensures that later updates from pingAllDevices can reliably find and update them.
+*/
+function updateDetails(data) {
+    const detailsContainer = document.getElementById("device-details");
+    const deviceFilter = document.getElementById("device-filter");
+    const onlineFilterButton = document.getElementById("filter-online");
+    const offlineFilterButton = document.getElementById("filter-offline");
+    const allFilterButton = document.getElementById("filter-all");
+    const cityFilter = document.getElementById("city-filter");
+
+    detailsContainer.innerHTML = "";
+    cityFilter.innerHTML = '<option value="all">All Cities</option>';
+
+    let combinedDevices = [];
+    let citySet = new Set();
+
+    // Icon utility based on device type
+    function getDeviceIcon(type = "") {
+        type = type.toLowerCase();
+        if (type.includes("camera")) return "fas fa-video";
+        if (type.includes("controller")) return "fas fa-cogs";
+        if (type.includes("archiver")) return "fas fa-database";
+        if (type.includes("server")) return "fas fa-server";
+        return "fas fa-microchip"; // fallback
+    }
+
+
+
+
+    // Fetch real-time status if available.
+    fetch("http://localhost:80/api/region/devices/status")
+        .then((response) => response.json())
+        .then((realTimeStatus) => {
+            console.log("Live Status Data:", realTimeStatus);
+
+            for (const [key, devices] of Object.entries(data.details)) {
+                if (!Array.isArray(devices) || devices.length === 0) continue;
+                const deviceType = key.toLowerCase();
+
+                devices.forEach((device) => {
+                    const deviceIP = device.ip_address || "N/A";
+                    let currentStatus = (realTimeStatus[deviceIP] || device.status || "offline").toLowerCase();
+                    const city = device.city || "Unknown";
+                    citySet.add(city);
+
+                    // Create card element.
+                    const card = document.createElement("div");
+                    card.className = "device-card";
+                    card.dataset.type = deviceType;
+                    card.dataset.status = currentStatus;
+                    card.dataset.city = city;
+                    card.setAttribute("data-ip", deviceIP);
+
+                    // Apply background color based on online/offline status
+                    card.style.backgroundColor = currentStatus === "online" ? "#e6ffed" : "#ffe6e6"; card.style.backgroundColor = currentStatus === "online"
+                        ? "rgba(16, 185, 129, 0.12)"  // Tailwind's emerald-500 with 12% opacity
+                        : "rgba(239, 68, 68, 0.12)";  // Tailwind's red-500 with 12% opacity
+
+
+                    card.style.borderColor = currentStatus === "online"
+                        ? "rgba(16, 185, 129, 0.4)"
+                        : "rgba(239, 68, 68, 0.4)";
+
+                    // Create a container for status
+                    const statusContainer = document.createElement("p");
+                    statusContainer.className = "device-status";
+                    // statusContainer.textContent = "Status: ";
+
+                    // Status text
+                    const statusText = document.createElement("span");
+                    statusText.className = "status-text";
+                    statusText.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+                    statusText.style.color = currentStatus === "online" ? "green" : "red";
+
+                    // Status dot
+                    const statusDot = document.createElement("span");
+                    statusDot.classList.add(currentStatus === "online" ? "online-dot" : "offline-dot");
+                    statusDot.style.backgroundColor = (currentStatus === "online") ? "green" : "red";
+                    statusDot.style.display = "inline-block";
+                    statusDot.style.width = "10px";
+                    statusDot.style.height = "10px";
+                    statusDot.style.marginLeft = "5px";
+                    statusDot.style.marginRight = "5px";
+                    statusDot.style.borderRadius = "50%";
+
+                    // Combine status parts
+                    statusContainer.appendChild(statusDot);
+                    statusContainer.appendChild(statusText);
+
+                    // Use insertAdjacentHTML to avoid overwriting statusContainer
+                    // ,,,, ,,m, 
+
+                    card.insertAdjacentHTML("beforeend", `
+                            <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700; font-family: 'Segoe UI', sans-serif; margin-bottom: 10px;">
+                                ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+                            </h3>
+
+                            <p class="device-type-label ${deviceType}" style="font-size: 1.05rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; margin-bottom: 10px;">
+                            
+                            <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
+                        </p>
+
+                        <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
+                            <strong style="color: #d7d9de;">
+                                <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
+                            </strong>
+                            <span 
+                                class="device-ip" 
+                                style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
+                                onclick="copyToClipboard('${deviceIP}')"
+                                title="Click to copy IP"
+                            >
+                                ${deviceIP}
+                            </span>
+                        </p>
+
+                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
+                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
+                                <span style=" font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);;">${device.location || "N/A"}</span>
+                            </p>
+
+                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
+                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
+                                <span style="font-weight: bold; color: rgb(215, 217, 222);;">${city}</span>
+                            </p>
+                        `);
+
+                    card.appendChild(statusContainer);
+
+                    
+
+                    // ............
+                    combinedDevices.push({
+                        card: card,
+                        device: {
+                            type: deviceType,
+                            status: currentStatus,
+                            city: city
+                        }
+                    });
+                });
+            }
+
+            combinedDevices.sort((a, b) => {
+                const statusA = (a.device.status === "offline") ? 0 : 1;
+                const statusB = (b.device.status === "offline") ? 0 : 1;
+                return statusA - statusB;
+            });
+
+            const allDevices = combinedDevices.map(item => item.card);
+            const deviceObjects = combinedDevices.map(item => item.device);
+
+            citySet.forEach((city) => {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                cityFilter.appendChild(option);
+            });
+
+            deviceFilter.value = "all";
+            cityFilter.value = "all";
+            document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
+            allFilterButton.classList.add("active");
+
+            function filterDevices() {
+                const selectedType = deviceFilter.value;
+                const selectedStatus = document.querySelector(".status-filter.active")?.dataset.status || "all";
+                const selectedCity = cityFilter.value;
+                // Search bar input
+                const searchTerm = document.getElementById("device-search").value.toLowerCase();
+
+                detailsContainer.innerHTML = "";
+
+                // const filteredDevices = allDevices.filter((device) =>
+                //     (selectedType === "all" || device.dataset.type === selectedType) &&
+                //     (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
+                //     (selectedCity === "all" || device.dataset.city === selectedCity)
+                // );
+
+                const filteredDevices = allDevices.filter((device) =>
+                    (selectedType === "all" || device.dataset.type === selectedType) &&
+                    (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
+                    (selectedCity === "all" || device.dataset.city === selectedCity) &&
+                    (
+                        !searchTerm ||
+                        device.innerText.toLowerCase().includes(searchTerm)
+                    )
+                );
+
+                filteredDevices.forEach((deviceCard) => {
+                    detailsContainer.appendChild(deviceCard);
+                });
+
+                const region = currentRegion?.toUpperCase() || "GLOBAL";
+                if (selectedCity !== "all") {
+                    document.getElementById("region-title").textContent = `${region}, ${selectedCity} Summary`;
+                } else {
+                    document.getElementById("region-title").textContent = `${region} Summary`;
+                }
+
+                const filteredSummaryDevices = deviceObjects.filter((deviceObj, index) => {
+                    const correspondingCard = allDevices[index];
+                    return (
+                        (selectedType === "all" || correspondingCard.dataset.type === selectedType) &&
+                        (selectedStatus === "all" || correspondingCard.dataset.status === selectedStatus) &&
+                        (selectedCity === "all" || correspondingCard.dataset.city === selectedCity)
+                    );
+                });
+
+                const summary = calculateCitySummary(filteredSummaryDevices);
+                updateSummary(summary);
+            }
+
+            function calculateCitySummary(devices) {
+                const summary = {
+                    summary: {
+                        totalDevices: devices.length,
+                        totalOnlineDevices: devices.filter(d => d.status === "online").length,
+                        totalOfflineDevices: devices.filter(d => d.status === "offline").length,
+                        cameras: { total: 0, online: 0, offline: 0 },
+                        archivers: { total: 0, online: 0, offline: 0 },
+                        controllers: { total: 0, online: 0, offline: 0 },
+                        servers: { total: 0, online: 0, offline: 0 },
+                    }
+                };
+
+                devices.forEach((device) => {
+                    if (!summary.summary[device.type]) return;
+                    summary.summary[device.type].total += 1;
+                    if (device.status === "online") summary.summary[device.type].online += 1;
+                    else summary.summary[device.type].offline += 1;
+                });
+
+                return summary;
+            }
+
+            filterDevices();
+
+            setTimeout(() => {
+                const selectedCity = cityFilter.value;
+                const selectedType = deviceFilter.value;
+                const selectedStatus = document.querySelector(".status-filter.active")?.dataset.status || "all";
+
+                const filteredSummaryDevices = deviceObjects.filter((deviceObj, index) => {
+                    const correspondingCard = allDevices[index];
+                    return (
+                        (selectedType === "all" || correspondingCard.dataset.type === selectedType) &&
+                        (selectedStatus === "all" || correspondingCard.dataset.status === selectedStatus) &&
+                        (selectedCity === "all" || correspondingCard.dataset.city === selectedCity)
+                    );
+                });
+
+                const summary = calculateCitySummary(filteredSummaryDevices);
+                updateSummary(summary);
+            }, 100);
+
+            deviceFilter.addEventListener("change", filterDevices);
+            // Search bar input
+            document.getElementById("device-search").addEventListener("input", filterDevices);
+            cityFilter.addEventListener("change", filterDevices);
+            allFilterButton.addEventListener("click", () => {
+                document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
+                allFilterButton.classList.add("active");
+                filterDevices();
+            });
+            onlineFilterButton.addEventListener("click", () => {
+                document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
+                onlineFilterButton.classList.add("active");
+                filterDevices();
+            });
+            offlineFilterButton.addEventListener("click", () => {
+                document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
+                offlineFilterButton.classList.add("active");
+                filterDevices();
+            });
+        })
+        .catch((error) => {
+            console.error("Error fetching real-time device status:", error);
+            detailsContainer.innerHTML = "<p>Failed to load device details.</p>";
+        });
+}
+
+function showModal(name, ip, location, status, city) {
+    document.getElementById("modal-title").textContent = `Details for ${name}`;
+    document.getElementById("modal-body").innerHTML = `
+            <li><strong>Name:</strong> ${name}</li>
+            <li><strong>IP:</strong> ${ip}</li>
+            <li><strong>Location:</strong> ${location}</li>
+            <li><strong>Status:</strong> ${status}</li>
+            <li><strong>City:</strong> ${city}</li>
+        `;
+    document.getElementById("modal").style.display = "block";
+}
+
+
+// Show/hide button on scroll
+window.addEventListener("scroll", () => {
+    const btn = document.getElementById("scrollToTopBtn");
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        btn.style.display = "block";
+    } else {
+        btn.style.display = "none";
+    }
+});
+
+// Scroll to top on click
+document.getElementById("scrollToTopBtn").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+
+
+
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\styles.css
+
+/* C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\styles.css */
+
+/* ===== Reset & Base Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #f1f1f1;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+
+
+/* 000 */
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 15px;
+  font-size: 18px;
+  cursor: pointer;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#scrollToTopBtn:hover {
+  background-color: #0b5ed7;
+  transform: scale(1.1);
+}
+
+
+/* 0000 */
+a {
+  color: #00adb5;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #fbc531;
+}
+
+/* ===== Layout ===== */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+
+/* ===== Enhanced Sidebar ===== */
+#sidebar {
+  width: 290px;
+  background: linear-gradient(135deg, #1e1e2f, #181827);
+  padding: 25px 20px;
+  border-right: 1px solid #2c2c3e;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+#sidebar h2 {
+  font-size: 22px;
+  color: #fbc531;
+  margin-bottom: 18px;
+  text-shadow: 0 0 4px rgba(0, 173, 181, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.region-button,
+.nav-button,
+.status-filter {
+  background-color: #2c2f33;
+  color: #f1f1f1;
+  border: none;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.region-button:hover,
+.nav-button:hover,
+.status-filter:hover {
+  background-color: #404258;
+  transform: scale(1.03);
+}
+
+.status-filter.active {
+  background-color: #00adb5;
+  color: #fff;
+  font-weight: bold;
+}
+
+select {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2c2f33;
+  color: #f1f1f1;
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+/*  */
+
+/* Global */
+.region-button[data-region="global"] i {
+  color: #00adb5; /* Teal */
+}
+
+/* APAC */
+.region-button[data-region="apac"] i {
+  color: #fbc531; /* Orange */
+}
+
+/* EMEA */
+.region-button[data-region="emea"] i {
+  color: #fbc531; /* Deep Orange */
+}
+
+/* LACA */
+.region-button[data-region="laca"] i {
+  color: #fbc531; /* Purple */
+}
+
+/* NAMER */
+.region-button[data-region="namer"] i {
+  color: #fbc531; /* Blue */
+}
+
+/* Trend Analysis */
+.nav-button i.fas.fa-chart-line {
+  color: #1abc9c; /* Green Cyan */
+}
+
+/* Summary */
+.nav-button i.fas.fa-table {
+  color: #d35400; /* Rust Orange */
+}
+
+/* All Devices */
+.status-filter[data-status="all"] i {
+  color: #bdc3c7; /* Silver */
+}
+
+/* Online Devices */
+.status-filter[data-status="online"] i {
+  color: #2ecc71; /* Green */
+}
+
+/* Offline Devices */
+.status-filter[data-status="offline"] i {
+  color: #e74c3c; /* Red */
+}
+
+/*  */
+/* Colorful Icons */
+
+
+.status-filter[data-status="offline"] i { color: #e84118; }
+
+label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #aaa;
+  margin-top: 8px;
+}
+/* ===== Main Content ===== */
+#content {
+  flex: 1;
+  padding:  5px 30px;
+}
+
+
+
+ #region-title {
+  text-align: center;
+  margin: 0 auto 20px;
+  padding: 24px;
+  background: linear-gradient(135deg, #1e1e2f, #2c2f33);
+  border-radius: 16px;
+  max-width: 100%;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fbc531;
+  letter-spacing: 1px;
+}
+
+
+#region-title img {
+  height: 40px; /* adjust as needed */
+  max-width: 120px;
+   object-fit: contain;
+  z-index: 11;
+  object-fit: contain;
+  display: inline-block;
+}
+
+
+
+/* ===== Summary Cards ===== */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: linear-gradient(135deg, #1e1e2f, #2c2f33);
+  padding: 10px 10px;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #333;
+  overflow: hidden;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(255, 204, 0, 0.25);
+  border-color: #00adb5;
+}
+
+.card h3 {
+  color: #fbc531;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.card i {
+  color: #00adb5;
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* Centered blocks */
+.card-status {
+  text-align: center;
+  /* padding: 14px 12px; */
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #fff;
+}
+
+.status-total {
+  background-color: #fbc53122;
+  color: #fbc531;
+}
+
+.status-online {
+  background-color: #44bd3222;
+  color: #44bd32;
+}
+
+.status-offline {
+  background-color: #e8411822;
+  color: #e84118;
+}
+
+.card-status span {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+
+.section-divider{
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right,#00adb5,#fbc531,#00adb5);
+    border-radius: 4px;
+    opacity: 0.8;
+}
+
+
+/* Background color based on status */
+.device-card.online {
+  background-color: #e8f5e9; /* light green */
+  border-left: 4px solid #2e7d32;
+}
+
+.device-card.offline {
+  background-color: #ffebee; /* light red */
+  border-left: 4px solid #c62828;
+}
+
+/* Different color header based on device type */
+
+.device-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+status-text {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+.status-text.online {
+    color: green;
+}
+.status-text.offline {
+    color: red;
+    margin-right: 5px;
+}
+.device-card.cameras .device-name {
+  color: #1976d2; /* Blue */
+}
+
+.device-card.controllers .device-name {
+  color: #9c27b0; /* Purple */
+}
+
+.device-card.archivers .device-name {
+  color: #f57c00; /* Orange */
+}
+
+.device-card.servers .device-name {
+  color: #2e7d32; /* Green */
+}
+
+/* Optional: add border/shadow for card aesthetics */
+/* .device-card {
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  /* transition: transform 0.2s ease; 
+} */
+
+.device-card:hover {
+  transform: scale(1.02);
+}
+
+
+
+
+/* ===== Device Grid ===== */
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+
+/* .device-card {
+  background-color: #2c2f33;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: 0.3s ease;
+} */
+
+#device-details.device-grid {
+  display: grid;
+  grid-template-rows: repeat(3, 2fr); /* 3 per row */
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ....................... ...................    ....................   ...    */
+
+
+
+/* ... */
+
+.details-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 1rem;
+}
+
+.details-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+#device-search {
+    padding: 12px 80px 12px 16px; 
+
+    margin-top: 5px;
+    font-size: 1rem;
+    width: 100%;
+    border: none;
+    max-width: 420px;
+    border-radius: 10px;
+    background-color: #121212;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px 18px;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+#device-search::placeholder {
+    color: #fff;
+    font-style: normal;
+    letter-spacing: 0.3px;
+}
+
+#device-search:focus {
+    background-color: #121212;
+    border-color: #fbc531;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+
+
+
+
+/* ... */
+
+
+/* Main container (card) */
+
+.device-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.2s ease-in-out;
+}
+
+.device-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 173, 181, 0.15) 0%, transparent 70%);
+  transform: rotate(25deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.device-card:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 173, 181, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}
+/* Header: Name and status */
+.device-card h3 {
+  /* font-size: 1.3rem; */
+  font-weight: 600;
+  color: var(--accent-yellow);
+  margin-bottom: 12px;
+  z-index: 1;
+  position: relative;
+}
+
+/* Status pill */
+.device-card .status {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+
+.device-card[data-status="online"] .status {
+  background-color: #0f766e33;
+  color: #34d399;
+}
+
+.device-card[data-status="offline"] .status {
+  background-color: #7f1d1d33;
+  color: #f87171;
+}
+
+/* .............. */
+
+/* Device name */
+.device-name {
+  font-size: 1.7 rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Device type label */
+.device-type-label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 1;
+  position: relative;
+}
+.device-type-label i {
+  color: var(--accent-yellow);
+}
+/* Device type icons by type */
+.device-type-label.cameras i {
+  color: #1e88e5; /* Blue */
+}
+.device-type-label.controllers i {
+  color: #8e24aa; /* Purple */
+}
+.device-type-label.archivers i {
+  color: #fb8c00; /* Orange */
+}
+.device-type-label.servers i {
+  color: #43a047; /* Green */
+}
+
+/* Paragraph text (IP, location, city) */
+.device-card p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 6px 0;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+  
+}
+
+/* Specific icon styles inside <p> blocks */
+.device-card p i.fa-network-wired {
+  color: #007bff; /* Blue for IP */
+}
+
+.device-card p i.fa-map-marker-alt {
+  color: #fbc531; /* Red for Location */
+}
+
+.device-card p i.fa-city {
+  color: #9b59b6; /* Purple for City */
+}
+
+
+/* ............. */
+
+
+
+.device-card[data-status="online"] .status {
+  background-color: #0f766e33; /* soft green tint */
+  color: #34d399;
+}
+
+.device-card[data-status="offline"] .status {
+  background-color: #7f1d1d33; /* soft red tint */
+  color: #f87171;
+  margin-right: 5px;
+}
+
+/* Device details */
+
+
+/* Details button */
+.device-card button {
+  /* margin-top: 15px; */
+  /* padding: 10px 14px; */
+  /* background-color: #019ca3;; */
+  color: #019ca3;
+  /* font-weight: 600; */
+  /* font-size: 0.95rem; */
+  /* border: none; */
+  /* border-radius: 8px; */
+  cursor: pointer;
+  z-index: 1;
+  position: relative;
+border-radius: 50%;
+}
+
+/* .device-card button:hover {
+  background-color: #019ca3;
+  transform: scale(1.05);
+} */
+
+/* Grid layout for cards */
+#device-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background-color: #0f172a; /* overall dashboard background */
+  min-height: 100vh;
+}
+
+/* ===== Fade In Animation ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+/* .device-card {
+  background-color: #2c2f33;
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.device-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(255, 204, 0, 0.3);
+}
+
+.device-card h3 {
+  font-size: 16px;
+  color: #00adb5;
+  margin-bottom: 8px;
+}
+
+.device-card p {
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+.details-button {
+  display: inline-block;
+  background-color: #00adb5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.details-button:hover {
+  background-color: #008c90;
+} */
+
+/* ===== Modal ===== */
+#modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #1e1e2f;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  color: #f1f1f1;
+}
+
+#close-modal {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #fbc531;
+}
+
+#modal-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+#modal-body li {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* ===== Countdown Timer ===== */
+.countdown-timer {
+  font-size: 14px;
+  color: #f1f1f1;
+  margin-top: 15px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  background-color: #1e1e2f;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  border-top: 1px solid #2c2c3e;
+  color: #aaa;
+}
+
+.footer-logo {
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #2c2c3e;
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ................ */
+
+/* ,,,,,,,,,, */
+
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.css
+
+:root {
+  --primary: #1e90ff;
+  --accent: #ffc107;
+  --background: #1a1a1a;
+  --card-bg: #2c2c2c;
+  --text: #f1f1f1;
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+header h1 {
+  text-align: center;
+  padding: 25px;
+  background-color: #000;
+  color: var(--accent);
+  font-size: 36px;
+  margin: 0;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.summary-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 20px;
+}
+
+
+.text-green {
+    color: #ffc107; /* Bootstrap green */
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+
+.summary-card {
+  flex: 1 1 200px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 4px 8px var(--shadow);
+  min-width: 220px;
+}
+
+.summary-card:hover {
+  transform: scale(1.05);
+  background-color: #333;
+}
+
+.summary-card i {
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/*  */
+
+.device-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  margin: 10px 0;
+  justify-content: center;
+}
+
+.device-card {
+  background-color: #2c2c2c;
+  border-radius: 12px;
+  padding: 20px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 660px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+}
+
+.device-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  font-size: 32px;
+  color: #0d6efd; /* Blue */
+  margin-bottom: 10px;
+}
+
+.device-card .label {
+  font-size: 18px;
+  color: var(--accent);;
+  margin-bottom: 5px;
+}
+
+.device-card .value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f1f1f1;
+  margin: 0;
+}
+
+.device-card .value.offline {
+  color: #dc3545; /* Red for offline */
+}
+/*  */
+
+
+
+
+/*  */
+.button-container {
+  text-align: center;
+  /* margin: 10px 0; */
+}
+
+.action-button {
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #f0f0f0;
+  padding: 12px 20px;
+  font-size: 15px;
+  border-radius: 8px;
+  margin: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.05);
+}
+
+.action-button:hover {
+  background-color: #333;
+  color: #fff;
+  border-color: #666;
+  transform: translateY(-2px);
+}
+
+.action-button.back {
+  background-color: #343a40;
+}
+
+.action-button.back:hover {
+  background-color: #495057;
+}
+
+.action-button.export {
+  background-color: #198754; /* Bootstrap green */
+  color: #fff;
+}
+
+.action-button.export:hover {
+  background-color: #157347;
+}
+
+
+/*  */
+button {
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  margin: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0a66c2;
+}
+
+select {
+  background-color: #2e2e2e;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 10px;
+}
+
+/* Container */
+.container {
+  overflow-x: auto;
+  margin: 20px auto;
+  padding: 10px;
+  max-width: 95%;
+}
+
+
+
+/* Filter Panel Container */
+.filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20px;
+  border-radius: 10px;
+  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Label Styling */
+.filter-panel label {
+  color: #ffc107;
+  font-weight: 600;
+  /* margin-bottom: 5px; */
+  display: block;
+  font-size: 18px;
+}
+
+/* Select Dropdown Styling */
+.filter-panel select {
+  background-color: #2c2f33;
+  color: #f1f1f1;
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 200px;
+  appearance: none;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.filter-panel select:focus {
+  border-color: #00adb5;
+  box-shadow: 0 0 5px rgba(0, 173, 181, 0.6);
+}
+
+/* Responsive behavior */
+@media screen and (max-width: 768px) {
+  .filter-panel {
+    flex-direction: column;
+  }
+
+  .filter-panel select {
+    width: 100%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Table */
+
+/* ...... */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+/* Table Header */
+table thead th {
+  background-color: #00bcd4;
+  color: #ffffff;
+  padding: 14px 10px;
+  border-bottom: 2px solid #444;
+  border-right: 1px solid #3d3d3d; /* vertical line */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Remove last border */
+thead th:last-child {
+  border-right: none;
+}
+
+/* Table Body */
+table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #333;
+  border-right: 1px solid #3d3d3d; /* vertical line */
+  text-align: center;
+  color: #e0e0e0;
+}
+
+/* Remove last border */
+tbody td:last-child {
+  border-right: none;
+}
+
+/* Row Hover */
+table tbody tr:hover {
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Uptime / Downtime Color */
+td.online {
+  color: #28a745;
+  font-weight: bold;
+}
+
+td.offline {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Remark styling */
+td#remark {
+  font-style: italic;
+  color: #ccc;
+}
+
+/* View History Button */
+table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #00bcd4;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+table button:hover {
+  background-color: #008ba3;
+}
+
+/* Row Markers */
+.online-row {
+  border-left: 4px solid #28a745;
+}
+
+.offline-row {
+  border-left: 4px solid #dc3545;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 700px;
+  color: var(--text);
+}
+
+.close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+}
+
+footer {
+  background-color: #000;
+  color: #aaa;
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.footer-logo {
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+footer a{
+    color: #fbc531;
+}
+
+.copy-text {
+    cursor: pointer;
+    /* text-decoration: underline dotted; */
+    /* color: #007bff; */
+}
+
+.toast {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: #cc4f4f;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 14px 22px;
+    position: fixed;
+    top: 60px;
+    right: 30px;
+    z-index: 10000;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.html
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devices Summary</title>
+
+    <link rel="stylesheet" href="summary.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1 style=" text-align: center;
+    padding: 20px;
+   background-color: hsla(62, 67%, 48%, 0);
+   background-color:black;
+   border-radius: 8px;
+   box-shadow: 0px 4px 6px rgba(178, 190, 11, 0.296);
+   transition: transform 0.3s ease-in-out;
+   color: rgb(198, 210, 18);
+   font-size: 36px;
+   margin: 0;
+   transition: color 0.3s ease;"">Devices Summary</h1>
+   </header>
+
+     <div id=" sidebar-content">
+
+
+            <div class="summary-container">
+                <div class="summary-card" id="total-devices">
+                    <i class="fas fa-network-wired"></i>
+                    Total Devices: <span>0</span>
+                </div>
+                <div class="summary-card" id="total-online">
+                    <i class="fas fa-signal"></i>
+                    Total Online Devices: <span>0</span>
+                </div>
+                <div class="summary-card" id="total-cameras">
+                    <i class="fas fa-video"></i>
+                    Total Cameras: <span>0</span>
+                </div>
+                <div class="summary-card" id="total-controllers">
+                    <i class="fas fa-microchip"></i>
+                    Total Controllers: <span>0</span>
+                </div>
+                <div class="summary-card" id="total-archivers">
+                    <i class="fas fa-archive"></i>
+                    Total Archivers: <span>0</span>
+                </div>
+                <div class="summary-card" id="total-servers">
+                    <i class="fas fa-server"></i>
+                    Total Servers: <span>0</span>
+                </div>
+            </div>
+
+            <!-- <div class="summary-container">
+                <div class="summary-card">
+                    <i class="fas fa-clock"></i>
+                    Downtime > 15 min: <p id="count-downtime-over-15">0</p>
+                </div>
+                <div class="summary-card">
+                    <i class="fas fa-power-off"></i>
+                    Currently Offline: <p id="count-currently-offline">0</p>
+                </div>
+            </div> -->
+
+            <div class="device-summary">
+                <div class="device-card">
+                    <i class="fas fa-clock icon"></i>
+                    <span class="label">Downtime &gt; 15 min:</span>
+                    <p class="value" id="count-downtime-over-15">0</p>
+                </div>
+                <div class="device-card">
+                    <i class="fas fa-power-off icon"></i>
+                    <span class="label">Currently Offline:</span>
+                    <p class="value offline" id="count-currently-offline">0</p>
+                </div>
+            </div>
+
+
+            <!-- <div style="text-align: center;">
+                <button onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <button onclick="exportDeviceTableToExcel()">
+                    <i class="fas fa-file-excel"></i> Export Device Table
+                </button>
+            </div> -->
+
+
+            <div class="button-container">
+                <button class="action-button back" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <button class="action-button export" onclick="exportDeviceTableToExcel()">
+                    <i class="fas fa-file-excel"></i> Export Device Table
+                </button>
+            </div>
+
+            <!-- <label for="region">Select Region:</label>
+            <select id="region" onchange="fetchDeviceData()">
+                <option value="global">Global</option>
+                <option value="apac">APAC</option>
+                <option value="emea">EMEA</option>
+                <option value="laca">LACA</option>
+                <option value="namer">NAMER</option>
+            </select>
+
+            <label for="device-type">Filter by Device Type:</label>
+            <select id="device-type" onchange="filterData()">
+                <option value="ALL">All</option>
+                <option value="CONTROLLER">Controller</option>
+
+                <option value="ARCHIVER">Archiver</option>
+
+                <option value="CAMERA">Camera</option>
+
+                <option value="SERVER">Server</option>
+
+            </select>
+
+            <label for="remark-filter">Filter by Remark:</label>
+            <select id="remark-filter" onchange="filterData()">
+                <option value="ALL">All</option>
+                <option value="Device needs repair">Device needs repair</option>
+                <option value="Device is Online">Device is Online</option>
+                <option value="Device is Offline">Device is Offline</option>
+            </select> -->
+
+            <div class="filter-panel">
+                <div>
+                    <label for="region">Select Region:</label>
+                    <select id="region" onchange="fetchDeviceData()">
+                        <option value="global">Global</option>
+                        <option value="apac">APAC</option>
+                        <option value="emea">EMEA</option>
+                        <option value="laca">LACA</option>
+                        <option value="namer">NAMER</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="device-type">Filter by Device Type:</label>
+                    <select id="device-type" onchange="filterData()">
+                        <option value="ALL">All</option>
+                        <option value="CONTROLLER">Controller</option>
+                        <option value="ARCHIVER">Archiver</option>
+                        <option value="CAMERA">Camera</option>
+                        <option value="SERVER">Server</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="remark-filter">Filter by Remark:</label>
+                    <select id="remark-filter" onchange="filterData()">
+                        <option value="ALL">All</option>
+                        <option value="Device needs repair">Device needs repair</option>
+                        <option value="Device is Online">Device is Online</option>
+                        <option value="Device is Offline">Device is Offline</option>
+                    </select>
+                </div>
+            </div>
+
+            </div>
+            </div>
+
+
+            <div class="container">
+                <table id="device-table">
+                    <thead>
+                        <tr>
+                            <th>Sr . No</th>
+                            <th>Device IP</th>
+                            <th>Device Name</th>
+                            <th>Device Type</th>
+                            <th>Device Region</th>
+                            <!-- <th>Device Status</th> -->
+                            <th>Uptime Duration</th>
+                            <th>Downtime Count</th>
+                            <th>Downtime Duration</th>
+                            <th>Details</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Toast Container -->
+<div id="toast" class="toast"></div>
+            <!-- Device History Modal -->
+            <div id="device-history-modal" class="modal">
+
+                <div class="modal-content">
+
+
+                    <div id="device-history-header"></div> <!-- Header for Device Name and IP -->
+
+                    <div id="device-history"></div>
+                    <!-- <<span class="close" onclick="closeHistoryModal()">&times;</span> -->
+
+                    <span class="close" onclick="closeHistoryModal()">&times;</span>
+                    <div id="device-history"></div>
+                    <button onclick="exportDeviceHistoryToExcel()">Export Device History</button>
+
+
+
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    fetchDeviceData();
+                });
+            </script>
+            <script src="summary.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+            <!-- Footer -->
+            <footer class="footer">
+                <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo">
+                <p>&copy;2025 VisionWatch | Powered by <strong style="color: #fbc531;"" >Western Union Services India Pvt Ltd.</strong></p>
+                <p>Contact:
+                    <a
+                        href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com</a>
+                    |
+                    <a href="tel:+91 20 67632394">+91 2067632394</a>
+                </p>
+            </footer>
+
+</body>
+
+</html>
+
+</body>
+
+</html>
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.js
+
+
+// let deviceUptimeTimers = {};
+// let deviceDowntimeTimers = {};
+
+// // Utility to turn an IP (or any string) into a safe DOM‑ID fragment
+// function sanitizeId(str) {
+//     return (str || '').replace(/[^a-zA-Z0-9]/g, '_');
+// }
+
+// function fetchDeviceData() {
+//     const selectedRegion = document.getElementById('region').value;
+
+//     if (selectedRegion === 'All') {
+//         fetch(`http://localhost/api/regions/all-details`)
+//             .then(res => res.json())
+//             .then(allRegionsData => {
+//                 let combinedDetails = { cameras: [], archivers: [], controllers: [], servers: [] };
+//                 Object.values(allRegionsData).forEach(regionData => {
+//                     if (regionData.details) {
+//                         ['cameras','archivers','controllers','servers'].forEach(type => {
+//                             combinedDetails[type].push(...(regionData.details[type]||[]));
+//                         });
+//                     }
+//                 });
+//                 fetchDeviceHistory(combinedDetails);
+//             })
+//             .catch(err => console.error('Error fetching all regions data:', err));
+//     } else {
+//         fetch(`http://localhost/api/regions/details/${selectedRegion}`)
+//             .then(res => res.json())
+//             .then(regionData => {
+//                 const d = regionData.details;
+//                 const total = (d.cameras?.length||0)+(d.archivers?.length||0)+(d.controllers?.length||0)+(d.servers?.length||0);
+//                 const online = ([...(d.cameras||[]),...(d.archivers||[]),...(d.controllers||[]),...(d.servers||[])]
+//                     .filter(dev => dev.status==="Online").length);
+//                 const setIf = (id,txt)=>{const el=document.getElementById(id); if(el) el.innerText=txt;};
+//                 setIf("total-devices", `Total Devices: ${total}`);
+//                 setIf("total-online", `Total Online Devices: ${online}`);
+//                 setIf("total-cameras", `Total Cameras: ${d.cameras?.length||0}`);
+//                 setIf("total-controllers", `Total Controllers: ${d.controllers?.length||0}`);
+//                 setIf("total-archivers", `Total Archivers: ${d.archivers?.length||0}`);
+//                 setIf("total-servers", `Total Servers: ${d.servers?.length||0}`);
+//                 fetchDeviceHistory(d);
+//             })
+//             .catch(err => console.error('Error fetching device data:', err));
+//     }
+// }
+
+// function fetchDeviceHistory(details) {
+//     fetch(`http://localhost/api/devices/history`)
+//         .then(res => res.json())
+//         .then(historyData => {
+//             populateDeviceTable(details, historyData);
+//             window.deviceHistoryData = historyData;
+//         })
+//         .catch(err => console.error('Error fetching device history:', err));
+// }
+
+// function populateDeviceTable(details, historyData) {
+//     const tbody = document.getElementById('device-table').getElementsByTagName('tbody')[0];
+//     tbody.innerHTML = '';
+//     let list = [];
+
+//     ['cameras','archivers','controllers','servers'].forEach(type => {
+//         details[type]?.forEach(dev => {
+//             const ip = dev.ip_address;
+//             const safe = sanitizeId(ip);
+//             const name = dev[type.slice(0,-1)+'name']||'Unknown';
+//             const category = type.slice(0,-1).toUpperCase();
+//             const region = dev.location||'Unknown';
+//             const hist = historyData[ip]||[];
+//             const current = dev.status || (hist.length? hist[hist.length-1].status : 'Unknown');
+//             const downCount = hist.filter(e=>e.status==='Offline').length;
+
+//             if (current==='Offline' || downCount>15) {
+//                 list.push({ ip, safe, name, category, region, current, hist, downCount });
+//             }
+//         });
+//     });
+
+//     list.sort((a,b)=>b.downCount - a.downCount);
+
+//     if (!list.length) {
+//         const row = tbody.insertRow();
+//         const cell = row.insertCell();
+//         cell.colSpan = 10;
+//         cell.textContent = "No devices found";
+//         cell.style.textAlign = "center";
+//         cell.style.fontWeight = "bold";
+//         updateDisplayedDeviceCount(0);
+//         return;
+//     }
+
+//     list.forEach((dev, idx) => {
+//         const row = tbody.insertRow();
+//         row.style.border = "1px solid black";
+//         row.innerHTML = `
+//             <td>${idx+1}</td>
+//             <td>${dev.ip}</td>
+//             <td>${dev.name}</td>
+//             <td>${dev.category}</td>
+//             <td>${dev.region}</td>
+//             <td id="uptime-${dev.safe}">0h/0m/0s</td>
+//             <td id="downtime-count-${dev.safe}">${dev.downCount}</td>
+//             <td id="downtime-${dev.safe}">0h/0m/0s</td>
+//             <td><button onclick="openDeviceHistory('${dev.ip}','${dev.name}')">View History</button></td>
+//             <td id="remark-${dev.safe}">Device working properly</td>
+//         `;
+//         row.style.color = dev.current==="Online" ? "green" : "red";
+
+//         if (dev.current==="Online") {
+//             startUptime(dev.ip, dev.hist);
+//         } else {
+//             startDowntime(dev.ip, dev.hist, dev.category);
+//         }
+//         updateRemarks(dev.ip, dev.hist, dev.category);
+//     });
+
+//     filterData();
+// }
+
+// function startUptime(ip, hist) {
+//     const safe = sanitizeId(ip);
+//     clearInterval(deviceDowntimeTimers[safe]);
+//     const lastOn = hist.filter(e=>e.status==='Online').pop();
+//     if (!lastOn) return;
+//     const start = new Date(lastOn.timestamp).getTime();
+//     deviceUptimeTimers[safe] = setInterval(()=>{
+//         const secs = Math.floor((Date.now()-start)/1000);
+//         const el = document.getElementById(`uptime-${safe}`);
+//         if (el) el.innerText = formatDuration(secs);
+//     },1000);
+// }
+
+// function startDowntime(ip, hist, category) {
+//     const safe = sanitizeId(ip);
+//     clearInterval(deviceUptimeTimers[safe]);
+//     const lastOff = hist.filter(e=>e.status==='Offline').pop();
+//     if (!lastOff) return;
+//     const start = new Date(lastOff.timestamp).getTime();
+//     deviceDowntimeTimers[safe] = setInterval(()=>{
+//         const secs = Math.floor((Date.now()-start)/1000);
+//         const el = document.getElementById(`downtime-${safe}`);
+//         if (el) el.innerText = formatDuration(secs);
+//         updateDowntimeCount(ip, hist, category);
+//     },1000);
+// }
+
+// // **Fix Downtime Count and Remarks Update**
+// function updateDowntimeCount(ip, hist, category) {
+//     const safe = sanitizeId(ip);
+//     const offs = hist.filter(e=>e.status==='Offline');
+//     const filtered = offs.filter((e,i,arr)=>{
+//         if (category==='SERVER') return true;
+//         if (i===0) return true;
+//         return (new Date(e.timestamp)-new Date(arr[i-1].timestamp))/1000 >=300;
+//     });
+//     const count = filtered.length;
+//     const el = document.getElementById(`downtime-count-${safe}`);
+//     if (el) el.innerText = count;
+//     updateRemarks(ip, hist, category);
+// }
+
+// // **Update Remarks**
+// function updateRemarks(ip, hist, category) {
+//     const safe = sanitizeId(ip);
+//     const offs = hist.filter(e=>e.status==='Offline');
+//     const filtered = offs.filter((e,i,arr)=>{
+//         if (category==='SERVER') return true;
+//         if (i===0) return true;
+//         return (new Date(e.timestamp)-new Date(arr[i-1].timestamp))/1000 >=300;
+//     });
+//     const count = filtered.length;
+//     const lastStatus = hist.length? hist[hist.length-1].status : 'Unknown';
+//     const el = document.getElementById(`remark-${safe}`);
+//     if (!el) return;
+
+//     if (lastStatus==='Offline') {
+//         el.innerText = count>=10 ? "Device is Offline, needs repair." : "Device is Offline.";
+//     }
+//     else if (lastStatus==='Online') {
+//         if (count>=10) el.innerText = "Device is Online, needs repair.";
+//         else if (count>0) el.innerText = `Device is Online, it had ${count} downtime occurrences.`;
+//         else el.innerText = "Device is Online.";
+//     }
+//     else {
+//         el.innerText = "Device status unknown.";
+//     }
+//     const dc = document.getElementById(`downtime-count-${safe}`);
+//     if (dc) dc.innerText = count;
+// }
+
+// function formatDuration(seconds) {
+//     const d = Math.floor(seconds/86400);
+//     const h = Math.floor((seconds%86400)/3600);
+//     const m = Math.floor((seconds%3600)/60);
+//     const s = Math.round(seconds%60);
+//     const parts = [];
+//     if (d) parts.push(`${d}d`);
+//     if (h) parts.push(`${h}h`);
+//     if (m) parts.push(`${m}m`);
+//     if (s||!parts.length) parts.push(`${s}s`);
+//     return parts.join('/');
+// }
+
+// function openDeviceHistory(ip, name) {
+//     if (!window.deviceHistoryData) return console.error("No history loaded");
+//     const hist = window.deviceHistoryData[ip]||[];
+//     displayDeviceHistory(ip,name,hist);
+//     const modal = document.getElementById('device-history-modal');
+//     if (modal) modal.style.display='block';
+// }
+
+// function calculateDowntimeDuration(ts, hist) {
+//     const start = new Date(ts).getTime();
+//     const nextUp = hist.find(e=> e.status==='Online' && new Date(e.timestamp).getTime()>start);
+//     if (nextUp) return formatDuration((new Date(nextUp.timestamp).getTime()-start)/1000);
+//     return formatDuration((Date.now()-start)/1000);
+// }
+
+// function displayDeviceHistory(ip,name,hist) {
+//     const header = document.getElementById('device-history-header');
+//     const container = document.getElementById('device-history');
+//     if (header) {
+//         header.innerHTML=`
+//             <h3>Device History</h3>
+//             <p><strong>Device Name:</strong> ${name}</p>
+//             <p><strong>Device IP:</strong> ${ip}</p>
+//             <hr>`;
+//     }
+//     if (!container) return;
+//     container.innerHTML='';
+//     if (!hist.length) {
+//         container.innerHTML='<p>No history available for this device.</p>';
+//         return;
+//     }
+//     let html = `
+//         <table border="1" style="width:100%; text-align:center; border-collapse:collapse;">
+//             <thead><tr>
+//                 <th>Sr. No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Downtime Duration</th>
+//             </tr></thead><tbody>`;
+//     let lastOff = null;
+//     hist.forEach((e,i)=>{
+//         const d = new Date(e.timestamp);
+//         const date = d.toLocaleDateString();
+//         const day = d.toLocaleString('en-US',{weekday:'long'});
+//         const time = d.toLocaleTimeString();
+//         let dur = '-';
+//         if (e.status==='Offline') lastOff = e.timestamp;
+//         else if (e.status==='Online' && lastOff) {
+//             dur = calculateDowntimeDuration(lastOff,hist);
+//             lastOff = null;
+//         }
+//         html+=`
+//             <tr>
+//                 <td>${i+1}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+//                 <td style="color:${e.status==='Online'?'green':'red'}">${e.status}</td>
+//                 <td>${dur}</td>
+//             </tr>`;
+//     });
+//     html+=`</tbody></table>`;
+//     container.innerHTML=html;
+// }
+
+// function closeHistoryModal() {
+//     const modal = document.getElementById('device-history-modal');
+//     if (modal) modal.style.display='none';
+// }
+
+// function filterData() {
+//     const typeSel = document.getElementById('device-type').value.toUpperCase();
+//     const remarkSel = document.getElementById('remark-filter').value.toUpperCase();
+//     const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
+//     let count = 0;
+//     for (let row of rows) {
+//         const type = row.cells[3].textContent.toUpperCase();
+//         const remark = row.cells[9].textContent.trim().toUpperCase();
+//         const show = (typeSel==='ALL'||type===typeSel) && (remarkSel==='ALL'||remark.includes(remarkSel));
+//         row.style.display = show? '':'none';
+//         if (show) count++;
+//     }
+//     updateDisplayedDeviceCount(count);
+// }
+
+// function updateDisplayedDeviceCount(count) {
+//     const el = document.getElementById('device-count');
+//     if (el) el.innerText = `Displayed Devices: ${count}`;
+// }
+
+// document.addEventListener("DOMContentLoaded", ()=>{
+//     const r = document.getElementById('region');
+//     if (r) r.addEventListener('change', fetchDeviceData);
+//     const t = document.getElementById('device-type');
+//     if (t) t.addEventListener('change', filterData);
+//     const f = document.getElementById('remark-filter');
+//     if (f) f.addEventListener('change', filterData);
+//     fetchDeviceData();
+// });
+
+// function exportDeviceTableToExcel() {
+//     const tbl = document.getElementById("device-table");
+//     if (!tbl) return;
+//     const wb = XLSX.utils.table_to_book(tbl, { sheet: "Device Table" });
+//     XLSX.writeFile(wb, "Device_Table.xlsx");
+// }
+
+// function exportDeviceHistoryToExcel() {
+//     const histTbl = document.querySelector("#device-history-modal table");
+//     if (!histTbl) return alert("Please open a device's history first.");
+//     const wb = XLSX.utils.table_to_book(histTbl, { sheet: "Device History" });
+//     XLSX.writeFile(wb, "Device_History.xlsx");
+// }
+
+
+
+
+let deviceUptimeTimers = {};
+let deviceDowntimeTimers = {};
+
+// Utility to turn an IP (or any string) into a safe DOM‑ID fragment
+function sanitizeId(str) {
+    return (str || '').replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function fetchDeviceData() {
+    const selectedRegion = document.getElementById('region').value;
+
+    if (selectedRegion === 'All') {
+        fetch(`http://localhost/api/regions/all-details`)
+            .then(res => res.json())
+            .then(allRegionsData => {
+                let combinedDetails = { cameras: [], archivers: [], controllers: [], servers: [] };
+                Object.values(allRegionsData).forEach(regionData => {
+                    if (regionData.details) {
+                        ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
+                            combinedDetails[type].push(...(regionData.details[type] || []));
+                        });
+                    }
+                });
+                fetchDeviceHistory(combinedDetails);
+            })
+            .catch(err => console.error('Error fetching all regions data:', err));
+    } else {
+        fetch(`http://localhost/api/regions/details/${selectedRegion}`)
+            .then(res => res.json())
+            .then(regionData => {
+                const d = regionData.details;
+                const total = (d.cameras?.length || 0) + (d.archivers?.length || 0) + (d.controllers?.length || 0) + (d.servers?.length || 0);
+                const online = ([...(d.cameras || []), ...(d.archivers || []), ...(d.controllers || []), ...(d.servers || [])]
+                    .filter(dev => dev.status === "Online").length);
+
+
+
+                const setWithIcon = (id, iconClass, label, value, colorClass = "") => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = `<i class="${iconClass}"></i> ${label}: <span class="${colorClass}">${value}</span>`;
+                    }
+                };
+                setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total,"text-green");
+                setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online, "text-green");
+                setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0,"text-green");
+                setWithIcon("total-controllers", "fas fa-microchip", "Total Controllers", d.controllers?.length || 0,"text-green");
+                setWithIcon("total-archivers", "fas fa-database", "Total Archivers", d.archivers?.length || 0,"text-green");
+                setWithIcon("total-servers", "fas fa-server", "Total Servers", d.servers?.length || 0,"text-green");
+
+                fetchDeviceHistory(d);
+            })
+            .catch(err => console.error('Error fetching device data:', err));
+    }
+}
+
+function fetchDeviceHistory(details) {
+    fetch(`http://localhost/api/devices/history`)
+        .then(res => res.json())
+        .then(historyData => {
+            populateDeviceTable(details, historyData);
+            window.deviceHistoryData = historyData;
+        })
+        .catch(err => console.error('Error fetching device history:', err));
+}
+
+function populateDeviceTable(details, historyData) {
+    const tbody = document.getElementById('device-table').getElementsByTagName('tbody')[0];
+    tbody.innerHTML = '';
+    let list = [];
+
+    ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
+        details[type]?.forEach(dev => {
+            const ip = dev.ip_address;
+            const safe = sanitizeId(ip);
+            const name = dev[type.slice(0, -1) + 'name'] || 'Unknown';
+            const category = type.slice(0, -1).toUpperCase();
+            const region = dev.location || 'Unknown';
+            const hist = filterHistoryForDisplay(historyData[ip] || [], category);
+            const current = dev.status || (hist.length ? hist[hist.length - 1].status : 'Unknown');
+            const downCount = hist.filter(e => e.status === 'Offline').length;
+
+            // Only show offline or >15 downtimes
+            if (current === 'Offline' || downCount > 15) {
+                list.push({ ip, safe, name, category, region, current, hist, downCount });
+            }
+        });
+    });
+
+    list.sort((a, b) => b.downCount - a.downCount);
+
+    // compute our two new summary counts:
+    const downtimeOver15Count = list.filter(d => d.downCount > 15).length;
+    const currentlyOfflineCount = list.filter(d => d.current === 'Offline').length;
+    const setIf = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
+    setIf('count-downtime-over-15', `Devices with >15 downtimes: ${downtimeOver15Count}`);
+    setIf('count-currently-offline', `Devices currently Offline: ${currentlyOfflineCount}`);
+
+    if (!list.length) {
+        const row = tbody.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 10;
+        cell.textContent = "No devices found";
+        cell.style.textAlign = "center";
+        cell.style.fontWeight = "bold";
+        updateDisplayedDeviceCount(0);
+        return;
+    }
+
+    list.forEach((dev, idx) => {
+        const row = tbody.insertRow();
+         row.classList.add(dev.current === "Online" ? "online-row" : "offline-row");
+        row.style.border = "1px solid black";
+        row.innerHTML = `
+   <td>${idx + 1}</td>
+    <td><span onclick="copyText('${dev.ip}')" style="cursor:pointer; ;">${dev.ip}</span></td>
+    <td><span onclick="copyText('${dev.name}')" style="cursor:pointer; ;">${dev.name}</span></td>
+    <td>${dev.category}</td>
+    <td>${dev.region}</td>
+    <td id="uptime-${dev.safe}">0h/0m/0s</td>
+    <td id="downtime-count-${dev.safe}">${dev.downCount}</td>
+    <td id="downtime-${dev.safe}">0h/0m/0s</td>
+    <td><button onclick="openDeviceHistory('${dev.ip}','${dev.name}','${dev.category}')">View History</button></td>
+    <td id="remark-${dev.safe}">Device working properly</td>
+`;
+        row.style.color = dev.current === "Online" ? "green" : "red";
+       
+
+        if (dev.current === "Online") {
+            startUptime(dev.ip, dev.hist);
+        } else {
+            startDowntime(dev.ip, dev.hist, dev.category);
+        }
+        updateRemarks(dev.ip, dev.hist, dev.category);
+    });
+
+    filterData();
+}
+
+function filterHistoryForDisplay(hist, category) {
+    if (category === 'SERVER') return hist.slice(); // show all
+    // else: remove any offline entries that resolve within 5 minutes
+    const filtered = [];
+    let lastOff = null;
+    hist.forEach(e => {
+        if (e.status === 'Offline') {
+            lastOff = e;
+        } else if (e.status === 'Online' && lastOff) {
+            const diff = (new Date(e.timestamp) - new Date(lastOff.timestamp)) / 1000;
+            if (diff >= 300) {
+                // keep the offline event and the matching online event
+                filtered.push(lastOff, e);
+            }
+            lastOff = null;
+        } else {
+            filtered.push(e);
+        }
+    });
+    // If an Offline at end with no Online, and it's >5min ago, keep it
+    if (lastOff) {
+        const diff = (Date.now() - new Date(lastOff.timestamp)) / 1000;
+        if (diff >= 300) filtered.push(lastOff);
+    }
+    return filtered.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+}
+
+function startUptime(ip, hist) {
+    const safe = sanitizeId(ip);
+    clearInterval(deviceDowntimeTimers[safe]);
+    const lastOn = hist.filter(e => e.status === 'Online').pop();
+    if (!lastOn) return;
+    const start = new Date(lastOn.timestamp).getTime();
+    deviceUptimeTimers[safe] = setInterval(() => {
+        const secs = Math.floor((Date.now() - start) / 1000);
+        const el = document.getElementById(`uptime-${safe}`);
+        if (el) el.innerText = formatDuration(secs);
+    }, 1000);
+}
+
+function startDowntime(ip, hist, category) {
+    const safe = sanitizeId(ip);
+    clearInterval(deviceUptimeTimers[safe]);
+    const lastOff = hist.filter(e => e.status === 'Offline').pop();
+    if (!lastOff) return;
+    const start = new Date(lastOff.timestamp).getTime();
+    deviceDowntimeTimers[safe] = setInterval(() => {
+        const secs = Math.floor((Date.now() - start) / 1000);
+        const el = document.getElementById(`downtime-${safe}`);
+        if (el) el.innerText = formatDuration(secs);
+        updateDowntimeCount(ip, hist, category);
+    }, 1000);
+}
+
+function updateDowntimeCount(ip, hist, category) {
+    const safe = sanitizeId(ip);
+    const offs = filterHistoryForDisplay(hist, category).filter(e => e.status === 'Offline');
+    const count = offs.length;
+    const el = document.getElementById(`downtime-count-${safe}`);
+    if (el) el.innerText = count;
+    updateRemarks(ip, hist, category);
+}
+
+function updateRemarks(ip, hist, category) {
+    const safe = sanitizeId(ip);
+    const filteredOffs = filterHistoryForDisplay(hist, category).filter(e => e.status === 'Offline');
+    const count = filteredOffs.length;
+    const lastStatus = hist.length ? hist[hist.length - 1].status : 'Unknown';
+    const el = document.getElementById(`remark-${safe}`);
+    if (!el) return;
+
+    if (lastStatus === 'Offline') {
+        el.innerText = count >= 10 ? "Device is Offline, needs repair." : "Device is Offline.";
+    }
+    else if (lastStatus === 'Online') {
+        if (count >= 10) el.innerText = "Device is Online, needs repair.";
+        else if (count > 0) el.innerText = `Device is Online, it had ${count} downtime occurrences.`;
+        else el.innerText = "Device is Online.";
+    }
+    else {
+        el.innerText = "Device status unknown.";
+    }
+    const dc = document.getElementById(`downtime-count-${safe}`);
+    if (dc) dc.innerText = count;
+}
+
+function formatDuration(seconds) {
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.round(seconds % 60);
+    const parts = [];
+    if (d) parts.push(`${d}d`);
+    if (h) parts.push(`${h}h`);
+    if (m) parts.push(`${m}m`);
+    if (s || !parts.length) parts.push(`${s}s`);
+    return parts.join('/');
+}
+
+function openDeviceHistory(ip, name, category) {
+    if (!window.deviceHistoryData) return console.error("No history loaded");
+    const raw = window.deviceHistoryData[ip] || [];
+    const hist = filterHistoryForDisplay(raw, category);
+    displayDeviceHistory(ip, name, category, hist);
+    const modal = document.getElementById('device-history-modal');
+    if (modal) modal.style.display = 'block';
+}
+
+function calculateDowntimeDuration(ts, hist) {
+    const start = new Date(ts).getTime();
+    const nextUp = hist.find(e => e.status === 'Online' && new Date(e.timestamp).getTime() > start);
+    if (nextUp) return formatDuration((new Date(nextUp.timestamp).getTime() - start) / 1000);
+    return formatDuration((Date.now() - start) / 1000);
+}
+
+function displayDeviceHistory(ip, name, category, hist) {
+    const header = document.getElementById('device-history-header');
+    const container = document.getElementById('device-history');
+    if (header) {
+        header.innerHTML = `
+            <h3>Device History</h3>
+            <p><strong>Device Name:</strong> ${name}</p>
+            <p><strong>Device IP:</strong> ${ip}</p>
+            <hr>`;
+    }
+    if (!container) return;
+    container.innerHTML = '';
+    if (!hist.length) {
+        container.innerHTML = '<p>No significant history (all brief outages &lt;5 min).</p>';
+        return;
+    }
+    let html = `
+        <table border="1" style="width:100%; text-align:center; border-collapse:collapse;">
+            <thead><tr>
+                <th>Sr. No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Downtime Duration</th>
+            </tr></thead><tbody>`;
+    let lastOff = null;
+    hist.forEach((e, i) => {
+        const d = new Date(e.timestamp);
+        const date = d.toLocaleDateString();
+        const day = d.toLocaleString('en-US', { weekday: 'long' });
+        const time = d.toLocaleTimeString();
+        let dur = '-';
+        if (e.status === 'Offline') lastOff = e.timestamp;
+        else if (e.status === 'Online' && lastOff) {
+            dur = calculateDowntimeDuration(lastOff, hist);
+            lastOff = null;
+        }
+        html += `
+            <tr>
+                <td>${i + 1}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+                <td style="color:${e.status === 'Online' ? 'green' : 'red'}">${e.status}</td>
+                <td>${dur}</td>
+            </tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+function closeHistoryModal() {
+    const modal = document.getElementById('device-history-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function filterData() {
+    const typeSel = document.getElementById('device-type').value.toUpperCase();
+    const remarkSel = document.getElementById('remark-filter').value.toUpperCase();
+    const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
+    let count = 0;
+    for (let row of rows) {
+        const type = row.cells[3].textContent.toUpperCase();
+        const remark = row.cells[9].textContent.trim().toUpperCase();
+        const show = (typeSel === 'ALL' || type === typeSel) && (remarkSel === 'ALL' || remark.includes(remarkSel));
+        row.style.display = show ? '' : 'none';
+        if (show) count++;
+    }
+    updateDisplayedDeviceCount(count);
+}
+
+function updateDisplayedDeviceCount(count) {
+    const el = document.getElementById('device-count');
+    if (el) el.innerText = `Displayed Devices: ${count}`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    ['region', 'device-type', 'remark-filter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
+    });
+    fetchDeviceData();
+});
+
+function exportDeviceTableToExcel() {
+    const tbl = document.getElementById("device-table");
+    if (!tbl) return;
+    const wb = XLSX.utils.table_to_book(tbl, { sheet: "Device Table" });
+    XLSX.writeFile(wb, "Device_Table.xlsx");
+}
+
+function exportDeviceHistoryToExcel() {
+    const histTbl = document.querySelector("#device-history-modal table");
+    if (!histTbl) return alert("Please open a device's history first.");
+    const wb = XLSX.utils.table_to_book(histTbl, { sheet: "Device History" });
+    XLSX.writeFile(wb, "Device_History.xlsx");
+}
+
+function copyText(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => showToast(`Copied: ${text}`))
+        .catch(err => console.error("Copy failed: ", err));
+}
+
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 2500); // Hide after 2.5 seconds
+}
+
+// ..........
+
+
+
+// ......
+
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\trend.css
+
+
+:root {
+  --bg: #1a1a1a;
+  --text: #e0e0e0;
+  --card: #262626;
+  --primary: #00bcd4;
+  --secondary: #ff9800;
+  --success: #4caf50;
+  --danger: #f44336;
+  --warning: #ffc107;
+  --hover-bg: #333;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --font: "Segoe UI", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+header {
+  background: #000;
+  padding: 20px;
+  text-align: center;
+  font-size: 36px;
+  box-shadow: 0 4px 6px var(--shadow);
+  border-radius: 0 0 10px 10px;
+  color: var(--warning);
+}
+
+h1 i {
+  margin-right: 10px;
+  color: var(--secondary);
+}
+
+#sidebar-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 15px 20px;
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+#sidebar-content label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+#sidebar-content select,
+#sidebar-content button {
+  margin: 5px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #2e2e2e;
+  color: var(--text);
+}
+
+.search-bar input{
+   margin: 5px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background-color: #2e2e2e;
+  color: white ;
+  font-size: 13px;
+  border: none;
+}
+
+
+#sidebar-content button {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  border: none;
+  transition: background 0.3s;
+}
+
+#sidebar-content button:hover {
+  background-color: #008ba3;
+}
+
+.container {
+  margin: 30px auto;
+  max-width: 96%;
+  overflow-x: auto;
+}
+
+/* 💡 Table Styling Improved */
+
+/* ...... */
+
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px var(--shadow);
+  margin-top: 10px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+thead {
+  background-color: var(--primary);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+th, td {
+  padding: 14px 12px;
+  text-align: center;
+  font-size: 15px;
+  border-right: 1px solid #3a3a3a;  /* 💡 Vertical column lines */
+  border-bottom: 1px solid #3a3a3a; /* 💡 Horizontal row lines */
+}
+
+/* Remove right border from last column */
+th:last-child,
+td:last-child {
+  border-right: none;
+}
+
+/* Zebra Stripes */
+tbody tr:nth-child(even) {
+  background-color: #2f2f2f;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #252525;
+}
+
+/* Hover Effect */
+tbody tr:hover {
+  background-color: #3a3a3a;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Status Coloring via class */
+.status-online {
+  /* color: #2ecc71; */
+  font-weight: bold;
+}
+
+.status-offline {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.status-repair {
+  color: #f39c12;
+  font-weight: bold;
+}
+/* 🪟 Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--card);
+  margin: 5% auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  color: var(--text);
+  position: relative;
+  box-shadow: 0 0 20px var(--shadow);
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+}
+
+
+.scrollable-history-table {
+  max-height: 400px; /* Adjust height as needed */
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.scrollable-history-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+footer {
+  text-align: center;
+  background-color: #111;
+  color: #bbb;
+  padding: 25px;
+  margin-top: 40px;
+  border-top: 1px solid #333;
+}
+
+.footer-logo {
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+button i {
+  margin-right: 6px;
+}
+footer a{
+    color: #fbc531;
+}
+
+
+/*  */
+
+.history-btn {
+    background-color: #00bcd4; /* Bootstrap blue */
+    color: white;
+    border: 1px solid #00bcd4;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.history-btn:hover {
+    background-color: #008ba3; /* Darker blue */
+    border-color: #008ba3;
+}
+
+.history-btn:active {
+    background-color: #004494;
+    border-color: #004494;
+}
+.toast {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: #cc4f4f;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 14px 22px;
+    position: fixed;
+    top: 60px;
+    right: 30px;
+    z-index: 10000;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.copy-text {
+    cursor: pointer;
+}
+
+
+
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\trend.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devices Trend Details</title>
+    <link rel="stylesheet" href="trend.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+
+
+</head>
+
+<body>
+
+
+    <header>
+        <h1 style=" text-align: center;
+    padding: 20px;
+   background-color: hsla(62, 67%, 48%, 0);
+   background-color:black;
+   border-radius: 8px;
+   box-shadow: 0px 4px 6px rgba(178, 190, 11, 0.296);
+   transition: transform 0.3s ease-in-out;
+   color: rgb(198, 210, 18);
+   font-size: 36px;
+   margin: 0;
+   transition: color 0.3s ease;""><i class=" fas fa-chart-line"></i> Devices Trend Details</h1>
+
+    </header>
+
+
+    <!-- Sidebar -->
+    <!-- <div id="sidebar">
+       button id="menu-btn" onclick="toggleSidebar()">☰</button>< -->
+    <div id="sidebar-content">
+        <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Back to Dashboard</button>
+        <button onclick="window.location.href='summary.html'"><i class="fas fa-table"></i> View Summary</button>
+        <button onclick="exportDeviceTableToExcel()"><i class="fas fa-file-export"></i> Export Device Table</button>
+
+
+
+
+
+
+        <label for="region">Select Region:</label>
+        <select id="region" onchange="fetchDeviceData()">
+            <option value="global" selected>Global</option>
+            <option value="apac">APAC</option>
+            <option value="emea">EMEA</option>
+            <option value="laca">LACA</option>
+            <option value="namer">NAMER</option>
+        </select>
+
+        <label for="device-type">Filter by Device Type:</label>
+        <select id="device-type" onchange="filterData()">
+            <option value="ALL">All</option>
+            <option value="CONTROLLER">Controller</option>
+
+            <option value="ARCHIVER">Archiver</option>
+
+            <option value="CAMERA">Camera</option>
+
+            <option value="SERVER">Server</option>
+
+        </select>
+
+        <label for="remark-filter">Filter by Remark:</label>
+        <select id="remark-filter" onchange="filterData()">
+            <option value="ALL">All</option>
+            <option value="Device needs repair">Device needs repair</option>
+            <option value="Device is Online">Device is Online</option>
+            <option value="Device is Offline">Device is Offline</option>
+        </select>
+
+        <label for="city-filter">Filter by Location:</label>
+        <select id="city-filter">
+            <option value="all">All Cities</option>
+        </select>
+
+
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder=" Search by IP, Location, City" />
+        </div>
+    </div>
+    </div>
+
+
+
+
+    <div class="container">
+        <table id="device-table">
+            <thead>
+                <tr>
+                    <th>Sr. No</th>
+                    <th>Device IP</th>
+                    <th>Device Name</th>
+                    <th>Device Type</th>
+                    <th>Uptime Duration</th>
+                    <th>Downtime Count</th>
+                    <th>Downtime Duration</th>
+                    <th>Details</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <!-- Toast container -->
+<div id="toast" class="toast"></div>
+
+    <!-- Device History Modal -->
+    <div id="device-history-modal" class="modal">
+
+        <div class="modal-content">
+
+
+            <div id="device-history-header"></div> <!-- Header for Device Name and IP -->
+
+            <div id="device-history"></div>
+            <!-- <<span class="close" onclick="closeHistoryModal()">&times;</span> -->
+
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <div id="device-history"></div>
+
+
+            <button onclick="exportDeviceHistoryToExcel()" class="history-btn"><i class="fas fa-download"></i> Export
+                Device History</button>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchDeviceData();
+        });
+    </script>
+    <script src="trend.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</body>
+
+</html>
+
+<!-- Footer -->
+<footer style="padding: 20px;
+   margin-top: 20px;
+
+   " class="footer">
+    <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo">
+    <p >&copy;2025 VisionWatch | Powered by <strong style="color: #fbc531;"">Western Union Services India Pvt Ltd.</strong></p>
+    <p>Contact:
+        <a
+            href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com</a>
+        |
+        <a href="tel:+91 20 67632394">+91 2067632394</a>
+    </p>
+</footer>
+
+</body>
+
+</html>
+
+
+C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\trend.js
+
+
+let deviceUptimeTimers = {};
+let deviceDowntimeTimers = {};
+
+// Utility to turn an IP (or any string) into a safe DOM‑ID fragment
+function sanitizeId(str) {
+    return str.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function fetchDeviceData() {
+    const selectedRegion = document.getElementById('region').value;
+    fetch(`http://localhost/api/regions/details/${selectedRegion}`)
+        .then(response => response.json())
+        .then(regionData => {
+            fetchDeviceHistory(regionData.details);
+        })
+        .catch(error => console.error('Error fetching device data:', error));
+}
+
+function fetchDeviceHistory(regionDetails) {
+    fetch(`http://localhost/api/devices/history`)
+        .then(response => response.json())
+        .then(historyData => {
+            populateDeviceTable(regionDetails, historyData);
+            window.deviceHistoryData = historyData; // Store history for reuse
+        })
+        .catch(error => console.error('Error fetching device history:', error));
+}
+
+function populateDeviceTable(details, historyData) {
+    const table = document.getElementById('device-table');
+    let tableBody = table.getElementsByTagName('tbody')[0];
+    if (!tableBody) {
+        tableBody = document.createElement('tbody');
+        table.appendChild(tableBody);
+    }
+
+
+
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    let deviceList = [];
+    let citySet = new Set(); // ✅ moved here
+
+
+
+
+    // ............              .....                   .....             ....    ... 
+    if (details) {
+        ['cameras', 'archivers', 'controllers', 'servers'].forEach(deviceType => {
+            details[deviceType]?.forEach(device => {
+
+                if (device.city) {
+                    citySet.add(device.city); // ✅ now this works
+                }
+
+                const deviceIp = device.ip_address;
+                const safeIp = sanitizeId(deviceIp);
+                const deviceName = device[deviceType.slice(0, -1) + 'name'];
+                const deviceCategory = deviceType.slice(0, -1).toUpperCase();
+
+                const deviceHistory = historyData[deviceIp] || [];
+                const lastStatusEntry = deviceHistory.length > 0 ? deviceHistory[deviceHistory.length - 1] : null;
+                const currentStatus = lastStatusEntry ? lastStatusEntry.status : "Unknown";
+
+                // Calculate downtime count
+                let downtimeCount = deviceHistory.filter(entry => entry.status === "Offline").length;
+
+                deviceList.push({
+                    deviceIp,
+                    safeIp,
+                    deviceName,
+                    deviceCategory,
+                    currentStatus,
+                    deviceHistory,
+                    downtimeCount
+                });
+            });
+        });
+
+
+
+        deviceList.sort((a, b) => {
+            const now = Date.now();
+
+            const aLast = a.deviceHistory[a.deviceHistory.length - 1];
+            const bLast = b.deviceHistory[b.deviceHistory.length - 1];
+
+            const aIsOffline = aLast?.status === "Offline";
+            const bIsOffline = bLast?.status === "Offline";
+
+            const aOfflineDuration = aIsOffline ? (now - new Date(aLast.timestamp)) / 1000 : 0;
+            const bOfflineDuration = bIsOffline ? (now - new Date(bLast.timestamp)) / 1000 : 0;
+
+            const aShouldPrioritize = aIsOffline && aOfflineDuration >= 300;
+            const bShouldPrioritize = bIsOffline && bOfflineDuration >= 300;
+
+            if (aShouldPrioritize && !bShouldPrioritize) return -1;
+            if (!aShouldPrioritize && bShouldPrioritize) return 1;
+
+            return b.downtimeCount - a.downtimeCount;
+        });
+
+
+
+
+
+        deviceList.forEach(({ deviceIp, safeIp, deviceName, deviceCategory, currentStatus, deviceHistory, downtimeCount }, index) => {
+            const row = tableBody.insertRow();
+            row.style.border = "1px solid black";
+
+            // row.innerHTML = `
+            //     <td>${index + 1}</td>
+            //     <td>${deviceIp}</td>
+            //     <td>${deviceName}</td>
+            //     <td>${deviceCategory}</td>
+            //     <td id="uptime-${safeIp}">0h/0m/0s</td>
+            //     <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+            //     <td id="downtime-${safeIp}">0h/0m/0s</td>
+            //     <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+            //     <td id="remark-${safeIp}">Device working properly</td>
+            // `;
+
+            row.innerHTML = `
+    <td>${index + 1}</td>
+    <td>
+        <span id="ip-${safeIp}" class="copy-text" onclick="copyToClipboard('ip-${safeIp}')">${deviceIp}</span>
+    </td>
+    <td>
+        <span id="name-${safeIp}" class="copy-text" onclick="copyToClipboard('name-${safeIp}')">${deviceName}</span>
+    </td>
+    <td>${deviceCategory}</td>
+    <td id="uptime-${safeIp}">0h/0m/0s</td>
+    <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+    <td id="downtime-${safeIp}">0h/0m/0s</td>
+    <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+    <td id="remark-${safeIp}">Device working properly</td>
+`;
+
+
+
+            row.classList.remove('status-online', 'status-offline', 'status-unknown');
+            if (currentStatus === "Online") {
+                row.classList.add('status-online');
+            } else if (currentStatus === "Offline") {
+                row.classList.add('status-offline');
+            } else {
+                row.classList.add('status-unknown');
+            }
+
+            // .....
+
+            if (currentStatus === "Online") {
+                startUptime(deviceIp, deviceHistory);
+            } else {
+                startDowntime(deviceIp, deviceHistory, deviceCategory);
+            }
+
+            // Automatically update remark for each row based on downtime and status
+            updateRemarks(deviceIp, deviceHistory, deviceCategory);
+        });
+    } else {
+        console.error('No details found in the response');
+    }
+
+    filterData();
+}
+
+
+
+function startUptime(ip, hist) {
+    const safe = sanitizeId(ip);
+    clearInterval(deviceDowntimeTimers[safe]);
+    const lastOn = hist.filter(e => e.status === 'Online').pop();
+    if (!lastOn) return;
+    const start = new Date(lastOn.timestamp).getTime();
+    deviceUptimeTimers[safe] = setInterval(() => {
+        const secs = Math.floor((Date.now() - start) / 1000);
+        const el = document.getElementById(`uptime-${safe}`);
+        if (el) el.innerText = formatDuration(secs);
+    }, 1000);
+}
+
+
+
+function startDowntime(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+    clearInterval(deviceUptimeTimers[safeIp]);
+    let lastOfflineEntry = history.filter(entry => entry.status === "Offline").pop();
+    if (!lastOfflineEntry) return;
+
+    let startTime = new Date(lastOfflineEntry.timestamp).getTime();
+    deviceDowntimeTimers[safeIp] = setInterval(() => {
+        let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById(`downtime-${safeIp}`).innerText = formatDuration(elapsedTime);
+        updateDowntimeCount(deviceIp, history, deviceCategory);
+    }, 1000);
+}
+
+// **Fix Downtime Count and Remarks Update (with offline short‑circuit)**
+function updateDowntimeCount(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+
+    // If the last status is Offline, force remark and exit
+    const lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
+    let remarkElement = document.getElementById(`remark-${safeIp}`);
+    if (lastStatus === "Offline" && remarkElement) {
+        remarkElement.innerText = "Device is Offline.";
+        // Still update the count, but skip the "Device is Online" logic
+        let downtimeEntries = history.filter(entry => entry.status === "Offline");
+        let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+            if (deviceCategory === "SERVER") return true;
+            if (index === 0) return true;
+            let previousEntry = arr[index - 1];
+            let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+            return duration >= 300;
+        });
+        document.getElementById(`downtime-count-${safeIp}`).innerText = filteredDowntimeEntries.length;
+        return;
+    }
+
+    // Otherwise, run the existing logic:
+    let downtimeEntries = history.filter(entry => entry.status === "Offline");
+
+    // Only count downtimes that last more than 5 minutes, except for servers
+    let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+        if (deviceCategory === "SERVER") return true;
+        if (index === 0) return true;
+        let previousEntry = arr[index - 1];
+        let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+        return duration >= 300;
+    });
+
+    let downtimeCount = filteredDowntimeEntries.length;
+    let downtimeElement = document.getElementById(`downtime-count-${safeIp}`);
+    if (downtimeElement) downtimeElement.innerText = downtimeCount;
+
+    // Update remarks based on downtime count (for Online devices)
+    if (remarkElement) {
+        if (downtimeCount === 0) {
+            remarkElement.innerText = "Device is Online.";
+        } else if (downtimeCount >= 15) {
+            remarkElement.innerText = `Device is Online, but it had ${downtimeCount} offline occurrences. Needs repair!`;
+        } else {
+            remarkElement.innerText = `Device is Online, but it had ${downtimeCount} offline occurrences.`;
+        }
+    }
+}
+
+function updateRemarks(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+    let downtimeEntries = history.filter(entry => entry.status === "Offline");
+
+    // Filter downtimes that lasted more than 5 minutes (except for servers)
+    let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+        if (deviceCategory === "SERVER") return true;
+        if (index === 0) return true;
+        let previousEntry = arr[index - 1];
+        let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+        return duration >= 300;
+    });
+
+    let downtimeCount = filteredDowntimeEntries.length;
+    let lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
+    let remarkElement = document.getElementById(`remark-${safeIp}`);
+
+    // Calculate total offline duration
+    let totalOfflineTime = 0;
+    let lastOfflineTime = null;
+    history.forEach(entry => {
+        if (entry.status === "Offline") {
+            if (!lastOfflineTime) lastOfflineTime = new Date(entry.timestamp);
+        } else if (entry.status === "Online" && lastOfflineTime) {
+            totalOfflineTime += (new Date(entry.timestamp) - lastOfflineTime) / 1000;
+            lastOfflineTime = null;
+        }
+    });
+    if (lastOfflineTime) {
+        totalOfflineTime += (new Date() - lastOfflineTime) / 1000;
+    }
+    let totalOfflineDays = Math.floor(totalOfflineTime / 86400);
+
+    let needsRepair = downtimeCount >= 15 || totalOfflineDays >= 1;
+
+
+    if (remarkElement) {
+        if (lastStatus === "Offline") {
+            remarkElement.innerText = needsRepair ? "Device is Offline, needs repair." : "Device is Offline.";
+            remarkElement.style.color = needsRepair ? "#c62828" : "#e65100";
+        } else if (lastStatus === "Online") {
+            if (needsRepair) {
+                remarkElement.innerText = "Device is Online, needs repair.";
+                remarkElement.style.color = "#e65100";
+            } else if (downtimeCount > 0) {
+                remarkElement.innerText = `Device is Online, it had ${downtimeCount} downtime occurrences.`;
+                remarkElement.style.color = "#f9a825";
+            } else {
+                remarkElement.innerText = "Device is Online.";
+                remarkElement.style.color = "#2e7d32";
+            }
+        } else {
+            remarkElement.innerText = "Device status unknown.";
+            remarkElement.style.color = "#6d6d6d";
+        }
+    }
+
+    let downtimeElement = document.getElementById(`downtime-count-${safeIp}`);
+    if (downtimeElement) downtimeElement.innerText = downtimeCount;
+}
+
+// **Updated function to format duration properly**
+function formatDuration(seconds) {
+    let days = Math.floor(seconds / 86400);
+    let hours = Math.floor((seconds % 86400) / 3600);
+    let minutes = Math.floor((seconds % 3600) / 60);
+    let secs = Math.round(seconds % 60);
+
+    let result = [];
+    if (days > 0) result.push(`${days}d`);
+    if (hours > 0) result.push(`${hours}h`);
+    if (minutes > 0) result.push(`${minutes}m`);
+    if (secs > 0 || result.length === 0) result.push(`${secs}s`);
+
+    return result.join('/');
+}
+
+function openDeviceHistory(deviceIp, deviceName) {
+    if (!window.deviceHistoryData) {
+        console.error("Device history data not loaded.");
+        return;
+    }
+    const history = window.deviceHistoryData[deviceIp] || [];
+    displayDeviceHistory(deviceIp, deviceName, history);
+    document.getElementById('device-history-modal').style.display = 'block';
+}
+
+function calculateDowntimeDuration(timestamp, history) {
+    let downtimeStart = new Date(timestamp).getTime();
+    let nextOnlineEntry = history.find(entry =>
+        entry.status === "Online" && new Date(entry.timestamp).getTime() > downtimeStart
+    );
+    if (nextOnlineEntry) {
+        let downtimeEnd = new Date(nextOnlineEntry.timestamp).getTime();
+        let durationInSeconds = (downtimeEnd - downtimeStart) / 1000;
+        return formatDuration(durationInSeconds);
+    }
+    let durationInSeconds = (Date.now() - downtimeStart) / 1000;
+    return formatDuration(durationInSeconds);
+}
+
+function displayDeviceHistory(deviceIp, deviceName, history) {
+    const modalHeader = document.getElementById('device-history-header');
+    const historyContainer = document.getElementById('device-history');
+    modalHeader.innerHTML = `
+        <h3>Device History</h3>
+        <p><strong>Device Name:</strong> ${deviceName}</p>
+        <p><strong>Device IP:</strong> ${deviceIp}</p>
+        <hr>
+    `;
+    historyContainer.innerHTML = '';
+    if (history.length === 0) {
+        historyContainer.innerHTML = `<p>No history available for this device.</p>`;
+        return;
+    }
+    let tableHTML = `
+        <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Downtime Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    let lastOfflineTimestamp = null;
+    history.forEach((entry, index) => {
+        let entryDate = new Date(entry.timestamp);
+        let formattedDate = entryDate.toLocaleDateString();
+        let formattedTime = entryDate.toLocaleTimeString();
+        let formattedDay = entryDate.toLocaleString('en-US', { weekday: 'long' });
+        let downtimeDuration = "-";
+        if (entry.status === "Offline") {
+            lastOfflineTimestamp = entry.timestamp;
+        } else if (entry.status === "Online" && lastOfflineTimestamp) {
+            downtimeDuration = calculateDowntimeDuration(lastOfflineTimestamp, history);
+            lastOfflineTimestamp = null;
+        }
+        tableHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${formattedDate}</td>
+                <td>${formattedDay}</td>
+                <td>${formattedTime}</td>
+                <td style="color: ${entry.status === "Online" ? 'green' : 'red'};">${entry.status}</td>
+                <td>${downtimeDuration}</td>
+            </tr>
+        `;
+    });
+    tableHTML += `</tbody></table>`;
+    // historyContainer.innerHTML = tableHTML;
+    historyContainer.innerHTML = `
+    <div class="scrollable-history-table">
+        ${tableHTML}
+    </div>
+`;
+}
+
+function closeHistoryModal() {
+    document.getElementById('device-history-modal').style.display = 'none';
+}
+
+function exportDeviceTableToExcel() {
+    const table = document.getElementById("device-table");
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Device Table" });
+    XLSX.writeFile(workbook, "Device_Table.xlsx");
+}
+
+function exportDeviceHistoryToExcel() {
+    const historyTable = document.querySelector("#device-history-modal table");
+    if (!historyTable) {
+        alert("Please open a device's history first.");
+        return;
+    }
+    const workbook = XLSX.utils.table_to_book(historyTable, { sheet: "Device History" });
+    XLSX.writeFile(workbook, "Device_History.xlsx");
+}
+
+
+function filterData() {
+    const selectedType = document.getElementById('device-type').value.toUpperCase();
+    const selectedRemark = document.getElementById('remark-filter').value.toUpperCase();
+    const searchText = document.getElementById('search-input').value.toUpperCase().trim();
+
+    const table = document.getElementById('device-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let row of rows) {
+        const type = row.cells[3].textContent.toUpperCase(); // Device type
+        const remark = row.cells[8].textContent.toUpperCase(); // Remark
+        const ip = row.cells[1].textContent.toUpperCase(); // IP
+        const name = row.cells[2].textContent.toUpperCase(); // Device name (location)
+        const city = name.split(',').pop().trim(); // Optional: parse city if included in name
+
+        const matchesType = selectedType === "ALL" || type === selectedType;
+        const matchesRemark = selectedRemark === "ALL" || remark.includes(selectedRemark);
+
+        const matchesSearch = (
+            ip.includes(searchText) ||
+            name.includes(searchText) ||
+            city.includes(searchText)
+        );
+
+        row.style.display = (matchesType && matchesRemark && matchesSearch) ? "" : "none";
+    }
+}
+
+function populateCityFilter(cities) {
+    const cityFilter = document.getElementById('city-filter');
+    cityFilter.innerHTML = `<option value="all">All Cities</option>`;
+    cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        cityFilter.appendChild(option);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('region').addEventListener('change', fetchDeviceData);
+    // Automatically filter when dropdowns change
+    document.getElementById('device-type').addEventListener('change', filterData);
+    document.getElementById('remark-filter').addEventListener('change', filterData);
+    fetchDeviceData(); // Initial load
+});
+
+document.getElementById('search-input').addEventListener('input', filterData);
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 2500);
+}
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId)?.innerText;
+    if (text) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast(`Copied: ${text}`))
+            .catch(err => console.error("Failed to copy:", err));
+    }
+}
