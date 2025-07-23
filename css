@@ -1,3 +1,21 @@
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
+const seatCapacities = {
+  Dubai: 53,
+  Dublin: 78,
+  Rome: 39,
+  London: 41,
+  Moscow: 108,
+  Casablanca: 55,
+  Madrid: 65,
+};
+
+export default seatCapacities;
+
+
+
+
+
+
 
 <Area
   type="monotone"
