@@ -1,25 +1,3 @@
-
-
-Compiled with problems:
-×
-ERROR
-[eslint] 
-src\components\Header.jsx
-  Line 59:18:  Unexpected use of 'location'      no-restricted-globals
-  Line 61:18:  'isPartitionPage' is not defined  no-undef
-  Line 62:19:  'currentCode' is not defined      no-undef
-
-Search for the keywords to learn more about each error.
-
-
-
-
-
-
-
-
-
-//C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Header.jsx
 import React, { useEffect, useState } from 'react';
 import {
   AppBar, Toolbar, Box, Typography,
@@ -40,12 +18,11 @@ import moroccoFlag from '../assets/flags/morocco.png';
 import russiaFlag from '../assets/flags/russia.png';
 import ukFlag from '../assets/flags/uk.png';
 import spainFlag from '../assets/flags/spain.png';
+
 import { partitionList } from '../api/occupancy.service';
 import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
-
 const displayNameMap = {
-
   'AUT.Vienna': 'Vienna',
   'DU.Abu Dhab': 'Abu Dhabi',
   'IE.Dublin': 'Dublin',
@@ -57,45 +34,36 @@ const displayNameMap = {
   'ES.Madrid': 'Madrid'
 };
 
-
-
+const flagMap = {
+  'AUT.Vienna': austriaFlag,
+  'DU.Abu Dhab': uaeFlag,
+  'IE.Dublin': irelandFlag,
+  'IT.Rome': italyFlag,
+  'LT.Vilnius': lithuaniaFlag,
+  'MA.Casablanca': moroccoFlag,
+  'RU.Moscow': russiaFlag,
+  'UK.London': ukFlag,
+  'ES.Madrid': spainFlag
+};
 
 export default function Header() {
-  // const navigate = useNavigate();
-  // const loc = useLocation();
-  // const { data } = useLiveOccupancy(1000);
-  // const [lastUpdate, setLastUpdate] = useState('');
-
   const navigate = useNavigate();
-  const loc = useLocation(); // ✅ correct hook usage
+  const loc = useLocation();
   const { data } = useLiveOccupancy(1000);
   const [lastUpdate, setLastUpdate] = useState('');
 
+  // ✅ Update time display
   useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
+    if (data) {
+      setLastUpdate(new Date().toLocaleTimeString());
+    }
   }, [data]);
 
+  // ✅ Parse path
   const parts = loc.pathname.split('/').filter(Boolean);
-  // const isPart = parts[0] === 'partition' && parts[1];
-  const isHome = location.pathname === '/';
-
-  const isPart = isPartitionPage;
-  const current = currentCode;
-
-  // const current = isPart ? decodeURIComponent(parts[1]) : '';
-  //  const isHome = loc.pathname === '/'; // ✅ fixed: use loc
-
-  const flagMap = {
-    'AUT.Vienna': austriaFlag,
-    'DU.Abu Dhab': uaeFlag,
-    'IE.Dublin': irelandFlag,
-    'IT.Rome': italyFlag,
-    'LT.Vilnius': lithuaniaFlag,
-    'MA.Casablanca': moroccoFlag,
-    'RU.Moscow': russiaFlag,
-    'UK.London': ukFlag,
-    'ES.Madrid': spainFlag
-  };
+  const isHome = loc.pathname === '/';
+  const isPart = parts[0] === 'partition' && !!parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
 
   return (
     <AppBar position="static" color="primary" sx={{ mb: 2 }}>
@@ -104,7 +72,7 @@ export default function Header() {
           <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
 
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+            EMEA Occupancy{current && ` • ${displayNameMap[current] || current.split('.').pop()}`}
           </Typography>
 
           <IconButton color="inherit" onClick={() => navigate('/')}>
@@ -115,15 +83,14 @@ export default function Header() {
             <HistoryIcon />
           </IconButton>
 
-
-          {/* ✅ Static Vilnius button shown only on main dashboard */}
+          {/* ✅ Static Vilnius button on home */}
           {isHome && (
             <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
               <ListAltIcon />
             </IconButton>
           )}
 
-          {/* ✅ Dynamic partition button shown when inside any partition */}
+          {/* ✅ Dynamic partition details button */}
           {isPart && (
             <IconButton
               color="inherit"
@@ -131,32 +98,10 @@ export default function Header() {
               <ListAltIcon />
             </IconButton>
           )}
-
-          {/* ✅ Static Vilnius button shown only on main dashboard
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-
-          {/* ✅ Dynamic partition button shown when inside any partition *
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-              <ListAltIcon />
-            </IconButton>
-          )} */}
-
-
         </Box>
 
-
-
-
-        {/* ,,,,,,,,,,,,,,,,,,,,,,,,,,,, */}
+        {/* Right side: Region Selector */}
         <Box display="flex" alignItems="center">
-
           <Select
             size="small"
             value={current}
@@ -174,26 +119,20 @@ export default function Header() {
                     alt={selected}
                     sx={{ width: 24, height: 16, mr: 1 }}
                   />
-                  {selected}
+                  {displayNameMap[selected] || selected}
                 </Box>
               ) : "— Select Site —"
             }
-
-
             sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
           >
             <MenuItem value="">— Select Site —</MenuItem>
-
-            + {partitionList.map(p => (
+            {partitionList.map(p => (
               <MenuItem key={p} value={p}>
                 {displayNameMap[p] || p}
               </MenuItem>
             ))}
           </Select>
-
         </Box>
-
-
       </Toolbar>
     </AppBar>
   );
