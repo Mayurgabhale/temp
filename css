@@ -1,238 +1,9 @@
-const name = floor.trim();
-const normalizedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(); // E.g., "london" → "London"
-const capacity = buildingCapacities[normalizedName] || 0;
-const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
-return {
-  name,
-  headcount: cnt,
-  capacity,
-  percentage: pct
-};
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\ChartCard.jsx
 
 
 
 
-
-
-
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
-
-const seatCapacities = {
-  Dubai: 53,
-  Dublin: 78,
-  Rome: 39,
-  London: 41,
-  Moscow: 108,
-  Casablanca: 55,
-  Madrid: 65,
-};
-
-export default seatCapacities;
-
-
-
-
-
-
-
-
-5 <Tooltip
-  contentStyle={{
-    backgroundColor: '#FFD666',
-    border: `1px solid ${colors.head}`,
-    borderRadius: 4,
-    padding: 8,
-    color: '#000'
-  }}
-  content={({ active, payload, label }) => {
-    if (!active || !payload || !payload.length) return null;
-    const datum = payload[0].payload;
-    return (
-      <div style={{
-        backgroundColor: '#FFD666',
-        border: `1px solid ${colors.head}`,
-        borderRadius: 4,
-        padding: 8,
-        color: '#000'
-      }}>
-        <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
-        <div>Headcount: {datum.headcount}</div>
-        <div>Usage %: {datum.percentage}%</div>
-        <div>Seat Capacity: {datum.capacity}</div>
-      </div>
-    );
-  }}
-/>
-
-
-......
-
-
-
-
-
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  Legend, Brush
-} from 'recharts';
-import dayjs from 'dayjs';
-
-export default function ChartCard({
-  data = [],
-  dataKey = 'value',
-  colors = { head: '#FFC107', cap: '#B0BEC5' },
-  chartHeight = 300,
-  title = ''
-}) {
-  const [hidden, setHidden] = useState({});
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return (
-      <Card>
-        <CardContent>
-          <Typography>No data to display.</Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const handleLegend = (o) => {
-    const key = o.dataKey;
-    setHidden(h => ({ ...h, [key]: !h[key] }));
-  };
-
-  const lineColor = colors.head;
-
-  return (
-    <Card>
-      <CardContent>
-        {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
-        <Box sx={{ width: '100%', height: chartHeight }}>
-          <ResponsiveContainer>
-            <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-              <defs>
-                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={colors.head} stopOpacity={0.8} />
-                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-
-              <XAxis
-                dataKey="name"
-                tickFormatter={t =>
-                  typeof t === 'number' ? dayjs(t).format('HH:mm:ss') : t
-                }
-              />
-              <YAxis />
-
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#FFD666',
-                  border: `1px solid ${lineColor}`,
-                  borderRadius: 4,
-                  padding: 8,
-                  color: '#000'
-                }}
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const datum = payload[0].payload;
-                  return (
-                    <div style={{
-                      backgroundColor: '#FFD666',
-                      border: `1px solid ${lineColor}`,
-                      borderRadius: 4,
-                      padding: 8,
-                      color: '#000'
-                    }}>
-                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
-                      <div>Headcount: {datum.headcount}</div>
-                      <div>Usage %: {datum.percentage}%</div>
-                      <div>Seat Capacity: {datum.capacity}</div>
-                    </div>
-                  );
-                }}
-              />
-
-              <Legend onClick={handleLegend} />
-              <Area
-                type="monotone"
-                dataKey={dataKey}
-                stroke={colors.head}
-                fill="url(#colorHead)"
-                hide={hidden[dataKey]}
-              />
-              <Brush dataKey="name" height={20} stroke={colors.head} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
-
-
-
-
-
-
-
-
-.......
-
-
-
-
-
-
-
-
-
-<Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
-                // custom content so we can show capacity only on hover
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const datum = payload[0].payload;
-                  return (
-                    <div style={{
-                      backgroundColor: '#FFD666',
-                      border: `1px solid ${lineColor}`,
-                      borderRadius: 4,
-                      padding: 8,
-                    }}>
-                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
-                      <div>Headcount: {datum.headcount}</div>
-                      <div>Usage %: {datum.percentage}%</div>
-                      <div>Seat Capacity: {datum.capacity}</div>
-                    </div>
-                  );
-                }}
-              />
-
-
-
- // Enrich each datum with its usage percentage
-  const enriched = data.map((d, i) => ({
-    ...d,
-    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
-  }));
-  const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
-  const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
-  const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
-  return (
-    <Card
-
-
-read above code careflly and belwo chart tooltip add usage and seat capacity: careflly witou and futurer error
-
-
-
-
-
-
+// made changes by mayur
 
 
 import React, { useState } from 'react';
@@ -289,7 +60,36 @@ export default function ChartCard({
                 }
               />
               <YAxis />
-              <Tooltip />
+              {/* <Tooltip /> */}
+
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#FFD666',
+                  border: `1px solid ${colors.head}`,
+                  borderRadius: 4,
+                  padding: 8,
+                  color: '#000'
+                }}
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const datum = payload[0].payload;
+                  return (
+                    <div style={{
+                      backgroundColor: '#FFD666',
+                      border: `1px solid ${colors.head}`,
+                      borderRadius: 4,
+                      padding: 8,
+                      color: '#000'
+                    }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
+                      <div>Headcount: {datum.headcount}</div>
+                      <div>Usage %: {datum.percentage}%</div>
+                      <div>Seat Capacity: {datum.capacity}</div>
+                    </div>
+                  );
+                }}
+              />
               <Legend onClick={handleLegend} />
               <Area
                 type="monotone"
@@ -308,7 +108,7 @@ export default function ChartCard({
 }
 
 
-
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\PartitionDetail.jsx
 
 
 
@@ -371,6 +171,7 @@ export default function PartitionDetail() {
 
   // Build floor entries
   const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
+    
     const name     = floor.trim();
     const capacity = buildingCapacities[name] || 0;
     const pct      = capacity ? Math.round(cnt / capacity * 100) : 0;
@@ -380,6 +181,8 @@ export default function PartitionDetail() {
       capacity,
       percentage: pct
     };
+
+
   });
 
   // Six cards
@@ -468,6 +271,30 @@ export default function PartitionDetail() {
     </>
   );
 }
+
+
+
+
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
+
+
+const seatCapacities = {
+  Dubai: 53,
+  Dublin: 78,
+  Rome: 39,
+  London: 41,
+  Moscow: 108,
+  Casablanca: 55,
+  Madrid: 65,
+};
+
+export default seatCapacities;
+
+
+
+
+
 
 
 
