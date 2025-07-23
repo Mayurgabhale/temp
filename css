@@ -1,4 +1,18 @@
-
+<Area
+  type="monotone"
+  dataKey={dataKey}
+  stroke={colors.head}
+  fill="url(#colorHead)"
+  hide={hidden[dataKey]}
+>
+  <LabelList
+    dataKey={dataKey}
+    position="top"
+    fill="#fff"
+    fontSize={12}
+    formatter={(value) => `${value}`}
+  />
+</Area>
 
 
 
