@@ -1,1 +1,9 @@
-          <StarIcon fontSize="large" border ='1px solid red ' />
+<StarIcon
+  fontSize="large"
+  sx={{
+    color: '#FFD700',           // change icon color (e.g., gold)
+    border: '2px solid red',    // apply border
+    borderRadius: '50%',        // optional: make it circular
+    padding: '4px',             // optional: spacing inside the border
+  }}
+/>
