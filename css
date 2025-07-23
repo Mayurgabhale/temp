@@ -1,3 +1,26 @@
+Compiled with problems:
+×
+ERROR
+[eslint] 
+src\pages\PartitionDetail.jsx
+  Line 490:25:  'ArrowBackIosNew' is not defined  react/jsx-no-undef
+
+Search for the keywords to learn more about each error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <Card sx={{ borderRadius: 3, boxShadow: '0 2px 12px rgba(0,0,0,0.1)', bgcolor: '#fff' }}>
   <CardContent>
     {title && (
