@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react'; import { useParams 
 
 import Header from '../components/Header'; import Footer from '../components/Footer'; import LoadingSpinner from '../components/LoadingSpinner'; import { fetchHistory } from '../api/occupancy.service';
 
-const apacPartitionDisplay = { 'IN.Pune':         { country: 'India',       city: 'Pune' }, 'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' }, 'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' }, 'PH.Taguig':       { country: 'Philippines', city: 'Taguig City' }, 'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' }, };
+const apacPartitionDisplay = { 'IN.Pune':         { country: 'India',       city: 'Pune' }, 'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' }, 'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' }, 'PH.Taguig':       { country: 'Philippines', city: 'Taguig' }, 'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' }, };
 
 const apacForwardKey = { 'IN.Pune':         'Pune', 'MY.Kuala Lumpur': 'Kuala Lumpur', 'PH.Quezon':       'Quezon City', 'PH.Taguig':       'Taguig City', 'JP.Tokyo':        'JP.Tokyo', };
 
@@ -20,9 +20,9 @@ useEffect(() => { setLoading(true); fetchHistory() .then(json => setData(json)) 
 
 const summaryEntry = useMemo(() => { if (!data || !pickedDate) return null; const dateStr = format(pickedDate, 'yyyy-MM-dd'); return data.summaryByDate.find(r => r.date === dateStr) || null; }, [data, pickedDate]);
 
-const partitionRows = useMemo(() => { if (!summaryEntry) return []; return Object.entries(summaryEntry.partitions) .filter(([key]) => !backendFilterKey || key === backendFilterKey) .map(([key, vals]) => { const feCode = apacReverseKey[key]; const display = feCode && apacPartitionDisplay[feCode]; return { country: display?.country ?? key, city: display?.city ?? key, employee: vals.Employee ?? vals.EmployeeCount ?? 0, contractor: vals.Contractor ?? vals.ContractorCount ?? 0, total: vals.total ?? 0, }; }); }, [summaryEntry, backendFilterKey]);
+const partitionRows = useMemo(() => { if (!summaryEntry) return []; return Object.entries(summaryEntry.partitions) .filter(([key]) => !backendFilterKey ? true : key === backendFilterKey) .map(([key, vals]) => { const feCode = apacReverseKey[key]; const display = feCode && apacPartitionDisplay[feCode]; return { country: display?.country ?? key, city: display?.city ?? key, employee: vals.Employee ?? vals.EmployeeCount ?? 0, contractor: vals.Contractor ?? vals.ContractorCount ?? 0, total: vals.total ?? 0, }; }); }, [summaryEntry, backendFilterKey]);
 
-const detailRows = useMemo(() => { if (!data || !pickedDate) return []; const dateStr = format(pickedDate, 'yyyy-MM-dd'); return data.details .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr) .filter(r => !backendFilterKey || r.PartitionName2 === backendFilterKey) .filter(r => r.Direction === 'InDirection') .reduce((acc, row) => { const key = ${row.PersonGUID}-${row.PersonnelType}; if (!acc._seen.has(key)) { acc._seen.add(key); acc.rows.push(row); } return acc; }, { _seen: new Set(), rows: [] }).rows; }, [data, pickedDate, backendFilterKey]);
+const detailRows = useMemo(() => { if (!data || !pickedDate) return []; const dateStr = format(pickedDate, 'yyyy-MM-dd'); return data.details .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr) .filter(r => !backendFilterKey || r.PartitionName2 === backendFilterKey) .filter(r => r.Direction === 'InDirection') .reduce((acc, row) => { const key = ${row.PersonGUID}-${row.PersonnelType}; if (!acc._seen.has(key)) { acc._seen.add(key); acc.rows.push(row); } return acc; }, { _seen: new Set(), rows: [] }) .rows; }, [data, pickedDate, backendFilterKey]);
 
 const handleExport = () => { const ws = XLSX.utils.json_to_sheet( detailRows.map((r, i) => ({ Sr: i + 1, Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'), Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'), EmployeeID: r.EmployeeID, Name: r.ObjectName1, PersonnelType: r.PersonnelType, Door: r.Door, Partition: formatPartition(r.PartitionName2), })) ); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Details'); const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }); saveAs(new Blob([buf]), apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx); };
 
@@ -35,13 +35,19 @@ return ( <> <Header /> <Container maxWidth={false} disableGutters sx={{ pt: 2, p
             <Table sx={{ border: '2px solid #000' }}>
               <TableHead>
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
+                  <TableCell colSpan={5} align="center" sx={{
+                    fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000'
+                  }}>
                     {format(pickedDate, 'EEEE, d MMMM, yyyy')}
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: '#FFC107' }}>
-                  {[ 'Country', 'City', 'Employee', 'Contractors', 'Total' ].map(h => (
-                    <TableCell key={h} align={['Country', 'City'].includes(h) ? 'left' : 'right'} sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                  {['Country', 'City', 'Employee', 'Contractors', 'Total'].map(h => (
+                    <TableCell
+                      key={h}
+                      align={['Country','City'].includes(h) ? 'left' : 'right'}
+                      sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}
+                    >
                       {h}
                     </TableCell>
                   ))}
@@ -66,6 +72,7 @@ return ( <> <Header /> <Container maxWidth={false} disableGutters sx={{ pt: 2, p
               </TableBody>
             </Table>
           </Paper>
+
           <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
             <Button variant="contained" sx={{ bgcolor: '#FFC107', color: '#000' }} onClick={() => setShowDetails(v => !v)}>
               {showDetails ? 'Hide Details' : 'See Details'}
@@ -103,7 +110,7 @@ return ( <> <Header /> <Container maxWidth={false} disableGutters sx={{ pt: 2, p
             <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: '#000' }}>
-                  {[ 'Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition' ].map(h => (
+                  {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
                     <TableCell key={h} align="center" sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>{h}</TableCell>
                   ))}
                 </TableRow>
