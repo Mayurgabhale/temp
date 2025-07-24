@@ -1,3 +1,31 @@
+
+in history page we slect history means this routen http://localhost:3000/history 
+we get thies datea >> 
+Tuesday, 22 July, 2025
+Country	City	Employees	Contractors	Total
+Philippines	Quezon City	117	33	150
+India	Pune	828	105	933
+Philippines	Taguig	5	2	7
+Japan	Tokyo	8	1	9
+MY.Kuala Lumpur	MY.Kuala Lumpur	4	1	5
+Total	962	142	1104
+
+
+but on particular regions route select this route http://localhost:3000/partition/Pune/history
+we get this emptry table date >> 
+Tuesday, 22 July, 2025
+Country	City	Employees	Contractors	Total
+Total	0	0	0
+
+so we need on this route slect http://localhost:3000/partition/Pune/history 
+we get all data valuse not 0 
+
+so read beleow history filese, and update careflly 
+
+
+
+
+
 // src/pages/History.jsx — APAC Edition
 
 import React, { useEffect, useState, useMemo } from 'react';
