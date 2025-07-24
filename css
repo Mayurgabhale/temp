@@ -1,18 +1,18 @@
-.filter(([key]) => {
-  if (!key) return false; // protect from undefined key
-  if (!decodedPartition) return true;
-
-  const normalizedKey = key.toLowerCase();
-  const normalizedPartition = decodedPartition.toLowerCase();
-
-  return (
-    normalizedKey === normalizedPartition ||
-    normalizedKey.endsWith(`.${normalizedPartition}`) ||
-    normalizedKey.includes(normalizedPartition)
-  );
-})
-
-
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of undefined (reading 'includes')
+TypeError: Cannot read properties of undefined (reading 'includes')
+    at http://localhost:3000/static/js/src_pages_History_jsx.chunk.js:188:103
+    at Array.filter (<anonymous>)
+    at http://localhost:3000/static/js/src_pages_History_jsx.chunk.js:188:6
+    at updateMemo (http://localhost:3000/static/js/bundle.js:18686:17)
+    at Object.useMemo (http://localhost:3000/static/js/bundle.js:27120:16)
+    at exports.useMemo (http://localhost:3000/static/js/bundle.js:41571:32)
+    at History (http://localhost:3000/static/js/src_pages_History_jsx.chunk.js:177:68)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
 
 
 
