@@ -1,3 +1,9 @@
+
+chunk-2R5PZ2QN.js?v=da36678b:35 Uncaught TypeError: createTheme_default is not a function
+    at chunk-2R5PZ2QN.js?v=da36678b:35:20
+
+
+
 // frontend/src/pages/GlobalPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
