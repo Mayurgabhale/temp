@@ -1,3 +1,6 @@
+import { createTheme } from '@mui/material/styles';  // ✅ correct
+
+
 
 chunk-2R5PZ2QN.js?v=da36678b:35 Uncaught TypeError: createTheme_default is not a function
     at chunk-2R5PZ2QN.js?v=da36678b:35:20
