@@ -1,63 +1,287 @@
-/* Header base */
-.header {
-  background-color: var(--wu-black);
-  color: var(--wu-yellow);
-  padding: 1.5rem 1rem;
-  border-bottom: 4px solid var(--wu-yellow);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+curantlty we are using mapchart.jsx
+i want ot use regionmap.jsx 
+kindly update path 
 
-/* Center all content */
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-}
 
-/* Logo + text alignment */
-.header-logo-text {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+// frontend/src/pages/GlobalPage.jsx
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, CircularProgress } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import MapChart from '../components/MapChart.jsx';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-/* Logo styling */
-.logo {
-  height: 48px;
-  width: auto;
-}
+export default function GlobalPage() {
+  const navigate = useNavigate();
+  const [counts, setCounts] = useState(null);
+  const [selected, setSelected] = useState('global');
 
-/* Typography */
-.header-text h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.2;
-  letter-spacing: 0.4px;
-}
+  useEffect(() => {
+    let isMounted = true;
 
-.header-text p {
-  font-size: 1rem;
-  margin: 0;
-  opacity: 0.9;
-}
+    const fetchCounts = () => {
+      axios.get('/api/headcount')
+        .then(res => {
+          if (isMounted) setCounts(res.data);
+        })
+        .catch(err => {
+          console.error('Failed to fetch headcounts', err);
+          if (isMounted) setCounts({ apac: 0, emea: 0, laca: 0, namer: 0 });
+        });
+    };
 
-/* Responsive: slightly scale up on larger screens */
-@media screen and (min-width: 768px) {
-  .header-text h1 {
-    font-size: 2.2rem;
+    // Initial load
+    fetchCounts();
+    // Poll every 15 seconds
+    const intervalId = setInterval(fetchCounts, 1_000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  if (!counts) {
+    return (
+      <Box display="flex" justifyContent="center" mt={6}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  .header-text p {
-    font-size: 1.1rem;
-  }
+  const REGION_CARDS = [
+    { key: 'apac', label: 'APAC', url: 'http://10.199.22.57:3000/', textColor: '#f5650c' },
+    { key: 'emea', label: 'EMEA', url: 'http://10.199.22.57:3001/', textColor: '#11e6ed' },
+    { key: 'laca', label: 'LACA', url: 'http://10.199.22.57:3003/', textColor: '#FF2DD1' },
+    { key: 'namer', label: 'NAMER', url: 'http://10.199.22.57:3002/', textColor: '#a6e61c' },
+  ];
+
+  return (
+    <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto 1fr auto', height: '100vh' }}>
+      {/* Header */}
+      <Box
+        px={2} py={3}
+        sx={{
+          backgroundColor: 'black', color: '#fff',
+          borderBottom: '4px solid #FFD700',
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+        }}
+      >
+        <Box component="img" src="/wu-head-logo.png" alt="WU Logo"
+          sx={{ height: { xs: 40, md: 60 }, mr: 2 }} />
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+          Global Headcount Dashboard
+        </Typography>
+      </Box>
+
+      {/* Region Cards */}
+      <Box
+        sx={{
+          position: 'sticky', top: 2, zIndex: 5,
+          display: 'flex', justifyContent: 'center', flexWrap: 'wrap',
+          p: 2, gap: 2, backgroundColor: 'transparent',
+        }}
+      >
+        {REGION_CARDS.map(region => (
+          <Box key={region.key}
+            onClick={() => { window.location.href = region.url; }}
+            sx={{
+              cursor: 'pointer', width: 200, height: 80,
+              display: 'flex', flexDirection: 'column',
+              justifyContent: 'center', alignItems: 'center',
+              border: '4px solid rgba(255, 204, 0, 0.89)', borderRadius: 2,
+              boxShadow: 3,
+              color: region.textColor,
+              '&:hover': { opacity: 0.9 },
+            }}
+          >
+            <Typography variant="subtitle1"
+              sx={{
+                fontWeight: 'bold',
+                color: region.textColor,
+                fontSize: { xs: '1.3rem' }
+              }}
+            >
+              {region.label}
+            </Typography>
+            <Typography variant="h3"
+              sx={{
+                color: region.textColor,
+                fontSize: { xs: '1.5rem', sm: '1.8rem', md: '1.8rem' },
+                fontWeight: 700
+              }}
+            >
+              {typeof counts[region.key] === 'number' ? counts[region.key] : 0}
+            </Typography>
+          </Box>
+        ))}
+
+        {/* VIP card */}
+        <Box onClick={() => navigate('/vip')}
+          sx={{
+            cursor: 'pointer',
+            display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center',
+            width: 100, height: 80,
+            backgroundColor: 'black', color: '#FFD700',
+            border: '4px solid rgba(255, 204, 0, 0.89)', borderRadius: 2,
+            boxShadow: 3,
+            '&:hover': { opacity: 0.9 },
+          }}>
+          <StarIcon fontSize="large" sx={{
+            color: '#50C878',
+            borderRadius: '50%',
+          }} />
+          <Typography variant="caption">Our Leader</Typography>
+        </Box>
+      </Box>
+
+      {/* Map */}
+      <Box sx={{ gridRow: 3, width: '100%', height: '100%', overflow: 'hidden' }}>
+        <MapChart selected={selected} onClickSite={r => setSelected(r)} initialZoom={1.8} />
+      </Box>
+
+      {/* Footer */}
+      {/* <Footer /> */}
+    </Box>
+  );
 }
+
+C:\Users\W0024618\Desktop\global-page\frontend\src\components\RegionMap.jsx
+// src/components/RegionMap.jsx
+import React, { useCallback } from 'react';
+import Box from '@mui/material/Box';
+import {
+  GoogleMap,
+  useJsApiLoader,
+  MarkerClusterer,
+  Marker,
+} from '@react-google-maps/api';
+
+// 1) where each region’s circle should sit
+const REGION_POINTS = {
+  apac:  { lat:  1.35, lng: 103.82 },
+  emea:  { lat: 50.11, lng:   8.68 },
+  laca:  { lat: -33.45,lng: -70.66 },
+  namer: { lat: 39.50, lng: -98.35 },
+};
+
+// 2) circle colour per region
+const REGION_COLORS = {
+  apac:  '#FF9500',
+  emea:  '#34C759',
+  laca:  '#007AFF',
+  namer: '#AF52DE',
+};
+
+export default function RegionMap({ counts, zoom = 2 }) {
+  // load Google JS API using Vite env var
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
+  });
+  const onLoad = useCallback(() => {}, []);
+
+  if (loadError) {
+    return (
+      <Box sx={{
+        width: '100%', height: '100%',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color: 'error.main'
+      }}>
+        Unable to load map.
+      </Box>
+    );
+  }
+  if (!isLoaded) {
+    return (
+      <Box sx={{
+        width: '100%', height: '100%',
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
+      }}>
+        Loading map…
+      </Box>
+    );
+  }
+
+  // build marker data array
+  const markers = Object.entries(counts).map(([region, count]) => ({
+    region,
+    count,
+    position: REGION_POINTS[region],
+    color: REGION_COLORS[region],
+  }));
+
+  return (
+    <GoogleMap
+      onLoad={onLoad}
+      mapContainerStyle={{ width: '100%', height: '100%' }}
+      center={{ lat: 20, lng: 0 }}
+      zoom={zoom}
+      options={{ disableDefaultUI: true }}
+    >
+      <MarkerClusterer options={{ minimumClusterSize: 1, zoomOnClick: false }}>
+        {clusterer =>
+          markers.map(({ region, count, position, color }) => (
+            <Marker
+              key={region}
+              position={position}
+              clusterer={clusterer}
+              label={{
+                text: String(count),
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: 'bold',
+              }}
+              icon={{
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 36,
+                fillColor: color,
+                fillOpacity: 0.9,
+                strokeWeight: 0,
+              }}
+            />
+          ))
+        }
+      </MarkerClusterer>
+    </GoogleMap>
+  );
+}
+
+C:\Users\W0024618\Desktop\global-page\frontend\vite.config.js
+                // frontend/vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  // Points Vite at your shared /public folder
+  publicDir: path.resolve(__dirname, '../public'),
+  server: {
+    port: 5173,
+    // Serve index.html for all non-asset routes (SPA fallback)
+    historyApiFallback: true,
+    // Disable the HMR error overlay so you don't get that popup
+    hmr: {
+      overlay: false
+    },
+    proxy: {
+      // All API calls under /api will be forwarded to your backend
+      '/api': {
+        target: 'http://localhost:3008',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
+});
+
+
+
+C:\Users\W0024618\Desktop\global-page\.env
+      # .env (at project root, next to package.json)
+VITE_GOOGLE_MAPS_KEY=AIzaSy…YOUR_GENERATED_KEY…XYZ123
+
+
+
+      i
