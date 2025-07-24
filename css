@@ -4,40 +4,20 @@ const handlePartitionChange = (newCode) => {
     return;
   }
 
-  let suffix = '';
-  if (extraSegments.includes('history')) {
-    suffix = '/history';
-  } else if (extraSegments.includes('details')) {
-    suffix = '/details';
+  const path = location.pathname;
+
+  let newPath = `/partition/${encodeURIComponent(newCode)}`;
+
+  if (path === '/history') {
+    // global history → change to partition history
+    newPath = `/partition/${encodeURIComponent(newCode)}/history`;
+  } else if (path.includes('/history')) {
+    // already on partition history
+    newPath = `/partition/${encodeURIComponent(newCode)}/history`;
+  } else if (path.includes('/details')) {
+    // details page
+    newPath = `/partition/${encodeURIComponent(newCode)}/details`;
   }
 
-  navigate(`/partition/${encodeURIComponent(newCode)}${suffix}`);
+  navigate(newPath);
 };
-
-
-
-
-
-
-
-
-
-
-const handlePartitionChange = (newCode) => {
-  if (!newCode) {
-    navigate('/');
-    return;
-  }
-
-  // If current path has /history or /details, preserve it
-  const suffix = (extraSegments.includes('history') || extraSegments.includes('details'))
-    ? `/${extraSegments.join('/')}`
-    : '';
-
-  // Navigate to the correct route
-  navigate(`/partition/${encodeURIComponent(newCode)}${suffix}`);
-};
-
-
-
-
