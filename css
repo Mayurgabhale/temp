@@ -1,3 +1,21 @@
+The problme is to in slect purtucqular regions we get like this date 
+on this route http://localhost:3000/partition/Pune/history
+Wednesday, 23 July, 2025
+Country	City	Employees	Contractors	Total
+Total	0	0	0
+but i need to get like this data 
+Wednesday, 23 July, 2025
+Country	City	Employee	Contractors	Total
+Mexico	Mexico City	44	6	50
+Total	44	6	50
+
+
+
+so check the issuse carefully abd slove it
+
+
+
+
 // src/pages/History.jsx — APAC Edition
 
 import React, { useEffect, useState, useMemo } from 'react';
