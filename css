@@ -1,20 +1,13 @@
-curantlty we are using mapchart.jsx
-i want ot use regionmap.jsx 
-kindly update path 
-
-
-// frontend/src/pages/GlobalPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
-import MapChart from '../components/MapChart.jsx';
+import RegionMap from '../components/RegionMap.jsx';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function GlobalPage() {
   const navigate = useNavigate();
   const [counts, setCounts] = useState(null);
-  const [selected, setSelected] = useState('global');
 
   useEffect(() => {
     let isMounted = true;
@@ -33,7 +26,7 @@ export default function GlobalPage() {
     // Initial load
     fetchCounts();
     // Poll every 15 seconds
-    const intervalId = setInterval(fetchCounts, 1_000);
+    const intervalId = setInterval(fetchCounts, 1000);
 
     return () => {
       isMounted = false;
@@ -136,152 +129,13 @@ export default function GlobalPage() {
         </Box>
       </Box>
 
-      {/* Map */}
+      {/* Region Map */}
       <Box sx={{ gridRow: 3, width: '100%', height: '100%', overflow: 'hidden' }}>
-        <MapChart selected={selected} onClickSite={r => setSelected(r)} initialZoom={1.8} />
+        <RegionMap counts={counts} zoom={2} />
       </Box>
 
-      {/* Footer */}
+      {/* Footer (optional) */}
       {/* <Footer /> */}
     </Box>
   );
 }
-
-C:\Users\W0024618\Desktop\global-page\frontend\src\components\RegionMap.jsx
-// src/components/RegionMap.jsx
-import React, { useCallback } from 'react';
-import Box from '@mui/material/Box';
-import {
-  GoogleMap,
-  useJsApiLoader,
-  MarkerClusterer,
-  Marker,
-} from '@react-google-maps/api';
-
-// 1) where each region’s circle should sit
-const REGION_POINTS = {
-  apac:  { lat:  1.35, lng: 103.82 },
-  emea:  { lat: 50.11, lng:   8.68 },
-  laca:  { lat: -33.45,lng: -70.66 },
-  namer: { lat: 39.50, lng: -98.35 },
-};
-
-// 2) circle colour per region
-const REGION_COLORS = {
-  apac:  '#FF9500',
-  emea:  '#34C759',
-  laca:  '#007AFF',
-  namer: '#AF52DE',
-};
-
-export default function RegionMap({ counts, zoom = 2 }) {
-  // load Google JS API using Vite env var
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
-  });
-  const onLoad = useCallback(() => {}, []);
-
-  if (loadError) {
-    return (
-      <Box sx={{
-        width: '100%', height: '100%',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: 'error.main'
-      }}>
-        Unable to load map.
-      </Box>
-    );
-  }
-  if (!isLoaded) {
-    return (
-      <Box sx={{
-        width: '100%', height: '100%',
-        display: 'flex', alignItems: 'center', justifyContent: 'center'
-      }}>
-        Loading map…
-      </Box>
-    );
-  }
-
-  // build marker data array
-  const markers = Object.entries(counts).map(([region, count]) => ({
-    region,
-    count,
-    position: REGION_POINTS[region],
-    color: REGION_COLORS[region],
-  }));
-
-  return (
-    <GoogleMap
-      onLoad={onLoad}
-      mapContainerStyle={{ width: '100%', height: '100%' }}
-      center={{ lat: 20, lng: 0 }}
-      zoom={zoom}
-      options={{ disableDefaultUI: true }}
-    >
-      <MarkerClusterer options={{ minimumClusterSize: 1, zoomOnClick: false }}>
-        {clusterer =>
-          markers.map(({ region, count, position, color }) => (
-            <Marker
-              key={region}
-              position={position}
-              clusterer={clusterer}
-              label={{
-                text: String(count),
-                color: 'white',
-                fontSize: '16px',
-                fontWeight: 'bold',
-              }}
-              icon={{
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 36,
-                fillColor: color,
-                fillOpacity: 0.9,
-                strokeWeight: 0,
-              }}
-            />
-          ))
-        }
-      </MarkerClusterer>
-    </GoogleMap>
-  );
-}
-
-C:\Users\W0024618\Desktop\global-page\frontend\vite.config.js
-                // frontend/vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
-export default defineConfig({
-  plugins: [react()],
-  // Points Vite at your shared /public folder
-  publicDir: path.resolve(__dirname, '../public'),
-  server: {
-    port: 5173,
-    // Serve index.html for all non-asset routes (SPA fallback)
-    historyApiFallback: true,
-    // Disable the HMR error overlay so you don't get that popup
-    hmr: {
-      overlay: false
-    },
-    proxy: {
-      // All API calls under /api will be forwarded to your backend
-      '/api': {
-        target: 'http://localhost:3008',
-        changeOrigin: true,
-        secure: false,
-      }
-    }
-  }
-});
-
-
-
-C:\Users\W0024618\Desktop\global-page\.env
-      # .env (at project root, next to package.json)
-VITE_GOOGLE_MAPS_KEY=AIzaSy…YOUR_GENERATED_KEY…XYZ123
-
-
-
-      i
