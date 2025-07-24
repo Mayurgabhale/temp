@@ -1,319 +1,363 @@
-// src/pages/HistoryApac.jsx
+// src/components/Header.jsx
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import {
-  Container,
+  AppBar,
+  Toolbar,
   Box,
-  Button,
   Typography,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  TextField
+  Select,
+  MenuItem,
+  IconButton
 } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { format } from 'date-fns';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchHistory } from '../api/occupancy.service';
+import HomeIcon    from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
-// APAC partition maps
-const apacPartitionDisplay = {
-  'IN.Pune':         { country: 'India',       city: 'Pune' },
-  'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' },
-  'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' },
-  'PH.Taguig':       { country: 'Philippines', city: 'Taguig' },
-  'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' },
+import WuLogo from '../assets/wu-logo.png';
+import CostaRicaFlag from '../assets/flags/costa-rica.png';
+import ArgentinaFlag  from '../assets/flags/argentina.png';
+import MexicoFlag     from '../assets/flags/mexico.png';
+import PeruFlag       from '../assets/flags/peru.png';
+import BrazilFlag     from '../assets/flags/brazil.png';
+import PanamaFlag     from '../assets/flags/panama.png';
+import LacaFlag       from '../assets/laca-flag.png';
+
+import { partitionList } from '../services/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+const displayNameMap = {
+  'CR.Costa Rica Partition': 'Costa Rica',
+  'MX.Mexico City':          'Mexico',
+  'AR.Cordoba':               'Cordoba',
+  'PA.Panama City':           'Panama',
+  'PE.Lima':                  'Lima',
+  'BR.Sao Paulo':             'Sao Paulo'
 };
 
-const apacForwardKey = {
+
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
+
+  // live‐update timer in header
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
+  const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
+  const suffixSegments = isPartitionPath
+    ? parts.slice(2)
+    : parts[0] === 'history'
+      ? ['history']
+      : [];
+
+  const flagMap = {
+    'CR.Costa Rica Partition': CostaRicaFlag,
+    'AR.Cordoba':               ArgentinaFlag,
+    'MX.Mexico City':           MexicoFlag,
+    'PE.Lima':                  PeruFlag,
+    'BR.Sao Paulo':             BrazilFlag,
+    'PA.Panama City':           PanamaFlag,
+  };
+  const selectedFlag = flagMap[currentPartition] || LacaFlag;
+
+  const makePartitionPath = suffix => {
+    const base = `/partition/${encodeURIComponent(currentPartition)}`;
+    return suffix ? `${base}/${suffix}` : base;
+  };
+
+  const handlePartitionChange = newPartition => {
+    if (!newPartition) return navigate('/');
+    const base = `/partition/${encodeURIComponent(newPartition)}`;
+    const full = suffixSegments.length
+      ? `${base}/${suffixSegments.join('/')}`
+      : base;
+    navigate(full);
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Left: Logo, Title, Nav */}
+        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
+
+          <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>        
+  Western Union – LACA
+  {currentPartition && <> • {displayNameMap[currentPartition] || currentPartition}</>}
+
+          </Typography>
+
+ {/* Live update timer */}
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#FFC72C',
+              ml: 2,
+              gap:20,
+              fontStyle: 'Aptos Narrow',
+              opacity: data ? 1 : 0,
+              transition: 'opacity 0.8s'
+            }}
+          >
+         {/* {lastUpdate} */}
+          </Typography>
+        
+
+          {/* Home/History/Details icons */}
+          <IconButton size="large" color="inherit"
+            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+            <HomeIcon sx={{ color: '#4caf50' }} />
+          </IconButton>
+         
+
+          <IconButton size="large" color="inherit"
+            onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
+            <HistoryIcon sx={{ color: '#F88379' }} />
+          </IconButton>
+          {/* Details icon always shown; defaults to Costa Rica if no partition yet */}
+          <IconButton size="large" color="inherit"
+            onClick={() => {
+              const target = currentPartition
+                ? makePartitionPath('details')
+                : '/partition/CR.Costa%20Rica%20Partition/details';
+              navigate(target);
+            }}>
+            <ListAltIcon sx={{ color: '#2196f3' }} />
+          </IconButton>
+
+
+
+
+
+        </Box>
+
+ 
+
+        {/* Right: Selector + Flag */}
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={currentPartition}
+            displayEmpty
+            onChange={e => handlePartitionChange(e.target.value)}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Partition —</MenuItem>
+           
+           
+       {partitionList.map(p => (
+   <MenuItem key={p} value={p}>
+     {displayNameMap[p] || p}
+   </MenuItem>
+ ))}
+           
+
+          </Select>
+          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+
+
+
+
+REad above files carafully and make same code for, as it is file for below code wiht 0 error
+
+        
+// src/components/Header.jsx — APAC Edition
+
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton
+} from '@mui/material';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+
+import HomeIcon    from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import InfoIcon    from '@mui/icons-material/Info';
+
+import WuLogo        from '../assets/wu-logo.png';
+import IndiaFlag     from '../assets/flags/india.png';
+import MalaysiaFlag  from '../assets/flags/malaysia.png';
+import PhilippinesFlag from '../assets/flags/philippines.png';
+import TaguigFlag    from '../assets/flags/Taguig.png';
+import JapanFlag     from '../assets/flags/japan.png';
+import DefaultFlag   from '../assets/flags/default.png';
+
+import { partitionList }    from '../services/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+// Friendly display names
+const displayNameMap = {
   'IN.Pune':         'Pune',
   'MY.Kuala Lumpur': 'Kuala Lumpur',
   'PH.Quezon':       'Quezon City',
-  'PH.Taguig':       'Taguig City',
-  'JP.Tokyo':        'JP.Tokyo',
+  'PH.Taguig':       'Taguig',
+  'JP.Tokyo':        'Tokyo',
 };
 
-const apacReverseKey = Object.fromEntries(
-  Object.entries(apacForwardKey).map(([k, v]) => [v, k])
-);
-
-const formatPartition = key => {
-  const feCode = apacReverseKey[key];
-  const display = feCode && apacPartitionDisplay[feCode];
-  return display ? `${display.city}` : key;
+// Flag lookup by partition code
+const flagMap = {
+  'IN.Pune':         IndiaFlag,
+  'MY.Kuala Lumpur': MalaysiaFlag,
+  'PH.Quezon':       PhilippinesFlag,
+  'PH.Taguig':       TaguigFlag,
+  'JP.Tokyo':        JapanFlag,
 };
 
-export default function HistoryApac() {
-  const { partition } = useParams();
-  const decodedPartition = partition ? decodeURIComponent(partition) : null;
-  const backendFilterKey = decodedPartition ? apacForwardKey[decodedPartition] : null;
+export default function Header() {
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { data }  = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
 
-  const [data, setData]               = useState(null);
-  const [loading, setLoading]         = useState(true);
-  const [pickedDate, setPickedDate]   = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
+  // Update timestamp on each new live-data push
+  // useEffect(() => {
+  //   if (data) {
+  //     setLastUpdate(new Date().toLocaleTimeString());
+  //   }
+  // }, [data]);
 
-  useEffect(() => {
-    setLoading(true);
-    fetchHistory()
-      .then(json => setData(json))
-      .finally(() => setLoading(false));
-  }, []);
+  // Parse path to detect /partition/:code and any trailing "history" or "details"
+  const segments        = location.pathname.split('/').filter(Boolean);
+  const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
+  const currentCode     = isPartitionPage ? decodeURIComponent(segments[1]) : '';
+  const extraSegments   = isPartitionPage ? segments.slice(2) : [];
 
-  const summaryEntry = useMemo(() => {
-    if (!data || !pickedDate) return null;
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    return data.summaryByDate.find(r => r.date === dateStr) || null;
-  }, [data, pickedDate]);
+  // Choose flag (or default)
+  const selectedFlag = flagMap[currentCode] || DefaultFlag;
 
-  const partitionRows = useMemo(() => {
-    if (!summaryEntry) return [];
-    return Object.entries(summaryEntry.partitions)
-      .filter(([key]) => !backendFilterKey ? true : key === backendFilterKey)
-      .map(([key, vals]) => {
-        const feCode = apacReverseKey[key];
-        const display = feCode && apacPartitionDisplay[feCode];
-        return {
-          country: display?.country ?? key,
-          city: display?.city ?? key,
-          employee: vals.Employee ?? vals.EmployeeCount ?? 0,
-          contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
-          total: vals.total ?? 0,
-        };
-      });
-  }, [summaryEntry, backendFilterKey]);
+  // Preserve any /history or /details suffix when changing region
+  // const handlePartitionChange = (newCode) => {
+  //   const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
+  //   const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
+  //   navigate(base + suffix);
+  // };
 
-  const detailRows = useMemo(() => {
-    if (!data || !pickedDate) return [];
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    return data.details
-      .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
-      .filter(r => !backendFilterKey || r.PartitionName2 === backendFilterKey)
-      .filter(r => r.Direction === 'InDirection')
-      .reduce((acc, row) => {
-        const key = `${row.PersonGUID}-${row.PersonnelType}`;
-        if (!acc._seen.has(key)) {
-          acc._seen.add(key);
-          acc.rows.push(row);
-        }
-        return acc;
-      }, { _seen: new Set(), rows: [] })
-      .rows;
-  }, [data, pickedDate, backendFilterKey]);
+  // new code add 
+const handlePartitionChange = (newCode) => {
+  if (!newCode) {
+    navigate('/');
+    return;
+  }
 
-  const handleExport = () => {
-    const ws = XLSX.utils.json_to_sheet(
-      detailRows.map((r, i) => ({
-        Sr: i + 1,
-        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
-        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
-        EmployeeID: r.EmployeeID,
-        Name: r.ObjectName1,
-        PersonnelType: r.PersonnelType,
-        Door: r.Door,
-        Partition: formatPartition(r.PartitionName2),
-      }))
-    );
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
-  };
+  const path = location.pathname;
 
-  if (loading) return <LoadingSpinner />;
-  if (!data) return null;
+  let newPath = `/partition/${encodeURIComponent(newCode)}`;
+
+  if (path === '/history') {
+    // global history → change to partition history
+    newPath = `/partition/${encodeURIComponent(newCode)}/history`;
+  } else if (path.includes('/history')) {
+    // already on partition history
+    newPath = `/partition/${encodeURIComponent(newCode)}/history`;
+  } else if (path.includes('/details')) {
+    // details page
+    newPath = `/partition/${encodeURIComponent(newCode)}/details`;
+  }
+
+  navigate(newPath);
+};
+
 
   return (
-    <>
-      <Header />
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        {/* DatePicker & Summary */}
-        {pickedDate && summaryEntry ? (
-          <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
-            <Box sx={{ flex: '0 0 200px' }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Select date"
-                  value={pickedDate}
-                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                  renderInput={params => <TextField fullWidth {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
+    <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
+      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
 
-            <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
-                <Table sx={{ border: '2px solid #000' }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{
-                        fontWeight: 'bold',
-                        fontSize: 16,
-                        bgcolor: '#000',
-                        color: '#fff',
-                        border: '2px solid #000'
-                      }}>
-                        {format(pickedDate, 'EEEE, d MMMM, yyyy')}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow sx={{ bgcolor: '#FFC107' }}>
-                      {['Country', 'City', 'Employee', 'Contractors', 'Total'].map(h => (
-                        <TableCell
-                          key={h}
-                          align={['Country','City'].includes(h) ? 'left' : 'right'}
-                          sx={{
-                            color: '#000',
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            border: '2px solid #000'
-                          }}
-                        >
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {partitionRows.map((row, i) => (
-                      <TableRow key={i}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{row.country}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{row.city}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.employee}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.contractor}</TableCell>
-                        <TableCell align="right" sx={{
-                          backgroundColor: '#FFC107',
-                          fontWeight: 'bold',
-                          border: '2px solid #000'
-                        }}>
-                          {row.total}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow sx={{ bgcolor: '#666' }}>
-                      <TableCell colSpan={2} align="right"
-                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        Total
-                      </TableCell>
-                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.employee, 0)}
-                      </TableCell>
-                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {partitionRows.reduce((s, r) => s + r.contractor, 0)}
-                      </TableCell>
-                      <TableCell align="right" sx={{
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        bgcolor: '#333',
-                        border: '2px solid #000'
-                      }}>
-                        {partitionRows.reduce((s, r) => s + r.total, 0)}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Paper>
+        {/* Left: Logo + Title + Nav Icons */}
+        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
 
-              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
-                <Button variant="contained" sx={{ bgcolor: '#FFC107', color: '#000' }}
-                  onClick={() => setShowDetails(v => !v)}
-                >
-                  {showDetails ? 'Hide Details' : 'See Details'}
-                </Button>
-                {showDetails && (
-                  <Button variant="outlined"
-                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-                    onClick={handleExport}
-                  >
-                    Export to Excel
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={{ px: '20px', mb: 3 }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Select date"
-                value={pickedDate}
-                onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                renderInput={params => <TextField fullWidth {...params} />}
-              />
-            </LocalizationProvider>
-            {!pickedDate && (
-              <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
-                Please pick a date to view region summary.
-              </Typography>
-            )}
-          </Box>
-        )}
+          <Typography variant="h6" sx={{ color: '#FFC107', mr: 3, fontWeight: 600 }}>
+            APAC Live Headcount
+            {currentCode && ` • ${displayNameMap[currentCode] || currentCode}`}
+          </Typography>
 
-        {/* Details */}
-        {showDetails && (
-          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
-            <Paper elevation={1} sx={{
-              px: '40px',
-              py: 1,
-              width: '100%',
-              border: '3px solid #000',
-              borderRadius: 2,
-            }}>
-              {detailRows.length > 0 ? (
-                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: '#000' }}>
-                      {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
-                        <TableCell key={h} align="center" sx={{
-                          color: '#FFC107',
-                          fontWeight: 'bold',
-                          fontSize: 14,
-                          border: '2px solid #000',
-                        }}>
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {detailRows.map((r, i) => (
-                      <TableRow key={`${r.PersonGUID}-${i}`}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{formatPartition(r.PartitionName2)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <Typography variant="body2" sx={{
-                  color: '#666',
-                  textAlign: 'center',
-                  mt: 2,
-                  fontStyle: 'italic',
-                }}>
-                  No swipe records found for this date.
-                </Typography>
-              )}
-            </Paper>
-          </Box>
-        )}
-      </Container>
-      <Footer />
-    </>
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#FFC107',
+              ml: 2,
+              opacity: data ? 1 : 0,
+              transition: 'opacity 0.8s'
+            }}
+          >
+            {lastUpdate}
+          </Typography>
+
+          <IconButton
+            component={Link}
+            to={ isPartitionPage
+              ? `/partition/${encodeURIComponent(currentCode)}`
+              : '/' }
+            color="inherit"
+          >
+            <HomeIcon />
+          </IconButton>
+
+          <IconButton
+            component={Link}
+            to={ isPartitionPage
+              ? `/partition/${encodeURIComponent(currentCode)}/history`
+              : '/history' }
+            color="inherit"
+          >
+            <HistoryIcon />
+          </IconButton>
+
+          <IconButton
+            component={Link}
+            to={ isPartitionPage
+              ? `/partition/${encodeURIComponent(currentCode)}/details`
+              : '/partition/Pune/details' }
+            color="inherit"
+          >
+            <InfoIcon />
+          </IconButton>
+        </Box>
+
+        {/* Right: Region Selector + Flag */}
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={currentCode}
+            displayEmpty
+            onChange={e => handlePartitionChange(e.target.value)}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
+            renderValue={val =>
+              val ? displayNameMap[val] || val : '— Select Region —'
+            }
+          >
+            <MenuItem value="">— Select Region —</MenuItem>
+            {partitionList.map(code => (
+              <MenuItem key={code} value={code}>
+                {displayNameMap[code] || code}
+              </MenuItem>
+            ))}
+          </Select>
+          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
+
+
+             make carefullly 
