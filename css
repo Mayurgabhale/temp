@@ -1,57 +1,68 @@
 <header className="header">
-        <div className="header-content">
-          <img src={wulogo} alt="WU Logo" className="logo" />
-          <div>
-            <h1>Associate Verification Tool</h1>
-            <p>Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
-          </div>
-        </div>
-      </header>
+  <div className="header-content">
+    <div className="header-logo-text">
+      <img src={wulogo} alt="WU Logo" className="logo" />
+      <div className="header-text">
+        <h1>Associate Verification Tool</h1>
+        <p>Pune Technology Engineering Center • Mon–Fri, 9:00–18:00</p>
+      </div>
+    </div>
+  </div>
+</header>
 
 
 
 
-/* Header */
 /* Header */
 .header {
   background-color: var(--wu-black);
   color: var(--wu-yellow);
-  padding: 1.5rem 1rem;
-  text-align: center;
+  padding: 1.2rem 1rem;
   border-bottom: 4px solid var(--wu-yellow);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-/* Flex container to adjust layout for larger screens */
+/* Flex wrapper for full width */
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-items: flex-start;
 }
 
-.header h1 {
-  font-size: 2rem;
-  margin: 0;
+/* Logo and text side by side, aligned center */
+.header-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  height: 48px;
+  width: auto;
+}
+
+/* Text styles */
+.header-text h1 {
+  font-size: 1.6rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  margin: 0;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
 }
 
-.header p {
-  font-size: 1rem;
+.header-text p {
+  font-size: 0.95rem;
   margin: 0;
   opacity: 0.9;
 }
 
-.logo {
-  height: 40px;
-  /* margin-right: 1rem; */
-}
-/* RESPONSIVE */
+/* Responsive styles */
 @media screen and (min-width: 768px) {
   .header-content {
     flex-direction: row;
@@ -59,11 +70,11 @@
     align-items: center;
   }
 
-  .header h1 {
-    font-size: 2.2rem;
+  .header-text h1 {
+    font-size: 2rem;
   }
 
-  .header p {
-    font-size: 1.1rem;
+  .header-text p {
+    font-size: 1.05rem;
   }
 }
