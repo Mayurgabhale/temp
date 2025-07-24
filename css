@@ -1,4 +1,21 @@
 
+.filter(([key]) => {
+  if (!decodedPartition) return true;
+
+  const normalizedKey = key.toLowerCase();
+  const normalizedPartition = decodedPartition.toLowerCase();
+
+  return (
+    normalizedKey === normalizedPartition ||
+    normalizedKey.endsWith(`.${normalizedPartition}`) || // IN.Pune
+    normalizedKey.includes(normalizedPartition)
+  );
+})
+
+
+
+
+
 
 useEffect(() => {
   setLoading(true);
