@@ -1,47 +1,15 @@
-
-.filter(([key]) => {
-  if (!decodedPartition) return true;
-
-  const normalizedKey = key.toLowerCase();
-  const normalizedPartition = decodedPartition.toLowerCase();
-
-  return (
-    normalizedKey === normalizedPartition ||
-    normalizedKey.endsWith(`.${normalizedPartition}`) || // IN.Pune
-    normalizedKey.includes(normalizedPartition)
-  );
-})
-
-
-
-
-
-
-useEffect(() => {
-  setLoading(true);
-  fetchHistory()
-    .then(json => setData(json))
-    .finally(() => setLoading(false));
-}, []);
-
-  after use above code 
-  we get on this route  http://localhost:3000/partition/Pune/history
-  this table 
-  Wednesday, 23 July, 2025
-Country	City	Employees	Contractors	Total
-Philippines	Quezon City	278	40	318
-India	Pune	865	115	980
-Japan	Tokyo	9	1	10
-Philippines	Taguig	9	3	12
-MY.Kuala Lumpur	MY.Kuala Lumpur	8	1	9
-Total	1169	160	1329
-
-
-
-  but i i wnat ot get lik ethis data in table
-  Wednesday, 23 July, 2025
-Country	City	Employee	Contractors	Total
-Mexico	Mexico City	44	6	50
-Total	44	6	50
-
-  so undestna the problme and find the soluctin 
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of undefined (reading 'includes')
+TypeError: Cannot read properties of undefined (reading 'includes')
+    at http://localhost:3000/static/js/src_pages_History_jsx.chunk.js:176:103
+    at Array.filter (<anonymous>)
+    at http://localhost:3000/static/js/src_pages_History_jsx.chunk.js:176:6
+    at updateMemo (http://localhost:3000/static/js/bundle.js:18686:17)
+    at Object.useMemo (http://localhost:3000/static/js/bundle.js:27120:16)
+    at exports.useMemo (http://localhost:3000/static/js/bundle.js:41571:32)
+    at History (http://localhost:3000/static/js/src_pages_History_jsx.chunk.js:165:68)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
