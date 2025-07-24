@@ -1,3 +1,22 @@
+.filter(([key]) => {
+  if (!key) return false; // protect from undefined key
+  if (!decodedPartition) return true;
+
+  const normalizedKey = key.toLowerCase();
+  const normalizedPartition = decodedPartition.toLowerCase();
+
+  return (
+    normalizedKey === normalizedPartition ||
+    normalizedKey.endsWith(`.${normalizedPartition}`) ||
+    normalizedKey.includes(normalizedPartition)
+  );
+})
+
+
+
+
+
+
 // src/pages/History.jsx
 
 import React, { useEffect, useState, useMemo } from 'react';
