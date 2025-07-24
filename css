@@ -12,3 +12,7 @@ const handlePartitionChange = (newCode) => {
   // Navigate to the correct route
   navigate(`/partition/${encodeURIComponent(newCode)}${suffix}`);
 };
+
+
+
+
