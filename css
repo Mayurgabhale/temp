@@ -1,3 +1,22 @@
+.filter(([key]) => {
+  if (!key || !decodedPartition) return false;
+
+  const normalizedKey = key.toLowerCase();
+  const normalizedPartition = decodedPartition.toLowerCase();
+
+  return (
+    normalizedKey === normalizedPartition ||
+    normalizedKey.endsWith(`.${normalizedPartition}`) ||
+    normalizedKey.includes(normalizedPartition)
+  );
+})
+
+
+
+
+
+
+
 Uncaught runtime errors:
 ×
 ERROR
