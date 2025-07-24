@@ -1,4 +1,4 @@
-// src/components/Header.jsx
+// src/components/Header.jsx — APAC Edition (LACA-style)
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -12,67 +12,70 @@ import {
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import HomeIcon    from '@mui/icons-material/Home';
+import HomeIcon from '@mui/icons-material/Home';
 import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
+import InfoIcon from '@mui/icons-material/Info';
 
 import WuLogo from '../assets/wu-logo.png';
-import CostaRicaFlag from '../assets/flags/costa-rica.png';
-import ArgentinaFlag  from '../assets/flags/argentina.png';
-import MexicoFlag     from '../assets/flags/mexico.png';
-import PeruFlag       from '../assets/flags/peru.png';
-import BrazilFlag     from '../assets/flags/brazil.png';
-import PanamaFlag     from '../assets/flags/panama.png';
-import LacaFlag       from '../assets/laca-flag.png';
+import IndiaFlag from '../assets/flags/india.png';
+import MalaysiaFlag from '../assets/flags/malaysia.png';
+import PhilippinesFlag from '../assets/flags/philippines.png';
+import TaguigFlag from '../assets/flags/Taguig.png';
+import JapanFlag from '../assets/flags/japan.png';
+import DefaultFlag from '../assets/flags/default.png';
 
 import { partitionList } from '../services/occupancy.service';
 import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
+// Mapping of partition codes to user-friendly names
 const displayNameMap = {
-  'CR.Costa Rica Partition': 'Costa Rica',
-  'MX.Mexico City':          'Mexico',
-  'AR.Cordoba':               'Cordoba',
-  'PA.Panama City':           'Panama',
-  'PE.Lima':                  'Lima',
-  'BR.Sao Paulo':             'Sao Paulo'
+  'IN.Pune': 'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon': 'Quezon City',
+  'PH.Taguig': 'Taguig',
+  'JP.Tokyo': 'Tokyo',
 };
 
+// Mapping of partition codes to flag images
+const flagMap = {
+  'IN.Pune': IndiaFlag,
+  'MY.Kuala Lumpur': MalaysiaFlag,
+  'PH.Quezon': PhilippinesFlag,
+  'PH.Taguig': TaguigFlag,
+  'JP.Tokyo': JapanFlag,
+};
 
 export default function Header() {
   const navigate = useNavigate();
   const loc = useLocation();
 
-  // live‐update timer in header
+  // Live update timestamp
   const { data } = useLiveOccupancy(1000);
   const [lastUpdate, setLastUpdate] = useState('');
   useEffect(() => {
     if (data) setLastUpdate(new Date().toLocaleTimeString());
   }, [data]);
 
+  // URL path parsing
   const parts = loc.pathname.split('/').filter(Boolean);
   const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
   const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
   const suffixSegments = isPartitionPath
     ? parts.slice(2)
     : parts[0] === 'history'
-      ? ['history']
-      : [];
+    ? ['history']
+    : [];
 
-  const flagMap = {
-    'CR.Costa Rica Partition': CostaRicaFlag,
-    'AR.Cordoba':               ArgentinaFlag,
-    'MX.Mexico City':           MexicoFlag,
-    'PE.Lima':                  PeruFlag,
-    'BR.Sao Paulo':             BrazilFlag,
-    'PA.Panama City':           PanamaFlag,
-  };
-  const selectedFlag = flagMap[currentPartition] || LacaFlag;
+  // Select appropriate flag
+  const selectedFlag = flagMap[currentPartition] || DefaultFlag;
 
+  // Build path to current partition with optional suffix
   const makePartitionPath = suffix => {
     const base = `/partition/${encodeURIComponent(currentPartition)}`;
     return suffix ? `${base}/${suffix}` : base;
   };
 
+  // Handle dropdown partition selection
   const handlePartitionChange = newPartition => {
     if (!newPartition) return navigate('/');
     const base = `/partition/${encodeURIComponent(newPartition)}`;
@@ -85,63 +88,62 @@ export default function Header() {
   return (
     <AppBar position="static" color="primary" sx={{ mb: 2 }}>
       <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Left: Logo, Title, Nav */}
+        {/* Left section: Logo, title, navigation icons */}
         <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
           <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>        
-  Western Union – LACA
-  {currentPartition && <> • {displayNameMap[currentPartition] || currentPartition}</>}
-
+          <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>
+            APAC Live Headcount
+            {currentPartition && <> • {displayNameMap[currentPartition] || currentPartition}</>}
           </Typography>
 
- {/* Live update timer */}
+          {/* Live update time */}
           <Typography
             variant="caption"
             sx={{
               color: '#FFC72C',
               ml: 2,
-              gap:20,
               fontStyle: 'Aptos Narrow',
               opacity: data ? 1 : 0,
               transition: 'opacity 0.8s'
             }}
           >
-         {/* {lastUpdate} */}
+            {lastUpdate}
           </Typography>
-        
 
-          {/* Home/History/Details icons */}
-          <IconButton size="large" color="inherit"
-            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+          {/* Navigation buttons */}
+          <IconButton
+            size="large"
+            color="inherit"
+            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}
+          >
             <HomeIcon sx={{ color: '#4caf50' }} />
           </IconButton>
-         
 
-          <IconButton size="large" color="inherit"
-            onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
+          <IconButton
+            size="large"
+            color="inherit"
+            onClick={() =>
+              navigate(currentPartition ? makePartitionPath('history') : '/history')
+            }
+          >
             <HistoryIcon sx={{ color: '#F88379' }} />
           </IconButton>
-          {/* Details icon always shown; defaults to Costa Rica if no partition yet */}
-          <IconButton size="large" color="inherit"
+
+          <IconButton
+            size="large"
+            color="inherit"
             onClick={() => {
               const target = currentPartition
                 ? makePartitionPath('details')
-                : '/partition/CR.Costa%20Rica%20Partition/details';
+                : '/partition/IN.Pune/details';
               navigate(target);
-            }}>
-            <ListAltIcon sx={{ color: '#2196f3' }} />
+            }}
+          >
+            <InfoIcon sx={{ color: '#2196f3' }} />
           </IconButton>
-
-
-
-
-
         </Box>
 
- 
-
-        {/* Right: Selector + Flag */}
+        {/* Right section: Partition selector and flag */}
         <Box display="flex" alignItems="center">
           <Select
             size="small"
@@ -150,205 +152,10 @@ export default function Header() {
             onChange={e => handlePartitionChange(e.target.value)}
             sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
           >
-            <MenuItem value="">— Select Partition —</MenuItem>
-           
-           
-       {partitionList.map(p => (
-   <MenuItem key={p} value={p}>
-     {displayNameMap[p] || p}
-   </MenuItem>
- ))}
-           
-
-          </Select>
-          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
-}
-
-
-
-
-
-REad above files carafully and make same code for, as it is file for below code wiht 0 error
-
-        
-// src/components/Header.jsx — APAC Edition
-
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  IconButton
-} from '@mui/material';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-
-import HomeIcon    from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import InfoIcon    from '@mui/icons-material/Info';
-
-import WuLogo        from '../assets/wu-logo.png';
-import IndiaFlag     from '../assets/flags/india.png';
-import MalaysiaFlag  from '../assets/flags/malaysia.png';
-import PhilippinesFlag from '../assets/flags/philippines.png';
-import TaguigFlag    from '../assets/flags/Taguig.png';
-import JapanFlag     from '../assets/flags/japan.png';
-import DefaultFlag   from '../assets/flags/default.png';
-
-import { partitionList }    from '../services/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-// Friendly display names
-const displayNameMap = {
-  'IN.Pune':         'Pune',
-  'MY.Kuala Lumpur': 'Kuala Lumpur',
-  'PH.Quezon':       'Quezon City',
-  'PH.Taguig':       'Taguig',
-  'JP.Tokyo':        'Tokyo',
-};
-
-// Flag lookup by partition code
-const flagMap = {
-  'IN.Pune':         IndiaFlag,
-  'MY.Kuala Lumpur': MalaysiaFlag,
-  'PH.Quezon':       PhilippinesFlag,
-  'PH.Taguig':       TaguigFlag,
-  'JP.Tokyo':        JapanFlag,
-};
-
-export default function Header() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const { data }  = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  // Update timestamp on each new live-data push
-  // useEffect(() => {
-  //   if (data) {
-  //     setLastUpdate(new Date().toLocaleTimeString());
-  //   }
-  // }, [data]);
-
-  // Parse path to detect /partition/:code and any trailing "history" or "details"
-  const segments        = location.pathname.split('/').filter(Boolean);
-  const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
-  const currentCode     = isPartitionPage ? decodeURIComponent(segments[1]) : '';
-  const extraSegments   = isPartitionPage ? segments.slice(2) : [];
-
-  // Choose flag (or default)
-  const selectedFlag = flagMap[currentCode] || DefaultFlag;
-
-  // Preserve any /history or /details suffix when changing region
-  // const handlePartitionChange = (newCode) => {
-  //   const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-  //   const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-  //   navigate(base + suffix);
-  // };
-
-  // new code add 
-const handlePartitionChange = (newCode) => {
-  if (!newCode) {
-    navigate('/');
-    return;
-  }
-
-  const path = location.pathname;
-
-  let newPath = `/partition/${encodeURIComponent(newCode)}`;
-
-  if (path === '/history') {
-    // global history → change to partition history
-    newPath = `/partition/${encodeURIComponent(newCode)}/history`;
-  } else if (path.includes('/history')) {
-    // already on partition history
-    newPath = `/partition/${encodeURIComponent(newCode)}/history`;
-  } else if (path.includes('/details')) {
-    // details page
-    newPath = `/partition/${encodeURIComponent(newCode)}/details`;
-  }
-
-  navigate(newPath);
-};
-
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
-      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-
-        {/* Left: Logo + Title + Nav Icons */}
-        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ color: '#FFC107', mr: 3, fontWeight: 600 }}>
-            APAC Live Headcount
-            {currentCode && ` • ${displayNameMap[currentCode] || currentCode}`}
-          </Typography>
-
-          <Typography
-            variant="caption"
-            sx={{
-              color: '#FFC107',
-              ml: 2,
-              opacity: data ? 1 : 0,
-              transition: 'opacity 0.8s'
-            }}
-          >
-            {lastUpdate}
-          </Typography>
-
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}`
-              : '/' }
-            color="inherit"
-          >
-            <HomeIcon />
-          </IconButton>
-
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}/history`
-              : '/history' }
-            color="inherit"
-          >
-            <HistoryIcon />
-          </IconButton>
-
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}/details`
-              : '/partition/Pune/details' }
-            color="inherit"
-          >
-            <InfoIcon />
-          </IconButton>
-        </Box>
-
-        {/* Right: Region Selector + Flag */}
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={currentCode}
-            displayEmpty
-            onChange={e => handlePartitionChange(e.target.value)}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
-            renderValue={val =>
-              val ? displayNameMap[val] || val : '— Select Region —'
-            }
-          >
             <MenuItem value="">— Select Region —</MenuItem>
-            {partitionList.map(code => (
-              <MenuItem key={code} value={code}>
-                {displayNameMap[code] || code}
+            {partitionList.map(p => (
+              <MenuItem key={p} value={p}>
+                {displayNameMap[p] || p}
               </MenuItem>
             ))}
           </Select>
@@ -358,6 +165,3 @@ const handlePartitionChange = (newCode) => {
     </AppBar>
   );
 }
-
-
-             make carefullly 
