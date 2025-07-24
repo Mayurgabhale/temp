@@ -4,6 +4,31 @@ const handlePartitionChange = (newCode) => {
     return;
   }
 
+  let suffix = '';
+  if (extraSegments.includes('history')) {
+    suffix = '/history';
+  } else if (extraSegments.includes('details')) {
+    suffix = '/details';
+  }
+
+  navigate(`/partition/${encodeURIComponent(newCode)}${suffix}`);
+};
+
+
+
+
+
+
+
+
+
+
+const handlePartitionChange = (newCode) => {
+  if (!newCode) {
+    navigate('/');
+    return;
+  }
+
   // If current path has /history or /details, preserve it
   const suffix = (extraSegments.includes('history') || extraSegments.includes('details'))
     ? `/${extraSegments.join('/')}`
