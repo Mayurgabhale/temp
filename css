@@ -1,3 +1,34 @@
+card.insertAdjacentHTML("beforeend", `
+  <div class="device-card-inner">
+    <h3 class="device-name">
+      <i class="${getDeviceIcon(deviceType)}"></i>
+      ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+    </h3>
+
+    <p class="device-type-label">${deviceType.toUpperCase()}</p>
+
+    <p class="device-detail">
+      <i class="fas fa-network-wired"></i>
+      <span class="device-ip" onclick="copyToClipboard('${deviceIP}')" title="Click to copy IP">${deviceIP}</span>
+    </p>
+
+    <p class="device-detail">
+      <i class="fas fa-map-marker-alt"></i>
+      ${device.location || "N/A"}
+    </p>
+
+    <p class="device-detail">
+      <i class="fas fa-city"></i> ${city}
+    </p>
+  </div>
+`);
+
+
+
+
+
+
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 :root {
