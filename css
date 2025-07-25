@@ -1,14 +1,66 @@
-{expandedFloor && (
-  <Box sx={{ px: "20px", mt: 2 }}>
-    <Typography variant="h6" gutterBottom>
-      {expandedFloor} — All Entries
-    </Typography>
-    <DataTable
-      columns={columns}
-      rows={(floorMap[expandedFloor] || []).map(r => ({
-        ...r,
-        LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString(),
-      }))}
-    />
-  </Box>
-)}
+
+// src/components/Footer.jsx
+import React, { useEffect } from 'react';
+import { Box, Typography, Link } from '@mui/material';
+
+export default function Footer() {
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.display = 'flex';
+      root.style.flexDirection = 'column';
+      root.style.minHeight = '100vh';
+    }
+  }, []);
+
+  return (
+    <Box
+      component="footer"
+      sx={{
+        mt: 'auto', // Push footer to bottom when used inside flex container
+        backgroundColor: '#000',
+        color: '#FFC72C',
+        py: 2,
+        px: 2,
+        textAlign: 'center',
+        borderTop: '2px solid #FFC72C',
+        fontSize: '0.9rem',
+        lineHeight: 1.5,
+        mt: 2
+        
+      }}
+    >
+      <Typography variant="subtitle2" fontWeight="bold">
+        Global Security Operations Center (GSOC)
+      </Typography>
+
+      <Typography variant="body2">
+        Live Occupancy dashboard for LACA— Real-time occupancy and personnel insights.
+      </Typography>
+
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        Contact us:{' '}
+        <Link
+          href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
+          underline="hover"
+          sx={{ color: '#FFC72C' }}
+        >
+          gsoc@westernunion.com
+        </Link>{' '}
+        | Landline:{' '}
+        <Box component="span" sx={{ color: '#FFC72C' }}>
+          +91-020-67632394
+        </Box>
+      </Typography>
+
+      <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+        © {new Date().getFullYear()} Western Union. All rights reserved.
+      </Typography>
+    </Box>
+  );
+}
+
+
+
+
+
