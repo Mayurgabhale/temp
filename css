@@ -1,89 +1,49 @@
-/* Font & Base Setup */
-body {
-  margin: 0;
-  padding: 2rem;
-  font-family: 'Urbanist', sans-serif;
-  background: #0f0f1b;
-  color: #f0f0f0;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Western Union Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="summary">
+    <div class="card">
+      <h3><i class="fas fa-microchip"></i> Total Devices</h3>
+      <div class="card-status total">Total <span id="total-devices">0</span></div>
+      <div class="card-status online">Online <span id="online-devices">0</span></div>
+      <div class="card-status offline">Offline <span id="offline-devices">0</span></div>
+    </div>
 
-/* Responsive Grid Layout */
-.summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
+    <div class="card">
+      <h3><i class="fas fa-video"></i> Cameras</h3>
+      <div class="card-status total">Total <span id="camera-total">0</span></div>
+      <div class="card-status online">Online <span id="camera-online">0</span></div>
+      <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
+    </div>
 
-/* Card Styling */
-.card {
-  border-radius: 18px;
-  padding: 24px;
-  background: linear-gradient(145deg, #1b1c2c, #151622);
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  position: relative;
-  box-shadow: 0 0 20px rgba(127, 90, 240, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    <div class="card">
+      <h3><i class="fas fa-database"></i> Archivers</h3>
+      <div class="card-status total">Total <span id="archiver-total">0</span></div>
+      <div class="card-status online">Online <span id="archiver-online">0</span></div>
+      <div class="card-status offline">Offline <span id="archiver-offline">0</span></div>
+    </div>
 
-.card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  padding: 2px;
-  background: linear-gradient(135deg, #7f5af0, #2cb67d);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-  pointer-events: none;
-}
+    <div class="card">
+      <h3><i class="fas fa-id-card"></i> Controllers</h3>
+      <div class="card-status total">Total <span id="controller-total">0</span></div>
+      <div class="card-status online">Online <span id="controller-online">0</span></div>
+      <div class="card-status offline">Offline <span id="controller-offline">0</span></div>
+    </div>
 
-/* Hover Effect */
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(127, 90, 240, 0.3);
-}
-
-/* Card Title */
-.card h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #7f5af0;
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Status Lines */
-.card-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1e1f2f;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.card-status.total {
-  border-left: 4px solid #7f5af0;
-}
-
-.card-status.online {
-  border-left: 4px solid #2cb67d;
-}
-
-.card-status.offline {
-  border-left: 4px solid #ef4565;
-}
-
-.card-status span {
-  color: #ffffff;
-  font-weight: bold;
-}
+    <div class="card">
+      <h3><i class="fas fa-server"></i> Servers</h3>
+      <div class="card-status total">Total <span id="server-total">0</span></div>
+      <div class="card-status online">Online <span id="server-online">0</span></div>
+      <div class="card-status offline">Offline <span id="server-offline">0</span></div>
+    </div>
+  </div>
+</body>
+</html>
