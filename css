@@ -9,7 +9,7 @@
                     // Apply background color based on online/offline status
                     card.style.backgroundColor = currentStatus === "online" ? "#e6ffed" : "#ffe6e6"; card.style.backgroundColor = currentStatus === "online"
                         ? ""  // Tailwind's emerald-500 with 12% opacity
-                        : "";  // Tailwind's red-500 with 12% opacity
+                        : "";  // Tailwind's red-500 with 12% opacity  this is the mian 
 
 
                     card.style.borderColor = currentStatus === "online"
