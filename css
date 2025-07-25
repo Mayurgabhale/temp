@@ -1,16 +1,5 @@
-const displayed = useMemo(() => {
-  const term = searchTerm.trim().toLowerCase();
-  return Object.entries(floorMap)
-    .map(([floor, emps]) => {
-      const filtered = !term
-        ? emps
-        : emps.filter(e =>
-            e.ObjectName1?.toLowerCase().includes(term) ||
-            e.EmployeeID?.toString().toLowerCase().includes(term) ||
-            e.CardNumber?.toString().toLowerCase().includes(term)
-          );
-      return [floor, filtered];
-    })
-    .filter(([, filtered]) => filtered.length > 0) // show only floors with matching results
-    .sort(([aFloor], [bFloor]) => (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0));
-}, [floorMap, searchTerm, liveCounts]);
+Uncaught runtime errors:
+×
+ERROR
+Forecast fetch failed: 500
+    at fetchForecastFromHistory (http://localhost:3000/static/js/src_components_Header_jsx.chunk.js:113:22)
