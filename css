@@ -1,4 +1,14 @@
-rows={(floorMap[expandedFloor] || []).map(r => ({
-  ...r,
-  LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString(),
-}))}
+{expandedFloor && (
+  <Box sx={{ px: "20px", mt: 2 }}>
+    <Typography variant="h6" gutterBottom>
+      {expandedFloor} — All Entries
+    </Typography>
+    <DataTable
+      columns={columns}
+      rows={(floorMap[expandedFloor] || []).map(r => ({
+        ...r,
+        LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString(),
+      }))}
+    />
+  </Box>
+)}
