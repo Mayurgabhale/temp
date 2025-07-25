@@ -1,114 +1,14 @@
-
-    // Fetch real-time status if available.
-    fetch("http://localhost:80/api/region/devices/status")
-        .then((response) => response.json())
-        .then((realTimeStatus) => {
-            console.log("Live Status Data:", realTimeStatus);
-
-            for (const [key, devices] of Object.entries(data.details)) {
-                if (!Array.isArray(devices) || devices.length === 0) continue;
-                const deviceType = key.toLowerCase();
-
-                devices.forEach((device) => {
-                    const deviceIP = device.ip_address || "N/A";
-                    let currentStatus = (realTimeStatus[deviceIP] || device.status || "offline").toLowerCase();
-                    const city = device.city || "Unknown";
-                    citySet.add(city);
-
-                    // Create card element.
-                    const card = document.createElement("div");
-                    card.className = "device-card";
-                    card.dataset.type = deviceType;
-                    card.dataset.status = currentStatus;
-                    card.dataset.city = city;
-                    card.setAttribute("data-ip", deviceIP);
-
-                    // Apply background color based on online/offline status
-                    card.style.backgroundColor = currentStatus === "online" ? "#e6ffed" : "#ffe6e6"; card.style.backgroundColor = currentStatus === "online"
-                        ? "rgba(16, 185, 129, 0.12)"  // Tailwind's emerald-500 with 12% opacity
-                        : "rgba(239, 68, 68, 0.12)";  // Tailwind's red-500 with 12% opacity
-
-
-                    card.style.borderColor = currentStatus === "online"
-                        ? "rgba(16, 185, 129, 0.4)"
-                        : "rgba(239, 68, 68, 0.4)";
-
-                    // Create a container for status
-                    const statusContainer = document.createElement("p");
-                    statusContainer.className = "device-status";
-                    // statusContainer.textContent = "Status: ";
-
-                    // Status text
-                    const statusText = document.createElement("span");
-                    statusText.className = "status-text";
-                    statusText.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
-                    statusText.style.color = currentStatus === "online" ? "green" : "red";
-
-                    // Status dot
-                    const statusDot = document.createElement("span");
-                    statusDot.classList.add(currentStatus === "online" ? "online-dot" : "offline-dot");
-                    statusDot.style.backgroundColor = (currentStatus === "online") ? "green" : "red";
-                    statusDot.style.display = "inline-block";
-                    statusDot.style.width = "10px";
-                    statusDot.style.height = "10px";
-                    statusDot.style.marginLeft = "5px";
-                    statusDot.style.marginRight = "5px";
-                    statusDot.style.borderRadius = "50%";
-
-                    // Combine status parts
-                    statusContainer.appendChild(statusDot);
-                    statusContainer.appendChild(statusText);
-
-                    // Use insertAdjacentHTML to avoid overwriting statusContainer
-                    // ,,,, ,,m, 
-
-                    // card.insertAdjacentHTML("beforeend", `
-                    //         <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700; font-family: 'Segoe UI', sans-serif; margin-bottom: 10px;">
-                    //             ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-                    //         </h3>
-
-                    //         <p class="device-type-label ${deviceType}" style="font-size: 1.05rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; margin-bottom: 10px;">
-
-                    //         <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
-                    //     </p>
-
-                    //     <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
-                    //         <strong style="color: #d7d9de;">
-                    //             <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
-                    //         </strong>
-                    //         <span 
-                    //             class="device-ip" 
-                    //             style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
-                    //             onclick="copyToClipboard('${deviceIP}')"
-                    //             title="Click to copy IP"
-                    //         >
-                    //             ${deviceIP}
-                    //         </span>
-                    //     </p>
-
-                    //         <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
-                    //             <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
-                    //             <span style=" font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);;">${device.location || "N/A"}</span>
-                    //         </p>
-
-                    //         <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
-                    //             <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
-                    //             <span style="font-weight: bold; color: rgb(215, 217, 222);;">${city}</span>
-                    //         </p>
-                    //     `);
-
-
-                    card.insertAdjacentHTML("beforeend", `
-  <div class="device-card-inner">
+card.insertAdjacentHTML("beforeend", `
+  <div class="device-card-inner ${currentStatus}">
     <h3 class="device-name">
       ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
     </h3>
 
     <p class="device-type-label ${deviceType}">
-      <strong><i class="${getDeviceIcon(deviceType)}"></i> ${deviceType.toUpperCase()}</strong>
+      <i class="${getDeviceIcon(deviceType)}"></i> ${deviceType.toUpperCase()}
     </p>
 
-    <p class="device-detail ip">
+    <p class="device-detail">
       <i class="fas fa-network-wired"></i>
       <span class="device-ip" onclick="copyToClipboard('${deviceIP}')" title="Click to copy IP">
         ${deviceIP}
@@ -124,69 +24,73 @@
     </p>
   </div>
 `);
-                    card.appendChild(statusContainer);
 
 
 
-                    // ............
-                    combinedDevices.push({
-                        card: card,
-                        device: {
-                            type: deviceType,
-                            status: currentStatus,
-                            city: city
-                        }
-                    });
-                });
-            }
+.device-card {
+  background: #1c1c1e;
+  border-radius: 14px;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.08);
+  border: 2px solid transparent;
+  transition: all 0.3s ease-in-out;
+}
 
-            combinedDevices.sort((a, b) => {
-                const statusA = (a.device.status === "offline") ? 0 : 1;
-                const statusB = (b.device.status === "offline") ? 0 : 1;
-                return statusA - statusB;
-            });
+.device-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 18px rgba(255, 204, 0, 0.2);
+}
 
-            const allDevices = combinedDevices.map(item => item.card);
-            const deviceObjects = combinedDevices.map(item => item.device);
+/* Inner content area */
+.device-card-inner {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
 
-            citySet.forEach((city) => {
-                const option = document.createElement("option");
-                option.value = city;
-                option.textContent = city;
-                cityFilter.appendChild(option);
-            });
+/* Conditional styling */
+.device-card[data-status="online"] {
+  border-color: #10b981; /* Green */
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
 
-            deviceFilter.value = "all";
-            cityFilter.value = "all";
-            document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
-            allFilterButton.classList.add("active");
+.device-card[data-status="offline"] {
+  border-color: #ef4444; /* Red */
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
 
-            function filterDevices() {
-                const selectedType = deviceFilter.value;
-                const selectedStatus = document.querySelector(".status-filter.active")?.dataset.status || "all";
-                const selectedCity = cityFilter.value;
-                // Search bar input
-                const searchTerm = document.getElementById("device-search").value.toLowerCase();
+/* Typography & Layout */
+.device-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
 
-                detailsContainer.innerHTML = "";
+.device-type-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffcc00;
+  margin-bottom: 12px;
+}
 
-                // const filteredDevices = allDevices.filter((device) =>
-                //     (selectedType === "all" || device.dataset.type === selectedType) &&
-                //     (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
-                //     (selectedCity === "all" || device.dataset.city === selectedCity)
-                // );
+.device-detail {
+  font-size: 0.95rem;
+  color: #d1d5db;
+  margin-bottom: 6px;
+}
 
-                const filteredDevices = allDevices.filter((device) =>
-                    (selectedType === "all" || device.dataset.type === selectedType) &&
-                    (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
-                    (selectedCity === "all" || device.dataset.city === selectedCity) &&
-                    (
-                        !searchTerm ||
-                        device.innerText.toLowerCase().includes(searchTerm)
-                    )
-                );
+.device-detail i {
+  margin-right: 6px;
+  color: #ffcc00;
+}
 
-                filteredDevices.forEach((deviceCard) => {
-                    detailsContainer.appendChild(deviceCard);
-                });
+.device-ip {
+  font-weight: 600;
+  color: #00adb5;
+  cursor: pointer;
+  text-shadow: 0 0 2px rgba(0, 173, 181, 0.3);
+}
 
+.device-ip:hover {
+  text-decoration: underline;
+}
