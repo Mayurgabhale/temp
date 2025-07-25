@@ -1,3 +1,12 @@
+Compiled with problems:
+×
+ERROR
+[eslint] 
+src\pages\PartitionDetail.jsx
+  Line 270:24:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+Search for the keywords to learn more about each error.
+
 import React, { useEffect, useState, useMemo } from "react";
 import {
   Container,
