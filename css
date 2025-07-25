@@ -1,3 +1,29 @@
+import { useMemo } from 'react';
+
+const floorEntries = useMemo(() => {
+  return Object.entries(live.floors).map(([floor, cnt]) => {
+    const name     = floor.trim();
+    const capacity = buildingCapacities[name] ?? 0;
+    const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+    return {
+      name,
+      Headcount: cnt,
+      Capacity:  capacity,
+      breakdown: {
+        Headcount: cnt,
+        'Total Seat': capacity,
+        Usage: `${pct}%`,
+      },
+    };
+  });
+}, [live.floors]);
+
+
+
+
+
+
 
 
 // src/components/ChartCard.jsx
