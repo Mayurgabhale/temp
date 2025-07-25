@@ -1,17 +1,15 @@
-return emps.some(r =>
-  r.ObjectName1.toLowerCase().includes(term) ||
-  r.EmployeeID.toLowerCase().includes(term) ||
-  (r.CardNumber && r.CardNumber.toLowerCase().includes(term))
-);
-
-
-
-
-
-
-
-const isMatch =
-  term &&
-  (r.ObjectName1.toLowerCase().includes(term) ||
-   r.EmployeeID.toLowerCase().includes(term) ||
-   (r.CardNumber && r.CardNumber.toLowerCase().includes(term)));
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at PartitionDetailDetails (http://localhost:3000/static/js/src_pages_PartitionDetailDetails_jsx.chunk.js:944:45)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27689:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17899:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19592:17)
+    at beginWork (http://localhost:3000/static/js/bundle.js:20178:16)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15670:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22251:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:22144:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:22128:7)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21892:42)
