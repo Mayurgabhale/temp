@@ -1,256 +1,7 @@
-import { useMemo } from 'react';
-
-const floorEntries = useMemo(() => {
-  return Object.entries(live.floors).map(([floor, cnt]) => {
-    const name     = floor.trim();
-    const capacity = buildingCapacities[name] ?? 0;
-    const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
-
-    return {
-      name,
-      Headcount: cnt,
-      Capacity:  capacity,
-      breakdown: {
-        Headcount: cnt,
-        'Total Seat': capacity,
-        Usage: `${pct}%`,
-      },
-    };
-  });
-}, [live.floors]);
-
-
-
-
-
-
-
-
-// src/components/ChartCard.jsx
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import {
-  AreaChart,
-  Area,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  Legend,
-  LabelList,
-  ReferenceLine,
-} from 'recharts';
-import dayjs from 'dayjs';
-
-const cardStyle = borderColor => ({
-  border: `1px solid ${borderColor}`,
-  borderRadius: 2,
-  bgcolor: 'rgba(0,0,0,0.4)',
-  overflow: 'hidden',
-  transition: 'transform 0.3s, box-shadow 0.3s',
-  '&:hover': {
-    transform: 'scale(1.02)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.7)',
-  },
-  width: '100%',
-});
-
-export default function ChartCard({
-  title,
-  data = [],
-  dataKey = 'value',
-  chartHeight = 350,
-  colors = { head: '#FFC107', cap: '#000000' },
-  animateDuration = 800,
-  showCrosshair = true,
-  timeFormat = 'HH:mm:ss',
-  axisProps = {},
-  tooltipFormatter = null,
-  disableLegendToggle = false,
-}) {
-  const [hidden, setHidden] = useState({});
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [replayKey, setReplayKey] = useState(0);
-  const containerRef = useRef();
-
-  if (!Array.isArray(data) || !data.length) {
-    return (
-      <Card sx={cardStyle(colors.head)}>
-        <CardContent sx={{ p: 1, textAlign: 'center' }}>
-          <Typography variant="h6">{title}</Typography>
-          <Typography variant="body2">No data to display.</Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const hasCapacity = data[0].Capacity != null;
-
-  const handleLegendClick = o => {
-    if (disableLegendToggle) return;
-    setHidden(prev => ({ ...prev, [o.dataKey]: !prev[o.dataKey] }));
-  };
-
-  const handleChartClick = () => setReplayKey(k => k + 1);
-
-  return (
-    <Card sx={cardStyle(colors.head)}>
-      <CardContent sx={{ p: 1 }}>
-        <Typography variant="h6" gutterBottom sx={{ color: colors.head, textAlign: 'center' }}>
-          {title}
-        </Typography>
-        <Box
-          ref={containerRef}
-          sx={{ width: '100%', height: chartHeight, cursor: 'pointer' }}
-          onClick={handleChartClick}
-        >
-          <ResponsiveContainer key={replayKey}>
-            <AreaChart
-              data={data}
-              margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-              onMouseMove={e => {
-                if (e && e.activeTooltipIndex != null) {
-                  setActiveIndex(e.activeTooltipIndex);
-                }
-              }}
-            >
-              <defs>
-                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="50%" stopColor={colors.head} stopOpacity={0.4} />
-                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-              {showCrosshair && activeIndex != null && data[activeIndex] && (
-                <ReferenceLine
-                  x={data[activeIndex].name}
-                  stroke={colors.head}
-                  strokeOpacity={0.5}
-                />
-              )}
-              <XAxis
-                dataKey="name"
-                tick={{ fill: '#000', fontWeight: 600 }}
-                tickFormatter={t =>
-                  typeof t === 'number' ? dayjs(t).format(timeFormat) : t
-                }
-                label={{
-                  position: 'insideBottomRight',
-                  offset: -10,
-                  fill: '#000',
-                  fontWeight: 600,
-                }}
-                {...axisProps.xAxis}
-              />
-              <YAxis
-                tick={{ fill: '#fff', fontWeight: 600 }}
-                label={{
-                  value: 'Count',
-                  angle: -90,
-                  position: 'insideLeft',
-                  fill: '#000',
-                  fontWeight: 600,
-                }}
-                {...axisProps.yAxis}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#fff',
-                  border: `1px solid ${colors.head}`,
-                  padding: '0.5rem',
-                }}
-                cursor={showCrosshair}
-                isAnimationActive={false}
-                content={({ active, payload }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const { breakdown = {}, name } = payload[0].payload;
-                  return (
-                    <Box sx={{ backgroundColor: '#fff', border: `1px solid ${colors.head}`, p: 1, borderRadius: 1 }}>
-                      <Typography variant="subtitle2" sx={{ color: colors.head, mb: 0.5 }}>
-                        {name}
-                      </Typography>
-                      {Object.entries(breakdown).map(([key, val]) => (
-                        <Typography key={key} variant="body2" sx={{ color: '#000' }}>
-                          {key}: {val}
-                        </Typography>
-                      ))}
-                    </Box>
-                  );
-                }}
-              />
-              <Legend
-                wrapperStyle={{ color: '#000' }}
-                onClick={handleLegendClick}
-                iconType="square"
-              />
-
-              {hasCapacity && !hidden.Capacity && (
-                <Area
-                  type="monotone"
-                  dataKey="Capacity"
-                  name="Total Seat"
-                  stroke={colors.cap}
-                  fill={`${colors.cap}33`}
-                  dot={false}
-                  isAnimationActive
-                  animationDuration={animateDuration}
-                >
-                  <LabelList
-                    dataKey="Capacity"
-                    position="top"
-                    isAnimationActive={false}
-                    style={{ fill: colors.cap, fontSize: 12, fontWeight: 600 }}
-                  />
-                </Area>
-              )}
-              {!hidden.Headcount && (
-                <Area
-                  type="monotone"
-                  dataKey={hasCapacity ? 'Headcount' : dataKey}
-                  name="Usage"
-                  stroke={colors.head}
-                  fill="url(#colorHead)"
-                  dot={false}
-                  isAnimationActive
-                  animationDuration={animateDuration}
-                >
-                  <LabelList
-                    dataKey={hasCapacity ? 'Headcount' : dataKey}
-                    position="top"
-                    style={{ fill: '#2ecc71', fontSize: 15, fontWeight: 600 }}
-                  />
-                </Area>
-              )}
-              {!hidden.Headcount && (
-                <Line
-                  type="monotone"
-                  dataKey={hasCapacity ? 'Headcount' : dataKey}
-                  stroke={colors.head}
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive
-                  animationDuration={animateDuration}
-                  activeDot={{ r: 6, stroke: '#000', strokeWidth: 2 }}
-                />
-              )}
-            </AreaChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
-
-
-
-
-
-
 
 
 import React, { useEffect, useState } from "react";
+import { useMemo } from 'react';
 import {
   Container,
   Box,
@@ -298,6 +49,11 @@ export default function PartitionDetail() {
     return () => clearInterval(timer);
   }, [partition]);
 
+
+  
+
+
+
   // Load historical summary once
   useEffect(() => {
     setHistoryLoading(true);
@@ -321,7 +77,8 @@ export default function PartitionDetail() {
   };
 
   // Build floorEntries with capacity
-  const floorEntries = Object.entries(live.floors).map(([floor, cnt]) => {
+  const floorEntries = useMemo(() => {
+  return Object.entries(live.floors).map(([floor, cnt]) => {
     const name     = floor.trim();
     const capacity = buildingCapacities[name] ?? 0;
     const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
@@ -337,6 +94,8 @@ export default function PartitionDetail() {
       },
     };
   });
+}, [live.floors]);
+
 
   return (
     <>
@@ -440,3 +199,4 @@ export default function PartitionDetail() {
     </>
   );
 }
+
