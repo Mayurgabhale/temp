@@ -1,3 +1,49 @@
+
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of null (reading 'summaryByDate')
+TypeError: Cannot read properties of null (reading 'summaryByDate')
+    at PartitionDetail (http://localhost:3000/src_pages_PartitionDetail_jsx.f759e7821e1ad518de2e.hot-update.js:284:27)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
+    at beginWork (http://localhost:3000/static/js/bundle.js:20232:637)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15742:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22323:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:22216:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:22200:7)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21964:42)
+
+import React, { useEffect, useState } from "react";
+import { useMemo } from 'react';
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+
+import SummaryCard from "../components/SummaryCard";
+import ChartCard from "../components/ChartCard";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
+
+import { fetchLiveSummary, fetchHistory } from "../api/occupancy.service";
+import { lookupFloor } from "../utils/floorLookup"; // This is correct
+
+import buildingCapacities from "../data/buildingCapacities";
+
+import seatCapacities from "../data/seatCapacities";
+
+import GroupIcon from "@mui/icons-material/Group";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+import PeopleIcon from "@mui/icons-material/People";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
+
 export default function PartitionDetail() {
   const { partition } = useParams();
   const navigate = useNavigate();
@@ -7,7 +53,7 @@ export default function PartitionDetail() {
   const [historyLoading, setHistoryLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("");
 
-  // Auto-refresh live summary
+  // Auto‐refresh live summary
   useEffect(() => {
     let timer;
     async function loadLive() {
@@ -20,7 +66,12 @@ export default function PartitionDetail() {
     return () => clearInterval(timer);
   }, [partition]);
 
-  // Load historical summary
+
+  
+
+
+
+  // Load historical summary once
   useEffect(() => {
     setHistoryLoading(true);
     fetchHistory(partition).then((json) => {
@@ -29,14 +80,11 @@ export default function PartitionDetail() {
     });
   }, [partition]);
 
-  // ✅ Early return BEFORE using any potentially null objects
-  if (!liveSummary || !history || !history.summaryByDate) {
-    return <LoadingSpinner />;
-  }
+  // if (!liveSummary || !history) return <LoadingSpinner />;
 
-  // ✅ Now safe to use
+  // Totals for cards
   const lastDay = history.summaryByDate.at(-1);
-  const partToday = lastDay?.region ?? {};
+  const partToday = lastDay.region;
   const live = liveSummary.realtime[partition] || {
     total: 0,
     Employee: 0,
@@ -45,97 +93,113 @@ export default function PartitionDetail() {
     floors: {},
   };
 
-  const floorEntries = useMemo(() => {
-    const liveFloors = liveSummary?.realtime?.[partition]?.floors || {};
-    return Object.entries(liveFloors).map(([floor, cnt]) => {
-      const name = floor.trim();
-      let capacity = buildingCapacities[name];
+  // Build floorEntries with capacity
+ const floorEntries = useMemo(() => {
+  if (!liveSummary || !liveSummary.realtime[partition]) return [];
 
-      if (capacity == null) {
-        capacity = seatCapacities[partition] ?? 0;
-      }
+  const liveFloors = liveSummary.realtime[partition].floors || {};
 
-      const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+  return Object.entries(liveFloors).map(([floor, cnt]) => {
+    const name = floor.trim();
+    let capacity = buildingCapacities[name];
 
-      return {
-        name,
+    if (capacity == null) {
+      capacity = seatCapacities[partition] ?? 0;
+    }
+
+    const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+    return {
+      name,
+      Headcount: cnt,
+      Capacity: capacity,
+      breakdown: {
         Headcount: cnt,
-        Capacity: capacity,
-        breakdown: {
-          Headcount: cnt,
-          'Total Seat': capacity,
-          Usage: `${pct}%`,
-        },
-      };
-    });
-  }, [liveSummary, partition]);
+        'Total Seat': capacity,
+        Usage: `${pct}%`,
+      },
+    };
+  });
+}, [liveSummary, partition]);
+
+// After that, the conditional return is fine
+if (!liveSummary || !history) return <LoadingSpinner />;
 
   return (
     <>
       <Header />
+
       <Box component="main" sx={{ pt: 1, pb: 1 }}>
         <Container maxWidth={false} disableGutters>
+          {/* Back button */}
           <Box display="flex" alignItems="center" mb={1} sx={{ px: "20px" }}>
             <Button size="small" onClick={() => navigate(-1)}>
               ← Back
             </Button>
           </Box>
 
+          {/* Six‐card partition summary */}
           <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-            {[
-              {
-                title: "Today's Total Headcount",
-                value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
-                icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
-                border: '#FFD666'
-              },
-              {
-                title: "Today's Employees Count",
-                value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
-                icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
-                border: '#81C784'
-              },
-              {
-                title: "Today's Contractors Count",
-                value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
-                icon: <i className="fa-solid fa-circle-user" style={{ color: '#64B5F6', fontSize: 25 }} />,
-                border: '#FFE599'
-              },
-              {
-                title: "Realtime Headcount",
-                value: live.total,
-                icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
-                border: '#FFF2CC'
-              },
-              {
-                title: "Realtime Employees Count",
-                value: live.Employee,
-                icon: <i className="bi bi-people" style={{ color: '#FFB74D', fontSize: 25 }} />,
-                border: '#FFD666'
-              },
-              {
-                title: "Realtime Contractors Count",
-                value: live.Contractor,
-                icon: <i className="fa-solid fa-circle-user" style={{ color: '#4DB6AC', fontSize: 25 }} />,
-                border: '#FFE599'
-              }
-            ].map(card => (
-              <Box key={card.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
-                <SummaryCard
-                  title={card.title}
-                  total={card.value}
-                  stats={[]}
-                  icon={card.icon}
-                  sx={{
-                    height: 140,
-                    border: `2px solid ${card.border}`
-                  }}
-                />
-              </Box>
-            ))}
-          </Box>
+  {[
+    {
+      title: "Today's Total Headcount",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.total,
+      icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
+      border: '#FFD666'
+    },
+    {
+      title: "Today's Employees Count",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.Employee,
+      icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+      border: '#81C784'
+    },
+    {
+      title: "Today's Contractors Count",
+      value: historyLoading ? <CircularProgress size={20} /> : partToday.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ color: '#64B5F6', fontSize: 25 }} />,
+      border: '#FFE599'
+    },
+    {
+      title: "Realtime Headcount",
+      value: live.total,
+      icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
+      border: '#FFF2CC'
+    },
+    {
+      title: "Realtime Employees Count",
+      value: live.Employee,
+      icon: <i className="bi bi-people" style={{ color: '#FFB74D', fontSize: 25 }} />,
+      border: '#FFD666'
+    },
+    {
+      title: "Realtime Contractors Count",
+      value: live.Contractor,
+      icon: <i className="fa-solid fa-circle-user" style={{ color: '#4DB6AC', fontSize: 25 }} />,
+      border: '#FFE599'
+    }
+  ].map(card => (
+    <Box key={card.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+      <SummaryCard
+        title={card.title}
+        total={card.value}
+        stats={[]}
+        icon={card.icon}
+        sx={{
+          height: 140,
+          border: `2px solid ${card.border}`
+        }}
+      />
+    </Box>
+  ))}
+</Box>
 
-          <Box mb={4} sx={{ px: "20px", p: 2, border: "2px solid #FFC107", background: 'rgba(0,0,0,0.4)' }}>
+          {/* Floor‐capacity chart */}
+          <Box mb={4} sx={{ 
+            px: "20px", 
+            p: 2, 
+            border: "2px solid #FFC107",
+            background: 'rgba(0,0,0,0.4)'
+          }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography variant="h6" sx={{ color: '#FFC107' }}>
                 Live Floor Headcount against Occupancy
@@ -158,7 +222,9 @@ export default function PartitionDetail() {
           </Box>
         </Container>
       </Box>
+
       <Footer />
     </>
   );
 }
+
