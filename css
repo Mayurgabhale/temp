@@ -1,3 +1,25 @@
+const floorEntries = Object.entries(live.floors).map(([floor, cnt]) => {
+  const nameRaw = floor.trim();
+  const name = nameRaw && nameRaw !== "unknown" ? nameRaw : partition; // fallback to region name
+  const capacity = buildingCapacities[name] ?? seatCapacities[partition] ?? 0;
+  const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+  return {
+    name,
+    Headcount: cnt,
+    Capacity: capacity,
+    breakdown: {
+      Headcount: cnt,
+      'Total Seat': capacity,
+      Usage: `${pct}%`,
+    },
+  };
+});
+
+
+
+
+
 
 
 // src/components/ChartCard.jsx
