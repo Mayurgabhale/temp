@@ -3,116 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Summary Dashboard</title>
+  <title>Branded Dashboard Cards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* Brand Theme */
+    :root {
+      --bg-dark: #0f111a;
+      --card-bg: #1a1c29;
+      --brand: #7f5af0;
+      --accent: #2cb67d;
+      --alert: #ef4565;
+      --text: #e4e4ec;
+    }
+
     body {
-      margin: 0;
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
       padding: 2rem;
-      background-color: #121212;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .summary {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
+      gap: 28px;
     }
 
     .card {
-      background: #1e1e2f;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      padding: 2px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--brand), var(--accent), var(--alert));
+      background-size: 300% 300%;
+      animation: glowBorder 6s ease infinite;
     }
 
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+    .card-inner {
+      background: rgba(26, 28, 41, 0.95);
+      border-radius: 16px;
+      padding: 24px;
+      height: 100%;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .card h3 {
+      font-size: 1.2rem;
+      color: var(--brand);
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 1.1rem;
-      margin-bottom: 18px;
-      color: #ffffff;
+      font-weight: 700;
+      margin-bottom: 20px;
     }
 
     .card-status {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      background: #2a2a3f;
       padding: 12px 16px;
       border-radius: 10px;
-      margin-bottom: 10px;
       font-size: 0.95rem;
-      font-weight: 500;
+      margin-bottom: 12px;
+      font-weight: 600;
+      background: #222433;
     }
 
-    .status-total {
-      border-left: 4px solid #00bcd4;
-    }
-
-    .status-online {
-      border-left: 4px solid #4caf50;
-    }
-
-    .status-offline {
-      border-left: 4px solid #f44336;
-    }
+    .status-total { border-left: 4px solid var(--brand); }
+    .status-online { border-left: 4px solid var(--accent); }
+    .status-offline { border-left: 4px solid var(--alert); }
 
     .card-status span {
-      font-weight: bold;
       color: #fff;
+      font-weight: bold;
+    }
+
+    @keyframes glowBorder {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .card:hover .card-inner {
+      transform: translateY(-3px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 8px 28px rgba(127, 90, 240, 0.4);
     }
 
     @media (max-width: 600px) {
-      body {
-        padding: 1rem;
-      }
+      body { padding: 1rem; }
     }
   </style>
 </head>
 <body>
   <div class="summary">
     <div class="card">
-      <h3><i class="fas fa-microchip"></i> Total Devices</h3>
-      <div class="card-status status-total">Total <span id="total-devices">Loading...</span></div>
-      <div class="card-status status-online">Online <span id="online-devices">Loading...</span></div>
-      <div class="card-status status-offline">Offline <span id="offline-devices">Loading...</span></div>
+      <div class="card-inner">
+        <h3><i class="fas fa-microchip"></i> Total Devices</h3>
+        <div class="card-status status-total">Total <span id="total-devices">Loading...</span></div>
+        <div class="card-status status-online">Online <span id="online-devices">Loading...</span></div>
+        <div class="card-status status-offline">Offline <span id="offline-devices">Loading...</span></div>
+      </div>
     </div>
 
     <div class="card">
-      <h3><i class="fas fa-video"></i> Cameras</h3>
-      <div class="card-status status-total">Total <span id="camera-total">Loading...</span></div>
-      <div class="card-status status-online">Online <span id="camera-online">Loading...</span></div>
-      <div class="card-status status-offline">Offline <span id="camera-offline">Loading...</span></div>
+      <div class="card-inner">
+        <h3><i class="fas fa-video"></i> Cameras</h3>
+        <div class="card-status status-total">Total <span id="camera-total">Loading...</span></div>
+        <div class="card-status status-online">Online <span id="camera-online">Loading...</span></div>
+        <div class="card-status status-offline">Offline <span id="camera-offline">Loading...</span></div>
+      </div>
     </div>
 
     <div class="card">
-      <h3><i class="fas fa-database"></i> Archivers</h3>
-      <div class="card-status status-total">Total <span id="archiver-total">Loading...</span></div>
-      <div class="card-status status-online">Online <span id="archiver-online">Loading...</span></div>
-      <div class="card-status status-offline">Offline <span id="archiver-offline">Loading...</span></div>
+      <div class="card-inner">
+        <h3><i class="fas fa-database"></i> Archivers</h3>
+        <div class="card-status status-total">Total <span id="archiver-total">Loading...</span></div>
+        <div class="card-status status-online">Online <span id="archiver-online">Loading...</span></div>
+        <div class="card-status status-offline">Offline <span id="archiver-offline">Loading...</span></div>
+      </div>
     </div>
 
     <div class="card">
-      <h3><i class="fas fa-id-card"></i> Controllers</h3>
-      <div class="card-status status-total">Total <span id="controller-total">Loading...</span></div>
-      <div class="card-status status-online">Online <span id="controller-online">Loading...</span></div>
-      <div class="card-status status-offline">Offline <span id="controller-offline">Loading...</span></div>
+      <div class="card-inner">
+        <h3><i class="fas fa-id-card"></i> Controllers</h3>
+        <div class="card-status status-total">Total <span id="controller-total">Loading...</span></div>
+        <div class="card-status status-online">Online <span id="controller-online">Loading...</span></div>
+        <div class="card-status status-offline">Offline <span id="controller-offline">Loading...</span></div>
+      </div>
     </div>
 
     <div class="card">
-      <h3><i class="fas fa-server"></i> Servers</h3>
-      <div class="card-status status-total">Total <span id="server-total">Loading...</span></div>
-      <div class="card-status status-online">Online <span id="server-online">Loading...</span></div>
-      <div class="card-status status-offline">Offline <span id="server-offline">Loading...</span></div>
+      <div class="card-inner">
+        <h3><i class="fas fa-server"></i> Servers</h3>
+        <div class="card-status status-total">Total <span id="server-total">Loading...</span></div>
+        <div class="card-status status-online">Online <span id="server-online">Loading...</span></div>
+        <div class="card-status status-offline">Offline <span id="server-offline">Loading...</span></div>
+      </div>
     </div>
   </div>
 </body>
