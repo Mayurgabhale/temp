@@ -1,3 +1,24 @@
+const floorEntries = Object.entries(live.floors)
+  .filter(([floor]) => floor && floor.trim() !== '')
+  .map(([floor, cnt]) => {
+    const name = floor.trim();
+    const capacity = buildingCapacities[name] ?? seatCapacities[partition] ?? 0;
+    const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+    return {
+      name,
+      Headcount: cnt,
+      Capacity: capacity,
+      breakdown: {
+        Headcount: cnt,
+        'Total Seat': capacity,
+        Usage: `${pct}%`,
+      },
+    };
+  });
+
+
+
 
 
 
