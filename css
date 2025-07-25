@@ -1,3 +1,14 @@
+<LabelList
+  dataKey="Capacity"
+  position="top"
+  isAnimationActive={false}
+  style={{ fill: colors.cap, fontSize: 12, fontWeight: 600 }}
+/>
+
+
+
+
+
 in chart labellist
 means lable are blink every second, so slove this issuse and stop for blink ok
 read below code carefully and slove thie issue carefully
