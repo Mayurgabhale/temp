@@ -3,3 +3,15 @@ return emps.some(r =>
   r.EmployeeID.toLowerCase().includes(term) ||
   (r.CardNumber && r.CardNumber.toLowerCase().includes(term))
 );
+
+
+
+
+
+
+
+const isMatch =
+  term &&
+  (r.ObjectName1.toLowerCase().includes(term) ||
+   r.EmployeeID.toLowerCase().includes(term) ||
+   (r.CardNumber && r.CardNumber.toLowerCase().includes(term)));
