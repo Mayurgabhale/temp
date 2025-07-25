@@ -1,145 +1,284 @@
-card.insertAdjacentHTML("beforeend", `
-  <div class="device-card-inner">
-    <h3 class="device-name">
-      <i class="${getDeviceIcon(deviceType)}"></i>
-      ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-    </h3>
 
-    <p class="device-type-label">${deviceType.toUpperCase()}</p>
+    //C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\pages\PartitionDetailDetails.jsx
 
-    <p class="device-detail">
-      <i class="fas fa-network-wired"></i>
-      <span class="device-ip" onclick="copyToClipboard('${deviceIP}')" title="Click to copy IP">${deviceIP}</span>
-    </p>
+  // src/pages/PartitionDetailDetails.jsx
+  import React, { useEffect, useState, useMemo } from "react";
+  import {
+    Container,
+    Box,
+    Typography,
+    Button,
+    TextField,
+    TableContainer,
+    Paper,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+  } from "@mui/material";
+  import { useParams, useNavigate } from "react-router-dom";
+  import Header from "../components/Header";
+  import Footer from "../components/Footer";
+  import LoadingSpinner from "../components/LoadingSpinner";
+  import DataTable from "../components/DataTable";
+  import { fetchLiveSummary } from "../api/occupancy.service";
+  import { lookupFloor } from "../utils/floorLookup";
 
-    <p class="device-detail">
-      <i class="fas fa-map-marker-alt"></i>
-      ${device.location || "N/A"}
-    </p>
+  export default function PartitionDetailDetails() {
+    const { partition } = useParams();
+    const navigate = useNavigate();
 
-    <p class="device-detail">
-      <i class="fas fa-city"></i> ${city}
-    </p>
-  </div>
-`);
-
-
+    const [details, setDetails] = useState([]);
+    const [liveCounts, setLiveCounts] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [lastUpdate, setLastUpdate] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [expandedFloor, setExpandedFloor] = useState(null);
 
 
+    // Initial load on partition change: show spinner
+    useEffect(() => {
+      let isMounted = true;
+      setLoading(true);
+      // fetchLiveSummary().then(json => {
+      //   if (!isMounted) return;
+      //   const det = json.details
+
+        fetchLiveSummary().then(json => {
+      if (!isMounted) return;
+        // grab and store the live floor counts
+        const counts = json.realtime[partition]?.floors || {};
+        setLiveCounts(counts);
+
+        // then build the raw detail rows
+        const det = json.details
+
+          .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+          .map(r => ({
+            ...r,
+            floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
+          }));
+        setDetails(det);
+        setLastUpdate(new Date().toLocaleTimeString());
+        setLoading(false);
+      });
+      return () => {
+        isMounted = false;
+      };
+    }, [partition]);
+
+    // Subsequent refresh every second, without spinner
+    useEffect(() => {
+      const interval = setInterval(async () => {
+        // const json = await fetchLiveSummary();
+        // const det = json.details
+
+              const json = await fetchLiveSummary();
+  // update live counts each tick
+        setLiveCounts(json.realtime[partition]?.floors || {});
+
+        // update details
+        const det = json.details
+
+
+          .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+          .map(r => ({
+            ...r,
+            floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
+          }));
+        setDetails(det);
+        setLastUpdate(new Date().toLocaleTimeString());
+      }, 1000);
+      return () => clearInterval(interval);
+    }, [partition]);
+
+
+    // Group by floor, ensuring every floor in liveCounts appears
+    const floorMap = useMemo(() => {
+      const m = {};
+      // initialize each live floor with empty array
+      Object.keys(liveCounts).forEach(floorName => {
+        m[floorName] = [];
+      });
+      // then bucket actual detail rows
+      details.forEach(r => {
+        // if lookupFloor returned a floor not in liveCounts, include it too
+        if (!(r.floor in m)) m[r.floor] = [];
+        m[r.floor].push(r);
+      });
+      return m;
+    }, [details, liveCounts]);
 
 
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    // Filter + sort
+    const displayed = useMemo(() => {
+      const term = searchTerm.trim().toLowerCase();
+      return Object.entries(floorMap)
+        // .filter(([floor, emps]) => {
+          .filter(([floor, emps]) => {
+          if (!term) return true;
+          if (floor.toLowerCase().includes(term)) return true;
+          return emps.some(r =>
+            r.ObjectName1.toLowerCase().includes(term) ||
+            r.EmployeeID.toLowerCase().includes(term)
+          );
+        })
 
-:root {
-  --color-bg: #1e1e2f;
-  --color-card: #2c2c3e;
-  --color-accent: #00ffd1;
-  --color-text-light: #d9e0ef;
-  --color-text-faded: #a0a6b8;
-  --color-online: #00c48c;
-  --color-offline: #ff4d4f;
-}
+        // sort by real-time headcount desc
+        .sort(([aFloor], [bFloor]) => (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0));
 
-.device-card {
-  background: rgba(44, 44, 62, 0.85);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 22px;
-  margin: 16px;
-  font-family: 'Inter', sans-serif;
-  color: var(--color-text-light);
-  border: 1.5px solid transparent;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  width: 280px;
-  position: relative;
-}
+    }, [floorMap, searchTerm]);
 
-.device-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 255, 209, 0.07);
-}
+    const columns = [
+      { field: "EmployeeID", headerName: "Emp ID" },
+      { field: "ObjectName1", headerName: "Name" },
+      { field: "LocaleMessageTime", headerName: "Swipe Time" },
+      { field: "PersonnelType", headerName: "Type" },
+      { field: "CardNumber", headerName: "Card" },
+      { field: "Door", headerName: "Door" },
+    ];
 
-.status-online {
-  border-color: var(--color-online);
-  box-shadow: 0 0 12px rgba(0, 196, 140, 0.3);
-}
+    return (
+      <>
+        <Header />
 
-.status-offline {
-  border-color: var(--color-offline);
-  box-shadow: 0 0 12px rgba(255, 77, 79, 0.3);
-}
+        <Box component="main" sx={{ pt: 1, pb: 1 }}>
+          <Container maxWidth={false} disableGutters>
+            {/* Back */}
+            <Box display="flex" alignItems="center" mb={2} sx={{ px: "20px" }}>
+              <Button size="small" onClick={() => navigate(-1)}>
+                ← Back to Overview
+              </Button>
+            </Box>
 
-.device-name {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+            {/* Floor Details + Search */}
+            <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: "20px" }}>
+              <Typography variant="h6">Floor Details</Typography>
+              <Typography variant="body2" color="textSecondary">
+                Last updated: {lastUpdate}
+              </Typography>
+              <TextField
+                size="small"
+                placeholder="Search floor / emp…"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </Box>
 
-.device-name i {
-  color: var(--color-accent);
-  font-size: 1.3rem;
-}
+            {/* Show spinner only during initial load */}
+            {loading ? (
+              <Box sx={{ px: "20px", py: 8 }}>
+                <LoadingSpinner />
+              </Box>
+            ) : (
+              <>
+                {/* Edge-to-edge cards */}
+                <Box
+                  component="section"
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    width: "100%",
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  {displayed.map(([floor, emps]) => (
+                    <Box
+                      key={floor}
+                      sx={{
+                        width: "50%",
+                        boxSizing: "border-box",
+                        p: "20px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          border: "1px solid #FFC107",
+                          borderRadius: 2,
+                          height: "100%",
+                        }}
+                      >
+                                <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                        {floor} (Total {liveCounts[floor] ?? 0})
+                      </Typography>
 
-.device-type-label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #facc15;
-  background: rgba(250, 204, 21, 0.1);
-  padding: 2px 8px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-bottom: 12px;
-}
 
-.device-detail {
-  font-size: 0.92rem;
-  color: var(--color-text-faded);
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-}
 
-.device-detail i {
-  margin-right: 8px;
-  color: var(--color-accent);
-}
+                        <TableContainer component={Paper} variant="outlined" sx={{ mb: 1 }}>
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                {["Emp ID", "Name", "Swipe Time", "Type", "Card", "Door"].map(h => (
+                                  <TableCell key={h} sx={{ fontWeight: "bold" }}>
+                                    {h}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {emps.slice(0, 10).map((r, i) => {
+                                const term = searchTerm.trim().toLowerCase();
+                                const isMatch =
+                                  term &&
+                                  (r.ObjectName1.toLowerCase().includes(term) ||
+                                    r.EmployeeID.toLowerCase().includes(term));
+                                return (
+                                  <TableRow
+                                    key={`${r.PersonGUID}-${i}`}
+                                    sx={isMatch ? { backgroundColor: "rgba(255, 235, 59, 0.3)" } : {}}
+                                  >
+                                    <TableCell>{r.EmployeeID}</TableCell>
+                                    <TableCell>{r.ObjectName1}</TableCell>
+                                    <TableCell>
+                                      {new Date(r.LocaleMessageTime).toLocaleTimeString()}
+                                    </TableCell>
+                                    <TableCell>{r.PersonnelType}</TableCell>
+                                    <TableCell>{r.CardNumber}</TableCell>
+                                    <TableCell>{r.Door}</TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            setExpandedFloor(expandedFloor === floor ? null : floor)
+                          }
+                        >
+                          {expandedFloor === floor ? "Hide" : "See more…"}
+                        </Button>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
 
-.device-ip {
-  font-weight: 600;
-  color: var(--color-accent);
-  cursor: pointer;
-}
+                {/* Expanded full-width table */}
+                {expandedFloor && (
+                  <Box sx={{ px: "20px", mt: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                      {expandedFloor} — All Entries
+                    </Typography>
+                    <DataTable
+                      columns={columns}
+                      rows={floorMap[expandedFloor].map(r => ({
+                        ...r,
+                        LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString(),
+                      }))}
+                    />
+                  </Box>
+                )}
+              </>
+            )}
+          </Container>
+        </Box>
 
-.device-status {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.07);
-  padding: 4px 10px;
-  border-radius: 12px;
-  gap: 6px;
-}
+        <Footer />
+      </>
+    );
+  }
 
-.online-dot,
-.offline-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.online-dot {
-  background-color: var(--color-online);
-}
-
-.offline-dot {
-  background-color: var(--color-offline);
-}
