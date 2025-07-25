@@ -1,11 +1,37 @@
-Compiled with problems:
-×
-ERROR
-[eslint] 
-src\pages\PartitionDetail.jsx
-  Line 282:24:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
 
-Search for the keywords to learn more about each error.
+in Miami, new york, austin texac, in
+
+this usage and total seat value are not disply so i givi you seatcapacites no write correct code
+C:\Users\W0024618\Desktop\namer-occupancy-frontend\namer-occupancy-frontend\src\data\seatCapacities.js
+
+// src/data/seatCapacities.js
+const seatCapacities = {
+  'US.CO.OBS':          840,  // Denver total seats
+  'US.FL.Miami':       300,
+  'US.NYC':            450,
+  'USA/Canada Default':150,
+};
+export default seatCapacities;
+
+
+C:\Users\W0024618\Desktop\namer-occupancy-frontend\namer-occupancy-frontend\src\data\buildingCapacities.js
+
+// src/data/buildingCapacities.js
+
+export default {
+  'Floor 06': 165,
+  'Floor 09': 165,
+  'Floor 11': 166,
+  'Floor 12': 165,
+  'Floor 13': 165,
+  'Floor 14': 138,
+  'Floor 15': 25,
+  'Floor 01':20,
+};
+
+
+
+
 
 import React, { useEffect, useState } from "react";
 import { useMemo } from 'react';
@@ -28,6 +54,8 @@ import { fetchLiveSummary, fetchHistory } from "../api/occupancy.service";
 import { lookupFloor } from "../utils/floorLookup"; // This is correct
 
 import buildingCapacities from "../data/buildingCapacities";
+
+import seatCapacities from "../data/seatCapacities";
 
 import GroupIcon from "@mui/icons-material/Group";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
@@ -84,8 +112,7 @@ export default function PartitionDetail() {
   };
 
   // Build floorEntries with capacity
-  const floorEntries = useMemo(() => {
-  return Object.entries(live.floors).map(([floor, cnt]) => {
+  const floorEntries = Object.entries(live.floors).map(([floor, cnt]) => {
     const name     = floor.trim();
     const capacity = buildingCapacities[name] ?? 0;
     const pct      = capacity ? Math.round((cnt / capacity) * 100) : 0;
@@ -101,8 +128,6 @@ export default function PartitionDetail() {
       },
     };
   });
-}, [live.floors]);
-
 
   return (
     <>
