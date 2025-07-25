@@ -1,8 +1,30 @@
-Compiled with problems:
-×
-ERROR
-[eslint] 
-src\pages\PartitionDetail.jsx
-  Line 284:22:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+const floorEntries = useMemo(() => {
+  if (!liveSummary || !liveSummary.realtime[partition]) return [];
 
-Search for the keywords to learn more about each error.
+  const liveFloors = liveSummary.realtime[partition].floors || {};
+
+  return Object.entries(liveFloors).map(([floor, cnt]) => {
+    const name = floor.trim();
+    let capacity = buildingCapacities[name];
+
+    if (capacity == null) {
+      capacity = seatCapacities[partition] ?? 0;
+    }
+
+    const pct = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+    return {
+      name,
+      Headcount: cnt,
+      Capacity: capacity,
+      breakdown: {
+        Headcount: cnt,
+        'Total Seat': capacity,
+        Usage: `${pct}%`,
+      },
+    };
+  });
+}, [liveSummary, partition]);
+
+// After that, the conditional return is fine
+if (!liveSummary || !history) return <LoadingSpinner />;
