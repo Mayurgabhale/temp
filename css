@@ -1,121 +1,101 @@
-card.insertAdjacentHTML("beforeend", `
-    <div class="device-card-inner">
-        <h3 class="device-name">
-            <i class="${getDeviceIcon(deviceType)} device-icon"></i>
-            ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-        </h3>
-
-        <p class="device-type-label">
-            ${deviceType.toUpperCase()}
-        </p>
-
-        <p class="device-detail">
-            <i class="fas fa-network-wired"></i>
-            <span class="device-ip" onclick="copyToClipboard('${deviceIP}')" title="Click to copy IP">${deviceIP}</span>
-        </p>
-
-        <p class="device-detail">
-            <i class="fas fa-map-marker-alt"></i> ${device.location || "N/A"}
-        </p>
-
-        <p class="device-detail">
-            <i class="fas fa-city"></i> ${city}
-        </p>
-    </div>
-`);
-
-
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+:root {
+  --color-bg: #1e1e2f;
+  --color-card: #2c2c3e;
+  --color-accent: #00ffd1;
+  --color-text-light: #d9e0ef;
+  --color-text-faded: #a0a6b8;
+  --color-online: #00c48c;
+  --color-offline: #ff4d4f;
+}
+
 .device-card {
-  background: linear-gradient(135deg, #1a1a1a, #292929);
-  border-radius: 18px;
+  background: rgba(44, 44, 62, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
   padding: 22px;
-  margin: 18px;
+  margin: 16px;
   font-family: 'Inter', sans-serif;
-  color: #f5f5f5;
-  border: 2px solid transparent;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  color: var(--color-text-light);
+  border: 1.5px solid transparent;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 280px;
   position: relative;
 }
 
 .device-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 255, 209, 0.07);
 }
 
 .status-online {
-  border-color: #16a34a66;
-  background-color: #16a34a12;
+  border-color: var(--color-online);
+  box-shadow: 0 0 12px rgba(0, 196, 140, 0.3);
 }
 
 .status-offline {
-  border-color: #dc262666;
-  background-color: #dc262612;
+  border-color: var(--color-offline);
+  box-shadow: 0 0 12px rgba(255, 77, 79, 0.3);
 }
 
 .device-name {
   font-size: 1.3rem;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.device-icon {
-  color: #facc15;
+.device-name i {
+  color: var(--color-accent);
   font-size: 1.3rem;
 }
 
 .device-type-label {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #a78bfa;
-  margin-bottom: 10px;
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 12px;
 }
 
 .device-detail {
-  font-size: 0.96rem;
-  margin-bottom: 7px;
+  font-size: 0.92rem;
+  color: var(--color-text-faded);
   display: flex;
   align-items: center;
-  color: #d1d5db;
+  margin-bottom: 8px;
 }
 
 .device-detail i {
   margin-right: 8px;
-  color: #fbbf24;
+  color: var(--color-accent);
 }
 
 .device-ip {
-  font-weight: bold;
-  color: #00e0d6;
+  font-weight: 600;
+  color: var(--color-accent);
   cursor: pointer;
-  text-shadow: 0 0 1px rgba(0, 224, 214, 0.3);
 }
 
 .device-status {
-  margin-top: 12px;
-  font-size: 0.95rem;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 600;
-}
-
-.status-text {
-  color: #f3f4f6;
-}
-
-.online-dot {
-  background-color: #16a34a;
-}
-
-.offline-dot {
-  background-color: #dc2626;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 4px 10px;
+  border-radius: 12px;
+  gap: 6px;
 }
 
 .online-dot,
@@ -123,40 +103,12 @@ card.insertAdjacentHTML("beforeend", `
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  display: inline-block;
 }
 
-/* Section Styles */
-.details-section {
-  padding: 20px;
-  background-color: #121212;
+.online-dot {
+  background-color: var(--color-online);
 }
 
-.details-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #f9fafb;
-  margin-bottom: 20px;
-}
-
-.details-header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-#device-search {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: none;
-  background: #1f2937;
-  color: #fff;
-  font-size: 0.95rem;
-  outline: none;
-  width: 300px;
-  transition: 0.3s;
-}
-
-#device-search::placeholder {
-  color: #9ca3af;
+.offline-dot {
+  background-color: var(--color-offline);
 }
