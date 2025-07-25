@@ -1,13 +1,18 @@
-
-Compiled with problems:
+Uncaught runtime errors:
 ×
 ERROR
-[eslint] 
-src\pages\PartitionDetail.jsx
-  Line 284:23:  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
+Cannot read properties of null (reading 'summaryByDate')
+TypeError: Cannot read properties of null (reading 'summaryByDate')
+    at PartitionDetail (http://localhost:3000/static/js/src_pages_PartitionDetail_jsx.chunk.js:1318:27)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27761:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17971:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19664:17)
+    at beginWork (http://localhost:3000/static/js/bundle.js:20232:637)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15742:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22323:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:22216:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:22200:7)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21964:42)
 
 import React, { useEffect, useState } from "react";
 import { useMemo } from 'react';
@@ -74,7 +79,7 @@ export default function PartitionDetail() {
     });
   }, [partition]);
 
-  if (!liveSummary || !history) return <LoadingSpinner />;
+  // if (!liveSummary || !history) return <LoadingSpinner />;
 
   // Totals for cards
   const lastDay = history.summaryByDate.at(-1);
