@@ -1,45 +1,24 @@
-<div class="card camera-card">
-  <model-viewer
-    src="images/camera.glb"
-    alt="3D Security Camera"
-    auto-rotate
-    rotation-per-second="15deg"
-    camera-controls
-    disable-zoom
-    exposure="1.2"
-    shadow-intensity="1"
-    ar
-    class="moving-camera"
-    style="width: 100%; height: 200px; background-color: #00000010; border-radius: 12px;">
-  </model-viewer>
-
-  <div class="card-status total">Total <span id="camera-total">0</span></div>
-  <div class="card-status online">Online <span id="camera-online">0</span></div>
-  <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
-</div>
+<model-viewer
+  src="images/camera.glb"
+  alt="3D Security Camera"
+  disable-zoom
+  camera-controls
+  auto-rotate="false"
+  class="floating-camera"
+  style="width: 100%; height: 200px; background: transparent;">
+</model-viewer>
 
 
 
-
-/* Float side-to-side */
-.moving-camera {
-  animation: moveSideways 4s ease-in-out infinite alternate;
+.floating-camera {
+  animation: floatLeftRight 4s ease-in-out infinite alternate;
   display: block;
   margin: 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  pointer-events: none; /* optional: disables user drag */
 }
 
-/* Horizontal float animation */
-@keyframes moveSideways {
-  0% { transform: translateX(-8px); }
-  100% { transform: translateX(8px); }
-}
-
-/* Optional: Card style (if needed) */
-.card.camera-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+/* Smooth left-to-right floating */
+@keyframes floatLeftRight {
+  0% { transform: translateX(-15px); }
+  100% { transform: translateX(15px); }
 }
