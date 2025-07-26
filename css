@@ -7,19 +7,18 @@ card.insertAdjacentHTML("beforeend", `
     <i class="${getDeviceIcon(deviceType)}" style="color: #3b3f46;"></i>
     <strong>${deviceType.toUpperCase()}</strong>
 
-    <i class="fas fa-network-wired" style="color: #d7d9de;"></i>
-    <span 
-      class="device-ip" 
-      onclick="copyToClipboard('${deviceIP}')" 
-      title="Click to copy IP" 
-      style="cursor: pointer; color: #0077b6;">
+    <i class="fas fa-network-wired" style="color: #0077b6;"></i>
+    <span class="device-ip"
+          onclick="copyToClipboard('${deviceIP}')"
+          title="Click to copy IP"
+          style="cursor: pointer;">
       ${deviceIP}
     </span>
 
-    <i class="fas fa-map-marker-alt" style="color: rgb(215, 217, 222);"></i>
+    <i class="fas fa-map-marker-alt" style="color: #e63946;"></i>
     <span>${device.location || "N/A"}</span>
 
-    <i class="fas fa-city" style="color: rgb(215, 217, 222);"></i>
+    <i class="fas fa-city" style="color: #6c757d;"></i>
     <span>${city}</span>
   </div>
 `);
@@ -40,17 +39,17 @@ card.insertAdjacentHTML("beforeend", `
   color: #333;
 }
 
-/* Fix icon color issue */
+/* Force icon color to apply */
 .card-content i {
   font-size: 1.1rem;
-  color: #3b3f46;
+  color: #3b3f46 !important;  /* ✅ FORCE color even inside <strong> or <span> */
   text-align: center;
 }
 
-/* Don’t override icon colors */
+/* Prevent parent tags from overriding icon color */
 .card-content span,
 .card-content strong {
   font-weight: 600;
+  color: inherit !important;  /* ✅ Inherit instead of override */
   display: block;
-  color: inherit;
 }
