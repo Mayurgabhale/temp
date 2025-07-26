@@ -1,6 +1,10 @@
- const region = currentRegion?.toUpperCase() || "GLOBAL";
-                if (selectedCity !== "all") {
-                    document.getElementById("region-title").textContent = `${region}, ${selectedCity} Summary`;
-                } else {
-                    document.getElementById("region-title").textContent = `${region} Summary`;
-                }
+const region = currentRegion?.toUpperCase() || "GLOBAL";
+const titleElement = document.getElementById("region-title");
+
+const logoHTML = `<img src="logo.png" alt="Logo" class="region-logo" />`; // Adjust path if needed
+
+if (selectedCity !== "all") {
+  titleElement.innerHTML = `${logoHTML}<span>${region}, ${selectedCity} Summary</span>`;
+} else {
+  titleElement.innerHTML = `${logoHTML}<span>${region} Summary</span>`;
+}
