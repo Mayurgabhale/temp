@@ -1,3 +1,37 @@
+
+.card-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  row-gap: 8px;
+  align-items: center;
+  padding: 15px;
+  background: #f8f9fc;
+  border-radius: 10px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* General style for icons */
+.card-content i {
+  font-size: 1.1rem;
+  color: #3b3f46;
+  text-align: center;
+}
+
+/* Text next to icons */
+.card-content span,
+.card-content strong {
+  font-weight: 600;
+  color: #212529;
+  display: block;
+}
+
+
+
+
+
 card.insertAdjacentHTML("beforeend", `
   <h3 class="device-name"> 
     ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
