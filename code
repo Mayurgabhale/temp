@@ -1,3 +1,5 @@
+
+/* top card section  */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 :root {
@@ -9,6 +11,7 @@
   --green: #2cb67d;
   --red: #ef4565;
   --blue: #00adb5;
+  --card-border:linear-gradient(135deg, #1e1e2f, #181827)
 }
 
 /* ===== Layout ===== */
@@ -33,6 +36,7 @@
   color: var(--white);
   box-shadow: 0 4px 20px rgba(0, 173, 181, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border:linear-gradient(135deg, #1e1e2f, #181827); ;
 }
 
 .card:hover {
@@ -46,7 +50,8 @@
   inset: 0;
   padding: 2px;
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--blue), var(--yellow), var(--blue));
+  background: linear-gradient(135deg, var(--card-border));
+  /* background: linear-gradient(135deg, #1e1e2f, #181827); */
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -88,10 +93,12 @@
 }
 
 .card-status.online {
+  border: 1px solid var(--green);
   border-left: 4px solid var(--green);
 }
 
 .card-status.offline {
+  border: 1px solid var(--red);
   border-left: 4px solid var(--red);
 }
 
@@ -129,3 +136,209 @@
     text-align: center;
   }
 }
+/* top card section  */
+
+
+match moth FOR SAME THEME 
+AND CREATE MORE ATRACTIVE AND CLEAN AND PROFESSALM DESING 
+
+
+/* ===== Dark Theme Root Styling ===== */
+
+.details-section {
+    /* background-color: #121212; */
+      background: linear-gradient(135deg, #1e1e2f, #181827);
+
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== Header Section ===== */
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #333;
+      background: linear-gradient(135deg, #1e1e2f, #181827);
+
+}
+
+.details-header h2 {
+    font-size: 1.5rem;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.details-header h2 i {
+    color: #00adb5;
+}
+
+#device-search {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2b2b2b;
+    color: #fff;
+    width: 300px;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* ===== Device Grid ===== */
+.device-grid {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); */
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ===== Device Card Styling ===== */
+.device-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.device-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 15px rgba(0, 173, 181, 0.25);
+}
+
+/* ===== Online/Offline Background ===== */
+.device-card[data-status="online"] {
+    border: 0.11px solid #10e63468;
+    border-left: 5px solid #10e634d5;
+    background-color: rgba(13, 13, 13, 0.1);
+}
+
+.device-card[data-status="offline"] {
+      border: 0.11px solid #f6051165;
+
+    border-left: 7px solid #f60511de;
+    background-color: rgba(13, 13, 13, 0.1);
+}
+
+/* ===== Typography ===== */
+.device-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.device-type-label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.device-ip {
+    color: #00adb5;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.device-ip:hover {
+    color: #00fff5;
+    text-decoration: underline;
+}
+
+/* ===== Status Styling ===== */
+.device-status {
+    margin-top: 15px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: #ccc;
+}
+
+.online-dot {
+    background-color: #10e634;
+}
+
+.offline-dot {
+    background-color: #f50f1a;
+}
+
+.online-dot, .offline-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* ===== Icon Colors (by device type) ===== */
+
+  
+
+/* ===== Icon Default Styling ===== */
+.device-type-label i,
+.device-card i {
+    margin-right: 6px;
+    font-size: 1.1rem;
+}
+
+
+/* Device type icons by type */
+.device-type-label.cameras i {
+  color: #1e88e5; /* Blue */
+}
+.device-type-label.controllers i {
+  color: #8e24aa; /* Purple */
+}
+.device-type-label.archivers i {
+  color: #fb8c00; /* Orange */
+}
+.device-type-label.servers i {
+  color: #43a047; /* Green */
+}
+
+
+/* Specific icon styles inside <p> blocks */
+.device-card p i.fa-network-wired {
+  color: #007bff; /* Blue for IP */
+}
+
+.device-card p i.fa-map-marker-alt {
+  color: #fbc531; /* Red for Location */
+}
+
+.device-card p i.fa-city {
+  color: #9b59b6; /* Purple for City */
+}
+
+/* ===== Responsive Adjustments ===== */
+@media screen and (max-width: 600px) {
+    .details-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    #device-search {
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+
+
+
