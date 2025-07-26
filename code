@@ -1,15 +1,7 @@
-const region = currentRegion?.toUpperCase() || "GLOBAL";
-const titleElement = document.getElementById("region-title");
-
-const logoHTML = `
-  <span style="display: flex; align-items: center;">
-    <img src="images/header-logo.png" alt="Logo"
-         style="height: 32px; width: auto; object-fit: contain; margin-right: 10px;" />
-  </span>
-`;
-
-const text = selectedCity !== "all"
-  ? `${region}, ${selectedCity} Summary`
-  : `${region} Summary`;
-
-titleElement.innerHTML = `${logoHTML}<span>${text}</span>`;
+ <div class="card">
+                    <!-- <h3><i class="fas fa-video"></i> Cameras</h3> -->
+                    <h3><img src="images/camera.png" alt=""></i></h3>
+                    <div class="card-status total">Total <span id="camera-total">0</span></div>
+                    <div class="card-status online">Online <span id="camera-online">0</span></div>
+                    <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
+                </div>
