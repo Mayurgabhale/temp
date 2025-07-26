@@ -1,22 +1,88 @@
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<div class="summary">
 
+  <!-- Total Devices -->
+  <div class="card">
+    <h3 style="display: flex; align-items: center;">
+      <lottie-player
+        src="https://assets6.lottiefiles.com/packages/lf20_8wREpI.json"
+        background="transparent"
+        speed="1"
+        style="width: 40px; height: 40px; margin-right: 10px;"
+        loop autoplay>
+      </lottie-player>
+      Total Devices
+    </h3>
+    <div class="card-status total">Total <span id="total-devices">0</span></div>
+    <div class="card-status online">Online <span id="online-devices">0</span></div>
+    <div class="card-status offline">Offline <span id="offline-devices">0</span></div>
+  </div>
 
+  <!-- Cameras -->
+  <div class="card">
+    <h3 style="display: flex; align-items: center;">
+      <lottie-player
+        src="https://assets6.lottiefiles.com/packages/lf20_hzgq1iov.json"
+        background="transparent"
+        speed="1"
+        style="width: 40px; height: 40px; margin-right: 10px;"
+        loop autoplay>
+      </lottie-player>
+      Cameras
+    </h3>
+    <div class="card-status total">Total <span id="camera-total">0</span></div>
+    <div class="card-status online">Online <span id="camera-online">0</span></div>
+    <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
+  </div>
 
+  <!-- Archivers -->
+  <div class="card">
+    <h3 style="display: flex; align-items: center;">
+      <lottie-player
+        src="https://assets6.lottiefiles.com/packages/lf20_7zwx1a3m.json"
+        background="transparent"
+        speed="1"
+        style="width: 40px; height: 40px; margin-right: 10px;"
+        loop autoplay>
+      </lottie-player>
+      Archivers
+    </h3>
+    <div class="card-status total">Total <span id="archiver-total">0</span></div>
+    <div class="card-status online">Online <span id="archiver-online">0</span></div>
+    <div class="card-status offline">Offline <span id="archiver-offline">0</span></div>
+  </div>
 
+  <!-- Controllers -->
+  <div class="card">
+    <h3 style="display: flex; align-items: center;">
+      <lottie-player
+        src="https://assets4.lottiefiles.com/private_files/lf30_2nufwbnm.json"
+        background="transparent"
+        speed="1"
+        style="width: 40px; height: 40px; margin-right: 10px;"
+        loop autoplay>
+      </lottie-player>
+      Controllers
+    </h3>
+    <div class="card-status total">Total <span id="controller-total">0</span></div>
+    <div class="card-status online">Online <span id="controller-online">0</span></div>
+    <div class="card-status offline">Offline <span id="controller-offline">0</span></div>
+  </div>
 
+  <!-- Servers -->
+  <div class="card">
+    <h3 style="display: flex; align-items: center;">
+      <lottie-player
+        src="https://assets10.lottiefiles.com/packages/lf20_x62chJ.json"
+        background="transparent"
+        speed="1"
+        style="width: 40px; height: 40px; margin-right: 10px;"
+        loop autoplay>
+      </lottie-player>
+      Servers
+    </h3>
+    <div class="card-status total">Total <span id="server-total">0</span></div>
+    <div class="card-status online">Online <span id="server-online">0</span></div>
+    <div class="card-status offline">Offline <span id="server-offline">0</span></div>
+  </div>
 
-<div class="card">
-  <h3 style="display: flex; align-items: center;">
-    <lottie-player
-      src="https://assets6.lottiefiles.com/packages/lf20_hzgq1iov.json"
-      background="transparent"
-      speed="1"
-      style="width: 40px; height: 40px; margin-right: 10px;"
-      loop autoplay>
-    </lottie-player>
-    Cameras
-  </h3>
-  <div class="card-status total">Total <span id="camera-total">0</span></div>
-  <div class="card-status online">Online <span id="camera-online">0</span></div>
-  <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
 </div>
