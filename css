@@ -1,43 +1,75 @@
-writr a css for "card-content class
-all content in center and with different font family and font style create more profesalnl and clean desing 
-icon and content with perent same aling ment 
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  background-color: #f9f9fb;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-content p {
+  margin: 6px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+}
+
+.card-content i {
+  margin-right: 8px;
+  font-size: 1.1rem;
+  color: #3c3f44;
+}
+
+.device-name {
+  text-align: center;
+  font-size: 1.2rem !important;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  color: #222;
+}
+
+.device-type-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: #e7f1ff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.device-ip {
+  color: #0077b6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.device-ip:hover {
+  color: #023e8a;
+  text-decoration: underline;
+}
+
+.card-content strong {
+  color: #555;
+  font-weight: 600;
+}
+
+.card-content span {
+  font-weight: 600;
+  color: #444;
+}
 
 
-card.insertAdjacentHTML("beforeend", `
-                            <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700;  font-family: 'Times New Roman', Times, serif;, sans-serif; margin-bottom: 10px;">
-                                ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-                            </h3>
-                               
-                             <div class="card-content">
-                            <p class="device-type-label ${deviceType}" style="font-size: 1.05rem;  font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: 600; margin-bottom: 10px;">
-                            
-                            <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
-                                 </p>
-
-                        <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
-                            <strong style="color: #d7d9de;">
-                                <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
-                            </strong>
-                            <span 
-                                class="device-ip" 
-                                style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
-                                onclick="copyToClipboard('${deviceIP}')"
-                                title="Click to copy IP"
-                            >
-                                ${deviceIP}
-                            </span>
-                        </p>
-
-                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
-                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
-                                <span style=" font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);;">${device.location || "N/A"}</span>
-                            </p>
-
-                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
-                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
-                                <span style="font-weight: bold; color: rgb(215, 217, 222);;">${city}</span>
-                            </p>
-
-                            </div>
-
-                        `);
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
