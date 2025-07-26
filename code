@@ -1,283 +1,101 @@
- for (const [key, devices] of Object.entries(data.details)) {
-                if (!Array.isArray(devices) || devices.length === 0) continue;
-                const deviceType = key.toLowerCase();
-
-                devices.forEach((device) => {
-                    const deviceIP = device.ip_address || "N/A";
-                    let currentStatus = (realTimeStatus[deviceIP] || device.status || "offline").toLowerCase();
-                    const city = device.city || "Unknown";
-                    citySet.add(city);
-
-                    // Create card element.
-                    const card = document.createElement("div");
-                    card.className = "device-card";
-                    card.dataset.type = deviceType;
-                    card.dataset.status = currentStatus;
-                    card.dataset.city = city;
-                    card.setAttribute("data-ip", deviceIP);
-
-                    // Apply background color based on online/offline status
-                    card.style.backgroundColor = currentStatus === "online" ? "#" : "#"; card.style.backgroundColor = currentStatus === "online"
-                        ? ""  // Tailwind's emerald-500 with 12% opacity
-                        : "";  // Tailwind's red-500 with 12% opacity
-
-
-                    card.style.borderColor = currentStatus === "online"
-                        ? "rgba(16, 185, 129, 0.4)"
-                        : "rgba(239, 68, 68, 0.4)";
-
-                    // Create a container for status
-                    const statusContainer = document.createElement("p");
-                    statusContainer.className = "device-status";
-                    // statusContainer.textContent = "Status: ";
-
-                    // Status text
-                    const statusText = document.createElement("span");
-                    statusText.className = "status-text";
-                    statusText.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
-                    statusText.style.color = currentStatus === "online" ? "green" : "red";
-
-                    // Status dot
-                    const statusDot = document.createElement("span");
-                    statusDot.classList.add(currentStatus === "online" ? "online-dot" : "offline-dot");
-                    statusDot.style.backgroundColor = (currentStatus === "online") ? "green" : "red";
-                    statusDot.style.display = "inline-block";
-                    statusDot.style.width = "10px";
-                    statusDot.style.height = "10px";
-                    statusDot.style.marginLeft = "5px";
-                    statusDot.style.marginRight = "5px";
-                    statusDot.style.borderRadius = "50%";
-
-                    // Combine status parts
-                    statusContainer.appendChild(statusDot);
-                    statusContainer.appendChild(statusText);
-
-                    // Use insertAdjacentHTML to avoid overwriting statusContainer
-                    // ,,,, ,,m, 
-
-                    card.insertAdjacentHTML("beforeend", `
-                            <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700; font-family: 'Segoe UI', sans-serif; margin-bottom: 10px;">
-                                ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-                            </h3>
-
-                            <p class="device-type-label ${deviceType}" style="font-size: 1.05rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; margin-bottom: 10px;">
-                            
-                            <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
-                        </p>
-
-                        <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
-                            <strong style="color: #d7d9de;">
-                                <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
-                            </strong>
-                            <span 
-                                class="device-ip" 
-                                style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
-                                onclick="copyToClipboard('${deviceIP}')"
-                                title="Click to copy IP"
-                            >
-                                ${deviceIP}
-                            </span>
-                        </p>
-
-                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
-                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
-                                <span style=" font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);;">${device.location || "N/A"}</span>
-                            </p>
-
-                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
-                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
-                                <span style="font-weight: bold; color: rgb(215, 217, 222);;">${city}</span>
-                            </p>
-                        `);
-
-                    card.appendChild(statusContainer);
-
-                    
-
-                    // ............
-                    combinedDevices.push({
-                        card: card,
-                        device: {
-                            type: deviceType,
-                            status: currentStatus,
-                            city: city
-                        }
-                    });
-                });
-            }
-
-
-
-
-
-/* ===== Dark Theme Root Styling ===== */
-
-.details-section {
-    background-color: #121212;
-    color: #e0e0e0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Responsive Grid Layout */
+/* Fonts & Colors */
+:root {
+  --yellow: #ffcc00;
+  --black: #0f0f0f;
+  --dark-gray: #1a1a1a;
+  --gray: #2b2b2b;
+  --white: #f5f5f5;
+  --green: #2cb67d;
+  --red: #ef4565;
 }
 
-/* ===== Header Section ===== */
-.details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: #1e1e1e;
-    border-bottom: 1px solid #333;
+
+
+/* Layout */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+    font-family: 'Urbanist', sans-serif;
+
+
 }
 
-.details-header h2 {
-    font-size: 1.5rem;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.details-header h2 i {
-    color: #00adb5;
-}
-
-#device-search {
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-    background-color: #2b2b2b;
-    color: #fff;
-    width: 300px;
-    font-size: 1rem;
-    outline: none;
-}
-
-/* ===== Device Grid ===== */
-.device-grid {
-    display: grid;
-    /* grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); */
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-
-    gap: 20px;
-    padding: 20px;
-}
-
-/* ===== Device Card Styling ===== */
-.device-card {
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 173, 181, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
-    position: relative;
-}
-
-.device-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 15px rgba(0, 173, 181, 0.25);
-}
-
-/* ===== Online/Offline Background ===== */
-.device-card[data-status="online"] {
-    border: 0.11px solid #10e63468;
-    border-left: 5px solid #10e634;
-    background-color: rgba(13, 13, 13, 0.1);
-}
-
-.device-card[data-status="offline"] {
-      border: 0.11px solid #f6051165;
-
-    border-left: 7px solid #f60511;
-    background-color: rgba(13, 13, 13, 0.1);
-}
-
-/* ===== Typography ===== */
-.device-name {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #ffffff;
-}
-
-.device-type-label {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
-.device-ip {
-    color: #00adb5;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.device-ip:hover {
-    color: #00fff5;
-    text-decoration: underline;
-}
-
-/* ===== Status Styling ===== */
-.device-status {
-    margin-top: 15px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    color: #ccc;
-}
-
-.online-dot {
-    background-color: #10e634;
-}
-
-.offline-dot {
-    background-color: #f50f1a;
-}
-
-.online-dot, .offline-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-/* ===== Icon Colors (by device type) ===== */
-
+/* Cards */
+.card {
+  background: var(--dark-gray);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   
+}
 
-/* ===== Icon Default Styling ===== */
-.device-type-label i,
-.device-card i {
-    margin-right: 6px;
-    font-size: 1.1rem;
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 16px;
+  /* background: linear-gradient(135deg, var(--yellow), #f7b733); */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 
-/* Device type icons by type */
-.device-type-label.cameras i {
-  color: #1e88e5; /* Blue */
-}
-.device-type-label.controllers i {
-  color: #8e24aa; /* Purple */
-}
-.device-type-label.archivers i {
-  color: #fb8c00; /* Orange */
-}
-.device-type-label.servers i {
-  color: #43a047; /* Green */
+/* Title */
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--yellow);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* ===== Responsive Adjustments ===== */
-@media screen and (max-width: 600px) {
-    .details-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
+/* Status Boxes */
+.card-status {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--gray);   
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+}
 
-    #device-search {
-        width: 100%;
-    }
+.card-status.total {
+  border: px solid var(--yellow) ;
+  border-left: 4px solid var(--yellow);
+}
+.card-status.online {
+    border: 1px solid var(--green) ;
+
+  border-left: 4px solid var(--green);
+}
+.card-status.offline {
+  border: 1px solid var(--red);
+  border-left: 4px solid var(--red);
+}
+
+.card-status span {
+  font-weight: bold;
+}
+.section-divider{
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right,#00adb5,#fbc531,#00adb5);
+    border-radius: 4px;
+    opacity: 0.8;
+    margin-top: 1rem;
 }
