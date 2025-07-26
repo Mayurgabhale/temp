@@ -1,38 +1,25 @@
-card.insertAdjacentHTML("beforeend", ` 
-  <h3>${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}</h3>
+card.insertAdjacentHTML("beforeend", `
+  <h3 class="device-name"> 
+    ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+  </h3>
 
-  <div class="card-content" style="display: flex; flex-direction: column; gap: 10px; font-family: 'Segoe UI', sans-serif;">
+  <div class="card-content">
+    <i class="${getDeviceIcon(deviceType)}"></i>
+    <strong>${deviceType.toUpperCase()}</strong>
 
-    <div style="display: flex; align-items: center;">
-      <i class="${getDeviceIcon(deviceType)}" style="margin-right: 8px;"></i>
-      <span style="font-size: 1.05rem; font-weight: 600; font-family: Verdana, Geneva, Tahoma, sans-serif;">
-        ${deviceType.toUpperCase()}
-      </span>
-    </div>
+    <i class="fas fa-network-wired"></i>
+    <span 
+      class="device-ip" 
+      onclick="copyToClipboard('${deviceIP}')" 
+      title="Click to copy IP" 
+      style="cursor: pointer; color: #0077b6;">
+      ${deviceIP}
+    </span>
 
-    <div style="display: flex; align-items: center;">
-      <i class="fas fa-network-wired" style="margin-right: 8px; color: #d7d9de;"></i>
-      <span class="device-ip"
-            style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);"
-            onclick="copyToClipboard('${deviceIP}')"
-            title="Click to copy IP">
-        ${deviceIP}
-      </span>
-    </div>
+    <i class="fas fa-map-marker-alt"></i>
+    <span>${device.location || "N/A"}</span>
 
-    <div style="display: flex; align-items: center;">
-      <i class="fas fa-map-marker-alt" style="margin-right: 8px; color: rgb(215, 217, 222);"></i>
-      <span style="font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);">
-        ${device.location || "N/A"}
-      </span>
-    </div>
-
-    <div style="display: flex; align-items: center;">
-      <i class="fas fa-city" style="margin-right: 8px; color: rgb(215, 217, 222);"></i>
-      <span style="font-weight: bold; color: rgb(215, 217, 222);">
-        ${city}
-      </span>
-    </div>
-
+    <i class="fas fa-city"></i>
+    <span>${city}</span>
   </div>
 `);
