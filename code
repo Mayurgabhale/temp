@@ -1,900 +1,164 @@
-Read Below EMEA Occupancy frontend deatsils carefully read each file line by line then mnake same frontend for apac, region
-go very step by step from create folder to all file structure carefully
-(note and i am give you code in two part it is first part code >>>>>>>>) because not give 2000 line code
-give me code after i give you seond part code ok leasn carefully
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\api\occupancy.service.js
-
-
-
-const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3005';
-
-// In-memory cache
-const cache = {
-  liveSummary: null,
-  history: new Map(),  // key: partition code or 'global'
-};
-
-/**
- * Fetch live summary, caching for session.
- */
-export async function fetchLiveSummary() {
-  if (cache.liveSummary) {
-    return cache.liveSummary;
-  }
-  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
-  if (!res.ok) throw new Error(`Live summary fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.liveSummary = json;
-  return json;
+/* ===== Dark Theme Root Styling ===== */
+body,
+.details-section {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/**
- * Fetch history (global or per-partition), caching for session.
- * @param {string} [location] — partition identifier, e.g. 'LT.Vilnius'
- */
-export async function fetchHistory(location) {
-  const key = location || 'global';
-  if (cache.history.has(key)) {
-    return cache.history.get(key);
-  }
-  const url = location
-    ? `${BASE}/api/occupancy/history/${encodeURIComponent(location)}`
-    : `${BASE}/api/occupancy/history`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
-  const json = await res.json();
-  cache.history.set(key, json);
-  return json;
+/* ===== Header Section ===== */
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #333;
 }
 
-/**
- * Clear all cached data (if you need to force a fresh fetch).
- */
-export function clearCache() {
-  cache.liveSummary = null;
-  cache.history.clear();
+.details-header h2 {
+    font-size: 1.5rem;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-// --- list of EMEA partitions for Dashboard
-export const partitionList = [
-  'AUT.Vienna',
-  'DU.Abu Dhab',
-  'IE.Dublin',
-  'IT.Rome',
-  'LT.Vilnius',
-  'MA.Casablanca',
-  'RU.Moscow',
-  'UK.London',
-  'ES.Madrid'
-];
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\assets\flags
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\assets\images
-
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\ChartCard.jsx
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  CartesianGrid, Legend, Brush
-} from 'recharts';
-import dayjs from 'dayjs';
-
-export default function ChartCard({
-  data = [],
-  dataKey = 'value',
-  colors = { head: '#FFC107', cap: '#B0BEC5' },
-  chartHeight = 300,
-  title = ''
-}) {
-  // Hook must be called unconditionally
-  const [hidden, setHidden] = useState({});
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return (
-      <Card>
-        <CardContent>
-          <Typography>No data to display.</Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const handleLegend = o => {
-    const key = o.dataKey;
-    setHidden(h => ({ ...h, [key]: !h[key] }));
-  };
-
-  return (
-    <Card>
-      <CardContent>
-        {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
-        <Box sx={{ width: '100%', height: chartHeight }}>
-          <ResponsiveContainer>
-            <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-              <defs>
-                <linearGradient id="colorHead" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={colors.head} stopOpacity={0.8} />
-                  <stop offset="95%" stopColor={colors.head} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                tickFormatter={t =>
-                  typeof t === 'number' ? dayjs(t).format('HH:mm:ss') : t
-                }
-              />
-              <YAxis />
-              <Tooltip />
-              <Legend onClick={handleLegend} />
-              <Area
-                type="monotone"
-                dataKey={dataKey}
-                stroke={colors.head}
-                fill="url(#colorHead)"
-                hide={hidden[dataKey]}
-              />
-              <Brush dataKey="name" height={20} stroke={colors.head} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
-  );
+.details-header h2 i {
+    color: #00adb5;
 }
 
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\CompositeChartCard.jsx
-
-
-// src/components/CompositeChartCard.jsx
-
-import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  Legend,
-  LabelList,
-  Cell
-} from 'recharts';
-
-
-
-const DARK_TO_LIGHT = [
-  '#FFD666', '#FFE599', '#FFF2CC', '#FFE599', '#E0E1DD',
-  '#FFD666', '#FFEE8C', '#F8DE7E', ' #FBEC5D', '#F0E68C',
-  ' #FFEE8C', '#21325E', '#415A77', '#6A7F9A', '#B0C4DE',
-  '#1A1F36', '#2B3353', '#4C6482', '#7B90B2', '#CAD3E9'
-];
-
-export default function CompositeChartCard({
-  title,
-  data,
-  lineColor = '#fff',
-  height = 300,
-  animationDuration = 1500,
-  animationEasing = 'ease-in-out'
-}) {
-  if (!Array.isArray(data) || data.length === 0) {
-    return (
-      <Card sx={{ border: `1px solid #fff`, bgcolor: 'rgba(0,0,0,0.4)' }}>
-        <CardContent>
-          <Typography variant="subtitle1" align="center" color="text.secondary">
-            {title}
-          </Typography>
-          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
-            No realtime employee data
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-  // Enrich each datum with its usage percentage
-  const enriched = data.map((d, i) => ({
-    ...d,
-    percentage: d.capacity ? Math.round(d.headcount / d.capacity * 100) : 0,
-    _color: DARK_TO_LIGHT[i % DARK_TO_LIGHT.length]
-  }));
-  const totalHeadcount = enriched.reduce((sum, d) => sum + (d.headcount || 0), 0);
-  const totalCapacity = enriched.reduce((sum, d) => sum + (d.capacity || 0), 0);
-  const avgUsage = totalCapacity ? Math.round((totalHeadcount / totalCapacity) * 100) : 0;
-  return (
-    <Card
-      sx={{
-        // border: `1px solid ${lineColor}`,
-        borderRadius: 2,
-        overflow: 'hidden',
-        bgcolor: 'rgba(0,0,0,0.4)',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'scale(1.02)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
-        }
-      }}
-    >
-      <CardContent sx={{ p: 1 }}>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          gutterBottom
-          sx={{ color: '#FFC107' }}
-        >
-          {title}
-        </Typography>
-
-
-
-
-
-
-        <Box sx={{ width: '100%', height }}>
-          <ResponsiveContainer>
-            <ComposedChart
-              data={enriched}
-              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-
-
-              <XAxis
-                dataKey="name"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-                tickFormatter={(label, index) => {
-                  const strLabel = String(label);
-                  const match = strLabel.match(/\d+/); // Extract number from label like "Floor 3"
-                  const floorNum = parseInt(match?.[0], 10);
-
-                  if (isNaN(floorNum)) return strLabel; // fallback to raw label if no number found
-
-                  const suffix = (n) => {
-                    if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
-                    switch (n % 10) {
-                      case 1: return `${n}st`;
-                      case 2: return `${n}nd`;
-                      case 3: return `${n}rd`;
-                      default: return `${n}th`;
-                    }
-                  };
-
-                  return suffix(floorNum);
-                }}
-              />
-
-
-              <YAxis
-                yAxisId="left"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-              />
-
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(255,255,255,0.6)"
-                domain={[0, 100]}
-                tickFormatter={val => `${val}%`}
-              />
-
-              {/* <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor }}
-                formatter={(value, name) => 
-                  name === 'percentage' ? `${value}%` : value
-                }
-              /> */}
-
-              <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: lineColor, padding: 8 }}
-                // custom content so we can show capacity only on hover
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const datum = payload[0].payload;
-                  return (
-                    <div style={{
-                      backgroundColor: '#FFD666',
-                      border: `1px solid ${lineColor}`,
-                      borderRadius: 4,
-                      padding: 8,
-                    }}>
-                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{label}</div>
-                      <div>Headcount: {datum.headcount}</div>
-                      <div>Usage %: {datum.percentage}%</div>
-                      <div>Seat Capacity: {datum.capacity}</div>
-                    </div>
-                  );
-                }}
-              />
-
-
-              {/* Headcount bars with per-bar colors & percentage labels */}
-              <Bar
-                yAxisId="left"
-                dataKey="headcount"
-                name="Headcount"
-                barSize={700}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              >
-                {enriched.map((entry, idx) => (
-                  <Cell key={`cell-${idx}`} fill={entry._color} />
-                ))}
-
-
-                {/* Show % on top of each bar */}
-                <LabelList
-                  dataKey="headcount"
-                  position="top"
-                  formatter={val => `${val}`}
-                  style={{ fill: '#fff', fontSize: 15, fontWeight: 700 }}
-                />
-
-                {/* Percentage centered inside each bar */}
-                <LabelList
-                  dataKey="percentage"
-                  position="inside"
-                  formatter={val => `${val}%`}
-                  style={{ fill: '#EE4B2B', fontSize: 14, fontWeight: 700 }}
-                />
-              </Bar>
-
-
-              {/* Seat Capacity line */}
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="percentage"
-                name="Usage %"
-                stroke={lineColor}
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
-
-              {/* Optional: draw capacity as second line */}
-              <Line
-                yAxisId="left"
-                type="monotone"
-
-                //  dataKey="capacity"
-                name="Total Seats"
-                stroke="#81C784"
-                strokeDasharray="5 5"
-                dot={false}
-                isAnimationActive
-                animationDuration={animationDuration}
-                animationEasing={animationEasing}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 4,
-            alignItems: 'center',
-            mb: 1,
-            fontWeight: 'bold',
-            fontSize: 16
-          }}
-        >
-          <Box sx={{ color: '#FFD700' /* Yellow */ }}>
-            Total Headcount: {totalHeadcount}
-          </Box>
-          <Box sx={{ color: '#4CAF50' /* Green */ }}>
-            Total Seats: {totalCapacity}
-          </Box>
-          <Box sx={{ color: '#FF4C4C' /* Red */ }}>
-            Usage: {avgUsage}%
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\DataTable.jsx
-
-
-import React from 'react';
-import {
-  Table, TableHead, TableBody, TableRow, TableCell,
-  TableContainer, Paper
-} from '@mui/material';
-
-export default function DataTable({ columns, rows }) {
-  return (
-    <TableContainer component={Paper} sx={{ mb:2 }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            {columns.map(c => (
-              <TableCell key={c.field} sx={{ fontWeight:'bold', borderBottom:'2px solid #000' }}>
-                {c.headerName}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((r,i)=>(
-            <TableRow key={i}>
-              {columns.map(c=>(
-                <TableCell key={c.field} sx={{ py:0.5, borderBottom:'1px solid #ccc' }}>
-                  {r[c.field]}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Footer.jsx
-
-
-import React, { useEffect } from 'react';
-import { Box, Typography, Link } from '@mui/material';
-
-export default function Footer() {
-  useEffect(() => {
-    const root = document.getElementById('root');
-    if (root) {
-      root.style.display = 'flex';
-      root.style.flexDirection = 'column';
-      root.style.minHeight = '100vh';
-    }
-  }, []);
-
-  return (
-    <Box
-      component="footer"
-      sx={{
-        mt: 'auto', // Push footer to bottom when used inside flex container
-        backgroundColor: '#000',
-        color: '#FFC72C',
-        py: 2,
-        px: 2,
-        textAlign: 'center',
-        borderTop: '2px solid #FFC72C',
-        fontSize: '0.9rem',
-        lineHeight: 1.5,
-      }}
-    >
-      <Typography variant="subtitle2" fontWeight="bold">
-        Global Security Operations Center (GSOC)
-      </Typography>
-
-      <Typography variant="body2">
-        Live Occupancy dashboard for EMEA — Real-time occupancy and personnel insights.
-      </Typography>
-
-      <Typography variant="body2" sx={{ mt: 1 }}>
-        Contact us:{' '}
-        <Link
-          href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
-          underline="hover"
-          sx={{ color: '#FFC72C' }}
-        >
-          gsoc@westernunion.com
-        </Link>{' '}
-        | Landline:{' '}
-        <Box component="span" sx={{ color: '#FFC72C' }}>
-          +91-020-67632394
-        </Box>
-      </Typography>
-
-      <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-        © {new Date().getFullYear()} Western Union. All rights reserved.
-      </Typography>
-    </Box>
-  );
-}
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Header.jsx
-
-
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-
-import wuLogo from '../assets/wu-logo.png';
-import austriaFlag from '../assets/flags/austria.png';
-import uaeFlag from '../assets/flags/uae.png';
-import irelandFlag from '../assets/flags/ireland.png';
-import italyFlag from '../assets/flags/italy.png';
-import lithuaniaFlag from '../assets/flags/lithuania.png';
-import moroccoFlag from '../assets/flags/morocco.png';
-import russiaFlag from '../assets/flags/russia.png';
-import ukFlag from '../assets/flags/uk.png';
-import spainFlag from '../assets/flags/spain.png';
-import { partitionList } from '../api/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-
-
-export default function Header() {
-  // const navigate = useNavigate();
-  // const loc = useLocation();
-  // const { data } = useLiveOccupancy(1000);
-  // const [lastUpdate, setLastUpdate] = useState('');
-
-    const navigate = useNavigate();
-  const loc = useLocation(); // ✅ correct hook usage
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
-
-  const parts = loc.pathname.split('/').filter(Boolean);
-  const isPart = parts[0] === 'partition' && parts[1];
-  const current = isPart ? decodeURIComponent(parts[1]) : '';
-   const isHome = loc.pathname === '/'; // ✅ fixed: use loc
-
-  const flagMap = {
-    'AUT.Vienna': austriaFlag,
-    'DU.Abu Dhab': uaeFlag,
-    'IE.Dublin': irelandFlag,
-    'IT.Rome': italyFlag,
-    'LT.Vilnius': lithuaniaFlag,
-    'MA.Casablanca': moroccoFlag,
-    'RU.Moscow': russiaFlag,
-    'UK.London': ukFlag,
-    'ES.Madrid': spainFlag
-  };
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-       <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-          </Typography>
-
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
-
-          {/* ✅ Static Vilnius button shown only on main dashboard */}
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-
-          {/* ✅ Dynamic partition button shown when inside any partition */}
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
-
-
-
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={current}
-            displayEmpty
-            onChange={e => navigate(e.target.value || '/')}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
-          >
-            <MenuItem value="">— Select Site —</MenuItem>
-            {partitionList.map(p => (
-              <MenuItem key={p} value={`/partition/${encodeURIComponent(p)}`}>
-                <Box component="img"
-                  src={flagMap[p]}
-                  alt={p}
-                  sx={{ width: 24, height: 16, mr: 1 }} />
-                {p.split('.').pop()}
-              </MenuItem>
-            ))}
-          </Select>
-
-          <Box />
-        </Box>
-
-      </Toolbar>
-    </AppBar>
-  );
-}
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\LoadingSpinner.jsx
-import React from 'react';
-import { Box, CircularProgress } from '@mui/material';
-
-export default function LoadingSpinner() {
-  return (
-    <Box sx={{ display:'flex', justifyContent:'center', py:4 }}>
-      <CircularProgress/>
-    </Box>
-  );
-}
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\PieChartCard.jsx
-import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from 'recharts';
-
-export default function PieChartCard({
-  title,
-  data,
-  colors = [],
-  innerRadius = 40,
-  height = 300,
-  showZeroSlice = false,
-  animationDuration = 1500
-}) {
-  const filtered = showZeroSlice ? data : data.filter(d => d.value > 0);
-  if (filtered.length === 0) {
-    return (
-      <Card sx={{ border: '2px solid #FFD666', bgcolor: 'rgba(0,0,0,0.6)' }}>
-        <CardContent>
-          <Typography variant="subtitle1" align="center" color="text.secondary">
-            {title}
-          </Typography>
-          <Typography variant="body2" align="center" sx={{ mt: 4 }}>
-            No data to display
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <Card
-      sx={{
-        borderRadius: 2,
-        overflow: 'hidden',
-        bgcolor: 'rgba(0,0,0,0.6)',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'scale(1.02)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.7)'
-        }
-      }}
-    >
-      <CardContent sx={{ p: 1 }}>
-        <Typography variant="subtitle1" align="center" gutterBottom sx={{color:'#FFC107'}}>
-          {title}
-        </Typography>
-        <Box sx={{ width: '100%', height }}>
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie
-                data={filtered}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={innerRadius}
-                outerRadius="80%"
-                isAnimationActive
-                animationDuration={animationDuration}
-                labelLine={false}
-                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-              >
-                {filtered.map((entry, idx) => (
-                  <Cell key={`slice-${idx}`} fill={colors[idx % colors.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{ backgroundColor: '#FFD666', borderColor: '#000' }}
-                formatter={(value, name) => [value, name]}
-              />
-              <Legend
-                layout="horizontal"
-                verticalAlign="bottom"
-                wrapperStyle={{ color: '#fff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
-  );
+#device-search {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2b2b2b;
+    color: #fff;
+    width: 300px;
+    font-size: 1rem;
+    outline: none;
 }
 
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\SummaryCard.jsx
-// src/components/SummaryCard.jsx
-
-import React from 'react';
-import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
-
-export default function SummaryCard({
-  title,
-  total,
-  stats = [],
-  icon,
-  titleColor,
-  totalColor,
-  statColors = [],
-  sx = {}
-}) {
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        px: 2,
-        py: 1,
-        border: titleColor ? `2px solid ${titleColor}` : undefined,
-        borderRadius: 2,
-        bgcolor: 'rgba(0,0,0,0.4)',
-        overflow: 'hidden',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'translateY(-4px) scale(1.02)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.7)',
-        },
-        ...sx
-      }}
-    >
-      <CardContent sx={{ textAlign: 'center', p: 1 }}>
-        {/* Icon + Title */}
-        <Box display="flex" justifyContent="center" alignItems="center" mb={1}>
-          {icon && (
-            <Box
-              component="span"
-              sx={{
-                mr: 1,
-                fontSize: 32,
-                color: titleColor || 'primary.main',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              {icon}
-            </Box>
-          )}
-          <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={titleColor ? { color: titleColor } : undefined}
-          >
-            {title}
-          </Typography>
-        </Box>
-
-        {/* Total */}
-        {total != null && (
-          <Box display="flex" justifyContent="center" alignItems="baseline" mb={1}>
-            <Typography
-              variant="h4"
-              sx={{
-                mr: 1,
-                ...(totalColor ? { color: totalColor } : undefined),
-                transition: 'color 0.3s'
-              }}
-            >
-              {total}
-            </Typography>
-          </Box>
-        )}
-
-        {/* Stats */}
-        <Grid container spacing={1} justifyContent="center">
-          {stats.map(({ label, value }, idx) => (
-            <Grid key={label} item xs={6}>
-              <Typography
-                variant="caption"
-                sx={
-                  statColors[idx]
-                    ? { color: statColors[idx], transition: 'color 0.3s' }
-                    : {}
-                }
-              >
-                {label}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={
-                  statColors[idx]
-                    ? { color: statColors[idx], transition: 'color 0.3s' }
-                    : {}
-                }
-              >
-                {value}
-              </Typography>
-            </Grid>
-          ))}
-        </Grid>
-      </CardContent>
-    </Card>
-  );
+/* ===== Device Grid ===== */
+.device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
 }
 
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
-const seatCapacities = {
-  Dubai: 53,
-  Dublin: 78,
-  Rome: 39,
-  London: 41,
-  Moscow: 108,
-  Casablanca: 55,
-  Madrid: 65,
-};
+/* ===== Device Card Styling ===== */
+.device-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    position: relative;
+}
 
-export default seatCapacities;
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\hooks\useLiveOccupancy.js
+.device-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 15px rgba(0, 173, 181, 0.25);
+}
 
-import { useState, useEffect, useRef } from 'react';
-import { fetchLiveSummary } from '../api/occupancy.service';
+/* ===== Online/Offline Background ===== */
+.device-card[data-status="online"] {
+    border-left: 5px solid #10e634;
+    background-color: rgba(16, 185, 129, 0.1);
+}
 
-export function useLiveOccupancy(interval = 1000) {
-  const [data, setData]       = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
-  const timer = useRef(null);
+.device-card[data-status="offline"] {
+    border-left: 5px solid #f50f1a;
+    background-color: rgba(239, 68, 68, 0.08);
+}
 
-  useEffect(() => {
-    let active = true;
+/* ===== Typography ===== */
+.device-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
 
-    async function load() {
-      try {
-        // fetchLiveSummary now returns cached data instantly if available
-        const json = await fetchLiveSummary();
-        if (!active) return;
-        setData(json);
-        setLoading(false);
-      } catch (e) {
-        if (!active) return;
-        setError(e);
-        setLoading(false);
-      }
+.device-type-label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.device-ip {
+    color: #00adb5;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.device-ip:hover {
+    color: #00fff5;
+    text-decoration: underline;
+}
+
+/* ===== Status Styling ===== */
+.device-status {
+    margin-top: 15px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: #ccc;
+}
+
+.online-dot {
+    background-color: #10e634;
+}
+
+.offline-dot {
+    background-color: #f50f1a;
+}
+
+.online-dot, .offline-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* ===== Icon Colors (by device type) ===== */
+.device-type-label.camera i {
+    color: #00adb5;
+}
+
+.device-type-label.controller i {
+    color: #f9c80e;
+}
+
+.device-type-label.archiver i {
+    color: #ff5e57;
+}
+
+.device-type-label.server i {
+    color: #6a67ce;
+}
+
+/* ===== Icon Default Styling ===== */
+.device-type-label i,
+.device-card i {
+    margin-right: 6px;
+    font-size: 1.1rem;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media screen and (max-width: 600px) {
+    .details-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
     }
 
-    load();
-    timer.current = setInterval(load, interval);
-
-    return () => {
-      active = false;
-      clearInterval(timer.current);
-    };
-  }, [interval]);
-
-  return { data, loading, error };
+    #device-search {
+        width: 100%;
+    }
 }
-
-...............................................
-
-
-
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
-//C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\Dashboard.jsx
-
-
-
-
-
