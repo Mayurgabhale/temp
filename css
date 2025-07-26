@@ -1,34 +1,37 @@
-.card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-left: 4px;
-}
+<div class="card-content" style="display: flex; flex-direction: column; gap: 8px;">
+  <p class="device-type-label ${deviceType}" style="font-size: 1.05rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: 600;">
+    <strong>
+      <i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}
+    </strong>
+  </p>
 
-/* Style each line (p tag) to align icon and text */
-.card-content p {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 0.95rem;
-}
+  <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif;">
+    <strong style="color: #d7d9de;">
+      <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
+    </strong>
+    <span class="device-ip"
+      style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);"
+      onclick="copyToClipboard('${deviceIP}')"
+      title="Click to copy IP">
+      ${deviceIP}
+    </span>
+  </p>
 
-/* Style icons inside strong tags */
-.card-content p strong i {
-  margin-right: 10px;
-  min-width: 18px;
-  text-align: center;
-  color: #00adb5;
-}
+  <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
+    <strong style="color: rgb(215, 217, 222);">
+      <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i>
+    </strong>
+    <span style="font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);">
+      ${device.location || "N/A"}
+    </span>
+  </p>
 
-/* Optional: make icons slightly larger */
-.card-content p i {
-  font-size: 1.05rem;
-}
-
-/* Align span text neatly with consistent color */
-.card-content p span {
-  font-weight: 600;
-  color: #2d2d2d;
-}
+  <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
+    <strong style="color: rgb(215, 217, 222);">
+      <i class="fas fa-city" style="margin-right: 5px;"></i>
+    </strong>
+    <span style="font-weight: bold; color: rgb(215, 217, 222);">
+      ${city}
+    </span>
+  </p>
+</div>
