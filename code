@@ -1,12 +1,15 @@
-                const logoHTML = `<span class="region-logo"><img src="images/header-logo.png" alt="Logo" class="region-logo" /></span>`; // Adjust path if needed
-#region-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+const region = currentRegion?.toUpperCase() || "GLOBAL";
+const titleElement = document.getElementById("region-title");
 
-.region-logo {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
-}
+const logoHTML = `
+  <span style="display: flex; align-items: center;">
+    <img src="images/header-logo.png" alt="Logo"
+         style="height: 32px; width: auto; object-fit: contain; margin-right: 10px;" />
+  </span>
+`;
+
+const text = selectedCity !== "all"
+  ? `${region}, ${selectedCity} Summary`
+  : `${region} Summary`;
+
+titleElement.innerHTML = `${logoHTML}<span>${text}</span>`;
