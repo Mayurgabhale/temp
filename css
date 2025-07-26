@@ -1,3 +1,30 @@
+card.insertAdjacentHTML("beforeend", `
+  <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700; font-family: 'Times New Roman', Times, serif; margin-bottom: 10px;">
+    ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+  </h3>
+
+  <div class="card-content">
+    <i class="${getDeviceIcon(deviceType)}" style="color: #3b3f46;"></i>
+    <strong>${deviceType.toUpperCase()}</strong>
+
+    <i class="fas fa-network-wired" style="color: #d7d9de;"></i>
+    <span 
+      class="device-ip" 
+      onclick="copyToClipboard('${deviceIP}')" 
+      title="Click to copy IP" 
+      style="cursor: pointer; color: #0077b6;">
+      ${deviceIP}
+    </span>
+
+    <i class="fas fa-map-marker-alt" style="color: rgb(215, 217, 222);"></i>
+    <span>${device.location || "N/A"}</span>
+
+    <i class="fas fa-city" style="color: rgb(215, 217, 222);"></i>
+    <span>${city}</span>
+  </div>
+`);
+
+
 
 .card-content {
   display: grid;
@@ -13,97 +40,17 @@
   color: #333;
 }
 
-/* General style for icons */
+/* Fix icon color issue */
 .card-content i {
   font-size: 1.1rem;
   color: #3b3f46;
   text-align: center;
 }
 
-/* Text next to icons */
+/* Don’t override icon colors */
 .card-content span,
 .card-content strong {
   font-weight: 600;
-  color: #212529;
   display: block;
+  color: inherit;
 }
-
-
-
-
-
-card.insertAdjacentHTML("beforeend", `
-  <h3 class="device-name"> 
-    ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-  </h3>
-
-  <div class="card-content">
-    <i class="${getDeviceIcon(deviceType)}"></i>
-    <strong>${deviceType.toUpperCase()}</strong>
-
-    <i class="fas fa-network-wired"></i>
-    <span 
-      class="device-ip" 
-      onclick="copyToClipboard('${deviceIP}')" 
-      title="Click to copy IP" 
-      style="cursor: pointer; color: #0077b6;">
-      ${deviceIP}
-    </span>
-
-    <i class="fas fa-map-marker-alt"></i>
-    <span>${device.location || "N/A"}</span>
-
-    <i class="fas fa-city"></i>
-    <span>${city}</span>
-  </div>
-`);
-
-
-
-
-this above code is pereect work but the problme is icons color not show, not applyigng 
-              sow correct it 
-
-
-
-
-               card.insertAdjacentHTML("beforeend", `
-                            <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700;  font-family: 'Times New Roman', Times, serif;, sans-serif; margin-bottom: 10px;">
-                                ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-                            </h3>
-
-                             <div class="card-content">
-                            <p class="device-type-label ${deviceType}" style="font-size: 1.05rem;  font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: 600; margin-bottom: 10px;">
-
-                            <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
-                                 </p>
-
-                        <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
-                            <strong style="color: #d7d9de;">
-                                <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
-                            </strong>
-                            <span 
-                                class="device-ip" 
-                                style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
-                                onclick="copyToClipboard('${deviceIP}')"
-                                title="Click to copy IP"
-                            >
-                                ${deviceIP}
-                            </span>
-                        </p>
-
-                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
-                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
-                                <span style=" font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);;">${device.location || "N/A"}</span>
-                            </p>
-
-                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
-                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
-                                <span style="font-weight: bold; color: rgb(215, 217, 222);;">${city}</span>
-                            </p>
-
-                            </div>
-
-                        `);
-see this code 
-              
