@@ -1,20 +1,15 @@
-.icon-3d {
-  font-size: 26px;
-  margin-right: 10px;
-  padding: 10px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #1f1f1f, #2b2b2b);
-  box-shadow: 4px 4px 8px #111, -4px -4px 8px #333;
-  color: #00ffe5;
-  transition: transform 0.3s ease;
-}
-
-.icon-3d:hover {
-  transform: scale(1.1) rotateX(10deg) rotateY(10deg);
-  box-shadow: 6px 6px 12px #111, -6px -6px 12px #333;
-}
-
-
-
-
-<h3><i class="fas fa-microchip icon-3d"></i> Total Devices</h3>
+<div class="card">
+  <h3 style="display: flex; align-items: center;">
+    <lottie-player
+      src="https://assets6.lottiefiles.com/packages/lf20_hzgq1iov.json"
+      background="transparent"
+      speed="1"
+      style="width: 40px; height: 40px; margin-right: 10px;"
+      loop autoplay>
+    </lottie-player>
+    Cameras
+  </h3>
+  <div class="card-status total">Total <span id="camera-total">0</span></div>
+  <div class="card-status online">Online <span id="camera-online">0</span></div>
+  <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
+</div>
