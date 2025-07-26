@@ -1,4 +1,4 @@
-
+                const logoHTML = `<span class="region-logo"><img src="images/header-logo.png" alt="Logo" class="region-logo" /></span>`; // Adjust path if needed
 #region-title {
   display: flex;
   align-items: center;
