@@ -1,3 +1,23 @@
+const isExpanded = expandedFloor === floor;
+
+const filteredRows = term
+  ? emps.filter(r => {
+      const empId = String(r.EmployeeID).toLowerCase();
+      const name = String(r.ObjectName1).toLowerCase();
+      const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : "";
+      return (
+        empId.includes(term) ||
+        name.includes(term) ||
+        card.includes(term)
+      );
+    })
+  : emps;
+
+const rowsToShow = isExpanded ? filteredRows : filteredRows.slice(0, 10);
+
+
+
+
 // src/pages/PartitionDetailDetails.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import {
