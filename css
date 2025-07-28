@@ -1,4 +1,18 @@
 #region-title {
+  width: 100%;
+  padding: 24px 30px;
+  background: #ffcc00;
+  color: #000;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 35px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+
+
+#region-title {
   position: relative;
   left: 50%;
   right: 50%;
