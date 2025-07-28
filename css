@@ -1,3 +1,21 @@
+deviceList.forEach(device => {
+  const deviceHistory = getDeviceHistory(device.ip); // your method
+  const downtimeCount = countValidDowntimes(deviceHistory, device.category);
+  const downtimeDurationSec = sumValidDowntimeDuration(deviceHistory, device.category);
+
+  // Update table cell values
+  const safeIp = device.ip.replace(/\./g, "-");
+
+  document.getElementById(`downtime-count-${safeIp}`).textContent = downtimeCount;
+  document.getElementById(`downtime-${safeIp}`).textContent = formatDuration(downtimeDurationSec);
+});
+
+
+
+
+
+
+
 function countValidDowntimes(history, deviceCategory) {
   let count = 0;
   let lastOffline = null;
