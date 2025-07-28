@@ -1,94 +1,28 @@
-<div id="region-title" class="dashboard-header">
-    <div class="region-logo">
-        <img src="images/security-camera.png" alt="">
-    </div>
-</div>
 
-
-#region-title .region-logo {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-}
-
-#region-title .region-logo img {
-  display: block;
-}
-
-
-
-
-
-
-....
-    <div id="region-title" class="dashboard-header">
-
-        <div> add class name and i want to disply this image left side top only write css for the dont make any changes 
-            <img src="images/security-camera.png" alt="">
-        </div>
-    </div>
-
-
-
-
-/* === Default (Desktop) === */
-#region-title {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
-  background-color: #ffcc00;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  font-weight: 700;
-  padding: 24px;
-  font-size: 35px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-      border-bottom: 1px solid #000000;
+/* ===== Footer ===== */
+.footer {
+  /* background-color: #1e1e2f; */
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  border-top: 1px solid #2c2c3e;
+  color: #000000;
+ position: fixed;
+ 
 
 }
 
-#region-title img {
-  height: 40px;
-  object-fit: contain;
+.footer-logo {
+  width: 120px;
+  margin-bottom: 10px;
 }
 
-
-/* === Tablets (768px – 1024px) === */
-@media (max-width: 1024px) {
-  #region-title {
-    font-size: 28px;
-    padding: 20px;
-  }
-
-  #region-title img {
-    height: 35px;
-  }
-}
-
-/* === Mobile (480px – 767px) === */
-@media (max-width: 767px) {
-  #region-title {
-    font-size: 22px;
-    padding: 16px;
-  }
-
-  #region-title img {
-    height: 30px;
-  }
-}
-
-/* === Extra Small Devices (less than 480px) === */
-@media (max-width: 479px) {
-  #region-title {
-    font-size: 18px;
-    padding: 12px;
-  }
-
-  #region-title img {
-    height: 26px;
-  }
-}
+  <footer class="footer">
+        <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo" />
+        <p style="color: 000000;">&copy; 2025 VisionWatch | Powered by <strong style="color: #fbc531;">Western Union
+                Services India Pvt Ltd.</strong></p>
+        <p style="color: 000000;">Contact:
+            <a href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">Email</a> |
+            <a href="tel:+912067632394">+91 20 67632394</a>
+        </p>
+    </footer>
