@@ -30,7 +30,10 @@ function displayDeviceHistory(deviceIp, deviceName, history) {
 
 
 
-    chekc above code are correct
+chekc above code are correct
+if device downtime is great than 5 minutes than Only device is offline otherwise wise if device downtime duration is less than 5 Minutes than device are not offline
+
+so read below code line by line and carefully and slow the issue correctly 
 
 
     
