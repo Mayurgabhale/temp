@@ -1,56 +1,118 @@
-let tableRows = [];
-let lastOfflineTimestamp = null;
-let lastOfflineIndex = null;
+in this tabl downtime duration is greter than 5 miniute thany only show entry in table 
+if only show entry in talbe downtime ducarintn is greter that 5 minitue s
 
-history.forEach((entry, index) => {
-    let entryDate = new Date(entry.timestamp);
-    let formattedDate = entryDate.toLocaleDateString();
-    let formattedTime = entryDate.toLocaleTimeString();
-    let formattedDay = entryDate.toLocaleString('en-US', { weekday: 'long' });
 
-    // Default values
-    let row = {
-        srNo: index + 1,
-        date: formattedDate,
-        day: formattedDay,
-        time: formattedTime,
-        status: entry.status,
-        duration: "-"
-    };
+see the datA
+Sr.No	Date	Day	Time	Status	Downtime Duration
+1	7/3/2025	Thursday	12:00:25 PM	Online	-
+2	7/3/2025	Thursday	4:27:23 PM	Offline	-SEE THIS IN BETWEEN ONLY 1 MINITUE GAP 
+3	7/3/2025	Thursday	4:28:22 PM	Online	-  
+4	7/3/2025	Thursday	4:31:23 PM	Offline	-
+5	7/3/2025	Thursday	4:32:23 PM	Online	-
+6	7/3/2025	Thursday	4:33:24 PM	Offline	-
+7	7/3/2025	Thursday	4:34:22 PM	Online	-
+8	7/3/2025	Thursday	4:51:23 PM	Offline	-
+9	7/3/2025	Thursday	4:52:23 PM	Online	-
+10	7/3/2025	Thursday	4:56:25 PM	Offline	-
+11	7/3/2025	Thursday	4:57:22 PM	Online	-
+12	7/3/2025	Thursday	5:45:25 PM	Offline	-
+13	7/3/2025	Thursday	5:46:22 PM	Online	-
+14	7/7/2025	Monday	4:39:56 PM	Online	-
+15	7/7/2025	Monday	5:10:00 PM	Offline	-
+16	7/7/2025	Monday	5:10:56 PM	Online	-
+17	7/11/2025	Friday	7:34:11 PM	Online	-
+18	7/22/2025	Tuesday	3:42:24 PM	Online	-
+19	7/22/2025	Tuesday	7:51:36 PM	Offline	-
+20	7/22/2025	Tuesday	7:52:35 PM	Online	-
+21	7/25/2025	Friday	10:28:42 AM	Online	-
+22	7/26/2025	Saturday	1:28:53 PM	Online	-
+23	7/28/2025	Monday	9:36:51 AM	Online	
 
-    if (entry.status === "Offline") {
-        lastOfflineTimestamp = entry.timestamp;
-        lastOfflineIndex = tableRows.length; // Store index where we might update duration
-    } else if (entry.status === "Online" && lastOfflineTimestamp !== null) {
-        const offlineStart = new Date(lastOfflineTimestamp).getTime();
-        const onlineTime = new Date(entry.timestamp).getTime();
-        const durationSec = (onlineTime - offlineStart) / 1000;
+function displayDeviceHistory(deviceIp, deviceName, history) {
+    const modalHeader = document.getElementById('device-history-header');
+    const historyContainer = document.getElementById('device-history');
+    modalHeader.innerHTML = `
+        <h3>Device History</h3>
+        <p><strong>Device Name:</strong> ${deviceName}</p>
+        <p><strong>Device IP:</strong> ${deviceIp}</p>
+        <hr>
+    `;
+    historyContainer.innerHTML = '';
+    if (history.length === 0) {
+        historyContainer.innerHTML = `<p>No history available for this device.</p>`;
+        return;
+    }
+    let tableHTML = `
+        <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Downtime Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-        if (durationSec >= 300 && lastOfflineIndex !== null) {
-            tableRows[lastOfflineIndex].duration = formatDuration(durationSec);
+
+    let lastOfflineTimestamp = null;
+    history.forEach((entry, index) => {
+        let entryDate = new Date(entry.timestamp);
+        let formattedDate = entryDate.toLocaleDateString();
+        let formattedTime = entryDate.toLocaleTimeString();
+        let formattedDay = entryDate.toLocaleString('en-US', { weekday: 'long' });
+
+        // let downtimeDuration = "-";
+        // if (entry.status === "Offline") {
+        //     lastOfflineTimestamp = entry.timestamp;
+        // } else if (entry.status === "Online" && lastOfflineTimestamp) {
+        //     downtimeDuration = calculateDowntimeDuration(lastOfflineTimestamp, history);
+        //     lastOfflineTimestamp = null;
+        // }
+
+        let downtimeDuration = "-";
+        if (entry.status === "Offline") {
+            lastOfflineTimestamp = entry.timestamp;
+        } else if (entry.status === "Online" && lastOfflineTimestamp) {
+            const offlineStart = new Date(lastOfflineTimestamp).getTime();
+            const onlineTime = new Date(entry.timestamp).getTime();
+            const durationSec = (onlineTime - offlineStart) / 1000;
+
+            if (durationSec >= 300) {
+                downtimeDuration = formatDuration(durationSec);
+            } else {
+                downtimeDuration = "-";
+            }
+
+            lastOfflineTimestamp = null;
         }
 
-        // Reset
-        lastOfflineTimestamp = null;
-        lastOfflineIndex = null;
-    }
 
-    tableRows.push(row);
-});
+        tableHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${formattedDate}</td>
+                <td>${formattedDay}</td>
+                <td>${formattedTime}</td>
+                <td style="color: ${entry.status === "Online" ? 'green' : 'red'};">${entry.status}</td>
+                <td>${downtimeDuration}</td>
+            </tr>
+        `;
+    });
+
+    
 
 
 
 
-
-tableRows.forEach(row => {
-    tableHTML += `
-        <tr>
-            <td>${row.srNo}</td>
-            <td>${row.date}</td>
-            <td>${row.day}</td>
-            <td>${row.time}</td>
-            <td style="color: ${row.status === "Online" ? 'green' : 'red'};">${row.status}</td>
-            <td>${row.duration}</td>
-        </tr>
-    `;
-});
+    tableHTML += `</tbody></table>`;
+    // historyContainer.innerHTML = tableHTML;
+    historyContainer.innerHTML = `
+    <div class="scrollable-history-table">
+        ${tableHTML}
+    </div>
+`;
+}
