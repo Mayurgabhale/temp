@@ -1,3 +1,7 @@
+<td id="status-logo-${safeIp}"></td>
+
+
+
 let remarkElement = document.getElementById(`remark-${safeIp}`);
 
 // 👉 Add this immediately after the line above:
