@@ -1,3 +1,61 @@
+see this main table table and correct device histroy talble 
+
+because in 
+
+10.64.21.80	LACA CR A209 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.80	CAMERA	0h/0m/0s	7	7h/52m/22s	View History	Device is Offline.
+2	10.64.21.72	LACA CR A303 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.72	CAMERA	0h/0m/0s	7	7h/52m/28s	View History	Device is Offline.
+3	10.64.21.134	LACA CR A305 GENERAL NORTHEAST - 10.64.21.134	CAMERA	0h/0m/0s	7	7h/52m/2s	View History	Device is Offline.
+4	10.64.21.5	LACA CR B104 EMERGENCY EXIT DOOR SOUTHWEST1 - 10.64.21.5	CAMERA	0h/0m/0s	7	7h/52m/4s	View History	Device is Offline.
+5	10.64.21.203	LACA CR B207 EMERGENCY EXIT DOOR NORTHEAST - 10.64.21.203	CAMERA	0h/0m/0s	7	7h/52m/4s	View History	Device is Offline.
+6	10.64.22.9	LACA CR B304 EMERGENCY EXIT DOOR NORTHEAST - 10.64.22.9	CAMERA	0h/0m/0s	7	7h/51m/55s	View History	Device is Offline.
+7	10.64.23.72	LACA CR E207 EMERGENCY EXIT DOOR NORTHWEST - 10.64.23.72	CAMERA	0h/0m/0s	7	7h/51m/58s	View History	Device is Offline.
+8	10.64.23.76	LACA CR E210 GENERAL NORTH - 10.64.23.76	CAMERA	0h/0m/0s	7	7h/51m/59s	View History	Device is 
+
+in above there are amny device more thant 5 miniute 7h/52m/22s  7h/52m/28s	 thay are not show in device histroy table 
+
+and no any more than 5 minite thant give one message 
+
+Sr. No	Device IP	Device Name	Device Type	Uptime Duration	Downtime Count	Downtime Duration	Details	Remark
+1	10.64.21.80	LACA CR A209 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.80	CAMERA	0h/0m/0s	7	7h/52m/22s	View History	Device is Offline.
+2	10.64.21.72	LACA CR A303 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.72	CAMERA	0h/0m/0s	7	7h/52m/28s	View History	Device is Offline.
+3	10.64.21.134	LACA CR A305 GENERAL NORTHEAST - 10.64.21.134	CAMERA	0h/0m/0s	7	7h/52m/2s	View History	Device is Offline.
+4	10.64.21.5	LACA CR B104 EMERGENCY EXIT DOOR SOUTHWEST1 - 10.64.21.5	CAMERA	0h/0m/0s	7	7h/52m/4s	View History	Device is Offline.
+5	10.64.21.203	LACA CR B207 EMERGENCY EXIT DOOR NORTHEAST - 10.64.21.203	CAMERA	0h/0m/0s	7	7h/52m/4s	View History	Device is Offline.
+6	10.64.22.9	LACA CR B304 EMERGENCY EXIT DOOR NORTHEAST - 10.64.22.9	CAMERA	0h/0m/0s	7	7h/51m/55s	View History	Device is Offline.
+7	10.64.23.72	LACA CR E207 EMERGENCY EXIT DOOR NORTHWEST - 10.64.23.72	CAMERA	0h/0m/0s	7	7h/51m/58s	View History	Device is Offline.
+8	10.64.23.76	LACA CR E210 GENERAL NORTH - 10.64.23.76	CAMERA	0h/0m/0s	7	7h/51m/59s	View History	Device is Offline.
+9	10.64.23.141	LACA CR E312 EMERGENCY EXIT DOOR SOUTH - 10.64.23.141	CAMERA	0h/0m/0s	7	7h/51m/41s	View History	Device is Offline.
+10	10.64.20.72	LACA CR E407 GENERAL NORTHWEST - 10.64.20.72	CAMERA	0h/0m/0s	7	7h/51m/27s	View History	Device is Offline.
+11	10.64.21.109	LACA CR A210 PCI NORTHEAST	CAMERA	0h/0m/0s	7	7h/51m/11s	View History	Device is Offline.
+12	10.64.22.74	LACA CR E401 MAIN ENTRANCE DOOR	CAMERA	0h/0m/0s	7	7h/49m/39s	View History	Device is Offline.
+13	10.21.4.66	US.NYC.199 Water St	CONTROLLER	0h/0m/0s	5	7h/52m/36s	View History	Device is Offline.
+14	10.128.144.124	RU.Moscow.Panel 01	CONTROLLER	7h/53m/22s	6	0h/0m/0s	View History	Device is Online, it had 6 downtime occurrences.
+15	10.136.63.236	Archiver Moscow	ARCHIVER	7h/53m/44s	6	0h/0m/0s	View History	Device is Online, it had 6 downtime occurrences.
+16	10.192.5.9	Archiver Server Kuala Lumpur	ARCHIVER	7h/6m/25s	5	0h/0m/0s	View History	Device is Online, it had 5 downtime occurrences.
+17	10.192.4.11	APAC_MY_KUALA LUMPUR_ISTAR ULTRA_CONTROLLER_01	CONTROLLER	7h/53m/35s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+18	10.65.32.98	AR.MonteVideo.Panel 01	CONTROLLER	7h/53m/23s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+19	10.65.32.99	AR.MonteVideo.Panel 02	CONTROLLER	7h/53m/8s	5	0h/0m/0s	View History	Device is Online, it had 5 downtime occurrences.
+20	10.65.32.114	AR.MonteVideo.Panel 03	CONTROLLER	7h/53m/8s	5	0h/0m/0s	View History	Device is Online, it had 5 downtime occurrences.
+21	10.65.21.115	AR.MonteVideo.Panel 04	CONTROLLER	7h/53m/9s	5	0h/0m/0s	View History	Device is Online, it had 5 downtime occurrences.
+22	10.70.1.201	PE.Lima.STA Cruz Panel 01	CONTROLLER	7h/53m/1s	5	0h/0m/0s	View History	Device is Online, it had 5 downtime occurrences.
+23	10.64.35.232	LACA CR A204 SOUTHWEST	CAMERA	4h/7m/2s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+24	10.64.21.85	Archiver server Costa Rica 3	ARCHIVER	7h/53m/44s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+25	10.194.2.13	APAC_PH_MANILA_ISTAR PRO_01	CONTROLLER	6h/43m/22s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+26	10.131.106.134	IT.Rome.controller 3	CONTROLLER	7h/53m/20s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+27	10.138.161.7	LT.VNO Gama.Panel 04	CONTROLLER	7h/6m/21s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+28	10.70.1.200	PE.Lima.STA Cruz Panel 02	CONTROLLER	4h/20m/13s	4	0h/0m/0s	View History	Device is Online, it had 4 downtime occurrences.
+29	10.64.20.69	LACA CR E404 EMERGENCY EXIT DOOR SOUTH - 10.64.20.69	CAMERA	7h/51m/38s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+30	10.64.21.184	LACA CR A306 GENERAL CENTRAL NORTHEAST	CAMERA	7h/50m/51s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+31	10.64.21.166	LACA CR A311 GENERAL CENTRAL EAST 10.64.21.166	CAMERA	7h/50m/46s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+32	10.64.34.166	LACA CR B110 FITNESS CENTER NORTHWEST	CAMERA	7h/50m/49s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+33	10.64.21.216	LACA CR B205 MAIN ENTRANCE DOOR	CAMERA	6h/24m/1s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+34	10.64.21.218	LACA CR B206 EMERGENCY EXIT DOOR SOUTHWEST - 10.64.21.218	CAMERA	7h/44m/59s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+35	10.64.38.238	LACA B309 GENERAL SOUTH EAST	CAMERA	7h/50m/16s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+36	10.64.23.184	LACA CR E303 GENERAL SOUTHEAST	CAMERA	7h/49m/50s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+37	10.194.2.190	Archiver Taguig City Philippines	ARCHIVER	4h/57m/24s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+38	10.130.36.56	EMEA_UAE_DUBAI_PANEL NEW	CONTROLLER	7h/53m/32s	3	0h/0m/0s	View History	Device is Online, it had 3 downtime occurrences.
+
+
 function displayDeviceHistory(deviceIp, deviceName, history) {
     const modalHeader = document.getElementById('device-history-header');
     const historyContainer = document.getElementById('device-history');
