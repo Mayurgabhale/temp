@@ -1,143 +1,27 @@
 #region-title {
   width: 100%;
-  height: 64px;
+  height: 70px;
   background-color: #ffcc00;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 30px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 0 20px;
   border-bottom: 1px solid #e0e0e0;
-  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+  z-index: 100;
   position: relative;
 }
 #region-title img {
   height: 40px;
   object-fit: contain;
 }
+
 
 
 
 
 .container {
   display: flex;
-  min-height: calc(100vh - 64px); /* Adjust height below header */
-}
-
-
-
-
-
-....
-#region-title {
-  width: 100%;
-  padding: 24px 30px;
-  background: #ffcc00;
-  color: #000;
-  border-bottom: 1px solid #e0e0e0;
-  font-size: 35px;
-  font-weight: 700;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-
-
-#region-title {
-  position: relative;
-  left: 50%;
-  right: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  margin-bottom: 20px;
-  padding: 24px 30px;
-  background: #ffcc00;
-  color: #000000;
-  border: 1px solid #e0e0e0;
-  border-radius: 0;
-  font-size: 35px;
-  font-weight: 700;
-  text-align: center;
-  z-index: 1;
-}
-
-
-
-
-
-
-#region-title {
-  width: 100vw;
-  margin-left: -30px; /* Match #content's horizontal padding */
-  margin-right: -30px;
-  margin-bottom: 20px;
-  padding: 24px 30px; /* Restore visual spacing inside */
-  background: #ffcc00;
-  color: #000;
-  border: 1px solid #e0e0e0;
-  border-radius: 0; /* Optional: flat edge when full width */
-  font-size: 35px;
-  font-weight: 700;
-  text-align: center;
-  position: relative;
-}
-
-
-
-
-
-
-
-   <div id="region-title" class="dashboard-header">
-                <img src="images/FooterLogo.png" alt="">
-            </div>
-region title i want to take a full screen widht 
-bu the problme in this 
-#content {
-  flex: 1;
-  padding: 5px 30px;
-}
-
-they apply padding 
-and region title in content div so they alos get padding 30px thisi 
-
-but   <div id="region-title"  i want ot tak full widht wiht any padding
-
-
-
-#region-title {
-  text-align: center;
-  margin: 0 auto 20px;
-  padding: 24px;
-  /* background:#000000 ; */
-  /* background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); */
-
-  /*       
-background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77);
-color: #fbc531; */
-
-/* 
-  background: #ffffff;
-  color: #ffcc00; */
-  position: relative;
-  background: #ffcc00;
-  color: #000000;
-  border: 1px solid #e0e0e0;
-  border-radius: 16px;
-  /* max-width: 100%; */
-  font-size: 35px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  font-weight: 700;
-}
-
-
-#region-title img {
-  height: 40px;
-  /* adjust as needed */
-  max-width: 120px;
-  object-fit: contain;
-  z-index: 11;
-  object-fit: contain;
-  display: inline-block;
+  flex-direction: row;
+  height: calc(100vh - 70px); /* full height minus header */
 }
