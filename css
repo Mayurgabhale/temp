@@ -1,3 +1,25 @@
+#region-title {
+  width: 100vw;
+  margin-left: -30px; /* Match #content's horizontal padding */
+  margin-right: -30px;
+  margin-bottom: 20px;
+  padding: 24px 30px; /* Restore visual spacing inside */
+  background: #ffcc00;
+  color: #000;
+  border: 1px solid #e0e0e0;
+  border-radius: 0; /* Optional: flat edge when full width */
+  font-size: 35px;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+}
+
+
+
+
+
+
+
    <div id="region-title" class="dashboard-header">
                 <img src="images/FooterLogo.png" alt="">
             </div>
