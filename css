@@ -1,4 +1,29 @@
+let downtimeDuration = "-";
+if (entry.status === "Offline") {
+    lastOfflineTimestamp = entry.timestamp;
+} else if (entry.status === "Online" && lastOfflineTimestamp) {
+    const offlineStart = new Date(lastOfflineTimestamp).getTime();
+    const onlineTime = new Date(entry.timestamp).getTime();
+    const durationSec = (onlineTime - offlineStart) / 1000;
 
+    if (durationSec >= 300) {
+        downtimeDuration = formatDuration(durationSec);
+    } else {
+        downtimeDuration = "-";
+    }
+
+    lastOfflineTimestamp = null;
+}
+
+
+
+
+
+
+
+
+
+.......
 function displayDeviceHistory(deviceIp, deviceName, history) {
     const modalHeader = document.getElementById('device-history-header');
     const historyContainer = document.getElementById('device-history');
