@@ -1,310 +1,503 @@
-in 3d floor no any one 
-
-3rd Floor (Total 1)
-Emp ID	Name	Swipe Time	Type	Card	Door
- tabel 
-
-issue is if no any data in tabl thene tabl eare not disply but 3d floor table are disply so what is the problme chek issus and slove it 
-red bleow code carefully and slove it 
-
-//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\pages\PartitionDetailDetails.jsx
-
-// src/pages/PartitionDetailDetails.jsx
-import React, { useEffect, useState, useMemo } from "react";
-import {
-  Container,
-  Box,
-  Typography,
-  Button,
-  TextField,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import LoadingSpinner from "../components/LoadingSpinner";
-import DataTable from "../components/DataTable";
-import { fetchLiveSummary } from "../api/occupancy.service";
-import { lookupFloor } from "../utils/floorLookup";
-
-export default function PartitionDetailDetails() {
-  const { partition } = useParams();
-  const navigate = useNavigate();
-
-  const [details, setDetails] = useState([]);
-  const [liveCounts, setLiveCounts] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [expandedFloor, setExpandedFloor] = useState(null);
-
-
-  // Initial load on partition change: show spinner
-  useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    // fetchLiveSummary().then(json => {
-    //   if (!isMounted) return;
-    //   const det = json.details
-
-    fetchLiveSummary().then(json => {
-      if (!isMounted) return;
-      // grab and store the live floor counts
-      const counts = json.realtime[partition]?.floors || {};
-      setLiveCounts(counts);
-
-      // then build the raw detail rows
-      const det = json.details
-
-        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-      setLoading(false);
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, [partition]);
-
-  // Subsequent refresh every second, without spinner
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      // const json = await fetchLiveSummary();
-      // const det = json.details
-
-      const json = await fetchLiveSummary();
-      // update live counts each tick
-      setLiveCounts(json.realtime[partition]?.floors || {});
-
-      // update details
-      const det = json.details
-
-
-        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [partition]);
-
-
-  // Group by floor, ensuring every floor in liveCounts appears
-  const floorMap = useMemo(() => {
-    const m = {};
-    // initialize each live floor with empty array
-    Object.keys(liveCounts).forEach(floorName => {
-      m[floorName] = [];
-    });
-    // then bucket actual detail rows
-    details.forEach(r => {
-      // if lookupFloor returned a floor not in liveCounts, include it too
-      if (!(r.floor in m)) m[r.floor] = [];
-      m[r.floor].push(r);
-    });
-    return m;
-  }, [details, liveCounts]);
 
 
 
-  // Filter + sort
-  const displayed = useMemo(() => {
+let deviceUptimeTimers = {};
+let deviceDowntimeTimers = {};
 
-    const term = searchTerm.trim().toLowerCase();
-    return Object.entries(floorMap)
-      // .filter(([floor, emps]) => {
-      .filter(([floor, emps]) => {
-        if (!term) return true;
-        if (floor.toLowerCase().includes(term)) return true;
-        return emps.some(r =>
-          r.ObjectName1.toLowerCase().includes(term) ||
-          r.EmployeeID.toLowerCase().includes(term) ||
-          (r.CardNumber && r.CardNumber.toLowerCase().includes(term))
-        );
+// Utility to turn an IP (or any string) into a safe DOM‑ID fragment
+function sanitizeId(str) {
+    return str.replace(/[^a-zA-Z0-9]/g, '_');
+}
 
-      })
+function fetchDeviceData() {
+    const selectedRegion = document.getElementById('region').value;
+    fetch(`http://localhost/api/regions/details/${selectedRegion}`)
+        .then(response => response.json())
+        .then(regionData => {
+            fetchDeviceHistory(regionData.details);
+        })
+        .catch(error => console.error('Error fetching device data:', error));
+}
 
-      // sort by real-time headcount desc
-      .sort(([aFloor], [bFloor]) => (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0));
+function fetchDeviceHistory(regionDetails) {
+    fetch(`http://localhost/api/devices/history`)
+        .then(response => response.json())
+        .then(historyData => {
+            populateDeviceTable(regionDetails, historyData);
+            window.deviceHistoryData = historyData; // Store history for reuse
+        })
+        .catch(error => console.error('Error fetching device history:', error));
+}
 
-  }, [floorMap, searchTerm]);
-  
-
-  const columns = [
-    { field: "EmployeeID", headerName: "Emp ID" },
-    { field: "ObjectName1", headerName: "Name" },
-    { field: "LocaleMessageTime", headerName: "Swipe Time" },
-    { field: "PersonnelType", headerName: "Type" },
-    { field: "CardNumber", headerName: "Card" },
-    { field: "Door", headerName: "Door" },
-  ];
-
-  return (
-    <>
-      <Header />
-
-      <Box component="main" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth={false} disableGutters>
-          {/* Back */}
-          <Box display="flex" alignItems="center" mb={2} sx={{ px: "20px" }}>
-            <Button size="small" onClick={() => navigate(-1)}>
-              ← Back to Overview
-            </Button>
-          </Box>
-
-          {/* Floor Details + Search */}
-          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: "20px" }}>
-            <Typography variant="h6">Floor Details</Typography>
-            <Typography variant="body2" color="textSecondary">
-              Last updated: {lastUpdate}
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="Search floor / emp…"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </Box>
-
-          {/* Show spinner only during initial load */}
-          {loading ? (
-            <Box sx={{ px: "20px", py: 8 }}>
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <>
-              {/* Edge-to-edge cards */}
-              <Box
-                component="section"
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  width: "100%",
-                  margin: 0,
-                  padding: 0,
-                }}
-              >
-                {displayed.map(([floor, emps]) => (
-                  <Box
-                    key={floor}
-                    sx={{
-                      width: "50%",
-                      boxSizing: "border-box",
-                      p: "20px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        border: "1px solid #FFC107",
-                        borderRadius: 2,
-                        height: "100%",
-                      }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                        {floor} (Total {liveCounts[floor] ?? 0})
-                      </Typography>
+function populateDeviceTable(details, historyData) {
+    const table = document.getElementById('device-table');
+    let tableBody = table.getElementsByTagName('tbody')[0];
+    if (!tableBody) {
+        tableBody = document.createElement('tbody');
+        table.appendChild(tableBody);
+    }
 
 
 
-                      <TableContainer component={Paper} variant="outlined" sx={{ mb: 1 }}>
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              {["Emp ID", "Name", "Swipe Time", "Type", "Card", "Door"].map(h => (
-                                <TableCell key={h} sx={{ fontWeight: "bold" }}>
-                                  {h}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          </TableHead>
+    tableBody.innerHTML = ''; // Clear existing rows
 
-                          <TableBody>
-  {(() => {
-    const term = searchTerm.trim().toLowerCase();
+    let deviceList = [];
+    let citySet = new Set(); // ✅ moved here
 
-    // Filter by EmployeeID, Name, or CardNumber if there's a search term
-    const isSearching = term.length > 0;
-    const filteredEmps = isSearching
-      ? emps.filter(r =>
-          r.EmployeeID.toLowerCase().includes(term) ||
-          r.ObjectName1.toLowerCase().includes(term) ||
-          (r.CardNumber && r.CardNumber.toLowerCase().includes(term))
-        )
-      : emps.slice(0, 10); // default: show first 10 only
 
-    return filteredEmps.map((r, i) => {
-      const isMatch = isSearching;
-      return (
-        <TableRow
-          key={`${r.PersonGUID}-${i}`}
-          sx={isMatch ? { backgroundColor: "rgba(255, 235, 59, 0.3)" } : {}}
-        >
-          <TableCell>{r.EmployeeID}</TableCell>
-          <TableCell>{r.ObjectName1}</TableCell>
-          <TableCell>{new Date(r.LocaleMessageTime).toLocaleTimeString()}</TableCell>
-          <TableCell>{r.PersonnelType}</TableCell>
-          <TableCell>{r.CardNumber}</TableCell>
-          <TableCell>{r.Door}</TableCell>
-        </TableRow>
-      );
-    });
-  })()}
-</TableBody>
 
-                        </Table>
-                      </TableContainer>
-                      <Button
-                        size="small"
-                        onClick={() =>
-                          setExpandedFloor(expandedFloor === floor ? null : floor)
-                        }
-                      >
-                        {expandedFloor === floor ? "Hide" : "See more…"}
-                      </Button>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
 
-              {/* Expanded full-width table */}
-              {expandedFloor && (
-                <Box sx={{ px: "20px", mt: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    {expandedFloor} — All Entries
-                  </Typography>
-                  <DataTable
-                    columns={columns}
-                    rows={(floorMap[expandedFloor] || []).map(r => ({
-                      ...r,
-                      LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString(),
-                    }))}
-                  />
-                </Box>
-              )}
-            </>
-          )}
-        </Container>
-      </Box>
+    // ............              .....                   .....             ....    ... 
+    if (details) {
+        ['cameras', 'archivers', 'controllers', 'servers'].forEach(deviceType => {
+            details[deviceType]?.forEach(device => {
 
-      <Footer />
-    </>
-  );
+                if (device.city) {
+                    citySet.add(device.city); // ✅ now this works
+                }
+
+                const deviceIp = device.ip_address;
+                const safeIp = sanitizeId(deviceIp);
+                const deviceName = device[deviceType.slice(0, -1) + 'name'];
+                const deviceCategory = deviceType.slice(0, -1).toUpperCase();
+
+                const deviceHistory = historyData[deviceIp] || [];
+                const lastStatusEntry = deviceHistory.length > 0 ? deviceHistory[deviceHistory.length - 1] : null;
+                const currentStatus = lastStatusEntry ? lastStatusEntry.status : "Unknown";
+
+                // Calculate downtime count
+                let downtimeCount = deviceHistory.filter(entry => entry.status === "Offline").length;
+
+                deviceList.push({
+                    deviceIp,
+                    safeIp,
+                    deviceName,
+                    deviceCategory,
+                    currentStatus,
+                    deviceHistory,
+                    downtimeCount
+                });
+            });
+        });
+
+
+
+        deviceList.sort((a, b) => {
+            const now = Date.now();
+
+            const aLast = a.deviceHistory[a.deviceHistory.length - 1];
+            const bLast = b.deviceHistory[b.deviceHistory.length - 1];
+
+            const aIsOffline = aLast?.status === "Offline";
+            const bIsOffline = bLast?.status === "Offline";
+
+            const aOfflineDuration = aIsOffline ? (now - new Date(aLast.timestamp)) / 1000 : 0;
+            const bOfflineDuration = bIsOffline ? (now - new Date(bLast.timestamp)) / 1000 : 0;
+
+            const aShouldPrioritize = aIsOffline && aOfflineDuration >= 300;
+            const bShouldPrioritize = bIsOffline && bOfflineDuration >= 300;
+
+            if (aShouldPrioritize && !bShouldPrioritize) return -1;
+            if (!aShouldPrioritize && bShouldPrioritize) return 1;
+
+            return b.downtimeCount - a.downtimeCount;
+        });
+
+
+
+
+
+        deviceList.forEach(({ deviceIp, safeIp, deviceName, deviceCategory, currentStatus, deviceHistory, downtimeCount }, index) => {
+            const row = tableBody.insertRow();
+            row.style.border = "1px solid black";
+
+            // row.innerHTML = `
+            //     <td>${index + 1}</td>
+            //     <td>${deviceIp}</td>
+            //     <td>${deviceName}</td>
+            //     <td>${deviceCategory}</td>
+            //     <td id="uptime-${safeIp}">0h/0m/0s</td>
+            //     <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+            //     <td id="downtime-${safeIp}">0h/0m/0s</td>
+            //     <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+            //     <td id="remark-${safeIp}">Device working properly</td>
+            // `;
+
+            row.innerHTML = `
+    <td>${index + 1}</td>
+    <td>
+        <span id="ip-${safeIp}" class="copy-text" onclick="copyToClipboard('ip-${safeIp}')">${deviceIp}</span>
+    </td>
+    <td>
+        <span id="name-${safeIp}" class="copy-text" onclick="copyToClipboard('name-${safeIp}')">${deviceName}</span>
+    </td>
+    <td>${deviceCategory}</td>
+    <td id="uptime-${safeIp}">0h/0m/0s</td>
+    <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+    <td id="downtime-${safeIp}">0h/0m/0s</td>
+    <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+    <td id="remark-${safeIp}">Device working properly</td>
+`;
+
+
+
+            row.classList.remove('status-online', 'status-offline', 'status-unknown');
+            if (currentStatus === "Online") {
+                row.classList.add('status-online');
+            } else if (currentStatus === "Offline") {
+                row.classList.add('status-offline');
+            } else {
+                row.classList.add('status-unknown');
+            }
+
+            // .....
+
+            if (currentStatus === "Online") {
+                startUptime(deviceIp, deviceHistory);
+            } else {
+                startDowntime(deviceIp, deviceHistory, deviceCategory);
+            }
+
+            // Automatically update remark for each row based on downtime and status
+            updateRemarks(deviceIp, deviceHistory, deviceCategory);
+        });
+    } else {
+        console.error('No details found in the response');
+    }
+
+    filterData();
 }
 
 
 
+function startUptime(ip, hist) {
+    const safe = sanitizeId(ip);
+    clearInterval(deviceDowntimeTimers[safe]);
+    const lastOn = hist.filter(e => e.status === 'Online').pop();
+    if (!lastOn) return;
+    const start = new Date(lastOn.timestamp).getTime();
+    deviceUptimeTimers[safe] = setInterval(() => {
+        const secs = Math.floor((Date.now() - start) / 1000);
+        const el = document.getElementById(`uptime-${safe}`);
+        if (el) el.innerText = formatDuration(secs);
+    }, 1000);
+}
 
 
+
+function startDowntime(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+    clearInterval(deviceUptimeTimers[safeIp]);
+    let lastOfflineEntry = history.filter(entry => entry.status === "Offline").pop();
+    if (!lastOfflineEntry) return;
+
+    let startTime = new Date(lastOfflineEntry.timestamp).getTime();
+    deviceDowntimeTimers[safeIp] = setInterval(() => {
+        let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById(`downtime-${safeIp}`).innerText = formatDuration(elapsedTime);
+        updateDowntimeCount(deviceIp, history, deviceCategory);
+    }, 1000);
+}
+
+// **Fix Downtime Count and Remarks Update (with offline short‑circuit)**
+function updateDowntimeCount(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+
+    // If the last status is Offline, force remark and exit
+    const lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
+    let remarkElement = document.getElementById(`remark-${safeIp}`);
+    if (lastStatus === "Offline" && remarkElement) {
+        remarkElement.innerText = "Device is Offline.";
+        // Still update the count, but skip the "Device is Online" logic
+        let downtimeEntries = history.filter(entry => entry.status === "Offline");
+        let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+            if (deviceCategory === "SERVER") return true;
+            if (index === 0) return true;
+            let previousEntry = arr[index - 1];
+            let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+            return duration >= 300;
+        });
+        document.getElementById(`downtime-count-${safeIp}`).innerText = filteredDowntimeEntries.length;
+        return;
+    }
+
+    // Otherwise, run the existing logic:
+    let downtimeEntries = history.filter(entry => entry.status === "Offline");
+
+    // Only count downtimes that last more than 5 minutes, except for servers
+    let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+        if (deviceCategory === "SERVER") return true;
+        if (index === 0) return true;
+        let previousEntry = arr[index - 1];
+        let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+        return duration >= 300;
+    });
+
+    let downtimeCount = filteredDowntimeEntries.length;
+    let downtimeElement = document.getElementById(`downtime-count-${safeIp}`);
+    if (downtimeElement) downtimeElement.innerText = downtimeCount;
+
+    // Update remarks based on downtime count (for Online devices)
+    if (remarkElement) {
+        if (downtimeCount === 0) {
+            remarkElement.innerText = "Device is Online.";
+        } else if (downtimeCount >= 15) {
+            remarkElement.innerText = `Device is Online, but it had ${downtimeCount} offline occurrences. Needs repair!`;
+        } else {
+            remarkElement.innerText = `Device is Online, but it had ${downtimeCount} offline occurrences.`;
+        }
+    }
+}
+
+function updateRemarks(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+    let downtimeEntries = history.filter(entry => entry.status === "Offline");
+
+    // Filter downtimes that lasted more than 5 minutes (except for servers)
+    let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+        if (deviceCategory === "SERVER") return true;
+        if (index === 0) return true;
+        let previousEntry = arr[index - 1];
+        let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+        return duration >= 300;
+    });
+
+    let downtimeCount = filteredDowntimeEntries.length;
+    let lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
+    let remarkElement = document.getElementById(`remark-${safeIp}`);
+
+    // Calculate total offline duration
+    let totalOfflineTime = 0;
+    let lastOfflineTime = null;
+    history.forEach(entry => {
+        if (entry.status === "Offline") {
+            if (!lastOfflineTime) lastOfflineTime = new Date(entry.timestamp);
+        } else if (entry.status === "Online" && lastOfflineTime) {
+            totalOfflineTime += (new Date(entry.timestamp) - lastOfflineTime) / 1000;
+            lastOfflineTime = null;
+        }
+    });
+    if (lastOfflineTime) {
+        totalOfflineTime += (new Date() - lastOfflineTime) / 1000;
+    }
+    let totalOfflineDays = Math.floor(totalOfflineTime / 86400);
+
+    let needsRepair = downtimeCount >= 15 || totalOfflineDays >= 1;
+
+
+    if (remarkElement) {
+        if (lastStatus === "Offline") {
+            remarkElement.innerText = needsRepair ? "Device is Offline, needs repair." : "Device is Offline.";
+            remarkElement.style.color = needsRepair ? "#c62828" : "#e65100";
+        } else if (lastStatus === "Online") {
+            if (needsRepair) {
+                remarkElement.innerText = "Device is Online, needs repair.";
+                remarkElement.style.color = "#e65100";
+            } else if (downtimeCount > 0) {
+                remarkElement.innerText = `Device is Online, it had ${downtimeCount} downtime occurrences.`;
+                remarkElement.style.color = "#f9a825";
+            } else {
+                remarkElement.innerText = "Device is Online.";
+                remarkElement.style.color = "#2e7d32";
+            }
+        } else {
+            remarkElement.innerText = "Device status unknown.";
+            remarkElement.style.color = "#6d6d6d";
+        }
+    }
+
+    let downtimeElement = document.getElementById(`downtime-count-${safeIp}`);
+    if (downtimeElement) downtimeElement.innerText = downtimeCount;
+}
+
+// **Updated function to format duration properly**
+function formatDuration(seconds) {
+    let days = Math.floor(seconds / 86400);
+    let hours = Math.floor((seconds % 86400) / 3600);
+    let minutes = Math.floor((seconds % 3600) / 60);
+    let secs = Math.round(seconds % 60);
+
+    let result = [];
+    if (days > 0) result.push(`${days}d`);
+    if (hours > 0) result.push(`${hours}h`);
+    if (minutes > 0) result.push(`${minutes}m`);
+    if (secs > 0 || result.length === 0) result.push(`${secs}s`);
+
+    return result.join('/');
+}
+
+function openDeviceHistory(deviceIp, deviceName) {
+    if (!window.deviceHistoryData) {
+        console.error("Device history data not loaded.");
+        return;
+    }
+    const history = window.deviceHistoryData[deviceIp] || [];
+    displayDeviceHistory(deviceIp, deviceName, history);
+    document.getElementById('device-history-modal').style.display = 'block';
+}
+
+function calculateDowntimeDuration(timestamp, history) {
+    let downtimeStart = new Date(timestamp).getTime();
+    let nextOnlineEntry = history.find(entry =>
+        entry.status === "Online" && new Date(entry.timestamp).getTime() > downtimeStart
+    );
+    if (nextOnlineEntry) {
+        let downtimeEnd = new Date(nextOnlineEntry.timestamp).getTime();
+        let durationInSeconds = (downtimeEnd - downtimeStart) / 1000;
+        return formatDuration(durationInSeconds);
+    }
+    let durationInSeconds = (Date.now() - downtimeStart) / 1000;
+    return formatDuration(durationInSeconds);
+}
+
+function displayDeviceHistory(deviceIp, deviceName, history) {
+    const modalHeader = document.getElementById('device-history-header');
+    const historyContainer = document.getElementById('device-history');
+    modalHeader.innerHTML = `
+        <h3>Device History</h3>
+        <p><strong>Device Name:</strong> ${deviceName}</p>
+        <p><strong>Device IP:</strong> ${deviceIp}</p>
+        <hr>
+    `;
+    historyContainer.innerHTML = '';
+    if (history.length === 0) {
+        historyContainer.innerHTML = `<p>No history available for this device.</p>`;
+        return;
+    }
+    let tableHTML = `
+        <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Downtime Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    let lastOfflineTimestamp = null;
+    history.forEach((entry, index) => {
+        let entryDate = new Date(entry.timestamp);
+        let formattedDate = entryDate.toLocaleDateString();
+        let formattedTime = entryDate.toLocaleTimeString();
+        let formattedDay = entryDate.toLocaleString('en-US', { weekday: 'long' });
+        let downtimeDuration = "-";
+        if (entry.status === "Offline") {
+            lastOfflineTimestamp = entry.timestamp;
+        } else if (entry.status === "Online" && lastOfflineTimestamp) {
+            downtimeDuration = calculateDowntimeDuration(lastOfflineTimestamp, history);
+            lastOfflineTimestamp = null;
+        }
+        tableHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${formattedDate}</td>
+                <td>${formattedDay}</td>
+                <td>${formattedTime}</td>
+                <td style="color: ${entry.status === "Online" ? 'green' : 'red'};">${entry.status}</td>
+                <td>${downtimeDuration}</td>
+            </tr>
+        `;
+    });
+    tableHTML += `</tbody></table>`;
+    // historyContainer.innerHTML = tableHTML;
+    historyContainer.innerHTML = `
+    <div class="scrollable-history-table">
+        ${tableHTML}
+    </div>
+`;
+}
+
+function closeHistoryModal() {
+    document.getElementById('device-history-modal').style.display = 'none';
+}
+
+function exportDeviceTableToExcel() {
+    const table = document.getElementById("device-table");
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Device Table" });
+    XLSX.writeFile(workbook, "Device_Table.xlsx");
+}
+
+function exportDeviceHistoryToExcel() {
+    const historyTable = document.querySelector("#device-history-modal table");
+    if (!historyTable) {
+        alert("Please open a device's history first.");
+        return;
+    }
+    const workbook = XLSX.utils.table_to_book(historyTable, { sheet: "Device History" });
+    XLSX.writeFile(workbook, "Device_History.xlsx");
+}
+
+
+function filterData() {
+    const selectedType = document.getElementById('device-type').value.toUpperCase();
+    const selectedRemark = document.getElementById('remark-filter').value.toUpperCase();
+    const searchText = document.getElementById('search-input').value.toUpperCase().trim();
+
+    const table = document.getElementById('device-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let row of rows) {
+        const type = row.cells[3].textContent.toUpperCase(); // Device type
+        const remark = row.cells[8].textContent.toUpperCase(); // Remark
+        const ip = row.cells[1].textContent.toUpperCase(); // IP
+        const name = row.cells[2].textContent.toUpperCase(); // Device name (location)
+        const city = name.split(',').pop().trim(); // Optional: parse city if included in name
+
+        const matchesType = selectedType === "ALL" || type === selectedType;
+        const matchesRemark = selectedRemark === "ALL" || remark.includes(selectedRemark);
+
+        const matchesSearch = (
+            ip.includes(searchText) ||
+            name.includes(searchText) ||
+            city.includes(searchText)
+        );
+
+        row.style.display = (matchesType && matchesRemark && matchesSearch) ? "" : "none";
+    }
+}
+
+function populateCityFilter(cities) {
+    const cityFilter = document.getElementById('city-filter');
+    cityFilter.innerHTML = `<option value="all">All Cities</option>`;
+    cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        cityFilter.appendChild(option);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('region').addEventListener('change', fetchDeviceData);
+    // Automatically filter when dropdowns change
+    document.getElementById('device-type').addEventListener('change', filterData);
+    document.getElementById('remark-filter').addEventListener('change', filterData);
+    fetchDeviceData(); // Initial load
+});
+
+document.getElementById('search-input').addEventListener('input', filterData);
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 2500);
+}
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId)?.innerText;
+    if (text) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast(`Copied: ${text}`))
+            .catch(err => console.error("Failed to copy:", err));
+    }
+}
+
+
+// ******************************************************************
