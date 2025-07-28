@@ -1,3 +1,12 @@
+
+const validDowntimeDurationSec = sumValidDowntimeDuration(device.history, device.category);
+const downtimeDuration = formatDuration(validDowntimeDurationSec);
+downtimeCell.innerHTML = downtimeDuration;
+
+
+
+
+
 function countValidDowntimes(history, category) {
     let count = 0;
     let lastOffline = null;
