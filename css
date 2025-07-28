@@ -1,3 +1,34 @@
+const term = searchTerm.trim().toLowerCase();
+{(term ? emps : emps.slice(0, 10)).map((r, i) => {
+  const isMatch =
+    term &&
+    (r.ObjectName1.toLowerCase().includes(term) ||
+     r.EmployeeID.toLowerCase().includes(term) ||
+     (r.CardNumber && r.CardNumber.toLowerCase().includes(term)));
+
+  return (
+    <TableRow
+      key={`${r.PersonGUID}-${i}`}
+      sx={isMatch ? { backgroundColor: "rgba(255, 235, 59, 0.3)" } : {}}
+    >
+      <TableCell>{r.EmployeeID}</TableCell>
+      <TableCell>{r.ObjectName1}</TableCell>
+      <TableCell>
+        {new Date(r.LocaleMessageTime).toLocaleTimeString()}
+      </TableCell>
+      <TableCell>{r.PersonnelType}</TableCell>
+      <TableCell>{r.CardNumber}</TableCell>
+      <TableCell>{r.Door}</TableCell>
+    </TableRow>
+  );
+})}
+
+
+
+
+
+
+
 
 // src/pages/PartitionDetailDetails.jsx
 import React, { useEffect, useState, useMemo } from "react";
