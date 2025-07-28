@@ -35,6 +35,7 @@ function displayDeviceHistory(deviceIp, deviceName, history) {
 
     
 
+
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
 
@@ -239,47 +240,21 @@ function updateDowntimeCount(deviceIp, history, deviceCategory) {
 
     // If the last status is Offline, force remark and exit
     const lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
-
-    // let remarkElement = document.getElementById(`remark-${safeIp}`);
-    // if (lastStatus === "Offline" && remarkElement) {
-    //     remarkElement.innerText = "Device is Offline.";
-    //     // Still update the count, but skip the "Device is Online" logic
-    //     let downtimeEntries = history.filter(entry => entry.status === "Offline");
-    //     let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
-    //         if (deviceCategory === "SERVER") return true;
-    //         if (index === 0) return true;
-    //         let previousEntry = arr[index - 1];
-    //         let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
-    //         return duration >= 300;
-    //     });
-    //     document.getElementById(`downtime-count-${safeIp}`).innerText = filteredDowntimeEntries.length;
-    //     return;
-    // }
-
-
     let remarkElement = document.getElementById(`remark-${safeIp}`);
-
-// 👉 Add this immediately after the line above:
-let statusLogoElement = document.getElementById(`status-logo-${safeIp}`);
-if (statusLogoElement) {
-    const lastEntry = history.length > 0 ? history[history.length - 1] : null;
-    const lastStatus = lastEntry ? lastEntry.status : "Unknown";
-    const lastTimestamp = lastEntry ? new Date(lastEntry.timestamp).getTime() : 0;
-    const now = Date.now();
-    const downtimeDuration = (now - lastTimestamp) / 1000;
-
-    let logo = '⚪'; // Default
-
-    if (lastStatus === "Offline" && downtimeDuration >= 300) {
-        logo = '🔴'; // Offline > 5 min
-    } else if (lastStatus === "Offline") {
-        logo = '🟡'; // Offline < 5 min
-    } else if (lastStatus === "Online") {
-        logo = '🟢'; // Online
+    if (lastStatus === "Offline" && remarkElement) {
+        remarkElement.innerText = "Device is Offline.";
+        // Still update the count, but skip the "Device is Online" logic
+        let downtimeEntries = history.filter(entry => entry.status === "Offline");
+        let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+            if (deviceCategory === "SERVER") return true;
+            if (index === 0) return true;
+            let previousEntry = arr[index - 1];
+            let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+            return duration >= 300;
+        });
+        document.getElementById(`downtime-count-${safeIp}`).innerText = filteredDowntimeEntries.length;
+        return;
     }
-
-    statusLogoElement.innerText = logo;
-}
 
     // Otherwise, run the existing logic:
     let downtimeEntries = history.filter(entry => entry.status === "Offline");
