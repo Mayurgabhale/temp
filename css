@@ -1,3 +1,22 @@
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  border-top: 1px solid #2c2c3e;
+  color: #000000;
+  background-color: #ffffff; /* or your preferred color */
+  z-index: 999; /* keep it on top */
+}
+
+
+
+
+
+
 
 /* ===== Footer ===== */
 .footer {
