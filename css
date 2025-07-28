@@ -1,55 +1,52 @@
+
+
+
+
+
+icon CONTROLLERS
+
+icon 10.21.4.66
+
+icon NAMER
+
+icon New York
+
+
 card.insertAdjacentHTML("beforeend", `
-  <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700; font-family: 'Times New Roman', Times, serif; margin-bottom: 10px;">
-    ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-  </h3>
+                            <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700;  font-family: 'Times New Roman', Times, serif;, sans-serif; margin-bottom: 10px;">
+                                ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
+                            </h3>
 
-  <div class="card-content">
-    <i class="${getDeviceIcon(deviceType)}" style="color: #3b3f46;"></i>
-    <strong>${deviceType.toUpperCase()}</strong>
+                             <div class="card-content">
+                            <p class="device-type-label ${deviceType}" style="font-size: 1.05rem;  font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: 600; margin-bottom: 10px;">
 
-    <i class="fas fa-network-wired" style="color: #0077b6;"></i>
-    <span class="device-ip"
-          onclick="copyToClipboard('${deviceIP}')"
-          title="Click to copy IP"
-          style="cursor: pointer;">
-      ${deviceIP}
-    </span>
+                            <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
+                                 </p>
 
-    <i class="fas fa-map-marker-alt" style="color: #e63946;"></i>
-    <span>${device.location || "N/A"}</span>
+                        <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
+                            <strong style="color: #d7d9de;">
+                                <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
+                            </strong>
+                            <span 
+                                class="device-ip" 
+                                style="font-weight: bold; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3);" 
+                                onclick="copyToClipboard('${deviceIP}')"
+                                title="Click to copy IP"
+                            >
+                                ${deviceIP}
+                            </span>
+                        </p>
 
-    <i class="fas fa-city" style="color: #6c757d;"></i>
-    <span>${city}</span>
-  </div>
-`);
+                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
+                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
+                                <span style=" font-size: 1rem; font-weight: bold; color: rgb(215, 217, 222);;">${device.location || "N/A"}</span>
+                            </p>
 
+                            <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
+                                <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
+                                <span style="font-weight: bold; color: rgb(215, 217, 222);;">${city}</span>
+                            </p>
 
+                            </div>
 
-.card-content {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 10px;
-  row-gap: 8px;
-  align-items: center;
-  padding: 15px;
-  background: #f8f9fc;
-  border-radius: 10px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 1rem;
-  color: #333;
-}
-
-/* Force icon color to apply */
-.card-content i {
-  font-size: 1.1rem;
-  color: #3b3f46 !important;  /* ✅ FORCE color even inside <strong> or <span> */
-  text-align: center;
-}
-
-/* Prevent parent tags from overriding icon color */
-.card-content span,
-.card-content strong {
-  font-weight: 600;
-  color: inherit !important;  /* ✅ Inherit instead of override */
-  display: block;
-}
+                        `);
