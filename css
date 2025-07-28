@@ -1,4 +1,27 @@
 #region-title {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  margin-bottom: 20px;
+  padding: 24px 30px;
+  background: #ffcc00;
+  color: #000000;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-size: 35px;
+  font-weight: 700;
+  text-align: center;
+  z-index: 1;
+}
+
+
+
+
+
+
+#region-title {
   width: 100vw;
   margin-left: -30px; /* Match #content's horizontal padding */
   margin-right: -30px;
