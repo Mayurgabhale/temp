@@ -1,3 +1,78 @@
+/* Main container styling */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+}
+
+/* Device name styling */
+.device-name {
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #3a3f48;
+}
+
+/* Device type label styling */
+.device-type-label {
+    display: flex;
+    align-items: center;
+    color: #d7d9de;
+    margin: 0 0 10px 0;
+}
+
+/* IP address row styling */
+.card-content p:nth-of-type(1) {
+    display: flex;
+    align-items: center;
+    margin: 0 0 8px 0;
+}
+
+/* Location row styling */
+.card-content p:nth-of-type(2) {
+    display: flex;
+    align-items: center;
+    margin: 0 0 6px 0;
+}
+
+/* City row styling */
+.card-content p:nth-of-type(3) {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+/* Icon styling */
+.card-content i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    color: #d7d9de;
+}
+
+/* IP address specific styling */
+.device-ip {
+    margin-left: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-content {
+        padding: 8px;
+    }
+    
+    .device-name {
+        font-size: 1rem;
+    }
+}
+
+
+
+
+....
+
+
 .card-content {
   display: flex;
   flex-direction: column;
