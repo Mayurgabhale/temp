@@ -1,3 +1,20 @@
+let currentStatus = "Unknown";
+if (lastStatusEntry) {
+    if (lastStatusEntry.status === "Online") {
+        currentStatus = "Online";
+    } else if (lastStatusEntry.status === "Offline") {
+        const offlineDurationSec = (Date.now() - new Date(lastStatusEntry.timestamp)) / 1000;
+        currentStatus = offlineDurationSec >= 300 ? "Offline" : "Online"; // ⚠️ Treat as online if under 5 min
+    }
+}
+
+
+
+
+
+
+
+
 function displayDeviceHistory(deviceIp, deviceName, history) {
     const modalHeader = document.getElementById('device-history-header');
     const historyContainer = document.getElementById('device-history');
