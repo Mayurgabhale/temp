@@ -1,3 +1,13 @@
+function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}m ${secs}s`;
+}
+
+
+
+
+
 let lastOfflineTimestamp = null;
 let srNo = 1;
 
