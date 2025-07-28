@@ -1,84 +1,303 @@
-https://poly.pizza/m/a6J7IDufQP
+// src/pages/PartitionDetailDetails.jsx
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
+import DataTable from "../components/DataTable";
+import { fetchLiveSummary } from "../api/occupancy.service";
+import { lookupFloor } from "../utils/floorLookup";
 
+export default function PartitionDetailDetails() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
 
+  const [details, setDetails] = useState([]);
+  const [liveCounts, setLiveCounts] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedFloor, setExpandedFloor] = useState(null);
 
-<div class="card">
-  <h3 class="camera-header">
-    <div class="camera-3d-wrapper">
-      <div class="camera-3d-container">
-        <iframe
-          title="3D Camera"
-          frameborder="0"
-          allow="autoplay; fullscreen; xr-spatial-tracking"
-          allowfullscreen
-          src="https://sketchfab.com/models/922f1fa3926f4001be2664b8996d8125/embed?autostart=1&ui_infos=0&ui_controls=0&ui_hint=0&ui_watermark=0">
-        </iframe>
-        <span class="status-led online"></span>
-      </div>
-    </div>
-  </h3>
-  <div class="card-status total">Total <span id="camera-total">0</span></div>
-  <div class="card-status online">Online <span id="camera-online">0</span></div>
-  <div class="card-status offline">Offline <span id="camera-offline">0</span></div>
-</div>
+  // common lowercase term
+  const term = searchTerm.trim().toLowerCase();
 
+  // fetch initial + live updates
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
 
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!isMounted) return;
 
+      const counts = json.realtime[partition]?.floors || {};
+      setLiveCounts(counts);
 
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+      setLoading(false);
+    };
 
-.camera-3d-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 160px;
-  margin-bottom: 10px;
-}
+    load();
 
-.camera-3d-container {
-  width: 220px;
-  height: 140px;
-  position: relative;
-  animation: cameraFloat 4s ease-in-out infinite alternate;
-}
+    const interval = setInterval(async () => {
+      const json = await fetchLiveSummary();
+      if (!isMounted) return;
+      setLiveCounts(json.realtime[partition]?.floors || {});
 
-.camera-3d-container iframe {
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  pointer-events: none;
-}
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+    }, 1000);
 
-.status-led {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
-}
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [partition]);
 
-.status-led.online {
-  background-color: #2cb67d;
-  animation: blinkGreen 1.2s infinite;
-}
+  // group rows by floor
+  const floorMap = useMemo(() => {
+    const m = {};
+    Object.keys(liveCounts).forEach(floorName => {
+      m[floorName] = [];
+    });
+    details.forEach(r => {
+      if (!(r.floor in m)) m[r.floor] = [];
+      m[r.floor].push(r);
+    });
+    return m;
+  }, [details, liveCounts]);
 
-.status-led.offline {
-  background-color: #ef4565;
-  animation: blinkRed 1.2s infinite;
-}
+  // filter floors based on searchTerm, then sort by headcount desc
+  const displayed = useMemo(() => {
+    return Object.entries(floorMap)
+      .filter(([floor, emps]) => {
+        if (!term) return true;
+        if (floor.toLowerCase().includes(term)) return true;
+        return emps.some(r => {
+          const empId = String(r.EmployeeID).toLowerCase();
+          const name = String(r.ObjectName1).toLowerCase();
+          const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : "";
+          return (
+            empId.includes(term) ||
+            name.includes(term) ||
+            card.includes(term)
+          );
+        });
+      })
+      .sort(
+        ([aFloor], [bFloor]) =>
+          (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0)
+      );
+  }, [floorMap, liveCounts, term]);
 
-@keyframes cameraFloat {
-  0% { transform: translateX(-10px); }
-  100% { transform: translateX(10px); }
-}
+  const columns = [
+    { field: "EmployeeID", headerName: "Emp ID" },
+    { field: "ObjectName1", headerName: "Name" },
+    { field: "LocaleMessageTime", headerName: "Swipe Time" },
+    { field: "PersonnelType", headerName: "Type" },
+    { field: "CardNumber", headerName: "Card" },
+    { field: "Door", headerName: "Door" },
+  ];
 
-@keyframes blinkGreen {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
+  return (
+    <>
+      <Header />
 
-@keyframes blinkRed {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.1; }
+      <Box component="main" sx={{ pt: 1, pb: 1 }}>
+        <Container maxWidth={false} disableGutters>
+          {/* Back button */}
+          <Box display="flex" alignItems="center" mb={2} sx={{ px: 2 }}>
+            <Button size="small" onClick={() => navigate(-1)}>
+              ← Back to Overview
+            </Button>
+          </Box>
+
+          {/* Title + search */}
+          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: 2 }}>
+            <Typography variant="h6">Floor Details</Typography>
+            <Typography variant="body2" color="textSecondary">
+              Last updated: {lastUpdate}
+            </Typography>
+            <TextField
+              size="small"
+              placeholder="Search floor / emp…"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </Box>
+
+          {loading ? (
+            <Box sx={{ px: 2, py: 8 }}>
+              <LoadingSpinner />
+            </Box>
+          ) : (
+            <>
+              {/* Cards */}
+              <Box
+                component="section"
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  m: 0,
+                  p: 0,
+                }}
+              >
+                {displayed.map(([floor, emps]) => {
+                  // slice default rows to 25
+                  const isSearching = term.length > 0;
+                  const rowsToShow = isSearching
+                    ? emps.filter(r => {
+                        const empId = String(r.EmployeeID).toLowerCase();
+                        const name = String(r.ObjectName1).toLowerCase();
+                        const card = r.CardNumber
+                          ? String(r.CardNumber).toLowerCase()
+                          : "";
+                        return (
+                          empId.includes(term) ||
+                          name.includes(term) ||
+                          card.includes(term)
+                        );
+                      })
+                    : emps.slice(0, 25);
+
+                  return (
+                    <Box
+                      key={floor}
+                      sx={{ width: "50%", boxSizing: "border-box", p: 2 }}
+                    >
+                      <Box
+                        sx={{
+                          border: "1px solid #FFC107",
+                          borderRadius: 2,
+                          height: "100%",
+                        }}
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={600}
+                          gutterBottom
+                        >
+                          {floor} (Total {liveCounts[floor] ?? 0})
+                        </Typography>
+
+                        <TableContainer
+                          component={Paper}
+                          variant="outlined"
+                          sx={{ mb: 1 }}
+                        >
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                {columns.map(col => (
+                                  <TableCell
+                                    key={col.field}
+                                    sx={{ fontWeight: "bold" }}
+                                  >
+                                    {col.headerName}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
+
+                            <TableBody>
+                              {rowsToShow.map((r, i) => (
+                                <TableRow
+                                  key={`${r.PersonGUID}-${i}`}
+                                  sx={
+                                    isSearching
+                                      ? {
+                                          backgroundColor:
+                                            "rgba(255, 235, 59, 0.3)",
+                                        }
+                                      : {}
+                                  }
+                                >
+                                  <TableCell>{r.EmployeeID}</TableCell>
+                                  <TableCell>{r.ObjectName1}</TableCell>
+                                  <TableCell>
+                                    {new Date(
+                                      r.LocaleMessageTime
+                                    ).toLocaleTimeString()}
+                                  </TableCell>
+                                  <TableCell>{r.PersonnelType}</TableCell>
+                                  <TableCell>{r.CardNumber}</TableCell>
+                                  <TableCell>{r.Door}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            setExpandedFloor(
+                              expandedFloor === floor ? null : floor
+                            )
+                          }
+                        >
+                          {expandedFloor === floor
+                            ? "Hide"
+                            : "See more…"}
+                        </Button>
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
+
+              {/* Expanded full table */}
+              {expandedFloor && (
+                <Box sx={{ px: 2, mt: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    {expandedFloor} — All Entries
+                  </Typography>
+                  <DataTable
+                    columns={columns}
+                    rows={(floorMap[expandedFloor] || []).map(r => ({
+                      ...r,
+                      LocaleMessageTime: new Date(
+                        r.LocaleMessageTime
+                      ).toLocaleTimeString(),
+                    }))}
+                  />
+                </Box>
+              )}
+            </>
+          )}
+        </Container>
+      </Box>
+
+      <Footer />
+    </>
+  );
 }
