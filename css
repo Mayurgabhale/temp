@@ -1,4 +1,4 @@
-
+/* === Default (Desktop) === */
 #region-title {
   position: fixed;
   top: 0;
@@ -9,19 +9,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* padding: 10px 20px; */
-  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04); */
   z-index: 1000;
   font-weight: 700;
   padding: 24px;
-
-    font-size: 35px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-
-
+  font-size: 35px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 #region-title img {
   height: 40px;
   object-fit: contain;
+}
+
+
+/* === Tablets (768px – 1024px) === */
+@media (max-width: 1024px) {
+  #region-title {
+    font-size: 28px;
+    padding: 20px;
+  }
+
+  #region-title img {
+    height: 35px;
+  }
+}
+
+/* === Mobile (480px – 767px) === */
+@media (max-width: 767px) {
+  #region-title {
+    font-size: 22px;
+    padding: 16px;
+  }
+
+  #region-title img {
+    height: 30px;
+  }
+}
+
+/* === Extra Small Devices (less than 480px) === */
+@media (max-width: 479px) {
+  #region-title {
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  #region-title img {
+    height: 26px;
+  }
 }
