@@ -87,3 +87,724 @@ function sumValidDowntimeDuration(history, deviceCategory) {
 
   return total;
 }
+
+
+
+
+i am very confused where to write above code
+
+
+
+  
+
+let deviceUptimeTimers = {};
+let deviceDowntimeTimers = {};
+
+// Utility to turn an IP (or any string) into a safe DOM‑ID fragment
+function sanitizeId(str) {
+    return str.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function fetchDeviceData() {
+    const selectedRegion = document.getElementById('region').value;
+    fetch(`http://localhost/api/regions/details/${selectedRegion}`)
+        .then(response => response.json())
+        .then(regionData => {
+            fetchDeviceHistory(regionData.details);
+        })
+        .catch(error => console.error('Error fetching device data:', error));
+}
+
+function fetchDeviceHistory(regionDetails) {
+    fetch(`http://localhost/api/devices/history`)
+        .then(response => response.json())
+        .then(historyData => {
+            populateDeviceTable(regionDetails, historyData);
+            window.deviceHistoryData = historyData; // Store history for reuse
+        })
+        .catch(error => console.error('Error fetching device history:', error));
+}
+
+function populateDeviceTable(details, historyData) {
+    const table = document.getElementById('device-table');
+    let tableBody = table.getElementsByTagName('tbody')[0];
+    if (!tableBody) {
+        tableBody = document.createElement('tbody');
+        table.appendChild(tableBody);
+    }
+
+
+function countValidDowntimes(history, deviceCategory) {
+  let count = 0;
+  let lastOffline = null;
+
+  for (let i = 0; i < history.length; i++) {
+    const entry = history[i];
+    if (entry.status === "Offline") {
+      lastOffline = entry;
+    } else if (entry.status === "Online" && lastOffline) {
+      const offlineTime = new Date(lastOffline.timestamp).getTime();
+      const onlineTime = new Date(entry.timestamp).getTime();
+      const durationSec = (onlineTime - offlineTime) / 1000;
+
+      if (deviceCategory === "SERVER" || durationSec >= 300) {
+        count++;
+      }
+
+      lastOffline = null;
+    }
+  }
+
+  // Still offline right now? Count it
+  if (lastOffline) {
+    const offlineTime = new Date(lastOffline.timestamp).getTime();
+    const now = Date.now();
+    const durationSec = (now - offlineTime) / 1000;
+
+    if (deviceCategory === "SERVER" || durationSec >= 300) {
+      count++;
+    }
+  }
+
+  return count;
+}
+function sumValidDowntimeDuration(history, deviceCategory) {
+  let total = 0;
+  let lastOffline = null;
+
+  for (let i = 0; i < history.length; i++) {
+    const entry = history[i];
+    if (entry.status === "Offline") {
+      lastOffline = entry;
+    } else if (entry.status === "Online" && lastOffline) {
+      const offlineTime = new Date(lastOffline.timestamp).getTime();
+      const onlineTime = new Date(entry.timestamp).getTime();
+      const durationSec = (onlineTime - offlineTime) / 1000;
+
+      if (deviceCategory === "SERVER" || durationSec >= 300) {
+        total += durationSec;
+      }
+
+      lastOffline = null;
+    }
+  }
+
+  if (lastOffline) {
+    const durationSec = (Date.now() - new Date(lastOffline.timestamp).getTime()) / 1000;
+    if (deviceCategory === "SERVER" || durationSec >= 300) {
+      total += durationSec;
+    }
+  }
+
+  return total;
+}
+
+
+
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    let deviceList = [];
+    let citySet = new Set(); // ✅ moved here
+
+
+
+
+    // ............              .....                   .....             ....    ... 
+    if (details) {
+        ['cameras', 'archivers', 'controllers', 'servers'].forEach(deviceType => {
+            details[deviceType]?.forEach(device => {
+
+                if (device.city) {
+                    citySet.add(device.city); // ✅ now this works
+                }
+
+                const deviceIp = device.ip_address;
+                const safeIp = sanitizeId(deviceIp);
+                const deviceName = device[deviceType.slice(0, -1) + 'name'];
+                const deviceCategory = deviceType.slice(0, -1).toUpperCase();
+
+                const deviceHistory = historyData[deviceIp] || [];
+                const lastStatusEntry = deviceHistory.length > 0 ? deviceHistory[deviceHistory.length - 1] : null;
+                // const currentStatus = lastStatusEntry ? lastStatusEntry.status : "Unknown";
+                let currentStatus = "Unknown";
+                if (lastStatusEntry) {
+                    if (lastStatusEntry.status === "Online") {
+                        currentStatus = "Online";
+                    } else if (lastStatusEntry.status === "Offline") {
+                        const offlineDurationSec = (Date.now() - new Date(lastStatusEntry.timestamp)) / 1000;
+                        currentStatus = offlineDurationSec >= 300 ? "Offline" : "Online"; // ⚠️ Treat as online if under 5 min
+                    }
+                }
+
+                // Calculate downtime count
+                let downtimeCount = deviceHistory.filter(entry => entry.status === "Offline").length;
+
+                deviceList.push({
+                    deviceIp,
+                    safeIp,
+                    deviceName,
+                    deviceCategory,
+                    currentStatus,
+                    deviceHistory,
+                    downtimeCount
+                });
+            });
+        });
+
+
+
+        deviceList.sort((a, b) => {
+            const now = Date.now();
+
+            const aLast = a.deviceHistory[a.deviceHistory.length - 1];
+            const bLast = b.deviceHistory[b.deviceHistory.length - 1];
+
+            const aIsOffline = aLast?.status === "Offline";
+            const bIsOffline = bLast?.status === "Offline";
+
+            const aOfflineDuration = aIsOffline ? (now - new Date(aLast.timestamp)) / 1000 : 0;
+            const bOfflineDuration = bIsOffline ? (now - new Date(bLast.timestamp)) / 1000 : 0;
+
+            const aShouldPrioritize = aIsOffline && aOfflineDuration >= 300;
+            const bShouldPrioritize = bIsOffline && bOfflineDuration >= 300;
+
+            if (aShouldPrioritize && !bShouldPrioritize) return -1;
+            if (!aShouldPrioritize && bShouldPrioritize) return 1;
+
+            return b.downtimeCount - a.downtimeCount;
+        });
+
+
+
+
+
+        deviceList.forEach(({ deviceIp, safeIp, deviceName, deviceCategory, currentStatus, deviceHistory, downtimeCount }, index) => {
+            const row = tableBody.insertRow();
+            row.style.border = "1px solid black";
+
+            // row.innerHTML = `
+            //     <td>${index + 1}</td>
+            //     <td>${deviceIp}</td>
+            //     <td>${deviceName}</td>
+            //     <td>${deviceCategory}</td>
+            //     <td id="uptime-${safeIp}">0h/0m/0s</td>
+            //     <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+            //     <td id="downtime-${safeIp}">0h/0m/0s</td>
+            //     <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+            //     <td id="remark-${safeIp}">Device working properly</td>
+            // `;
+
+            row.innerHTML = `
+    <td>${index + 1}</td>
+    <td>
+        <span id="ip-${safeIp}" class="copy-text" onclick="copyToClipboard('ip-${safeIp}')">${deviceIp}</span>
+    </td>
+    <td>
+        <span id="name-${safeIp}" class="copy-text" onclick="copyToClipboard('name-${safeIp}')">${deviceName}</span>
+    </td>
+    <td>${deviceCategory}</td>
+    <td id="uptime-${safeIp}">0h/0m/0s</td>
+    <td id="downtime-count-${safeIp}">${downtimeCount}</td>
+    <td id="downtime-${safeIp}">0h/0m/0s</td>
+    <td><button class="history-btn" onclick="openDeviceHistory('${deviceIp}', '${deviceName}')">View History</button></td>
+    <td id="remark-${safeIp}">Device working properly</td>
+`;
+
+
+
+            row.classList.remove('status-online', 'status-offline', 'status-unknown');
+            if (currentStatus === "Online") {
+                row.classList.add('status-online');
+            } else if (currentStatus === "Offline") {
+                row.classList.add('status-offline');
+            } else {
+                row.classList.add('status-unknown');
+            }
+
+            // .....
+
+            if (currentStatus === "Online") {
+                startUptime(deviceIp, deviceHistory);
+            } else {
+                startDowntime(deviceIp, deviceHistory, deviceCategory);
+            }
+
+            // Automatically update remark for each row based on downtime and status
+            updateRemarks(deviceIp, deviceHistory, deviceCategory);
+        });
+        
+    } else {
+        console.error('No details found in the response');
+    }
+
+    filterData();
+}
+
+
+
+function startUptime(ip, hist) {
+    const safe = sanitizeId(ip);
+    clearInterval(deviceDowntimeTimers[safe]);
+    const lastOn = hist.filter(e => e.status === 'Online').pop();
+    if (!lastOn) return;
+    const start = new Date(lastOn.timestamp).getTime();
+    deviceUptimeTimers[safe] = setInterval(() => {
+        const secs = Math.floor((Date.now() - start) / 1000);
+        const el = document.getElementById(`uptime-${safe}`);
+        if (el) el.innerText = formatDuration(secs);
+    }, 1000);
+}
+
+
+
+function startDowntime(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+    clearInterval(deviceUptimeTimers[safeIp]);
+    let lastOfflineEntry = history.filter(entry => entry.status === "Offline").pop();
+    if (!lastOfflineEntry) return;
+
+    let startTime = new Date(lastOfflineEntry.timestamp).getTime();
+    deviceDowntimeTimers[safeIp] = setInterval(() => {
+        let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById(`downtime-${safeIp}`).innerText = formatDuration(elapsedTime);
+        updateDowntimeCount(deviceIp, history, deviceCategory);
+    }, 1000);
+}
+
+// **Fix Downtime Count and Remarks Update (with offline short‑circuit)**
+function updateDowntimeCount(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+
+    // If the last status is Offline, force remark and exit
+    const lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
+    let remarkElement = document.getElementById(`remark-${safeIp}`);
+    if (lastStatus === "Offline" && remarkElement) {
+        remarkElement.innerText = "Device is Offline.";
+        // Still update the count, but skip the "Device is Online" logic
+        let downtimeEntries = history.filter(entry => entry.status === "Offline");
+        let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+            if (deviceCategory === "SERVER") return true;
+            if (index === 0) return true;
+            let previousEntry = arr[index - 1];
+            let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+            return duration >= 300;
+        });
+        document.getElementById(`downtime-count-${safeIp}`).innerText = filteredDowntimeEntries.length;
+        return;
+    }
+
+    // Otherwise, run the existing logic:
+    let downtimeEntries = history.filter(entry => entry.status === "Offline");
+
+    // Only count downtimes that last more than 5 minutes, except for servers
+    let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+        if (deviceCategory === "SERVER") return true;
+        if (index === 0) return true;
+        let previousEntry = arr[index - 1];
+        let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+        return duration >= 300;
+    });
+
+    let downtimeCount = filteredDowntimeEntries.length;
+    let downtimeElement = document.getElementById(`downtime-count-${safeIp}`);
+    if (downtimeElement) downtimeElement.innerText = downtimeCount;
+
+    // Update remarks based on downtime count (for Online devices)
+    if (remarkElement) {
+        if (downtimeCount === 0) {
+            remarkElement.innerText = "Device is Online.";
+        } else if (downtimeCount >= 15) {
+            remarkElement.innerText = `Device is Online, but it had ${downtimeCount} offline occurrences. Needs repair!`;
+        } else {
+            remarkElement.innerText = `Device is Online, but it had ${downtimeCount} offline occurrences.`;
+        }
+    }
+}
+
+function updateRemarks(deviceIp, history, deviceCategory) {
+    const safeIp = sanitizeId(deviceIp);
+    let downtimeEntries = history.filter(entry => entry.status === "Offline");
+
+    // Filter downtimes that lasted more than 5 minutes (except for servers)
+    let filteredDowntimeEntries = downtimeEntries.filter((entry, index, arr) => {
+        if (deviceCategory === "SERVER") return true;
+        if (index === 0) return true;
+        let previousEntry = arr[index - 1];
+        let duration = (new Date(entry.timestamp) - new Date(previousEntry.timestamp)) / 1000;
+        return duration >= 300;
+    });
+
+    let downtimeCount = filteredDowntimeEntries.length;
+    let lastStatus = history.length > 0 ? history[history.length - 1].status : "Unknown";
+    let remarkElement = document.getElementById(`remark-${safeIp}`);
+
+    // Calculate total offline duration
+    let totalOfflineTime = 0;
+    let lastOfflineTime = null;
+    history.forEach(entry => {
+        if (entry.status === "Offline") {
+            if (!lastOfflineTime) lastOfflineTime = new Date(entry.timestamp);
+        } else if (entry.status === "Online" && lastOfflineTime) {
+            totalOfflineTime += (new Date(entry.timestamp) - lastOfflineTime) / 1000;
+            lastOfflineTime = null;
+        }
+    });
+    if (lastOfflineTime) {
+        totalOfflineTime += (new Date() - lastOfflineTime) / 1000;
+    }
+    let totalOfflineDays = Math.floor(totalOfflineTime / 86400);
+
+    let needsRepair = downtimeCount >= 15 || totalOfflineDays >= 1;
+
+
+    if (remarkElement) {
+        if (lastStatus === "Offline") {
+            remarkElement.innerText = needsRepair ? "Device is Offline, needs repair." : "Device is Offline.";
+            remarkElement.style.color = needsRepair ? "#c62828" : "#e65100";
+        } else if (lastStatus === "Online") {
+            if (needsRepair) {
+                remarkElement.innerText = "Device is Online, needs repair.";
+                remarkElement.style.color = "#e65100";
+            } else if (downtimeCount > 0) {
+                remarkElement.innerText = `Device is Online, it had ${downtimeCount} downtime occurrences.`;
+                remarkElement.style.color = "#f9a825";
+            } else {
+                remarkElement.innerText = "Device is Online.";
+                remarkElement.style.color = "#2e7d32";
+            }
+        } else {
+            remarkElement.innerText = "Device status unknown.";
+            remarkElement.style.color = "#6d6d6d";
+        }
+    }
+
+    let downtimeElement = document.getElementById(`downtime-count-${safeIp}`);
+    if (downtimeElement) downtimeElement.innerText = downtimeCount;
+}
+
+// **Updated function to format duration properly**
+function formatDuration(seconds) {
+    let days = Math.floor(seconds / 86400);
+    let hours = Math.floor((seconds % 86400) / 3600);
+    let minutes = Math.floor((seconds % 3600) / 60);
+    let secs = Math.round(seconds % 60);
+
+    let result = [];
+    if (days > 0) result.push(`${days}d`);
+    if (hours > 0) result.push(`${hours}h`);
+    if (minutes > 0) result.push(`${minutes}m`);
+    if (secs > 0 || result.length === 0) result.push(`${secs}s`);
+
+    return result.join('/');
+}
+
+function openDeviceHistory(deviceIp, deviceName) {
+    if (!window.deviceHistoryData) {
+        console.error("Device history data not loaded.");
+        return;
+    }
+    const history = window.deviceHistoryData[deviceIp] || [];
+    displayDeviceHistory(deviceIp, deviceName, history);
+    document.getElementById('device-history-modal').style.display = 'block';
+}
+
+function calculateDowntimeDuration(timestamp, history) {
+    let downtimeStart = new Date(timestamp).getTime();
+    let nextOnlineEntry = history.find(entry =>
+        entry.status === "Online" && new Date(entry.timestamp).getTime() > downtimeStart
+    );
+    if (nextOnlineEntry) {
+        let downtimeEnd = new Date(nextOnlineEntry.timestamp).getTime();
+        let durationInSeconds = (downtimeEnd - downtimeStart) / 1000;
+        return formatDuration(durationInSeconds);
+    }
+    let durationInSeconds = (Date.now() - downtimeStart) / 1000;
+    return formatDuration(durationInSeconds);
+}
+
+// function displayDeviceHistory(deviceIp, deviceName, history) {
+//     const modalHeader = document.getElementById('device-history-header');
+//     const historyContainer = document.getElementById('device-history');
+//     modalHeader.innerHTML = `
+//         <h3>Device History</h3>
+//         <p><strong>Device Name:</strong> ${deviceName}</p>
+//         <p><strong>Device IP:</strong> ${deviceIp}</p>
+//         <hr>
+//     `;
+//     historyContainer.innerHTML = '';
+//     if (history.length === 0) {
+//         historyContainer.innerHTML = `<p>No history available for this device.</p>`;
+//         return;
+//     }
+//     let tableHTML = `
+//         <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
+//             <thead>
+//                 <tr>
+//                     <th>Sr.No</th>
+//                     <th>Date</th>
+//                     <th>Day</th>
+//                     <th>Time</th>
+//                     <th>Status</th>
+//                     <th>Downtime Duration</th>
+//                 </tr>
+//             </thead>
+//             <tbody>
+//     `;
+
+
+//     let lastOfflineTimestamp = null;
+//     history.forEach((entry, index) => {
+//         let entryDate = new Date(entry.timestamp);
+//         let formattedDate = entryDate.toLocaleDateString();
+//         let formattedTime = entryDate.toLocaleTimeString();
+//         let formattedDay = entryDate.toLocaleString('en-US', { weekday: 'long' });
+
+//         // let downtimeDuration = "-";
+//         // if (entry.status === "Offline") {
+//         //     lastOfflineTimestamp = entry.timestamp;
+//         // } else if (entry.status === "Online" && lastOfflineTimestamp) {
+//         //     downtimeDuration = calculateDowntimeDuration(lastOfflineTimestamp, history);
+//         //     lastOfflineTimestamp = null;
+//         // }
+
+//         let downtimeDuration = "-";
+//         if (entry.status === "Offline") {
+//             lastOfflineTimestamp = entry.timestamp;
+//         } else if (entry.status === "Online" && lastOfflineTimestamp) {
+//             const offlineStart = new Date(lastOfflineTimestamp).getTime();
+//             const onlineTime = new Date(entry.timestamp).getTime();
+//             const durationSec = (onlineTime - offlineStart) / 1000;
+
+//             if (durationSec >= 300) {
+//                 downtimeDuration = formatDuration(durationSec);
+//             } else {
+//                 downtimeDuration = "-";
+//             }
+
+//             lastOfflineTimestamp = null;
+//         }
+
+
+//         tableHTML += `
+//             <tr>
+//                 <td>${index + 1}</td>
+//                 <td>${formattedDate}</td>
+//                 <td>${formattedDay}</td>
+//                 <td>${formattedTime}</td>
+//                 <td style="color: ${entry.status === "Online" ? 'green' : 'red'};">${entry.status}</td>
+//                 <td>${downtimeDuration}</td>
+//             </tr>
+//         `;
+//     });
+    
+
+
+
+
+//     tableHTML += `</tbody></table>`;
+//     // historyContainer.innerHTML = tableHTML;
+//     historyContainer.innerHTML = `
+//     <div class="scrollable-history-table">
+//         ${tableHTML}
+//     </div>
+// `;
+// }
+
+
+function displayDeviceHistory(deviceIp, deviceName, history) {
+    const modalHeader = document.getElementById('device-history-header');
+    const historyContainer = document.getElementById('device-history');
+
+    modalHeader.innerHTML = `
+        <h3>Device History</h3>
+        <p><strong>Device Name:</strong> ${deviceName}</p>
+        <p><strong>Device IP:</strong> ${deviceIp}</p>
+        <hr>
+    `;
+
+    historyContainer.innerHTML = '';
+
+    if (history.length === 0) {
+        historyContainer.innerHTML = `<p>No history available for this device.</p>`;
+        return;
+    }
+
+    let tableHTML = `
+        <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Downtime Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    let rowCounter = 1;
+    let lastOffline = null;
+
+    for (let i = 0; i < history.length; i++) {
+        const entry = history[i];
+
+        if (entry.status === "Offline") {
+            lastOffline = entry;
+        } else if (entry.status === "Online" && lastOffline) {
+            const offlineTime = new Date(lastOffline.timestamp);
+            const onlineTime = new Date(entry.timestamp);
+            const durationSec = (onlineTime - offlineTime) / 1000;
+
+            if (durationSec >= 300) {
+                const formattedDate = offlineTime.toLocaleDateString();
+                const formattedDay = offlineTime.toLocaleString('en-US', { weekday: 'long' });
+                const formattedTime = offlineTime.toLocaleTimeString();
+                const downtimeDuration = formatDuration(durationSec);
+
+                tableHTML += `
+                    <tr>
+                        <td>${rowCounter++}</td>
+                        <td>${formattedDate}</td>
+                        <td>${formattedDay}</td>
+                        <td>${formattedTime}</td>
+                        <td style="color: red;">Offline</td>
+                        <td>${downtimeDuration}</td>
+                    </tr>
+                `;
+            }
+
+            lastOffline = null; // Clear after processing
+        }
+    }
+
+    // 🔴 If device is still offline, include its ongoing downtime
+    if (lastOffline) {
+        const offlineTime = new Date(lastOffline.timestamp);
+        const now = new Date();
+        const durationSec = (now - offlineTime) / 1000;
+
+        if (durationSec >= 300) {
+            const formattedDate = offlineTime.toLocaleDateString();
+            const formattedDay = offlineTime.toLocaleString('en-US', { weekday: 'long' });
+            const formattedTime = offlineTime.toLocaleTimeString();
+            const downtimeDuration = formatDuration(durationSec);
+
+            tableHTML += `
+                <tr>
+                    <td>${rowCounter++}</td>
+                    <td>${formattedDate}</td>
+                    <td>${formattedDay}</td>
+                    <td>${formattedTime}</td>
+                    <td style="color: red;">Offline (Still Down)</td>
+                    <td>${downtimeDuration}</td>
+                </tr>
+            `;
+        }
+    }
+
+    tableHTML += `</tbody></table>`;
+
+    if (rowCounter === 1) {
+        historyContainer.innerHTML = `<p>No downtime events longer than 5 minutes.</p>`;
+    } else {
+        historyContainer.innerHTML = `
+            <div class="scrollable-history-table">
+                ${tableHTML}
+            </div>
+        `;
+    }
+}
+
+
+function closeHistoryModal() {
+    document.getElementById('device-history-modal').style.display = 'none';
+}
+
+function exportDeviceTableToExcel() {
+    const table = document.getElementById("device-table");
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Device Table" });
+    XLSX.writeFile(workbook, "Device_Table.xlsx");
+}
+
+function exportDeviceHistoryToExcel() {
+    const historyTable = document.querySelector("#device-history-modal table");
+    if (!historyTable) {
+        alert("Please open a device's history first.");
+        return;
+    }
+    const workbook = XLSX.utils.table_to_book(historyTable, { sheet: "Device History" });
+    XLSX.writeFile(workbook, "Device_History.xlsx");
+}
+
+
+function filterData() {
+    const selectedType = document.getElementById('device-type').value.toUpperCase();
+    const selectedRemark = document.getElementById('remark-filter').value.toUpperCase();
+    const searchText = document.getElementById('search-input').value.toUpperCase().trim();
+
+    const table = document.getElementById('device-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let row of rows) {
+        const type = row.cells[3].textContent.toUpperCase(); // Device type
+        const remark = row.cells[8].textContent.toUpperCase(); // Remark
+        const ip = row.cells[1].textContent.toUpperCase(); // IP
+        const name = row.cells[2].textContent.toUpperCase(); // Device name (location)
+        const city = name.split(',').pop().trim(); // Optional: parse city if included in name
+
+        const matchesType = selectedType === "ALL" || type === selectedType;
+        const matchesRemark = selectedRemark === "ALL" || remark.includes(selectedRemark);
+
+        const matchesSearch = (
+            ip.includes(searchText) ||
+            name.includes(searchText) ||
+            city.includes(searchText)
+        );
+
+        row.style.display = (matchesType && matchesRemark && matchesSearch) ? "" : "none";
+    }
+}
+
+function populateCityFilter(cities) {
+    const cityFilter = document.getElementById('city-filter');
+    cityFilter.innerHTML = `<option value="all">All Cities</option>`;
+    cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        cityFilter.appendChild(option);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('region').addEventListener('change', fetchDeviceData);
+    // Automatically filter when dropdowns change
+    document.getElementById('device-type').addEventListener('change', filterData);
+    document.getElementById('remark-filter').addEventListener('change', filterData);
+    fetchDeviceData(); // Initial load
+});
+
+document.getElementById('search-input').addEventListener('input', filterData);
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 2500);
+}
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId)?.innerText;
+    if (text) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast(`Copied: ${text}`))
+            .catch(err => console.error("Failed to copy:", err));
+    }
+}
+
+
+// ******************************************************************
