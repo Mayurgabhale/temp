@@ -1,2 +1,12 @@
+// old (counts every “Offline” log)
+let downtimeCount = deviceHistory.filter(e => e.status === "Offline").length;
+
+
+
+
+
+
+
+
 // new (counts only valid downtime events)
 let downtimeCount = countValidDowntimes(deviceHistory, deviceCategory);
