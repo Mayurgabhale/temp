@@ -1,3 +1,11 @@
+let downtimeCount = countValidDowntimes(history, deviceCategory);
+
+
+
+
+
+
+
 let downtimeCount = countValidDowntimes(deviceHistory, deviceCategory);
 
 
