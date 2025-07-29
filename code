@@ -13,6 +13,8 @@ getting   padding: 20px;
 
 padding apply this sidebar-content thats sidebar content left side also getting padding but we not requie sidebar dcontent get a padding they also ad full height 
 
+sidebar content getting gap left, top, and bottom side but we don't require gap
+
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
