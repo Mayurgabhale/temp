@@ -9,6 +9,12 @@ if (e.status === 'Offline') {
   lastOff = null;
 }
 
+Sr.No	Date	Day	Time	             Status	           Duration
+1	7/26/2025	Saturday	1:31:02 PM	Offline	2d/21h/15m/48s
+2	7/26/2025	Saturday	1:36:45 PM	Online	5m/43s
+3	7/29/2025	Tuesday	9:53:55 AM	Offline	52m/56s
+4	7/29/2025	Tuesday	10:01:01 AM	Online	7m/7s
+
 
 
 
