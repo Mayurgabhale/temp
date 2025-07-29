@@ -1,3 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devices Trend Details</title>
+    <link rel="stylesheet" href="trend.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+</head>
+
+<body>
+
 
     <header>
         <h1 style=" text-align: center;
@@ -13,3 +29,366 @@
    transition: color 0.3s ease;""><i class=" fas fa-chart-line"></i> Devices Trend Details</h1>
 
     </header>
+
+
+    <!-- Sidebar -->
+    <!-- <div id="sidebar">
+       button id="menu-btn" onclick="toggleSidebar()">☰</button>< -->
+    <div id="sidebar-content">
+        <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Back to Dashboard</button>
+        <button onclick="window.location.href='summary.html'"><i class="fas fa-table"></i> View Summary</button>
+        <button onclick="exportDeviceTableToExcel()"><i class="fas fa-file-export"></i> Export Device Table</button>
+
+
+
+
+
+
+        <label for="region">Select Region:</label>
+        <select id="region" onchange="fetchDeviceData()">
+            <option value="global" selected>Global</option>
+            <option value="apac">APAC</option>
+            <option value="emea">EMEA</option>
+            <option value="laca">LACA</option>
+            <option value="namer">NAMER</option>
+        </select>
+
+        <label for="device-type">Filter by Device Type:</label>
+        <select id="device-type" onchange="filterData()">
+            <option value="ALL">All</option>
+            <option value="CONTROLLER">Controller</option>
+
+            <option value="ARCHIVER">Archiver</option>
+
+            <option value="CAMERA">Camera</option>
+
+            <option value="SERVER">Server</option>
+
+        </select>
+
+        <label for="remark-filter">Filter by Remark:</label>
+        <select id="remark-filter" onchange="filterData()">
+            <option value="ALL">All</option>
+            <option value="Device needs repair">Device needs repair</option>
+            <option value="Device is Online">Device is Online</option>
+            <option value="Device is Offline">Device is Offline</option>
+        </select>
+
+        <label for="city-filter">Filter by Location:</label>
+        <select id="city-filter">
+            <option value="all">All Cities</option>
+        </select>
+
+
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder=" Search by IP, Location, City" />
+        </div>
+    </div>
+    </div>
+
+
+    <div class="container">
+        <table id="device-table">
+            <thead>
+                <tr>
+                    <th>Sr. No</th>
+                    <th>Device IP</th>
+                    <th>Device Name</th>
+                    <th>Device Type</th>
+                    <th>Uptime Duration</th>
+                    <th>Downtime Count</th>
+                    <th>Downtime Duration</th>
+                    <th>Details</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <!-- Toast container -->
+<div id="toast" class="toast"></div>
+
+    <!-- Device History Modal -->
+    <div id="device-history-modal" class="modal">
+
+        <div class="modal-content">
+
+
+            <div id="device-history-header"></div> <!-- Header for Device Name and IP -->
+
+            <div id="device-history"></div>
+            <!-- <<span class="close" onclick="closeHistoryModal()">&times;</span> -->
+
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <div id="device-history"></div>
+
+
+            <button onclick="exportDeviceHistoryToExcel()" class="history-btn"><i class="fas fa-download"></i> Export
+                Device History</button>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchDeviceData();
+        });
+    </script>
+    <script src="trend.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</body>
+
+</html>
+
+<!-- Footer -->
+<footer style="padding: 20px;
+   margin-top: 20px;
+
+   " class="footer">
+    <img src="images/FooterLogo.png" alt="Company Logo" class="footer-logo">
+    <p >&copy;2025 VisionWatch | Powered by <strong style="color: #fbc531;"">Western Union Services India Pvt Ltd.</strong></p>
+    <p>Contact:
+        <a
+            href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com</a>
+        |
+        <a href="tel:+91 20 67632394">+91 2067632394</a>
+    </p>
+</footer>
+
+</body>
+
+</html>
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --yellow: #ffcc00;
+  --black: #000000;
+  --white: #f9fafc;
+  --blue: #0d6efd;
+  --green: #2cb67d;
+  --red: #ef4565;
+  --gray: #e0e0e0;
+  --border-radius: 12px;
+  --font-main: 'Poppins', sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--white);
+  color: #212529;
+  margin: 0;
+  /* padding-top: 70px; */
+  line-height: 1.6;
+}
+
+/* ===== Header ===== */
+header h1 {
+  text-align: center;
+  padding: 20px;
+  background-color: var(--yellow);
+  border-bottom: 1px solid #000;
+  color: #000;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  font-family: Georgia, serif;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Sidebar ===== */
+#sidebar-content {
+  background-color: var(--yellow);
+  border-right: 1px solid #000;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 280px;
+}
+
+#sidebar-content button,
+#sidebar-content select {
+  background-color: #f1f3f5;
+  color: #000;
+  border: 1px solid var(--gray);
+  padding: 12px;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#sidebar-content button:hover,
+#sidebar-content select:hover {
+  background-color: #e9ecef;
+  transform: scale(1.02);
+}
+
+#sidebar-content label {
+  font-weight: 600;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* ===== Search Bar ===== */
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 8px;
+  font-family: var(--font-main);
+}
+
+/* ===== Table ===== */
+.container {
+  padding: 30px;
+  overflow-x: auto;
+}
+
+#device-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--gray);
+  background-color: #f0f8fc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+#device-table th,
+#device-table td {
+  padding: 14px 12px;
+  border: 1px solid var(--gray);
+  text-align: left;
+  font-size: 14px;
+}
+
+#device-table th {
+  background-color: var(--yellow);
+  color: #000;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+#device-table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+#device-table tr:hover {
+  background-color: #e9ecef;
+}
+
+/* ===== Modal ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 600px;
+  font-family: var(--font-main);
+  color: #000;
+  position: relative;
+}
+
+.modal-content button.history-btn {
+  background-color: var(--blue);
+  color: #fff;
+  padding: 12px;
+  border: none;
+  margin-top: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-content button.history-btn:hover {
+  background-color: #0b5ed7;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff0000;
+  cursor: pointer;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--blue);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  z-index: 3000;
+  display: none;
+}
+
+/* ===== Footer ===== */
+.footer {
+  background-color: var(--yellow);
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: #000;
+  border-top: 1px solid #000;
+}
+
+.footer-logo {
+  height: 30px;
+  margin-bottom: 10px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  #sidebar-content {
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #000;
+    padding: 20px;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  #device-table th,
+  #device-table td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  header h1 {
+    font-size: 24px;
+    padding: 16px;
+  }
+}
