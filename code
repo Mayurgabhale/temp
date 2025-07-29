@@ -1,3 +1,14 @@
+if (d.status === 'Offline') {
+  row.classList.add('row-offline');
+} else if (d.status === 'Online') {
+  row.classList.add('row-online');
+} else {
+  // Optional: handle unknown or other cases
+  row.classList.add('row-repair');
+}
+
+
+
 ReferenceError: remark is not defined
     at trend.js:824:3
     at Array.forEach (<anonymous>)
