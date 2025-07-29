@@ -1,33 +1,27 @@
-<div class="search-bar">
-  <i class="fas fa-search search-icon"></i>
-  <input type="text" id="search-input" placeholder="Search by IP, Location, City" />
-</div>
-
-
-
-
-/* Sidebar search bar styling */
 .search-bar {
   position: relative;
   width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .search-bar input {
   width: 100%;
-  padding: 10px 14px 10px 38px; /* left padding for icon */
+  box-sizing: border-box;
+  padding: 10px 14px 10px 38px; /* make room for icon */
   font-size: 15px;
   border-radius: var(--border-radius);
   border: 1px solid #ccc;
-  font-family: var(--font-main);
   background-color: #fff;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: var(--font-main);
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 .search-bar input:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
 }
 
 .search-icon {
@@ -35,19 +29,7 @@
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
-  color: #666;
+  color: #888;
   font-size: 16px;
   pointer-events: none;
-}
-
-
-.search-bar input::placeholder {
-  color: #999;
-  font-size: 14px;
-}
-
-
-
-.search-bar input:hover {
-  border-color: #aaa;
 }
