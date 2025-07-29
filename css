@@ -1,150 +1,24 @@
-function displayDeviceHistory(ip, name, category, hist) {
-  const header = document.getElementById('device-history-header');
-  const container = document.getElementById('device-history');
-  header.innerHTML = `
-    <h2 style="color: var(--yellow); font-size: 24px;">${name} <span style="font-size:16px;">(${ip})</span></h2>
-    <hr style="margin: 10px 0; border-color: var(--gray);">
-  `;
-
-  if (!hist.length) {
-    container.innerHTML = `<p style="font-style: italic; color: #777;">No downtime ≥5 min in history.</p>`;
-    return;
-  }
-
-  let html = `
-    <div class="scrollable-history-table">
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Sr.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  let idx = 1;
-  let lastOff = null;
-
-  hist.forEach(e => {
-    const t = new Date(e.timestamp);
-    const date = t.toLocaleDateString();
-    const day = t.toLocaleString('en-US', { weekday: 'long' });
-    const time = t.toLocaleTimeString();
-    let dur = '-';
-
-    if (e.status === 'Offline') {
-      if (!lastOff) {
-        lastOff = e.timestamp;
-        html += `
-          <tr>
-            <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-            <td class="status-offline">${e.status}</td><td>${dur}</td>
-          </tr>`;
-      }
-    } else if (e.status === 'Online') {
-      if (lastOff) {
-        const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-        dur = formatDuration(diff);
-        const offTime = new Date(lastOff);
-        const offDate = offTime.toLocaleDateString();
-        const offDay = offTime.toLocaleString('en-US', { weekday: 'long' });
-        const offClock = offTime.toLocaleTimeString();
-
-        html += `
-          <tr>
-            <td>${idx++}</td><td>${offDate}</td><td>${offDay}</td><td>${offClock}</td>
-            <td class="status-offline">Offline</td><td>${dur}</td>
-          </tr>
-          <tr>
-            <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-            <td class="status-online">${e.status}</td><td>${formatDuration(0)}</td>
-          </tr>`;
-
-        lastOff = null;
-      } else {
-        html += `
-          <tr>
-            <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-            <td class="status-online">${e.status}</td><td>${dur}</td>
-          </tr>`;
-      }
-    }
-  });
-
-  if (lastOff) {
-    const t = new Date(lastOff);
-    const date = t.toLocaleDateString();
-    const day = t.toLocaleString('en-US', { weekday: 'long' });
-    const time = t.toLocaleTimeString();
-    const now = Date.now();
-    const dur = formatDuration((now - new Date(lastOff)) / 1000);
-
-    html += `
-      <tr>
-        <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-        <td class="status-offline">Offline</td><td>${dur}</td>
-      </tr>`;
-  }
-
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
-}
-
-
-
-
-
-
-
-
-
-/* Scrollable container for table */
 .scrollable-history-table {
-  overflow-x: auto;
+  max-height: 400px; /* or any height you prefer */
+  overflow-y: auto;
   margin-top: 10px;
-}
-
-/* Table styling */
-.history-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-main);
-  font-size: 14px;
-  background-color: var(--white);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   border: 1px solid #ccc;
-  text-align: center;
+  border-radius: 8px;
 }
 
-.history-table thead {
+/* Optional: keep header visible when scrolling (sticky header) */
+.history-table thead th {
+  position: sticky;
+  top: 0;
   background-color: var(--yellow);
-  color: var(--black);
+  z-index: 1;
 }
 
-.history-table th,
-.history-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
 
-.history-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
 
-/* Status colors */
-.status-online {
-  color: green;
-  font-weight: bold;
-}
 
-.status-offline {
-  color: red;
-  font-weight: bold;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .history-table {
-    font-size: 12px;
-  }
-}
+<div class="scrollable-history-table">
+  <table class="history-table">
+    ...
+  </table>
+</div>
