@@ -1,4 +1,17 @@
+see this duration not show
+LACA CR A209 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.80 (10.64.21.80)
+Sr.No	Date	Day	Time	           Status	  Duration
+1	7/29/2025	Tuesday	9:48:31 AM	Offline	  -
 
+see this only some row are disply duration 
+Sr.No	Date	Day	Time	Status	            Duration
+1	7/3/2025	Thursday	12:00:22 PM	Online	-
+2	7/3/2025	Thursday	1:25:37 PM	Offline	-
+3	7/3/2025	Thursday	1:26:07 PM	Online	30s
+4	7/3/2025	Thursday	4:36:22 PM	Offline	-
+5	7/3/2025	Thursday	4:36:41 PM	Online	19s
+6	7/3/2025	Thursday	5:45:22 PM	Offline	-
+7	7/3/2025	Thursday	5:45:45 PM	Online	24s
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
