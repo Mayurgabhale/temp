@@ -1,4 +1,6 @@
-
+in view history tables device duration are not show, duration are not displaying
+read all code carefully and slow the issue to show duration
+in view history tables 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
 
