@@ -1,3 +1,22 @@
+
+Sr.No	Date	Day	Time          	Status	             Duration
+1	7/29/2025	Tuesday	9:48:31 AM	Offline	-
+2	7/29/2025	Tuesday	9:48:31 AM	Offline	1h/25m/31s
+
+
+
+
+Sr.No	Date	Day	      Time	         Status	            Duration
+1	7/26/2025	Saturday	1:31:38 PM	Offline	-
+2	7/26/2025	Saturday	1:36:50 PM	Online	5m/12s this is correct 
+3	7/29/2025	Tuesday	9:55:30 AM	Offline	-      <----    and it is empty not show anything 
+4	7/29/2025	Tuesday	10:01:50 AM	Online	6m/21s
+
+see above data carefully timeing chek timeing between duratin and duration it is incorrect duraion logic 
+
+1	7/29/2025	Tuesday	9:48:31 AM	Offline	- see in between not much differnet but you give 1h/25m/31s this is wrong 
+2	7/29/2025	Tuesday	9:48:31 AM	Offline	1h/25m/31s
+
 function displayDeviceHistory(ip, name, category, hist) {
   const header = document.getElementById('device-history-header');
   const container = document.getElementById('device-history');
