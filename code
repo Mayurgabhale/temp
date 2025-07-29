@@ -1,323 +1,229 @@
-const isExpanded = expandedFloor === floor;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-const filteredRows = term
-  ? emps.filter(r => {
-      const empId = String(r.EmployeeID).toLowerCase();
-      const name = String(r.ObjectName1).toLowerCase();
-      const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : "";
-      return (
-        empId.includes(term) ||
-        name.includes(term) ||
-        card.includes(term)
-      );
-    })
-  : emps;
+:root {
+  --yellow: #ffcc00;
+  --black: #000000;
+  --white: #f9fafc;
+  --blue: #0d6efd;
+  --green: #2cb67d;
+  --red: #ef4565;
+  --gray: #e0e0e0;
+  --border-radius: 12px;
+  --font-main: 'Poppins', sans-serif;
+}
 
-const rowsToShow = isExpanded ? filteredRows : filteredRows.slice(0, 10);
+body {
+  font-family: var(--font-main);
+  background-color: var(--white);
+  color: #212529;
+  margin: 0;
+  padding-top: 70px;
+  line-height: 1.6;
+}
 
+/* ===== Header ===== */
+header h1 {
+  text-align: center;
+  padding: 20px;
+  background-color: var(--yellow);
+  border-bottom: 1px solid #000;
+  color: #000;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  font-family: Georgia, serif;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
 
+/* ===== Sidebar ===== */
+#sidebar-content {
+  background-color: var(--yellow);
+  border-right: 1px solid #000;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 280px;
+}
 
+#sidebar-content button,
+#sidebar-content select {
+  background-color: #f1f3f5;
+  color: #000;
+  border: 1px solid var(--gray);
+  padding: 12px;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-// src/pages/PartitionDetailDetails.jsx
-import React, { useEffect, useState, useMemo } from "react";
-import {
-  Container,
-  Box,
-  Typography,
-  Button,
-  TextField,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import LoadingSpinner from "../components/LoadingSpinner";
-import DataTable from "../components/DataTable";
-import { fetchLiveSummary } from "../api/occupancy.service";
-import { lookupFloor } from "../utils/floorLookup";
+#sidebar-content button:hover,
+#sidebar-content select:hover {
+  background-color: #e9ecef;
+  transform: scale(1.02);
+}
 
-export default function PartitionDetailDetails() {
-  const { partition } = useParams();
-  const navigate = useNavigate();
+#sidebar-content label {
+  font-weight: 600;
+  margin-top: 10px;
+  font-size: 14px;
+}
 
-  const [details, setDetails] = useState([]);
-  const [liveCounts, setLiveCounts] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [expandedFloor, setExpandedFloor] = useState(null);
+/* ===== Search Bar ===== */
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 8px;
+  font-family: var(--font-main);
+}
 
-  // common lowercase term
-  const term = searchTerm.trim().toLowerCase();
+/* ===== Table ===== */
+.container {
+  padding: 30px;
+  overflow-x: auto;
+}
 
-  // fetch initial + live updates
-  useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
+#device-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--gray);
+  background-color: #f0f8fc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
 
-    const load = async () => {
-      const json = await fetchLiveSummary();
-      if (!isMounted) return;
+#device-table th,
+#device-table td {
+  padding: 14px 12px;
+  border: 1px solid var(--gray);
+  text-align: left;
+  font-size: 14px;
+}
 
-      const counts = json.realtime[partition]?.floors || {};
-      setLiveCounts(counts);
+#device-table th {
+  background-color: var(--yellow);
+  color: #000;
+  font-weight: 700;
+  font-size: 15px;
+}
 
-      const det = json.details
-        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-      setLoading(false);
-    };
+#device-table tr:nth-child(even) {
+  background-color: #ffffff;
+}
 
-    load();
+#device-table tr:hover {
+  background-color: #e9ecef;
+}
 
-    const interval = setInterval(async () => {
-      const json = await fetchLiveSummary();
-      if (!isMounted) return;
-      setLiveCounts(json.realtime[partition]?.floors || {});
+/* ===== Modal ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
 
-      const det = json.details
-        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-    }, 1000);
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 600px;
+  font-family: var(--font-main);
+  color: #000;
+  position: relative;
+}
 
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [partition]);
+.modal-content button.history-btn {
+  background-color: var(--blue);
+  color: #fff;
+  padding: 12px;
+  border: none;
+  margin-top: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-  // group rows by floor
-  const floorMap = useMemo(() => {
-    const m = {};
-    Object.keys(liveCounts).forEach(floorName => {
-      m[floorName] = [];
-    });
-    details.forEach(r => {
-      if (!(r.floor in m)) m[r.floor] = [];
-      m[r.floor].push(r);
-    });
-    return m;
-  }, [details, liveCounts]);
+.modal-content button.history-btn:hover {
+  background-color: #0b5ed7;
+}
 
-  // filter floors based on searchTerm, then sort by headcount desc
-  const displayed = useMemo(() => {
-    return Object.entries(floorMap)
-      .filter(([floor, emps]) => {
-        if (!term) return true;
-        if (floor.toLowerCase().includes(term)) return true;
-        return emps.some(r => {
-          const empId = String(r.EmployeeID).toLowerCase();
-          const name = String(r.ObjectName1).toLowerCase();
-          const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : "";
-          return (
-            empId.includes(term) ||
-            name.includes(term) ||
-            card.includes(term)
-          );
-        });
-      })
-      .sort(
-        ([aFloor], [bFloor]) =>
-          (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0)
-      );
-  }, [floorMap, liveCounts, term]);
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff0000;
+  cursor: pointer;
+}
 
-  const columns = [
-    { field: "EmployeeID", headerName: "Emp ID" },
-    { field: "ObjectName1", headerName: "Name" },
-    { field: "LocaleMessageTime", headerName: "Swipe Time" },
-    { field: "PersonnelType", headerName: "Type" },
-    { field: "CardNumber", headerName: "Card" },
-    { field: "Door", headerName: "Door" },
-  ];
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--blue);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  z-index: 3000;
+  display: none;
+}
 
-  return (
-    <>
-      <Header />
+/* ===== Footer ===== */
+.footer {
+  background-color: var(--yellow);
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: #000;
+  border-top: 1px solid #000;
+}
 
-      <Box component="main" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth={false} disableGutters>
-          {/* Back button */}
-          <Box display="flex" alignItems="center" mb={2} sx={{ px: 2 }}>
-            <Button size="small" onClick={() => navigate(-1)}>
-              ← Back to Overview
-            </Button>
-          </Box>
+.footer-logo {
+  height: 30px;
+  margin-bottom: 10px;
+}
 
-          {/* Title + search */}
-          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: 2 }}>
-            <Typography variant="h6">Floor Details</Typography>
-            <Typography variant="body2" color="textSecondary">
-              Last updated: {lastUpdate}
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="Search floor / emp…"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </Box>
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  #sidebar-content {
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #000;
+    padding: 20px;
+  }
 
-          {loading ? (
-            <Box sx={{ px: 2, py: 8 }}>
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <>
-              {/* Cards */}
-              <Box
-                component="section"
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  width: "100%",
-                  m: 0,
-                  p: 0,
-                }}
-              >
-                {displayed.map(([floor, emps]) => {
-                  // slice default rows to 25
-                  const isSearching = term.length > 0;
-                  const rowsToShow = isSearching
-                    ? emps.filter(r => {
-                        const empId = String(r.EmployeeID).toLowerCase();
-                        const name = String(r.ObjectName1).toLowerCase();
-                        const card = r.CardNumber
-                          ? String(r.CardNumber).toLowerCase()
-                          : "";
-                        return (
-                          empId.includes(term) ||
-                          name.includes(term) ||
-                          card.includes(term)
-                        );
-                      })
-                    : emps.slice(0, 25);
+  .container {
+    padding: 16px;
+  }
 
-                  return (
-                    <Box
-                      key={floor}
-                      sx={{ width: "50%", boxSizing: "border-box", p: 2 }}
-                    >
-                      <Box
-                        sx={{
-                          border: "1px solid #FFC107",
-                          borderRadius: 2,
-                          height: "100%",
-                        }}
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight={600}
-                          gutterBottom
-                        >
-                          {floor} (Total {liveCounts[floor] ?? 0})
-                        </Typography>
+  #device-table th,
+  #device-table td {
+    font-size: 13px;
+    padding: 10px;
+  }
 
-                        <TableContainer
-                          component={Paper}
-                          variant="outlined"
-                          sx={{ mb: 1 }}
-                        >
-                          <Table size="small">
-                            <TableHead>
-                              <TableRow>
-                                {columns.map(col => (
-                                  <TableCell
-                                    key={col.field}
-                                    sx={{ fontWeight: "bold" }}
-                                  >
-                                    {col.headerName}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHead>
+  .modal-content {
+    padding: 20px;
+  }
 
-                            <TableBody>
-                              {rowsToShow.map((r, i) => (
-                                <TableRow
-                                  key={`${r.PersonGUID}-${i}`}
-                                  sx={
-                                    isSearching
-                                      ? {
-                                          backgroundColor:
-                                            "rgba(255, 235, 59, 0.3)",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  <TableCell>{r.EmployeeID}</TableCell>
-                                  <TableCell>{r.ObjectName1}</TableCell>
-                                  <TableCell>
-                                    {new Date(
-                                      r.LocaleMessageTime
-                                    ).toLocaleTimeString()}
-                                  </TableCell>
-                                  <TableCell>{r.PersonnelType}</TableCell>
-                                  <TableCell>{r.CardNumber}</TableCell>
-                                  <TableCell>{r.Door}</TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            setExpandedFloor(
-                              expandedFloor === floor ? null : floor
-                            )
-                          }
-                        >
-                          {expandedFloor === floor
-                            ? "Hide"
-                            : "See more…"}
-                        </Button>
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Box>
-
-              {/* Expanded full table */}
-              {expandedFloor && (
-                <Box sx={{ px: 2, mt: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    {expandedFloor} — All Entries
-                  </Typography>
-                  <DataTable
-                    columns={columns}
-                    rows={(floorMap[expandedFloor] || []).map(r => ({
-                      ...r,
-                      LocaleMessageTime: new Date(
-                        r.LocaleMessageTime
-                      ).toLocaleTimeString(),
-                    }))}
-                  />
-                </Box>
-              )}
-            </>
-          )}
-        </Container>
-      </Box>
-
-      <Footer />
-    </>
-  );
+  header h1 {
+    font-size: 24px;
+    padding: 16px;
+  }
 }
