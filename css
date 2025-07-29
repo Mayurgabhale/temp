@@ -1,3 +1,27 @@
+if (lastOff) {
+  const t = new Date(lastOff);
+  const date = t.toLocaleDateString();
+  const day = t.toLocaleString('en-US', { weekday: 'long' });
+  const time = t.toLocaleTimeString();
+  const now = Date.now();
+  const dur = formatDuration((now - new Date(lastOff)) / 1000);
+
+  html += `<tr>
+    <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+    <td style="color:red">Offline</td>
+    <td>${dur}</td>
+  </tr>`;
+}
+
+
+
+
+
+
+
+
+
+
 let dur = '-';
 if (e.status === 'Offline') {
   lastOff = e.timestamp; // Just mark the time, no duration yet
