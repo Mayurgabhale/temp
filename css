@@ -1,3 +1,49 @@
+function displayDeviceHistory(ip, name, category, hist) {
+    const header = document.getElementById('device-history-header');
+    const container = document.getElementById('device-history');
+    if (header) {
+        header.innerHTML = `
+            <h3>Device History</h3>
+            <p><strong>Device Name:</strong> ${name}</p>
+            <p><strong>Device IP:</strong> ${ip}</p>
+            <hr>`;
+    }
+    if (!container) return;
+    container.innerHTML = '';
+    if (!hist.length) {
+        container.innerHTML = '<p>No significant history (all brief outages &lt;5 min).</p>';
+        return;
+    }
+    let html = `
+        <table border="1" style="width:100%; text-align:center; border-collapse:collapse;">
+            <thead><tr>
+                <th>Sr. No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Downtime Duration</th>
+            </tr></thead><tbody>`;
+    let lastOff = null;
+    hist.forEach((e, i) => {
+        const d = new Date(e.timestamp);
+        const date = d.toLocaleDateString();
+        const day = d.toLocaleString('en-US', { weekday: 'long' });
+        const time = d.toLocaleTimeString();
+        let dur = '-';
+        if (e.status === 'Offline') lastOff = e.timestamp;
+        else if (e.status === 'Online' && lastOff) {
+            dur = calculateDowntimeDuration(lastOff, hist);
+            lastOff = null;
+        }
+        html += `
+            <tr>
+                <td>${i + 1}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+                <td style="color:${e.status === 'Online' ? '#212529' : '#212529'}">${e.status}</td>
+                <td>${dur}</td>
+            </tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+
+
 .modal {
   display: none;
   position: fixed;
