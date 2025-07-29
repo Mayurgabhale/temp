@@ -1,115 +1,86 @@
+
 function displayDeviceHistory(ip, name, category, hist) {
-    const header = document.getElementById('device-history-header');
-    const container = document.getElementById('device-history');
-    
-    if (header) {
-        header.innerHTML = `
-            <h2 style="color: var(--yellow); font-size: 24px; margin-bottom: 10px;">Device History</h2>
-            <p><strong>Device Name:</strong> ${name}</p>
-            <p><strong>Device IP:</strong> ${ip}</p>
-            <hr style="margin: 15px 0; border-color: var(--gray);">`;
-    }
+  const header = document.getElementById('device-history-header');
+  const container = document.getElementById('device-history');
+  header.innerHTML = `<h3>${name} (${ip})</h3><hr>`;
 
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    if (!hist.length) {
-        container.innerHTML = `<p style="font-style: italic; color: #555;">No significant history (all brief outages &lt; 5 min).</p>`;
-        return;
-    }
-
-    let html = `
-        <div class="history-table-wrapper">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>Sr. No</th>
-                <th>Date</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Status</th>
-                <th>Downtime Duration</th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
-
-    let lastOff = null;
-    hist.forEach((e, i) => {
-        const d = new Date(e.timestamp);
-        const date = d.toLocaleDateString();
-        const day = d.toLocaleString('en-US', { weekday: 'long' });
-        const time = d.toLocaleTimeString();
-        let dur = '-';
-        if (e.status === 'Offline') lastOff = e.timestamp;
-        else if (e.status === 'Online' && lastOff) {
-            dur = calculateDowntimeDuration(lastOff, hist);
-            lastOff = null;
-        }
-
-        html += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${date}</td>
-            <td>${day}</td>
-            <td>${time}</td>
-            <td class="${e.status === 'Offline' ? 'status-offline' : 'status-online'}">${e.status}</td>
-            <td>${dur}</td>
-          </tr>`;
-    });
-
-    html += `</tbody></table></div>`;
-    container.innerHTML = html;
-}
-
-
-
-/* Device History Table */
-.history-table-wrapper {
-  overflow-x: auto;
-  margin-top: 15px;
-}
-
-.history-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-main);
-  font-size: 14px;
-  text-align: center;
-  background-color: #fff;
-  border: 1px solid var(--gray);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-
-.history-table thead {
-  background-color: var(--yellow);
-  color: var(--black);
-}
-
-.history-table th,
-.history-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-
-.history-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.status-online {
-  color: green;
-  font-weight: bold;
-}
-
-.status-offline {
-  color: red;
-  font-weight: bold;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-  .history-table {
-    font-size: 12px;
+  if (!hist.length) {
+    container.innerHTML = '<p>No downtime ≥5 min in history.</p>';
+    return;
   }
+
+  let html = `<table border="1" style="width:100%;text-align:center;border-collapse:collapse;">
+    <thead><tr>
+      <th>Sr.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th>
+    </tr></thead><tbody>`;
+
+  let idx = 1;
+  let lastOff = null;
+
+  hist.forEach(e => {
+    const t = new Date(e.timestamp);
+    const date = t.toLocaleDateString();
+    const day = t.toLocaleString('en-US', { weekday: 'long' });
+    const time = t.toLocaleTimeString();
+    let dur = '-';
+
+    if (e.status === 'Offline') {
+      // Only set lastOff if it's null (start of a new Offline period)
+      if (!lastOff) {
+        lastOff = e.timestamp;
+        html += `<tr>
+          <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+          <td style="color:red">${e.status}</td><td>${dur}</td>
+        </tr>`;
+      }
+      // If already Offline, ignore duplicate entries until Online appears
+    } else if (e.status === 'Online') {
+      if (lastOff) {
+        const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+        dur = formatDuration(diff);
+        const offTime = new Date(lastOff);
+        const offDate = offTime.toLocaleDateString();
+        const offDay = offTime.toLocaleString('en-US', { weekday: 'long' });
+        const offClock = offTime.toLocaleTimeString();
+
+        // Output Offline row with calculated duration
+        html += `<tr>
+          <td>${idx++}</td><td>${offDate}</td><td>${offDay}</td><td>${offClock}</td>
+          <td style="color:red">Offline</td><td>${dur}</td>
+        </tr>`;
+
+        // Output Online row
+        html += `<tr>
+          <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+          <td style="color:green">${e.status}</td><td>${formatDuration(0)}</td>
+        </tr>`;
+
+        lastOff = null; // Reset after pairing
+      } else {
+        // Online entry without a preceding Offline
+        html += `<tr>
+          <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+          <td style="color:green">${e.status}</td><td>${dur}</td>
+        </tr>`;
+      }
+    }
+  });
+
+  // If history ends with unmatched Offline (ongoing)
+  if (lastOff) {
+    const t = new Date(lastOff);
+    const date = t.toLocaleDateString();
+    const day = t.toLocaleString('en-US', { weekday: 'long' });
+    const time = t.toLocaleTimeString();
+    const now = Date.now();
+    const dur = formatDuration((now - new Date(lastOff)) / 1000);
+
+    html += `<tr>
+      <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+      <td style="color:red">Offline</td><td>${dur}</td>
+    </tr>`;
+  }
+
+  html += `</tbody></table>`;
+  container.innerHTML = `<div class="scrollable-history-table">${html}</div>`;
 }
