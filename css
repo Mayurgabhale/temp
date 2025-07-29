@@ -1,3 +1,15 @@
+let dur = '-';
+if (e.status === 'Offline') {
+  lastOff = e.timestamp;
+} else if (e.status === 'Online' && lastOff) {
+  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+  dur = formatDuration(diff);
+  lastOff = null;
+}
+
+
+
+
 in view history tables device duration are not show, duration are not displaying
 read all code carefully and slow the issue to show duration
 in view history tables 
