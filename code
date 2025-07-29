@@ -1,3 +1,38 @@
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #f1f1f1;
+  border-top: 1px solid #ccc;
+  z-index: 1000;
+  padding: 10px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.footer-logo {
+  height: 30px;
+}
+
+.footer a {
+  color: #000;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+footer p {
+  margin: 2px 0;
+  font-size: 14px;
+}
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
