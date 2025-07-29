@@ -2,12 +2,16 @@
         <div class="header-container">
             <div class="header-left">
                 <button onclick="window.location.href='index.html'">
-                    <i class="fas fa-home"></i>
+                    <i class="fas fa-home"></i>  hovoer on this icon then disply  Back to Dashboard
                 </button>
                 <button onclick="window.location.href='summary.html'">
-                    <i class="fas fa-table"></i>
+                    <i class="fas fa-table"></i> and hover on this icon then disply View Summary 
                 </button>
             </div>
             <h1><i class="fas fa-chart-line"></i> Devices Trend Details</h1>
         </div>
     </header>
+
+
+
+ 
