@@ -1,5 +1,54 @@
 
 
+in this some  issue, Uptime Duration is not on and Downtime Duration alos not correct and Downtime Count alos some wrong 
+Sr. No	Device IP	Device Name	Device Type	Uptime Duration	Downtime Count	Downtime Duration	Details	Remark
+1	10.64.21.80	LACA CR A209 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.80	CAMERA	0h/0m/0s	1	1h/41m/36s	View History	Device is Offline, needs check.
+2	10.64.21.72	LACA CR A303 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.72	CAMERA	0h/0m/0s	1	1h/41m/35s	View History	Device is Offline, needs check.
+3	10.64.21.134	LACA CR A305 GENERAL NORTHEAST - 10.64.21.134	CAMERA	0h/0m/0s	1	1h/41m/35s	View History	Device is Offline, needs check.
+4	10.64.21.5	LACA CR B104 EMERGENCY EXIT DOOR SOUTHWEST1 - 10.64.21.5	CAMERA	0h/0m/0s	1	1h/41m/33s	View History	Device is Offline, needs check.
+5	10.64.21.203	LACA CR B207 EMERGENCY EXIT DOOR NORTHEAST - 10.64.21.203	CAMERA	0h/0m/0s	1	1h/41m/33s	View History	Device is Offline, needs check.
+6	10.64.22.9	LACA CR B304 EMERGENCY EXIT DOOR NORTHEAST - 10.64.22.9	CAMERA	0h/0m/0s	1	1h/41m/33s	View History	Device is Offline, needs check.
+7	10.64.23.72	LACA CR E207 EMERGENCY EXIT DOOR NORTHWEST - 10.64.23.72	CAMERA	0h/0m/0s	1	1h/41m/31s	View History	Device is Offline, needs check.
+8	10.64.23.76	LACA CR E210 GENERAL NORTH - 10.64.23.76	CAMERA	0h/0m/0s	1	1h/41m/30s	View History	Device is Offline, needs check.
+9	10.64.23.141	LACA CR E312 EMERGENCY EXIT DOOR SOUTH - 10.64.23.141	CAMERA	0h/0m/0s	1	1h/41m/32s	View History	Device is Offline, needs check.
+10	10.64.20.72	LACA CR E407 GENERAL NORTHWEST - 10.64.20.72	CAMERA	0h/0m/0s	1	1h/41m/32s	View History	Device is Offline, needs check.
+11	10.64.21.109	LACA CR A210 PCI NORTHEAST	CAMERA	0h/0m/0s	1	1h/41m/29s	View History	Device is Offline, needs check.
+12	10.64.22.74	LACA CR E401 MAIN ENTRANCE DOOR	CAMERA	0h/0m/0s	1	1h/41m/13s	View History	Device is Offline, needs check.
+13	10.21.4.66	US.NYC.199 Water St	CONTROLLER	0h/0m/0s	1	1h/41m/41s	View History	Device is Offline, needs check.
+14	10.130.36.56	EMEA Server	SERVER	1h/41m/48s	3	0h/0m/0s	View History	Device is Online.
+15	10.64.10.50	LACA Server	SERVER	1h/41m/46s	3	0h/0m/0s	View History	Device is Online.
+16	10.194.2.190	Archiver Taguig City Philippines	ARCHIVER	1h/29m/6s	2	0h/0m/0s	View History	Device is Online, had 2 downtime events ≥5 min.
+17	10.199.8.30	IN-PUN-PODIUM-ISTAR ULTRA-4	CONTROLLER	4d/1h/1m/37s	2	0h/0m/0s	View History	Device is Online, had 2 downtime events ≥5 min.
+18	10.194.2.13	APAC_PH_MANILA_ISTAR PRO_01	CONTROLLER	1h/28m/17s	2	0h/0m/0s	View History	Device is Online, had 2 downtime events ≥5 min.
+19	10.136.63.236	Archiver Moscow	ARCHIVER	6d/1h/44m/9s	1	0h/0m/0s	View History	Device is Online, had 1 downtime events ≥5 min.
+20	10.80.3.61	PA.Panama City. Panel 01	CONTROLLER	25d/38m/10s	1	0h/0m/0s	View History	Device is Online, had 1 downtime events ≥5 min.
+21	10.58.118.20	Master Server	SERVER	1h/41m/10s	1	0h/0m/0s	View History	Device is Online, had 1 downtime events ≥5 min.
+22	10.58.118.21	NAMER Server	SERVER	1h/41m/10s	1	0h/0m/0s	View History	Device is Online, had 1 downtime events ≥5 min.
+23	10.64.21.26	LACA CR S101 BASEMENT S1 TELECOM WAREHOUSE 07 - 10.64.21.26	CAMERA	0h/0m/0s	0	0h/0m/0s	View History	Device is Online.
+24	10.64.21.28	LACA CR S102 BASEMENT S1 FIXED ASSETS WAREHOUSE 51 - 10.64.21.28	CAMERA	0h/0m/0s	0	0h/0m/0s	View History	Device is Online.
+25	172.21.132.31	LACA CR S201 BASEMENT S2 EUC WAREHOUSE 15 - 172.21.132.31	CAMERA	0h/0m/0s	0	0h/0m/0s	View History	Device is Online.
+
+
+
+and view history page duratin is not correct 
+Sr.No	Date	Day	Time	Status	Duration
+1	7/29/2025	Tuesday	9:48:31 AM	Offline	-
+2	7/29/2025	Tuesday	9:48:31 AM	Offline	1h/43m/44s
+
+see below 
+Sr.No	Date	Day	Time	Status	Duration
+1	7/22/2025	Tuesday	3:42:24 PM	Offline	-
+2	7/22/2025	Tuesday	3:42:24 PM	Offline	2h/30m/4s this is wonrg calcuation 
+3	7/22/2025	Tuesday	6:12:28 PM	Online	0s  and this require 30m
+4	7/23/2025	Wednesday	9:46:17 AM	Offline	-   in thie require more time because 	7/22/2025	Tuesday	6:12:28 PM to 7/23/2025	Wednesday	9:46:17 AM so why it is show empty 
+5	7/23/2025	Wednesday	9:46:17 AM	Offline	2d/42m/13s
+6	7/25/2025	Friday	10:28:30 AM	Online	0s
+
+read below all code line by line carefully and give me all updates code all code 
+
+
+
+
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
 
