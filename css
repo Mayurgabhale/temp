@@ -1,4 +1,106 @@
+// ✅ FIXED VERSION - Downtime, Uptime, History logic corrected
 
+let deviceUptimeTimers = {}; let deviceDowntimeTimers = {};
+
+function sanitizeId(str) { return (str || '').replace(/[^a-zA-Z0-9]/g, '_'); }
+
+function fetchDeviceData() { const region = document.getElementById('region').value; fetch(http://localhost/api/regions/details/${region}) .then(r => r.json()) .then(d => fetchDeviceHistory(d.details)) .catch(console.error); }
+
+function fetchDeviceHistory(details) { fetch(http://localhost/api/devices/history) .then(r => r.json()) .then(historyData => { populateDeviceTable(details, historyData); window.deviceHistoryData = historyData; }) .catch(console.error); }
+
+function populateDeviceTable(details, historyData) { const tbody = document.querySelector('#device-table tbody'); tbody.innerHTML = ''; const devices = [];
+
+['cameras', 'archivers', 'controllers', 'servers'].forEach(type => { (details[type] || []).forEach(dev => { const ip = dev.ip_address; const safe = sanitizeId(ip); const name = dev[type.slice(0, -1) + 'name'] || 'Unknown'; const category = type.slice(0, -1).toUpperCase(); const rawHist = historyData[ip] || []; const hist = filterHistoryForDisplay(rawHist, category); const lastRaw = rawHist[rawHist.length - 1]?.status || 'Unknown'; let status = lastRaw; if (lastRaw === 'Offline' && ((Date.now() - new Date(rawHist[rawHist.length - 1].timestamp)) / 1000) < 300) { status = 'Online'; }
+
+const downCount = countValidDowntimes(hist);
+  devices.push({ ip, safe, name, category, rawHist, hist, status, downCount });
+});
+
+});
+
+devices.sort((a, b) => { const now = Date.now(); const aLast = a.hist[a.hist.length - 1], bLast = b.hist[b.hist.length - 1]; const aOff = aLast?.status === 'Offline' ? (now - new Date(aLast.timestamp)) / 1000 : 0; const bOff = bLast?.status === 'Offline' ? (now - new Date(bLast.timestamp)) / 1000 : 0; if ((aOff >= 300) !== (bOff >= 300)) return aOff >= 300 ? -1 : 1; return b.downCount - a.downCount; });
+
+devices.forEach((d, i) => { const row = tbody.insertRow(); row.classList.add(d.status === 'Online' ? 'status-online' : 'status-offline'); row.innerHTML = `
+
+<td>${i + 1}</td>
+<td><span id="ip-${d.safe}" class="copy-text" onclick="copyToClipboard('ip-${d.safe}')">${d.ip}</span></td>
+<td><span id="name-${d.safe}" class="copy-text" onclick="copyToClipboard('name-${d.safe}')">${d.name}</span></td>
+<td>${d.category}</td>
+<td id="uptime-${d.safe}">0h/0m/0s</td>
+<td id="downtime-count-${d.safe}">${d.downCount}</td>
+<td id="downtime-${d.safe}">0h/0m/0s</td>
+<td><button class="history-btn" onclick="openDeviceHistory('${d.ip}','${d.name}','${d.category}')">View History</button></td>
+<td id="remark-${d.safe}">–</td>`;if (d.status === 'Online') startUptime(d.ip, d.rawHist);
+else startDowntime(d.ip, d.rawHist);
+
+updateRemarks(d.ip, d.hist, d.status, d.downCount);
+
+});
+
+filterData(); }
+
+function countValidDowntimes(hist) { let count = 0; for (let i = 0; i < hist.length - 1; i++) { const a = hist[i]; const b = hist[i + 1]; if (a.status === 'Offline' && b.status === 'Online') { const dur = (new Date(b.timestamp) - new Date(a.timestamp)) / 1000; if (dur >= 300) count++; } } if (hist.length && hist[hist.length - 1].status === 'Offline') { const dur = (Date.now() - new Date(hist[hist.length - 1].timestamp)) / 1000; if (dur >= 300) count++; } return count; }
+
+function filterHistoryForDisplay(hist, category) { if (category === 'SERVER') return hist.slice(); return hist.filter(e => e.status === 'Offline' || e.status === 'Online'); }
+
+function startUptime(ip, rawHist) { const safe = sanitizeId(ip); clearInterval(deviceDowntimeTimers[safe]); const lastOnline = [...rawHist].reverse().find(e => e.status === 'Online'); if (!lastOnline) return; const t0 = new Date(lastOnline.timestamp).getTime(); deviceUptimeTimers[safe] = setInterval(() => { document.getElementById(uptime-${safe}).innerText = formatDuration(Math.floor((Date.now() - t0) / 1000)); }, 1000); }
+
+function startDowntime(ip, rawHist) { const safe = sanitizeId(ip); clearInterval(deviceUptimeTimers[safe]); const lastOffline = [...rawHist].reverse().find(e => e.status === 'Offline'); if (!lastOffline) return; const t0 = new Date(lastOffline.timestamp).getTime(); deviceDowntimeTimers[safe] = setInterval(() => { const secs = Math.floor((Date.now() - t0) / 1000); document.getElementById(downtime-${safe}).innerText = formatDuration(secs); updateRemarks(ip, rawHist, null, null); }, 1000); }
+
+function updateRemarks(ip, hist, forcedStatus, forcedCount) { const safe = sanitizeId(ip); let status = forcedStatus; if (!status) { const last = hist[hist.length - 1]?.status || 'Unknown'; status = last === 'Offline' && ((Date.now() - new Date(hist[hist.length - 1].timestamp)) / 1000) < 300 ? 'Online' : last; } const count = forcedCount ?? countValidDowntimes(hist); const el = document.getElementById(remark-${safe}); if (!el) return; if (status === 'Offline') { el.innerText = count > 0 ? 'Device is Offline, needs check.' : 'Device is Offline.'; } else if (status === 'Online') { el.innerText = count > 0 ? Device is Online, had ${count} downtime events ≥5 min. : 'Device is Online.'; } else { el.innerText = 'Device status unknown.'; } }
+
+function formatDuration(sec) { const d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.floor((sec % 3600) / 60), s = Math.round(sec % 60); const parts = []; if (d) parts.push(${d}d); if (h) parts.push(${h}h); if (m) parts.push(${m}m); if (s || !parts.length) parts.push(${s}s); return parts.join('/'); }
+
+function openDeviceHistory(ip, name, category) { const raw = window.deviceHistoryData[ip] || []; const hist = raw.filter(e => e.status === 'Offline' || e.status === 'Online'); displayDeviceHistory(ip, name, category, hist); document.getElementById('device-history-modal').style.display = 'block'; }
+
+function displayDeviceHistory(ip, name, category, hist) { const header = document.getElementById('device-history-header'); const container = document.getElementById('device-history'); header.innerHTML = <h3>${name} (${ip})</h3><hr>;
+
+if (!hist.length) { container.innerHTML = '<p>No downtime ≥5 min in history.</p>'; return; }
+
+let html = <table border="1" style="width:100%;text-align:center;border-collapse:collapse;"> <thead><tr> <th>Sr.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th> </tr></thead><tbody>;
+
+let idx = 1, lastOff = null; hist.forEach(e => { const t = new Date(e.timestamp); const date = t.toLocaleDateString(); const day = t.toLocaleString('en-US', { weekday: 'long' }); const time = t.toLocaleTimeString(); let dur = '-';
+
+if (e.status === 'Offline') {
+  if (!lastOff) {
+    lastOff = t;
+    html += `<tr><td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td><td style="color:red">Offline</td><td>${dur}</td></tr>`;
+  }
+} else if (e.status === 'Online' && lastOff) {
+  const diff = (t - lastOff) / 1000;
+  dur = formatDuration(diff);
+  const offDate = lastOff.toLocaleDateString();
+  const offDay = lastOff.toLocaleString('en-US', { weekday: 'long' });
+  const offTime = lastOff.toLocaleTimeString();
+  html += `<tr><td>${idx++}</td><td>${offDate}</td><td>${offDay}</td><td>${offTime}</td><td style="color:red">Offline</td><td>${dur}</td></tr>`;
+  html += `<tr><td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td><td style="color:green">Online</td><td>0s</td></tr>`;
+  lastOff = null;
+}
+
+});
+
+if (lastOff) { const now = new Date(); const diff = (now - lastOff) / 1000; const dur = formatDuration(diff); const date = lastOff.toLocaleDateString(); const day = lastOff.toLocaleString('en-US', { weekday: 'long' }); const time = lastOff.toLocaleTimeString(); html += <tr><td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td><td style="color:red">Offline</td><td>${dur}</td></tr>; }
+
+html += </tbody></table>; container.innerHTML = <div class="scrollable-history-table">${html}</div>; }
+
+function closeHistoryModal() { document.getElementById('device-history-modal').style.display = 'none'; }
+
+function filterData() { const typeSel = document.getElementById('device-type').value.toUpperCase(); const remarkSel = document.getElementById('remark-filter').value.toUpperCase(); const searchTxt = document.getElementById('search-input').value.toUpperCase(); document.querySelectorAll('#device-table tbody tr').forEach(r => { const type = r.cells[3].textContent.toUpperCase(); const remark = r.cells[8].textContent.toUpperCase(); const ip = r.cells[1].textContent.toUpperCase(); const name = r.cells[2].textContent.toUpperCase(); const show = (typeSel === 'ALL' || type === typeSel) && (remarkSel === 'ALL' || remark.includes(remarkSel)) && (ip.includes(searchTxt) || name.includes(searchTxt)); r.style.display = show ? '' : 'none'; }); }
+
+function copyToClipboard(id) { const t = document.getElementById(id)?.innerText; if (t) navigator.clipboard.writeText(t); }
+
+document.addEventListener('DOMContentLoaded', () => { ['region', 'device-type', 'remark-filter'].forEach(id => { document.getElementById(id)?.addEventListener('change', id === 'region' ? fetchDeviceData : filterData); }); document.getElementById('search-input')?.addEventListener('input', filterData); fetchDeviceData(); });
+
+
+
+
+
+
+
+
+
+
+...................
 
 in this some  issue, Uptime Duration is not on and Downtime Duration alos not correct and Downtime Count alos some wrong 
 Sr. No	Device IP	Device Name	Device Type	Uptime Duration	Downtime Count	Downtime Duration	Details	Remark
