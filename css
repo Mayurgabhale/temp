@@ -1,3 +1,34 @@
+let idx = 1;
+let lastOff = null;
+hist.forEach(e => {
+  const t = new Date(e.timestamp);
+  const date = t.toLocaleDateString();
+  const day = t.toLocaleString('en-US',{weekday:'long'});
+  const time = t.toLocaleTimeString();
+
+  let dur = '-';
+  if (e.status === 'Offline') {
+    lastOff = e.timestamp; // Just mark offline time
+  } else if (e.status === 'Online' && lastOff) {
+    const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+    dur = formatDuration(diff); // Correct diff
+    lastOff = null;
+  }
+
+  html += `<tr>
+    <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+    <td style="color:${e.status==='Online'?'green':'red'}">${e.status}</td>
+    <td>${dur}</td>
+  </tr>`;
+});
+
+
+
+
+
+....
+
+
 if (lastOff) {
   const t = new Date(lastOff);
   const date = t.toLocaleDateString();
