@@ -90,3 +90,61 @@ function displayDeviceHistory(ip, name, category, hist) {
   container.innerHTML = html;
 }
 
+
+
+
+
+
+
+
+
+/* Scrollable container for table */
+.scrollable-history-table {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+/* Table styling */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-main);
+  font-size: 14px;
+  background-color: var(--white);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.history-table thead {
+  background-color: var(--yellow);
+  color: var(--black);
+}
+
+.history-table th,
+.history-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.history-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Status colors */
+.status-online {
+  color: green;
+  font-weight: bold;
+}
+
+.status-offline {
+  color: red;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .history-table {
+    font-size: 12px;
+  }
+}
