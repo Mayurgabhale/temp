@@ -1,18 +1,17 @@
+Sr.No	Date	   Day	   Time	       Status	 Duration
+1	7/3/2025	Thursday	12:00:22 PM	Online	-                         see this 7/3
+2	7/3/2025	Thursday	1:25:37 PM	Offline	25d/21h/32m/53s            and this alos 7/3 but duraation ae so 25d/21h/32m/53s  this is wrong 
+3	7/3/2025	Thursday	1:26:07 PM	Online	30s   << this is correct 
+4	7/3/2025	Thursday	4:36:22 PM	Offline	25d/18h/22m/8s  this is wrong 
+5	7/3/2025	Thursday	4:36:41 PM	Online	19s
+6	7/3/2025	Thursday	5:45:22 PM	Offline	25d/17h/13m/8s
+7	7/3/2025	Thursday	5:45:45 PM	Online	24s
+see above duration are not correct calucatin 
 
-let dur = '-';
-if (e.status === 'Offline') {
-  lastOff = e.timestamp;
-} else if (e.status === 'Online' && lastOff) {
-  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-  dur = formatDuration(diff);
-  lastOff = null;
-}
+the belwo code is correct but duratin is not show correct 
 
-
-
-
-
-
+correct below logic and give me update code carefully 
+this logic is corrct but duration calucatin is incorrect 
 
 let dur = '-';
 if (e.status === 'Offline') {
