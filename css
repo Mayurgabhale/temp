@@ -1,3 +1,31 @@
+<header>
+  <div class="header-container">
+
+    <!-- Home Icon Only (clean, left-aligned) -->
+    <div class="header-left">
+      <button onclick="window.location.href='index.html'" title="Back to Dashboard">
+        <i class="fas fa-home"></i>
+      </button>
+    </div>
+
+    <h1>Devices Summary</h1>
+
+    <!-- Keep other buttons if needed later -->
+    <div class="button-container">
+      <button class="action-button export" onclick="exportDeviceTableToExcel()" title="Export Device Table">
+        <i class="fas fa-file-excel"></i>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+
+
+
+
+
+
 /* Home Icon Button (clean and minimal) */
 .header-left button {
   background: none;
