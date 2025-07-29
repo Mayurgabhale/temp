@@ -1,3 +1,20 @@
+let dur = '-';
+if (e.status === 'Offline') {
+  lastOff = e.timestamp; // Just mark the time, no duration yet
+} else if (e.status === 'Online' && lastOff) {
+  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+  dur = formatDuration(diff); // Calculate duration from lastOff to this Online
+  lastOff = null;
+}
+
+
+
+...
+
+
+
+
+
 Sr.No	Date	   Day	   Time	       Status	 Duration
 1	7/3/2025	Thursday	12:00:22 PM	Online	-                         see this 7/3
 2	7/3/2025	Thursday	1:25:37 PM	Offline	25d/21h/32m/53s            and this alos 7/3 but duraation ae so 25d/21h/32m/53s  this is wrong 
