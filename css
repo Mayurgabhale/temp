@@ -1,18 +1,26 @@
-
 function displayDeviceHistory(ip, name, category, hist) {
   const header = document.getElementById('device-history-header');
   const container = document.getElementById('device-history');
-  header.innerHTML = `<h3>${name} (${ip})</h3><hr>`;
+  header.innerHTML = `
+    <h2 style="color: var(--yellow); font-size: 24px;">${name} <span style="font-size:16px;">(${ip})</span></h2>
+    <hr style="margin: 10px 0; border-color: var(--gray);">
+  `;
 
   if (!hist.length) {
-    container.innerHTML = '<p>No downtime ≥5 min in history.</p>';
+    container.innerHTML = `<p style="font-style: italic; color: #777;">No downtime ≥5 min in history.</p>`;
     return;
   }
 
-  let html = `<table border="1" style="width:100%;text-align:center;border-collapse:collapse;">
-    <thead><tr>
-      <th>Sr.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th>
-    </tr></thead><tbody>`;
+  let html = `
+    <div class="scrollable-history-table">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Sr.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
 
   let idx = 1;
   let lastOff = null;
@@ -25,15 +33,14 @@ function displayDeviceHistory(ip, name, category, hist) {
     let dur = '-';
 
     if (e.status === 'Offline') {
-      // Only set lastOff if it's null (start of a new Offline period)
       if (!lastOff) {
         lastOff = e.timestamp;
-        html += `<tr>
-          <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-          <td style="color:red">${e.status}</td><td>${dur}</td>
-        </tr>`;
+        html += `
+          <tr>
+            <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+            <td class="status-offline">${e.status}</td><td>${dur}</td>
+          </tr>`;
       }
-      // If already Offline, ignore duplicate entries until Online appears
     } else if (e.status === 'Online') {
       if (lastOff) {
         const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
@@ -43,30 +50,27 @@ function displayDeviceHistory(ip, name, category, hist) {
         const offDay = offTime.toLocaleString('en-US', { weekday: 'long' });
         const offClock = offTime.toLocaleTimeString();
 
-        // Output Offline row with calculated duration
-        html += `<tr>
-          <td>${idx++}</td><td>${offDate}</td><td>${offDay}</td><td>${offClock}</td>
-          <td style="color:red">Offline</td><td>${dur}</td>
-        </tr>`;
+        html += `
+          <tr>
+            <td>${idx++}</td><td>${offDate}</td><td>${offDay}</td><td>${offClock}</td>
+            <td class="status-offline">Offline</td><td>${dur}</td>
+          </tr>
+          <tr>
+            <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+            <td class="status-online">${e.status}</td><td>${formatDuration(0)}</td>
+          </tr>`;
 
-        // Output Online row
-        html += `<tr>
-          <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-          <td style="color:green">${e.status}</td><td>${formatDuration(0)}</td>
-        </tr>`;
-
-        lastOff = null; // Reset after pairing
+        lastOff = null;
       } else {
-        // Online entry without a preceding Offline
-        html += `<tr>
-          <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-          <td style="color:green">${e.status}</td><td>${dur}</td>
-        </tr>`;
+        html += `
+          <tr>
+            <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+            <td class="status-online">${e.status}</td><td>${dur}</td>
+          </tr>`;
       }
     }
   });
 
-  // If history ends with unmatched Offline (ongoing)
   if (lastOff) {
     const t = new Date(lastOff);
     const date = t.toLocaleDateString();
@@ -75,12 +79,14 @@ function displayDeviceHistory(ip, name, category, hist) {
     const now = Date.now();
     const dur = formatDuration((now - new Date(lastOff)) / 1000);
 
-    html += `<tr>
-      <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-      <td style="color:red">Offline</td><td>${dur}</td>
-    </tr>`;
+    html += `
+      <tr>
+        <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
+        <td class="status-offline">Offline</td><td>${dur}</td>
+      </tr>`;
   }
 
-  html += `</tbody></table>`;
-  container.innerHTML = `<div class="scrollable-history-table">${html}</div>`;
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
 }
+
