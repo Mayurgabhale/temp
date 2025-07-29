@@ -1,18 +1,5 @@
-let dur = '-';
-if (e.status === 'Offline') {
-  lastOff = e.timestamp;
-} else if (e.status === 'Online' && lastOff) {
-  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-  dur = formatDuration(diff);
-  lastOff = null;
-}
 
 
-
-
-in view history tables device duration are not show, duration are not displaying
-read all code carefully and slow the issue to show duration
-in view history tables 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
 
@@ -193,7 +180,7 @@ function displayDeviceHistory(ip, name, category, hist) {
   }
   let html = `<table border="1" style="width:100%;text-align:center;border-collapse:collapse;">
     <thead><tr>
-      <th>#</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th>
+      <th>Sr.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Duration</th>
     </tr></thead><tbody>`;
   let idx = 1, lastOff = null;
   hist.forEach(e => {
@@ -201,13 +188,25 @@ function displayDeviceHistory(ip, name, category, hist) {
     const date = t.toLocaleDateString();
     const day = t.toLocaleString('en-US',{weekday:'long'});
     const time = t.toLocaleTimeString();
+
+    // let dur = '-';
+    // if (e.status==='Offline') lastOff = e.timestamp;
+    // else if (e.status==='Online' && lastOff) {
+    //   const diff = (new Date(e.timestamp)-new Date(lastOff))/1000;
+    //   if (diff>=300) dur = formatDuration(diff);
+    //   lastOff = null;
+    // }
+
     let dur = '-';
-    if (e.status==='Offline') lastOff = e.timestamp;
-    else if (e.status==='Online' && lastOff) {
-      const diff = (new Date(e.timestamp)-new Date(lastOff))/1000;
-      if (diff>=300) dur = formatDuration(diff);
-      lastOff = null;
-    }
+if (e.status === 'Offline') {
+  lastOff = e.timestamp;
+} else if (e.status === 'Online' && lastOff) {
+  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+  dur = formatDuration(diff);
+  lastOff = null;
+}
+
+
     html += `<tr>
       <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
       <td style="color:${e.status==='Online'?'green':'red'}">${e.status}</td>
