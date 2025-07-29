@@ -1,138 +1,4 @@
-let idx = 1;
-let lastOff = null;
-hist.forEach(e => {
-  const t = new Date(e.timestamp);
-  const date = t.toLocaleDateString();
-  const day = t.toLocaleString('en-US',{weekday:'long'});
-  const time = t.toLocaleTimeString();
 
-  let dur = '-';
-  if (e.status === 'Offline') {
-    lastOff = e.timestamp; // Just mark offline time
-  } else if (e.status === 'Online' && lastOff) {
-    const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-    dur = formatDuration(diff); // Correct diff
-    lastOff = null;
-  }
-
-  html += `<tr>
-    <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-    <td style="color:${e.status==='Online'?'green':'red'}">${e.status}</td>
-    <td>${dur}</td>
-  </tr>`;
-});
-
-
-
-
-
-....
-
-
-if (lastOff) {
-  const t = new Date(lastOff);
-  const date = t.toLocaleDateString();
-  const day = t.toLocaleString('en-US', { weekday: 'long' });
-  const time = t.toLocaleTimeString();
-  const now = Date.now();
-  const dur = formatDuration((now - new Date(lastOff)) / 1000);
-
-  html += `<tr>
-    <td>${idx++}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-    <td style="color:red">Offline</td>
-    <td>${dur}</td>
-  </tr>`;
-}
-
-
-
-
-
-
-
-
-
-
-let dur = '-';
-if (e.status === 'Offline') {
-  lastOff = e.timestamp; // Just mark the time, no duration yet
-} else if (e.status === 'Online' && lastOff) {
-  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-  dur = formatDuration(diff); // Calculate duration from lastOff to this Online
-  lastOff = null;
-}
-
-
-
-...
-
-
-
-
-
-Sr.No	Date	   Day	   Time	       Status	 Duration
-1	7/3/2025	Thursday	12:00:22 PM	Online	-                         see this 7/3
-2	7/3/2025	Thursday	1:25:37 PM	Offline	25d/21h/32m/53s            and this alos 7/3 but duraation ae so 25d/21h/32m/53s  this is wrong 
-3	7/3/2025	Thursday	1:26:07 PM	Online	30s   << this is correct 
-4	7/3/2025	Thursday	4:36:22 PM	Offline	25d/18h/22m/8s  this is wrong 
-5	7/3/2025	Thursday	4:36:41 PM	Online	19s
-6	7/3/2025	Thursday	5:45:22 PM	Offline	25d/17h/13m/8s
-7	7/3/2025	Thursday	5:45:45 PM	Online	24s
-see above duration are not correct calucatin 
-
-the belwo code is correct but duratin is not show correct 
-
-correct below logic and give me update code carefully 
-this logic is corrct but duration calucatin is incorrect 
-
-let dur = '-';
-if (e.status === 'Offline') {
-  lastOff = e.timestamp;
-  const now = Date.now();
-  dur = formatDuration((now - new Date(lastOff)) / 1000); // Show ongoing duration
-} else if (e.status === 'Online' && lastOff) {
-  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-  dur = formatDuration(diff);
-  lastOff = null;
-}
-
-Sr.No	Date	Day	Time	             Status	           Duration
-1	7/26/2025	Saturday	1:31:02 PM	Offline	2d/21h/15m/48s
-2	7/26/2025	Saturday	1:36:45 PM	Online	5m/43s
-3	7/29/2025	Tuesday	9:53:55 AM	Offline	52m/56s
-4	7/29/2025	Tuesday	10:01:01 AM	Online	7m/7s
-
-
-
-
-
-
-
-
-In view history table duration are not display so check what is the problem in this code and correct it 
-Read the below code carefully
-
-Is some are so duration but other is not show 
-So correct it and give me update code 
-
-
-
-
-see this duration not show
-LACA CR A209 EMERGENCY EXIT DOOR NORTHWEST - 10.64.21.80 (10.64.21.80)
-Sr.No	Date	Day	Time	           Status	  Duration
-1	7/29/2025	Tuesday	9:48:31 AM	Offline	  -
-
-see this only some row are disply duration 
-
-Sr.No	Date	Day	Time	            Status	    Duration
-1	7/3/2025	Thursday	12:00:22 PM	Online	-
-2	7/3/2025	Thursday	1:25:37 PM	Offline	-
-3	7/3/2025	Thursday	1:26:07 PM	Online	30s
-4	7/3/2025	Thursday	4:36:22 PM	Offline	-
-5	7/3/2025	Thursday	4:36:41 PM	Online	19s
-6	7/3/2025	Thursday	5:45:22 PM	Offline	-
-7	7/3/2025	Thursday	5:45:45 PM	Online	24s
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
@@ -222,6 +88,7 @@ function filterHistoryForDisplay(hist, category) {
   if (category === 'SERVER') return hist.slice();
 
   const out = [];
+  
   let lastOff = null;
   hist.forEach(e => {
     if (e.status === 'Offline') lastOff = e;
@@ -231,10 +98,13 @@ function filterHistoryForDisplay(hist, category) {
       lastOff = null;
     }
   });
+
   if (lastOff) {
+
     const diff = (Date.now() - new Date(lastOff.timestamp)) / 1000;
     if (diff >= 300) out.push(lastOff);
   }
+  
   return out.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
 }
 
@@ -331,14 +201,30 @@ function displayDeviceHistory(ip, name, category, hist) {
     //   lastOff = null;
     // }
 
-    let dur = '-';
+
+// let dur = '-';
+// if (e.status === 'Offline') {
+//   lastOff = e.timestamp;
+//   const now = Date.now();
+//   dur = formatDuration((now - new Date(lastOff)) / 1000); // Show ongoing duration
+// } else if (e.status === 'Online' && lastOff) {
+//   const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+//   dur = formatDuration(diff);
+//   lastOff = null;
+// }
+
+
+let dur = '-';
 if (e.status === 'Offline') {
-  lastOff = e.timestamp;
+  lastOff = e.timestamp; // Just mark the time, no duration yet
 } else if (e.status === 'Online' && lastOff) {
   const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
-  dur = formatDuration(diff);
+  dur = formatDuration(diff); // Calculate duration from lastOff to this Online
   lastOff = null;
 }
+
+
+
 
 
     html += `<tr>
