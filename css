@@ -1,3 +1,21 @@
+let dur = '-';
+if (e.status === 'Offline') {
+  lastOff = e.timestamp;
+  const now = Date.now();
+  dur = formatDuration((now - new Date(lastOff)) / 1000); // Show ongoing duration
+} else if (e.status === 'Online' && lastOff) {
+  const diff = (new Date(e.timestamp) - new Date(lastOff)) / 1000;
+  dur = formatDuration(diff);
+  lastOff = null;
+}
+
+
+
+
+
+
+
+
 In view history table duration are not display so check what is the problem in this code and correct it 
 Read the below code carefully
 
