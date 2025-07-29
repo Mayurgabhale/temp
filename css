@@ -1,24 +1,40 @@
 function displayDeviceHistory(ip, name, category, hist) {
     const header = document.getElementById('device-history-header');
     const container = document.getElementById('device-history');
+    
     if (header) {
         header.innerHTML = `
-            <h3>Device History</h3>
+            <h2 style="color: var(--yellow); font-size: 24px; margin-bottom: 10px;">Device History</h2>
             <p><strong>Device Name:</strong> ${name}</p>
             <p><strong>Device IP:</strong> ${ip}</p>
-            <hr>`;
+            <hr style="margin: 15px 0; border-color: var(--gray);">`;
     }
+
     if (!container) return;
+
     container.innerHTML = '';
+
     if (!hist.length) {
-        container.innerHTML = '<p>No significant history (all brief outages &lt;5 min).</p>';
+        container.innerHTML = `<p style="font-style: italic; color: #555;">No significant history (all brief outages &lt; 5 min).</p>`;
         return;
     }
+
     let html = `
-        <table border="1" style="width:100%; text-align:center; border-collapse:collapse;">
-            <thead><tr>
-                <th>Sr. No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Downtime Duration</th>
-            </tr></thead><tbody>`;
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Sr. No</th>
+                <th>Date</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Downtime Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
+
     let lastOff = null;
     hist.forEach((e, i) => {
         const d = new Date(e.timestamp);
@@ -31,79 +47,69 @@ function displayDeviceHistory(ip, name, category, hist) {
             dur = calculateDowntimeDuration(lastOff, hist);
             lastOff = null;
         }
+
         html += `
-            <tr>
-                <td>${i + 1}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-                <td style="color:${e.status === 'Online' ? '#212529' : '#212529'}">${e.status}</td>
-                <td>${dur}</td>
-            </tr>`;
+          <tr>
+            <td>${i + 1}</td>
+            <td>${date}</td>
+            <td>${day}</td>
+            <td>${time}</td>
+            <td class="${e.status === 'Offline' ? 'status-offline' : 'status-online'}">${e.status}</td>
+            <td>${dur}</td>
+          </tr>`;
     });
-    html += `</tbody></table>`;
+
+    html += `</tbody></table></div>`;
     container.innerHTML = html;
 }
 
 
 
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  top: 0;
-  left: 0;
+/* Device History Table */
+.history-table-wrapper {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.history-table {
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.65);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background-color: var(--white);
-  padding: 30px 40px;
-  border-radius: var(--border-radius);
-  width: 90%;
-  max-width: 600px;
+  border-collapse: collapse;
   font-family: var(--font-main);
-  color: var(--black);
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  border: 2px solid var(--yellow);
+  font-size: 14px;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid var(--gray);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
-/* Close button */
-.modal-content .close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--red);
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.modal-content .close:hover {
-  transform: scale(1.2);
-}
-
-/* Export Button */
-.export-btn {
-  margin-top: 20px;
+.history-table thead {
   background-color: var(--yellow);
   color: var(--black);
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-family: var(--font-main);
 }
 
-.export-btn:hover {
-  background-color: var(--blue);
-  color: var(--white);
+.history-table th,
+.history-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.history-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.status-online {
+  color: green;
+  font-weight: bold;
+}
+
+.status-offline {
+  color: red;
+  font-weight: bold;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .history-table {
+    font-size: 12px;
+  }
 }
