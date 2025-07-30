@@ -1,76 +1,39 @@
-<label for="city-filter">Filter by Location:</label>
-<select id="city-filter">
-  <option value="all">All Cities</option>
-</select>
+All Cities
 
+Quezon
 
+Taguig
 
+Pune
 
-// 👇 Populate City Filter
-const cityFilter = document.getElementById("city-filter");
-if (cityFilter) {
-    const cities = [...new Set(list.map(dev => dev.region).filter(Boolean))].sort();
-    cityFilter.innerHTML = '<option value="all">All Cities</option>';
-    cities.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city;
-        option.textContent = city;
-        cityFilter.appendChild(option);
-    });
-}
+Pune Tower B
 
+Kuala Lumpur
 
+Austria vienna
 
+Ireland dublin
 
+Rome
 
+Vilnius Delta
 
-function filterData() {
-    const typeSel = document.getElementById('device-type')?.value.toUpperCase();
-    const remarkSel = document.getElementById('remark-filter')?.value.toUpperCase();
-    const citySel = document.getElementById('city-filter')?.value.toUpperCase();
+Vilnius Gama
 
-    const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
-    let count = 0;
+Moscow
 
-    for (let row of rows) {
-        const type = row.cells[3].textContent.toUpperCase();
-        const remark = row.cells[9].textContent.trim().toUpperCase();
-        const city = row.cells[4].textContent.toUpperCase(); // Location column
+Madrid
 
-        const show =
-            (typeSel === 'ALL' || type === typeSel) &&
-            (remarkSel === 'ALL' || remark.includes(remarkSel)) &&
-            (citySel === 'ALL' || city === citySel);
+Costa Rica
 
-        row.style.display = show ? '' : 'none';
-        if (show) count++;
-    }
+Mexico
 
-    updateDisplayedDeviceCount(count);
-}
+Brazil
 
+Denver
 
+Tokyo
 
+Dubai
 
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    ['region', 'device-type', 'remark-filter'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
-    });
-
-    const cityFilter = document.getElementById('city-filter');
-    if (cityFilter) {
-        cityFilter.addEventListener('change', filterData);
-    }
-
-    fetchDeviceData();
-});
-
-
-
+Casablanca
