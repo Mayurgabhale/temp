@@ -1,14 +1,22 @@
-summary.js:835 Error fetching device history: ReferenceError: sanitizeId is not defined
-    at summary.js:843:34
+Error fetching device history: ReferenceError: filterHistoryForDisplay is not defined
+    at summary.js:851:34
     at Array.forEach (<anonymous>)
-    at summary.js:841:32
+    at summary.js:845:32
     at Array.forEach (<anonymous>)
-    at populateDeviceTable (summary.js:840:64)
-    at summary.js:832:13
-(anonymous)	@	summary.js:835
+    at populateDeviceTable (summary.js:844:64)
+    at summary.js:836:13
+(anonymous) @ summary.js:839
+Promise.catch
+fetchDeviceHistory @ summary.js:839
+(anonymous) @ summary.js:823
+Promise.then
+fetchDeviceData @ summary.js:804
+(anonymous) @ summary.html:277Understand this error
+let deviceUptimeTimers = {}; let deviceDowntimeTimers = {};
+solve above error and give me update code carefully 
+// Utility to turn an IP (or any string) into a safe DOM‑ID fragment 
 
-slove this error﻿
-
+function sanitizeId(str) { return (str || '').replace(/[^a-zA-Z0-9]/g, '_'); }
 
 function fetchDeviceData() {
     const selectedRegion = document.getElementById('region').value;
