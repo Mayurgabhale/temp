@@ -1,27 +1,14 @@
-trend.js:1150 Uncaught ReferenceError: devices is not defined
-    at trend.js:1150:34
-(anonymous)	@	trend.js:1150
-
-ReferenceError: downCountm is not defined
-    at trend.js:805:71
-    at Array.forEach (<anonymous>)
-    at trend.js:789:27
-    at Array.forEach (<anonymous>)
-    at populateDeviceTable (trend.js:788:51)
-    at trend.js:777:7
-Promise.catch		
-fetchDeviceHistory	@	trend.js:780
-(anonymous)	@	trend.js:769
-Promise.then		
-fetchDeviceData	@	trend.js:769
-(anonymous)	@	trend.html:174
-
-read above error carefully and slove it corectlty, 
-and give me update ocde 
-
-read below file carefully and slove this isssus
+in table city are diplsy corectly but in select box city are not disply
+read the below code carefully and give me correct code,
 
 
+
+<div class="filter">
+                <label for="cityFilter">City:</label>
+                <select id="cityFilter">
+                    <option value="all">All Cities</option>
+                </select>
+            </div>
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
@@ -71,7 +58,7 @@ function populateDeviceTable(details, historyData) {
       }
       const downCount = hist.filter(e => e.status === 'Offline').length;
 
-      devices.push({ ip, safe, name, category, rawHist, hist, status, downCountm,city });
+      devices.push({ ip, safe, name, category, rawHist, hist, status, downCount,city  });
     });
   });
 
@@ -100,7 +87,20 @@ if (d.status === 'Offline') {
 }
 
 
-    row.innerHTML = `
+//     row.innerHTML = `
+// <td>${i+1}</td>
+// <td><span id="ip-${d.safe}" class="copy-text" onclick="copyToClipboard('ip-${d.safe}')">${d.ip}</span></td>
+// <td><span id="name-${d.safe}" class="copy-text" onclick="copyToClipboard('name-${d.safe}')">${d.name}</span></td>
+// <td>${d.category}</td>
+// <td id="uptime-${d.safe}">0h/0m/0s</td>
+// <td id="downtime-count-${d.safe}">${d.downCount}</td>
+// <td id="downtime-${d.safe}">0h/0m/0s</td>
+// <td><button class="history-btn" onclick="openDeviceHistory('${d.ip}','${d.name}','${d.category}')">View History</button></td>
+// <td id="remark-${d.safe}">–</td>
+// `;
+
+
+row.innerHTML = `
 <td>${i+1}</td>
 <td><span id="ip-${d.safe}" class="copy-text" onclick="copyToClipboard('ip-${d.safe}')">${d.ip}</span></td>
 <td><span id="name-${d.safe}" class="copy-text" onclick="copyToClipboard('name-${d.safe}')">${d.name}</span></td>
@@ -110,8 +110,10 @@ if (d.status === 'Offline') {
 <td id="downtime-count-${d.safe}">${d.downCount}</td>
 <td id="downtime-${d.safe}">0h/0m/0s</td>
 <td><button class="history-btn" onclick="openDeviceHistory('${d.ip}','${d.name}','${d.category}')">View History</button></td>
-<td id="remark-${d.safe}">–</td>
+<td id="remark-${d.safe}" data-city="${d.city}">–</td>
 `;
+
+
     if (d.status === 'Online') startUptime(d.ip, d.hist);
     else startDowntime(d.ip, d.hist);
 
@@ -419,20 +421,6 @@ function exportDeviceHistoryToExcel() {
 const uniqueCities = [...new Set(devices.map(dev => dev.city).filter(Boolean))].sort();
 
 // Populate city filter dropdown
-
-document.addEventListener('DOMContentLoaded', () => {
-  ['region', 'device-type', 'remark-filter'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
-  });
-
-  document.getElementById('search-input')?.addEventListener('input', filterData);
-
-  // ✅ Add cityFilter event
-  document.getElementById('cityFilter')?.addEventListener('change', filterData);
-
-  fetchDeviceData();
-});
-
 const cityFilter = document.getElementById('cityFilter');
 if (cityFilter) {
   cityFilter.innerHTML = '<option value="all">All Cities</option>';
@@ -463,6 +451,7 @@ if (cityFilter) {
 // }
 
 
+
 function filterData() {
   const typeSel     = document.getElementById('device-type').value.toUpperCase();
   const remarkSel   = document.getElementById('remark-filter').value.toUpperCase();
@@ -490,14 +479,27 @@ function copyToClipboard(id) {
   if (t) navigator.clipboard.writeText(t);
 }
 
+// document.addEventListener('DOMContentLoaded', () => {
+//   ['region','device-type','remark-filter'].forEach(id => {
+//     document.getElementById(id)?.addEventListener('change', id==='region'?fetchDeviceData:filterData);
+//   });
+//   document.getElementById('search-input')?.addEventListener('input', filterData);
+//   fetchDeviceData();
+// });
+
+
 document.addEventListener('DOMContentLoaded', () => {
-  ['region','device-type','remark-filter'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', id==='region'?fetchDeviceData:filterData);
+  ['region', 'device-type', 'remark-filter'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
   });
+
   document.getElementById('search-input')?.addEventListener('input', filterData);
+
+  // ✅ Add cityFilter event
+  document.getElementById('cityFilter')?.addEventListener('change', filterData);
+
   fetchDeviceData();
 });
-
 
 
 function showToast(message) {
