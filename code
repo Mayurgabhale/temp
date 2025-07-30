@@ -1,12 +1,21 @@
-Uncaught ReferenceError: devices is not defined
-    at trend.js:1150:34Understand this error
+trend.js:1150 Uncaught ReferenceError: devices is not defined
+    at trend.js:1150:34
+(anonymous)	@	trend.js:1150
+
 ReferenceError: downCountm is not defined
     at trend.js:805:71
     at Array.forEach (<anonymous>)
     at trend.js:789:27
     at Array.forEach (<anonymous>)
     at populateDeviceTable (trend.js:788:51)
-    at trend.js:777:7Understand this error
+    at trend.js:777:7
+Promise.catch		
+fetchDeviceHistory	@	trend.js:780
+(anonymous)	@	trend.js:769
+Promise.then		
+fetchDeviceData	@	trend.js:769
+(anonymous)	@	trend.html:167
+﻿
 
 
 slove this this console error and give me updat code for correct 
