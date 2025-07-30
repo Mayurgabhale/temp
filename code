@@ -1,11 +1,12 @@
-trend.js:1165 Uncaught ReferenceError: devices is not defined
-    at trend.js:1165:34
-(anonymous)	@	trend.js:1165
+trend.js:1166 Uncaught ReferenceError: devices is not defined
+    at trend.js:1166:34
+(anonymous)	@	trend.js:1166
 
-Read the below code carefully and slove thie above error coreclty,
+REad the below code carefully and slove thie above error 
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
+let Devices = [];
 
 // Utility to turn an IP (or any string) into a safe DOM-ID fragment
 function sanitizeId(str) {
