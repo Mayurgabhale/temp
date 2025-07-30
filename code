@@ -1,82 +1,63 @@
-<header>
-  <div class="header-container">
-    <div class="header-left">
-      <button onclick="window.location.href='index.html'">
-        <i class="fas fa-home"></i> Back to Dashboard
-      </button>
-      <button onclick="window.location.href='summary.html'">
-        <i class="fas fa-table"></i> View Summary
-      </button>
-    </div>
-    <h1><i class="fas fa-chart-line"></i> Devices Trend Details</h1>
-  </div>
-</header>
+<label for="city-filter">Filter by Location:</label>
+<select id="city-filter">
+  <option value="all">All Cities</option>
+</select>
 
 
 
-/* Clean header layout */
-header {
-  background-color: var(--yellow);
-  border-bottom: 1px solid #000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  padding: 10px 20px;
-}
 
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
 
-.header-left {
-  display: flex;
-  gap: 12px;
-}
-
-.header-left button {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #000;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: var(--font-main);
-}
-
-.header-left button:hover {
-  background-color: #f1f1f1;
-  transform: scale(1.03);
-}
-
-header h1 {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 700;
-  font-family: Georgia, serif;
-  color: #000;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  justify-content: center;
-  text-align: center;
+// Populate the City filter
+const cityFilter = document.getElementById("city-filter");
+if (cityFilter) {
+  const cities = [...new Set(list.map(dev => dev.region).filter(Boolean))].sort();
+  cityFilter.innerHTML = '<option value="all">All Cities</option>';
+  cities.forEach(city => {
+    const option = document.createElement("option");
+    option.value = city;
+    option.textContent = city;
+    cityFilter.appendChild(option);
+  });
 }
 
 
 
 
-.header-container {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+
+
+function filterData() {
+  const typeSel = document.getElementById('device-type')?.value.toUpperCase();
+  const remarkSel = document.getElementById('remark-filter')?.value.toUpperCase();
+  const citySel = document.getElementById('city-filter')?.value.toUpperCase();
+
+  const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
+  let count = 0;
+
+  for (let row of rows) {
+    const type = row.cells[3].textContent.toUpperCase();
+    const remark = row.cells[9].textContent.trim().toUpperCase();
+    const city = row.cells[4].textContent.toUpperCase(); // Location column
+
+    const show =
+      (typeSel === 'ALL' || type === typeSel) &&
+      (remarkSel === 'ALL' || (remarkSel === 'YES' ? remark : !remark)) &&
+      (citySel === 'ALL' || city === citySel);
+
+    row.style.display = show ? '' : 'none';
+    if (show) count++;
+  }
+
+  updateDisplayedDeviceCount(count);
 }
 
-header h1 {
-  font-size: 20px;
-  justify-content: flex-start;
-}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  ['region', 'device-type', 'remark-filter', 'city-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
+  });
+
+  fetchDeviceData();
+});
+
