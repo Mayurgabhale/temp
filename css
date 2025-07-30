@@ -1,24 +1,141 @@
-.scrollable-history-table {
-  max-height: 400px; /* or any height you prefer */
-  overflow-y: auto;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
+<!DOCTYPE html>
+<html lang="en">
 
-/* Optional: keep header visible when scrolling (sticky header) */
-.history-table thead th {
-  position: sticky;
-  top: 0;
-  background-color: var(--yellow);
-  z-index: 1;
-}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Devices Trend Details</title>
+    <link rel="stylesheet" href="trend.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+
+ <button id="scrollToTopBtn" title="Go to top">
+        <i class="bi bi-chevron-double-up"></i>
+    </button>
+
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <button onclick="window.location.href='index.html'" title="Back to Dashboard">
+                    <i class="fas fa-home"></i>
+                </button>
+                <button onclick="window.location.href='summary.html'" title="View Summary">
+                    <i class="fas fa-table"></i>
+                </button>
+            </div>
+            <h1><i class="fas fa-chart-line"></i> Devices Trend Details</h1>
+        </div>
+    </header>
+
+    <!-- Main layout: sidebar + table -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div id="sidebar-content">
+
+
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search by IP, Location, City" />
+            </div>
 
 
 
 
-<div class="scrollable-history-table">
-  <table class="history-table">
-    ...
-  </table>
-</div>
+            <!-- <button onclick="exportDeviceTableToExcel()"><i class="fas fa-file-export"></i> Export Device Table</button> -->
+            <button onclick="exportDeviceTableToExcel()"  id="export-btn"><i class="fas fa-file-export"></i> Export Device Table</button>
+
+            <label for="region">Select Region:</label>
+            <select id="region" onchange="fetchDeviceData()">
+                <option value="global" selected>Global</option>
+                <option value="apac">APAC</option>
+                <option value="emea">EMEA</option>
+                <option value="laca">LACA</option>
+                <option value="namer">NAMER</option>
+            </select>
+
+            <label for="device-type">Filter by Device Type:</label>
+            <select id="device-type" onchange="filterData()">
+                <option value="ALL">All</option>
+                <option value="CONTROLLER">Controller</option>
+                <option value="ARCHIVER">Archiver</option>
+                <option value="CAMERA">Camera</option>
+                <option value="SERVER">Server</option>
+            </select>
+
+            <label for="remark-filter">Filter by Remark:</label>
+            <select id="remark-filter" onchange="filterData()">
+                <option value="ALL">All</option>
+                <option value="Device needs repair">Device needs repair</option>
+                <option value="Device is Online">Device is Online</option>
+                <option value="Device is Offline">Device is Offline</option>
+            </select>
+
+            <label for="city-filter">Filter by Location:</label>
+            <select id="city-filter">
+                <option value="all">All Cities</option>
+            </select>
+
+
+        </div>
+
+        <!-- Table -->
+        <div class="container">
+             
+            <table id="device-table">
+                <thead>
+                    <tr>
+                        <th>Sr. No</th>
+                        <th>Device IP</th>
+                        <th>Device Name</th>
+                        <th>Device Type</th>
+                        <th>Uptime Duration</th>
+                        <th>Downtime Count</th>
+                        <th>Downtime Duration</th>
+                        <th>Details</th>
+                        <th>Remark</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Device History Modal -->
+    <div id="device-history-modal" class="modal">
+        <div class="modal-content">
+            <div id="device-history-header"></div>
+            <div id="device-history"></div>
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <button onclick="exportDeviceHistoryToExcel()" class="history-btn">
+                <i class="fas fa-download"></i> Export Device History
+            </button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <img src="images/footerLogo.png" alt="Company Logo" class="footer-logo" />
+        <p>&copy;2025 VisionWatch | Powered by <strong style="color: #ffcc00;">Western Union
+                Ltd.</strong></p>
+        <p>Contact:
+            <a href="mailto:gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com">
+                gsoc-globalsecurityoperationcenter.sharedmailbox@westernunion.com
+            </a> |
+            <a href="tel:+91 20 67632394">+91 2067632394</a>
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchDeviceData();
+        });
+    </script>
+    <script src="trend.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+
+</html>
