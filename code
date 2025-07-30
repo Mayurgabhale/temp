@@ -1,3 +1,39 @@
+function filterData() {
+  const searchValue = document.getElementById('searchBox')?.value.toLowerCase() || "";
+  const selectedCity = document.getElementById('cityFilter')?.value.toLowerCase() || "";
+  const selectedDeviceType = document.getElementById('device-type')?.value.toLowerCase() || "all";
+  const selectedRemark = document.getElementById('remark-filter')?.value.toLowerCase() || "all";
+
+  const rows = document.querySelectorAll('#device-table tbody tr');
+  let visibleCount = 0;
+
+  rows.forEach(row => {
+    const ip = row.cells[1].textContent.trim(); // IP column
+    const name = row.cells[2].textContent.toLowerCase();
+    const category = row.cells[3].textContent.toLowerCase(); // Device Type
+    const region = row.cells[4].textContent.toLowerCase();
+    const city = row.cells[5].textContent.toLowerCase();
+    const remark = document.getElementById(`remark-${sanitizeId(ip)}`)?.innerText.toLowerCase() || "";
+
+    const matchesSearch = [ip, name, category, region, city].some(text =>
+      text.toLowerCase().includes(searchValue)
+    );
+
+    const matchesCity = !selectedCity || city === selectedCity;
+    const matchesType = selectedDeviceType === "all" || category === selectedDeviceType.toLowerCase();
+    const matchesRemark = selectedRemark === "all" || remark.includes(selectedRemark);
+
+    const shouldDisplay = matchesSearch && matchesCity && matchesType && matchesRemark;
+    row.style.display = shouldDisplay ? "" : "none";
+    if (shouldDisplay) visibleCount++;
+  });
+
+  updateDisplayedDeviceCount(visibleCount);
+}
+
+
+
+
 
 
 
