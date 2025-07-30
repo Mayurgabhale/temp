@@ -1,5 +1,6 @@
 
 
+
 //C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.js
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
@@ -87,7 +88,7 @@ function populateDeviceTable(details, historyData) {
             // Only show offline or >15 downtimes
             if (current === 'Offline' || downCount > 15) {
                 list.push({ ip, safe, name, category, region,city, current, hist, downCount });
-                // list.push({ ip, safe, name, category, location, city, current, hist, downCount });
+                
             }
         });
     });
@@ -117,10 +118,8 @@ list.forEach(dev => {
 
 
 const cities = [...new Set(list.map(dev => dev.city).filter(Boolean))].sort();
-// const locations = [...new Set(list.map(dev => dev.location).filter(Boolean))].sort();
 
 const cityFilter = document.getElementById('cityFilter');
-// const locationFilter = document.getElementById('locationFilter');
 
 cities.forEach(city => {
   const option = document.createElement('option');
@@ -129,12 +128,7 @@ cities.forEach(city => {
   cityFilter.appendChild(option);
 });
 
-// locations.forEach(loc => {
-//   const option = document.createElement('option');
-//   option.value = loc;
-//   option.textContent = loc;
-//   locationFilter.appendChild(option);
-// });
+
 
 
 
@@ -432,30 +426,6 @@ function closeHistoryModal() {
 
 
 
-// function filterData() {
-//     const typeSel = document.getElementById('device-type')?.value.toUpperCase();
-//     const remarkSel = document.getElementById('remark-filter')?.value.toUpperCase();
-//     const citySel = document.getElementById('city-filter')?.value.toUpperCase();
-
-//     const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
-//     let count = 0;
-
-//     for (let row of rows) {
-//         const type = row.cells[3].textContent.toUpperCase();
-//         const remark = row.cells[9].textContent.trim().toUpperCase();
-//         const city = row.cells[4].textContent.toUpperCase(); // Location column
-
-//         const show =
-//             (typeSel === 'ALL' || type === typeSel) &&
-//             (remarkSel === 'ALL' || remark.includes(remarkSel)) &&
-//             (citySel === 'ALL' || city === citySel);
-
-//         row.style.display = show ? '' : 'none';
-//         if (show) count++;
-//     }
-
-//     updateDisplayedDeviceCount(count);
-// }
 
 
 
@@ -463,22 +433,18 @@ function closeHistoryModal() {
 function filterData() {
 
 document.getElementById('cityFilter').addEventListener('change', filterData);
-// document.getElementById('locationFilter').addEventListener('change', filterData);
 document.getElementById('searchBox').addEventListener('input', filterData);
 
   const searchValue = document.getElementById('searchBox').value.toLowerCase();
   const selectedCity = document.getElementById('cityFilter').value.toLowerCase();
-//   const selectedLocation = document.getElementById('locationFilter').value.toLowerCase();
 
   const rows = document.querySelectorAll('#deviceTable tbody tr');
   rows.forEach(row => {
     const text = row.textContent.toLowerCase();
     const city = row.cells[4].textContent.toLowerCase();     // Adjust index if needed
-    // const location = row.cells[5].textContent.toLowerCase(); /
 
     const matchesSearch = text.includes(searchValue);
     const matchesCity = !selectedCity || city === selectedCity;
-    // const matchesLocation = !selectedLocation || location === selectedLocation;
 
     row.style.display = (matchesSearch && matchesCity) ? '' : 'none';
   });
