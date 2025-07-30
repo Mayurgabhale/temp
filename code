@@ -1,106 +1,12 @@
-function filterData() {
-  const searchValue = document.getElementById('searchBox')?.value.toLowerCase() || "";
-  const selectedCity = document.getElementById('cityFilter')?.value.toLowerCase() || "";
-  const selectedDeviceType = document.getElementById('device-type')?.value.toLowerCase() || "all";
-  const selectedRemark = document.getElementById('remark-filter')?.value.toLowerCase() || "all";
-
-  const rows = document.querySelectorAll('#device-table tbody tr');
-  let visibleCount = 0;
-
-  rows.forEach(row => {
-    const ip = row.cells[1].textContent.trim(); // IP column
-    const name = row.cells[2].textContent.toLowerCase();
-    const category = row.cells[3].textContent.toLowerCase(); // Device Type
-    const region = row.cells[4].textContent.toLowerCase();
-    const city = row.cells[5].textContent.toLowerCase();
-    const remark = document.getElementById(`remark-${sanitizeId(ip)}`)?.innerText.toLowerCase() || "";
-
-    const matchesSearch = [ip, name, category, region, city].some(text =>
-      text.toLowerCase().includes(searchValue)
-    );
-
-    const matchesCity = !selectedCity || city === selectedCity;
-    const matchesType = selectedDeviceType === "all" || category === selectedDeviceType.toLowerCase();
-    const matchesRemark = selectedRemark === "all" || remark.includes(selectedRemark);
-
-    const shouldDisplay = matchesSearch && matchesCity && matchesType && matchesRemark;
-    row.style.display = shouldDisplay ? "" : "none";
-    if (shouldDisplay) visibleCount++;
-  });
-
-  updateDisplayedDeviceCount(visibleCount);
-}
-
-
-
-
-
-
-
-
-<!-- Region Filter -->
-            <div class="filter-group">
-                <label for="region">Select Region:</label>
-                <select id="region" onchange="fetchDeviceData()">
-                    <option value="global">Global</option>
-                    <option value="apac">APAC</option>
-                    <option value="emea">EMEA</option>
-                    <option value="laca">LACA</option>
-                    <option value="namer">NAMER</option>
-                </select>
-            </div>
-
-            <!-- Device Type Filter -->
-            <div class="filter-group">
-                <label for="device-type">Filter by Device Type:</label>
-                <select id="device-type" onchange="filterData()">
-                    <option value="ALL">All</option>
-                    <option value="CONTROLLER">Controller</option>
-                    <option value="ARCHIVER">Archiver</option>
-                    <option value="CAMERA">Camera</option>
-                    <option value="SERVER">Server</option>
-                </select>
-            </div>
-
-            <!-- Remark Filter -->
-            <div class="filter-group">
-                <label for="remark-filter">Filter by Remark:</label>
-                <select id="remark-filter" onchange="filterData()">
-                    <option value="ALL">All</option>
-                    <option value="Device needs repair">Device needs repair</option>
-                    <option value="Device is Online">Device is Online</option>
-                    <option value="Device is Offline">Device is Offline</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
+good, 
+but this is not work  <div class="filter-group">
                 <label for="city-filter">Filter by Location:</label>
 
                 <select id="cityFilter">
                     <option value="">All Cities</option>
                 </select>
             </div>
-
-
-
-in above select filter are not work. 
-means if i select <option value="Device is Offline">Device is Offline</option> show only ofline devices ok 
-
-only this filter are work  <!-- Region Filter -->
-            <div class="filter-group">
-                <label for="region">Select Region:</label>
-                <select id="region" onchange="fetchDeviceData()">
-                    <option value="global">Global</option>
-                    <option value="apac">APAC</option>
-                    <option value="emea">EMEA</option>
-                    <option value="laca">LACA</option>
-                    <option value="namer">NAMER</option>
-                </select>
-            </div>
-
-
-read below code and give me update code version. carefully
-
+other are wokr propary only city not filter out 
 //C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.js
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
@@ -568,28 +474,63 @@ function closeHistoryModal() {
  
 // }
 
+// function filterData() {
+//   const searchValue = document.getElementById('searchBox').value.toLowerCase();
+//   const selectedCity = document.getElementById('cityFilter').value.toLowerCase();
+//   const selectedLocation = document.getElementById('locationFilter').value.toLowerCase();
+
+//   const rows = document.querySelectorAll('#deviceTable tbody tr');
+//   rows.forEach(row => {
+//     const name = row.cells[0].textContent.toLowerCase();
+//     const category = row.cells[1].textContent.toLowerCase();
+//     const safe = row.cells[2].textContent.toLowerCase();
+//     const current = row.cells[3].textContent.toLowerCase();
+//     const city = row.cells[4].textContent.toLowerCase();
+//     const location = row.cells[5].textContent.toLowerCase();
+
+//     const matchesSearch = [name, category, safe, current, city, location].some(text =>
+//       text.includes(searchValue)
+//     );
+//     const matchesCity = !selectedCity || city === selectedCity;
+//     const matchesLocation = !selectedLocation || location === selectedLocation;
+
+//     row.style.display = (matchesSearch && matchesCity && matchesLocation) ? '' : 'none';
+//   });
+// }
+
+
+
 function filterData() {
-  const searchValue = document.getElementById('searchBox').value.toLowerCase();
-  const selectedCity = document.getElementById('cityFilter').value.toLowerCase();
-  const selectedLocation = document.getElementById('locationFilter').value.toLowerCase();
+  const searchValue = document.getElementById('searchBox')?.value.toLowerCase() || "";
+  const selectedCity = document.getElementById('cityFilter')?.value.toLowerCase() || "";
+  const selectedDeviceType = document.getElementById('device-type')?.value.toLowerCase() || "all";
+  const selectedRemark = document.getElementById('remark-filter')?.value.toLowerCase() || "all";
 
-  const rows = document.querySelectorAll('#deviceTable tbody tr');
+  const rows = document.querySelectorAll('#device-table tbody tr');
+  let visibleCount = 0;
+
   rows.forEach(row => {
-    const name = row.cells[0].textContent.toLowerCase();
-    const category = row.cells[1].textContent.toLowerCase();
-    const safe = row.cells[2].textContent.toLowerCase();
-    const current = row.cells[3].textContent.toLowerCase();
-    const city = row.cells[4].textContent.toLowerCase();
-    const location = row.cells[5].textContent.toLowerCase();
+    const ip = row.cells[1].textContent.trim(); // IP column
+    const name = row.cells[2].textContent.toLowerCase();
+    const category = row.cells[3].textContent.toLowerCase(); // Device Type
+    const region = row.cells[4].textContent.toLowerCase();
+    const city = row.cells[5].textContent.toLowerCase();
+    const remark = document.getElementById(`remark-${sanitizeId(ip)}`)?.innerText.toLowerCase() || "";
 
-    const matchesSearch = [name, category, safe, current, city, location].some(text =>
-      text.includes(searchValue)
+    const matchesSearch = [ip, name, category, region, city].some(text =>
+      text.toLowerCase().includes(searchValue)
     );
-    const matchesCity = !selectedCity || city === selectedCity;
-    const matchesLocation = !selectedLocation || location === selectedLocation;
 
-    row.style.display = (matchesSearch && matchesCity && matchesLocation) ? '' : 'none';
+    const matchesCity = !selectedCity || city === selectedCity;
+    const matchesType = selectedDeviceType === "all" || category === selectedDeviceType.toLowerCase();
+    const matchesRemark = selectedRemark === "all" || remark.includes(selectedRemark);
+
+    const shouldDisplay = matchesSearch && matchesCity && matchesType && matchesRemark;
+    row.style.display = shouldDisplay ? "" : "none";
+    if (shouldDisplay) visibleCount++;
   });
+
+  updateDisplayedDeviceCount(visibleCount);
 }
 
 
@@ -662,4 +603,12 @@ function copyToClipboard(elementId) {
             .catch(err => console.error("Failed to copy:", err));
     }
 }
+
+
+// ..........
+
+
+
+// ......
+
 
