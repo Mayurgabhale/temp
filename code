@@ -1,4 +1,20 @@
 
+// Populate city filter dropdown after devices are prepared
+const cityFilter = document.getElementById('cityFilter');
+if (cityFilter) {
+  const uniqueCities = [...new Set(devices.map(dev => dev.city).filter(Boolean))].sort();
+  cityFilter.innerHTML = '<option value="all">All Cities</option>';
+  uniqueCities.forEach(city => {
+    const option = document.createElement('option');
+    option.value = city;
+    option.textContent = city;
+    cityFilter.appendChild(option);
+  });
+}
+
+
+
+
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
