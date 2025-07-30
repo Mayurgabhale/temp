@@ -1,4 +1,60 @@
+<label for="city-filter">Filter by Location:</label>
+<select id="city-filter">
+    <option value="all">All Cities</option>
+</select>
 
+
+
+// Collect cities from devices
+const citySet = new Set();
+list.forEach(dev => {
+    if (dev.region) {
+        citySet.add(dev.region);
+    }
+});
+
+// Populate city filter dropdown
+const cityFilter = document.getElementById("city-filter");
+if (cityFilter) {
+    cityFilter.innerHTML = '<option value="all">All Cities</option>';
+    Array.from(citySet).sort().forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        option.textContent = city;
+        cityFilter.appendChild(option);
+    });
+}
+
+
+
+
+
+
+
+function filterData() {
+    const typeSel = document.getElementById('device-type').value.toUpperCase();
+    const remarkSel = document.getElementById('remark-filter').value.toUpperCase();
+    const citySel = document.getElementById('city-filter').value.toUpperCase();
+
+    const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
+    let count = 0;
+
+    for (let row of rows) {
+        const type = row.cells[3].textContent.toUpperCase();
+        const remark = row.cells[9].textContent.trim().toUpperCase();
+        const city = row.cells[4].textContent.toUpperCase(); // Location column
+
+        const show =
+            (typeSel === 'ALL' || type === typeSel) &&
+            (remarkSel === 'ALL' || remark.includes(remarkSel)) &&
+            (citySel === 'ALL' || city === citySel);
+
+        row.style.display = show ? '' : 'none';
+        if (show) count++;
+    }
+
+    updateDisplayedDeviceCount(count);
+}
 
 
 
