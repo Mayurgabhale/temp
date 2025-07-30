@@ -1,151 +1,171 @@
-// File: C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.js let deviceUptimeTimers = {}; let deviceDowntimeTimers = {};
+summary.js:835 Error fetching device history: ReferenceError: sanitizeId is not defined
+    at summary.js:843:34
+    at Array.forEach (<anonymous>)
+    at summary.js:841:32
+    at Array.forEach (<anonymous>)
+    at populateDeviceTable (summary.js:840:64)
+    at summary.js:832:13
+(anonymous)	@	summary.js:835
 
-// Utility to turn an IP (or any string) into a safe DOM‑ID fragment function sanitizeId(str) { return (str || '').replace(/[^a-zA-Z0-9]/g, '_'); }
+slove this error﻿
 
-function fetchDeviceData() { const selectedRegion = document.getElementById('region').value;
 
-if (selectedRegion === 'All') {
-    fetch(`http://localhost/api/regions/all-details`)
+function fetchDeviceData() {
+    const selectedRegion = document.getElementById('region').value;
+
+    if (selectedRegion === 'All') {
+        fetch(`http://localhost/api/regions/all-details`)
+            .then(res => res.json())
+            .then(allRegionsData => {
+                let combinedDetails = { cameras: [], archivers: [], controllers: [], servers: [] };
+                Object.values(allRegionsData).forEach(regionData => {
+                    if (regionData.details) {
+                        ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
+                            combinedDetails[type].push(...(regionData.details[type] || []));
+                        });
+                    }
+                });
+                fetchDeviceHistory(combinedDetails);
+            })
+            .catch(err => console.error('Error fetching all regions data:', err));
+    } else {
+        fetch(`http://localhost/api/regions/details/${selectedRegion}`)
+            .then(res => res.json())
+            .then(regionData => {
+                const d = regionData.details;
+                const total = (d.cameras?.length || 0) + (d.archivers?.length || 0) + (d.controllers?.length || 0) + (d.servers?.length || 0);
+                const online = ([...(d.cameras || []), ...(d.archivers || []), ...(d.controllers || []), ...(d.servers || [])]
+                    .filter(dev => dev.status === "Online").length);
+
+                const setWithIcon = (id, iconClass, label, value, colorClass = "") => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = `<i class="${iconClass}"></i> ${label}: <span class="${colorClass}" style="font-weight: 700;">${value}</span>`;
+                    }
+                };
+                setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total, "text-green");
+                setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online, "text-green");
+                setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0, "text-green");
+                setWithIcon("total-controllers", "fas fa-microchip", "Total Controllers", d.controllers?.length || 0, "text-green");
+                setWithIcon("total-archivers", "fas fa-database", "Total Archivers", d.archivers?.length || 0, "text-green");
+                setWithIcon("total-servers", "fas fa-server", "Total Servers", d.servers?.length || 0, "text-green");
+
+                fetchDeviceHistory(d);
+            })
+            .catch(err => console.error('Error fetching device data:', err));
+    }
+
+}
+
+function fetchDeviceHistory(details) {
+    // fetch(http://localhost/api/devices/history) .then(res => res.json()) .then(historyData => { populateDeviceTable(details, historyData); window.deviceHistoryData = historyData; }) .catch(err => console.error('Error fetching device history:', err)); }
+
+            fetch(`http://localhost/api/devices/history`)
         .then(res => res.json())
-        .then(allRegionsData => {
-            let combinedDetails = { cameras: [], archivers: [], controllers: [], servers: [] };
-            Object.values(allRegionsData).forEach(regionData => {
-                if (regionData.details) {
-                    ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
-                        combinedDetails[type].push(...(regionData.details[type] || []));
-                    });
-                }
+        .then(historyData => {
+            populateDeviceTable(details, historyData);
+            window.deviceHistoryData = historyData;
+        })
+        .catch(err => console.error('Error fetching device history:', err));
+}
+        function populateDeviceTable(details, historyData) {
+            const tbody = document.getElementById('device-table').getElementsByTagName('tbody')[0]; tbody.innerHTML = ''; let list = []; let locationSet = new Set();
+
+            ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
+                details[type]?.forEach(dev => {
+                    const ip = dev.ip_address;
+                    const safe = sanitizeId(ip);
+                    const name = dev[type.slice(0, -1) + 'name'] || 'Unknown';
+                    const category = type.slice(0, -1).toUpperCase();
+                    const region = dev.location || 'Unknown';
+                    const hist = filterHistoryForDisplay(historyData[ip] || [], category);
+                    const current = dev.status || (hist.length ? hist[hist.length - 1].status : 'Unknown');
+                    const downCount = hist.filter(e => e.status === 'Offline').length;
+
+                    // Collect unique locations for filter dropdown
+                    locationSet.add(region);
+
+                    if (current === 'Offline' || downCount > 15) {
+                        list.push({ ip, safe, name, category, region, current, hist, downCount });
+                    }
+                });
             });
-            fetchDeviceHistory(combinedDetails);
-        })
-        .catch(err => console.error('Error fetching all regions data:', err));
-} else {
-    fetch(`http://localhost/api/regions/details/${selectedRegion}`)
-        .then(res => res.json())
-        .then(regionData => {
-            const d = regionData.details;
-            const total = (d.cameras?.length || 0) + (d.archivers?.length || 0) + (d.controllers?.length || 0) + (d.servers?.length || 0);
-            const online = ([...(d.cameras || []), ...(d.archivers || []), ...(d.controllers || []), ...(d.servers || [])]
-                .filter(dev => dev.status === "Online").length);
 
-            const setWithIcon = (id, iconClass, label, value, colorClass = "") => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.innerHTML = `<i class="${iconClass}"></i> ${label}: <span class="${colorClass}" style="font-weight: 700;">${value}</span>`;
-                }
-            };
-            setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total,"text-green");
-            setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online, "text-green");
-            setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0,"text-green");
-            setWithIcon("total-controllers", "fas fa-microchip", "Total Controllers", d.controllers?.length || 0,"text-green");
-            setWithIcon("total-archivers", "fas fa-database", "Total Archivers", d.archivers?.length || 0,"text-green");
-            setWithIcon("total-servers", "fas fa-server", "Total Servers", d.servers?.length || 0,"text-green");
+            // Insert location filter label and dropdown into DOM if not already present
+            const filterContainer = document.getElementById('filters-container');
+            if (filterContainer && !document.getElementById('location-filter-label')) {
+                const label = document.createElement('label');
+                label.setAttribute('for', 'location-filter');
+                label.id = 'location-filter-label';
+                label.textContent = 'Filter by Location:';
 
-            fetchDeviceHistory(d);
-        })
-        .catch(err => console.error('Error fetching device data:', err));
-}
+                const select = document.createElement('select');
+                select.id = 'location-filter';
+                select.innerHTML = '<option value="All">All Locations</option>';
 
-}
+                filterContainer.appendChild(label);
+                filterContainer.appendChild(select);
 
-function fetchDeviceHistory(details) { fetch(http://localhost/api/devices/history) .then(res => res.json()) .then(historyData => { populateDeviceTable(details, historyData); window.deviceHistoryData = historyData; }) .catch(err => console.error('Error fetching device history:', err)); }
+                // Attach change listener
+                select.addEventListener('change', filterData);
+            }
 
-function populateDeviceTable(details, historyData) { const tbody = document.getElementById('device-table').getElementsByTagName('tbody')[0]; tbody.innerHTML = ''; let list = []; let locationSet = new Set();
+            // Populate the location dropdown
+            const locationFilter = document.getElementById('location-filter');
+            if (locationFilter) {
+                // Clear existing options except 'All'
+                locationFilter.innerHTML = '<option value="All">All Locations</option>';
+                [...locationSet].sort().forEach(loc => {
+                    const opt = document.createElement('option');
+                    opt.value = loc;
+                    opt.textContent = loc;
+                    locationFilter.appendChild(opt);
+                });
+            }
 
-['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
-    details[type]?.forEach(dev => {
-        const ip = dev.ip_address;
-        const safe = sanitizeId(ip);
-        const name = dev[type.slice(0, -1) + 'name'] || 'Unknown';
-        const category = type.slice(0, -1).toUpperCase();
-        const region = dev.location || 'Unknown';
-        const hist = filterHistoryForDisplay(historyData[ip] || [], category);
-        const current = dev.status || (hist.length ? hist[hist.length - 1].status : 'Unknown');
-        const downCount = hist.filter(e => e.status === 'Offline').length;
+            list.sort((a, b) => b.downCount - a.downCount);
 
-        // Collect unique locations for filter dropdown
-        locationSet.add(region);
+            const downtimeOver15Count = list.filter(d => d.downCount > 15).length;
+            const currentlyOfflineCount = list.filter(d => d.current === 'Offline').length;
+            const setIf = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
+            setIf('count-downtime-over-15', `Devices with >15 downtimes: ${downtimeOver15Count}`);
+            setIf('count-currently-offline', `Devices currently Offline: ${currentlyOfflineCount}`);
 
-        if (current === 'Offline' || downCount > 15) {
-            list.push({ ip, safe, name, category, region, current, hist, downCount });
+            if (!list.length) {
+                const row = tbody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 10;
+                cell.textContent = "No devices found";
+                cell.style.textAlign = "center";
+                cell.style.fontWeight = "bold";
+                updateDisplayedDeviceCount(0);
+                return;
+            }
+
+            window.allDeviceRows = list; // Cache for filtering
+            renderFilteredTable();
+
         }
-    });
-});
-
-// Insert location filter label and dropdown into DOM if not already present
-const filterContainer = document.getElementById('filters-container');
-if (filterContainer && !document.getElementById('location-filter-label')) {
-    const label = document.createElement('label');
-    label.setAttribute('for', 'location-filter');
-    label.id = 'location-filter-label';
-    label.textContent = 'Filter by Location:';
-
-    const select = document.createElement('select');
-    select.id = 'location-filter';
-    select.innerHTML = '<option value="All">All Locations</option>';
-
-    filterContainer.appendChild(label);
-    filterContainer.appendChild(select);
-
-    // Attach change listener
-    select.addEventListener('change', filterData);
-}
-
-// Populate the location dropdown
-const locationFilter = document.getElementById('location-filter');
-if (locationFilter) {
-    // Clear existing options except 'All'
-    locationFilter.innerHTML = '<option value="All">All Locations</option>';
-    [...locationSet].sort().forEach(loc => {
-        const opt = document.createElement('option');
-        opt.value = loc;
-        opt.textContent = loc;
-        locationFilter.appendChild(opt);
-    });
-}
-
-list.sort((a, b) => b.downCount - a.downCount);
-
-const downtimeOver15Count = list.filter(d => d.downCount > 15).length;
-const currentlyOfflineCount = list.filter(d => d.current === 'Offline').length;
-const setIf = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
-setIf('count-downtime-over-15', `Devices with >15 downtimes: ${downtimeOver15Count}`);
-setIf('count-currently-offline', `Devices currently Offline: ${currentlyOfflineCount}`);
-
-if (!list.length) {
-    const row = tbody.insertRow();
-    const cell = row.insertCell();
-    cell.colSpan = 10;
-    cell.textContent = "No devices found";
-    cell.style.textAlign = "center";
-    cell.style.fontWeight = "bold";
-    updateDisplayedDeviceCount(0);
-    return;
-}
-
-window.allDeviceRows = list; // Cache for filtering
-renderFilteredTable();
-
-}
 
 // ... rest of existing functions (filterHistoryForDisplay, startUptime, startDowntime, updateRemarks, etc.) remain unchanged ...
 
-function filterData() { const typeSel = document.getElementById('device-type').value.toUpperCase(); const remarkSel = document.getElementById('remark-filter').value.toUpperCase(); const locSel = document.getElementById('location-filter')?.value || "All"; const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows; let count = 0;
+function filterData() {
+            const typeSel = document.getElementById('device-type').value.toUpperCase(); const remarkSel = document.getElementById('remark-filter').value.toUpperCase(); const locSel = document.getElementById('location-filter')?.value || "All"; const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows; let count = 0;
 
-for (let row of rows) {
-    const type = row.cells[3].textContent.toUpperCase();
-    const remark = row.cells[9].textContent.trim().toUpperCase();
-    const location = row.cells[4].textContent.trim();
-    const show = (typeSel === 'ALL' || type === typeSel) &&
-                 (remarkSel === 'ALL' || remark.includes(remarkSel)) &&
-                 (locSel === 'All' || location === locSel);
-    row.style.display = show ? '' : 'none';
-    if (show) count++;
-}
+            for (let row of rows) {
+                const type = row.cells[3].textContent.toUpperCase();
+                const remark = row.cells[9].textContent.trim().toUpperCase();
+                const location = row.cells[4].textContent.trim();
+                const show = (typeSel === 'ALL' || type === typeSel) &&
+                    (remarkSel === 'ALL' || remark.includes(remarkSel)) &&
+                    (locSel === 'All' || location === locSel);
+                row.style.display = show ? '' : 'none';
+                if (show) count++;
+            }
 
-updateDisplayedDeviceCount(count);
+            updateDisplayedDeviceCount(count);
 
-}
+        }
 
 // Ensure DOMContentLoaded binding includes filter container document.addEventListener("DOMContentLoaded", () => { ['region', 'device-type', 'remark-filter'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', id === 'region' ? fetchDeviceData : filterData); }); // Assuming there's a div with id="filters-container" around your filters/UI fetchDeviceData(); });
 
