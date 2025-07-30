@@ -1,23 +1,81 @@
-function filterData() {
-  const searchValue = document.getElementById('searchBox').value.toLowerCase();
-  const selectedCity = document.getElementById('cityFilter').value.toLowerCase();
-  const selectedLocation = document.getElementById('locationFilter').value.toLowerCase();
+// Clear existing options first
+const cityFilter = document.getElementById('cityFilter');
+const locationFilter = document.getElementById('locationFilter');
+cityFilter.innerHTML = '<option value="">All Cities</option>';
+locationFilter.innerHTML = '<option value="">All Locations</option>';
 
-  const rows = document.querySelectorAll('#deviceTable tbody tr');
-  rows.forEach(row => {
-    const name = row.cells[0].textContent.toLowerCase();
-    const category = row.cells[1].textContent.toLowerCase();
-    const safe = row.cells[2].textContent.toLowerCase();
-    const current = row.cells[3].textContent.toLowerCase();
-    const city = row.cells[4].textContent.toLowerCase();
-    const location = row.cells[5].textContent.toLowerCase();
+// Extract unique cities and locations
+const uniqueCities = [...new Set(list.map(dev => dev.city).filter(Boolean))].sort();
+const uniqueLocations = [...new Set(list.map(dev => dev.location).filter(Boolean))].sort();
 
-    const matchesSearch = [name, category, safe, current, city, location].some(text =>
-      text.includes(searchValue)
-    );
-    const matchesCity = !selectedCity || city === selectedCity;
-    const matchesLocation = !selectedLocation || location === selectedLocation;
+// Populate city select box
+uniqueCities.forEach(city => {
+  const option = document.createElement('option');
+  option.value = city;
+  option.textContent = city;
+  cityFilter.appendChild(option);
+});
 
-    row.style.display = (matchesSearch && matchesCity && matchesLocation) ? '' : 'none';
+// Populate location select box
+uniqueLocations.forEach(loc => {
+  const option = document.createElement('option');
+  option.value = loc;
+  option.textContent = loc;
+  locationFilter.appendChild(option);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+function populateDeviceTable(devices) {
+  list.length = 0; // clear previous
+  const tableBody = document.querySelector('#deviceTable tbody');
+  tableBody.innerHTML = '';
+
+  devices.forEach(dev => {
+    const ip = dev.ip || 'Unknown';
+    const safe = dev.safe || 'Unknown';
+    const name = dev.name || 'Unknown';
+    const category = dev.category || 'Unknown';
+    const location = dev.location || 'Unknown';
+    const city = dev.city || 'Unknown';
+    const current = dev.current || 'Unknown';
+    const hist = dev.history || [];
+    const downCount = hist.filter(state => state === 'down').length;
+
+    list.push({ ip, safe, name, category, location, city, current, hist, downCount });
   });
+
+  // ✅ Populate filters with unique values
+  const cityFilter = document.getElementById('cityFilter');
+  const locationFilter = document.getElementById('locationFilter');
+  cityFilter.innerHTML = '<option value="">All Cities</option>';
+  locationFilter.innerHTML = '<option value="">All Locations</option>';
+
+  const uniqueCities = [...new Set(list.map(dev => dev.city).filter(Boolean))].sort();
+  const uniqueLocations = [...new Set(list.map(dev => dev.location).filter(Boolean))].sort();
+
+  uniqueCities.forEach(city => {
+    const option = document.createElement('option');
+    option.value = city;
+    option.textContent = city;
+    cityFilter.appendChild(option);
+  });
+
+  uniqueLocations.forEach(loc => {
+    const option = document.createElement('option');
+    option.value = loc;
+    option.textContent = loc;
+    locationFilter.appendChild(option);
+  });
+
+  renderTable(list);
 }
