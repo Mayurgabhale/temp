@@ -10,3 +10,84 @@ tableBody.innerHTML = filteredData.map(dev => `
 `).join('');
 
 
+
+
+
+const ip = dev.ip || 'Unknown';
+const safe = dev.safe || 'Unknown';
+const name = dev.name || 'Unknown';
+const category = dev.category || 'Unknown';
+const location = dev.location || 'Unknown';
+const city = dev.city || 'Unknown';
+const current = dev.current || 'Unknown';
+const hist = dev.history || [];
+const downCount = hist.filter(state => state === 'down').length;
+
+list.push({ ip, safe, name, category, location, city, current, hist, downCount });
+
+
+
+
+<select id="cityFilter">
+  <option value="">All Cities</option>
+</select>
+
+<select id="locationFilter">
+  <option value="">All Locations</option>
+</select>
+
+
+
+
+const cities = [...new Set(list.map(dev => dev.city).filter(Boolean))].sort();
+const locations = [...new Set(list.map(dev => dev.location).filter(Boolean))].sort();
+
+const cityFilter = document.getElementById('cityFilter');
+const locationFilter = document.getElementById('locationFilter');
+
+cities.forEach(city => {
+  const option = document.createElement('option');
+  option.value = city;
+  option.textContent = city;
+  cityFilter.appendChild(option);
+});
+
+locations.forEach(loc => {
+  const option = document.createElement('option');
+  option.value = loc;
+  option.textContent = loc;
+  locationFilter.appendChild(option);
+});
+
+
+
+
+
+
+function filterData() {
+  const searchValue = document.getElementById('searchBox').value.toLowerCase();
+  const selectedCity = document.getElementById('cityFilter').value.toLowerCase();
+  const selectedLocation = document.getElementById('locationFilter').value.toLowerCase();
+
+  const rows = document.querySelectorAll('#deviceTable tbody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const city = row.cells[4].textContent.toLowerCase();     // Adjust index if needed
+    const location = row.cells[5].textContent.toLowerCase(); // Adjust index if needed
+
+    const matchesSearch = text.includes(searchValue);
+    const matchesCity = !selectedCity || city === selectedCity;
+    const matchesLocation = !selectedLocation || location === selectedLocation;
+
+    row.style.display = (matchesSearch && matchesCity && matchesLocation) ? '' : 'none';
+  });
+}
+
+
+
+
+
+
+document.getElementById('cityFilter').addEventListener('change', filterData);
+document.getElementById('locationFilter').addEventListener('change', filterData);
+document.getElementById('searchBox').addEventListener('input', filterData);
