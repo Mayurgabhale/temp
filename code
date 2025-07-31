@@ -1,62 +1,32 @@
-const rows = useMemo(() => {
-  if (!summary || !summary.partitions) return [];
-  return Object.entries(summary.partitions)
-    .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
-    .map(([k, v]) => {
-      const [code, site] = k.split('.');
-      const employee = v.Employee ?? v.EmployeeCount ?? 0;
-      const contractor = v.Contractor ?? v.ContractorCount ?? 0;
-      return {
-        country: codeToCountry[code] || code,
-        site,
-        employee,
-        contractor,
-        total: employee + contractor
-      };
-    });
-}, [summary, filterCode]);
+http://localhost:3000/history
 
+on this route we get 
+Wednesday, 30 July, 2025
+Country	Site	Employees	Contractors	Total
+Lithuania	Vilnius	556	32	588
+UK	London	22	1	23
+Austria	Vienna	50	3	53
+Ireland	Dublin	32	2	34
+UAE	Abu Dhab	20	1	21
+Spain	Madrid	57	3	60
+Italy	Rome	29	1	30
+Russia	Moscow	12	2	14
+Total	778	45	823
 
+this is correct but the problme is when i select pertucular city then, in table total are not disply 
 
+see this 
 
+http://localhost:3000/partition/AUT.Vienna/history
 
-
-
-
-
-return data?.summaryByDate?.find(r => r.date === ds) || null;
-
-
-
-
-
-return (data?.details || []).filter(r => r.SwipeDate?.startsWith(ds))
-
-
-
-
-
-
-
-
-
-
-
-......m
-Wednesday, 23 July, 2025
+Wednesday, 30 July, 2025
 Country	Site	Employees	Contractors	Total
 Total	0	0	0
 
+in this table only show 0 but we want disply total ok 
 
+read the bleow code carefully and give me update correct code 
 
-
-
-ok work
-but in table are not show total 
-see this, count not show only 0 are visible so fix this and give me update code 
-Wednesday, 23 July, 2025
-Country	Site	Employees	Contractors	Total
-Total	0	0	 0
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -301,282 +271,3 @@ const rows = useMemo(() => {
 
 
 
-
-
-
-
-import React, { useEffect, useState, useMemo } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  Button,
-  TextField,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import DataTable from '../components/DataTable';
-import { fetchLiveSummary } from '../api/occupancy.service';
-import { lookupFloor } from '../utils/floorLookup';
-
-export default function PartitionDetailDetails() {
-  const { partition } = useParams();
-  const navigate = useNavigate();
-
-  const [details, setDetails] = useState([]);
-  const [liveCounts, setLiveCounts] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [expandedFloor, setExpandedFloor] = useState(null);
-
-  const term = searchTerm.trim().toLowerCase();
-
-  useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-
-    const load = async () => {
-      const json = await fetchLiveSummary();
-      if (!isMounted) return;
-
-      const counts = json.realtime[partition]?.floors || {};
-      setLiveCounts(counts);
-
-      const det = json.details
-        .filter(r => r.PartitionName2 === partition && r.Direction === 'InDirection')
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-      setLoading(false);
-    };
-
-    load();
-
-    const interval = setInterval(load, 1000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [partition]);
-
-  const floorMap = useMemo(() => {
-    const m = {};
-    Object.keys(liveCounts).forEach(floorName => {
-      m[floorName] = [];
-    });
-    details.forEach(r => {
-      if (!(r.floor in m)) m[r.floor] = [];
-      m[r.floor].push(r);
-    });
-    return m;
-  }, [details, liveCounts]);
-
-  const displayed = useMemo(() => {
-    return Object.entries(floorMap)
-      .filter(([floor, emps]) => {
-        if (!term) return true;
-        if (floor.toLowerCase().includes(term)) return true;
-        return emps.some(r => {
-          const empId = String(r.EmployeeID).toLowerCase();
-          const name = String(r.ObjectName1).toLowerCase();
-          const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : '';
-          return (
-            empId.includes(term) ||
-            name.includes(term) ||
-            card.includes(term)
-          );
-        });
-      })
-      .sort(
-        ([aFloor], [bFloor]) =>
-          (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0)
-      );
-  }, [floorMap, liveCounts, term]);
-
-  const columns = [
-    { field: 'EmployeeID', headerName: 'Emp ID' },
-    { field: 'ObjectName1', headerName: 'Name' },
-    { field: 'LocaleMessageTime', headerName: 'Swipe Time' },
-    { field: 'PersonnelType', headerName: 'Type' },
-    { field: 'CardNumber', headerName: 'Card' },
-    { field: 'Door', headerName: 'Door' },
-  ];
-
-  return (
-    <>
-      <Header />
-
-      <Box component="main" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth={false} disableGutters>
-          <Box display="flex" alignItems="center" mb={2} sx={{ px: 2 }}>
-            <Button size="small" onClick={() => navigate(-1)}>
-              ← Back to Overview
-            </Button>
-          </Box>
-
-          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: 2 }}>
-            <Typography variant="h6">Floor Details</Typography>
-            <Typography variant="body2" color="textSecondary">
-              Last updated: {lastUpdate}
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="Search floor / emp…"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </Box>
-
-          {loading ? (
-            <Box sx={{ px: 2, py: 8 }}>
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <>
-              <Box
-                component="section"
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  width: '100%',
-                  m: 0,
-                  p: 0,
-                }}
-              >
-                {displayed.map(([floor, emps]) => {
-                  const isSearching = term.length > 0;
-                  const rowsToShow = isSearching
-                    ? emps.filter(r => {
-                        const empId = String(r.EmployeeID).toLowerCase();
-                        const name = String(r.ObjectName1).toLowerCase();
-                        const card = r.CardNumber
-                          ? String(r.CardNumber).toLowerCase()
-                          : '';
-                        return (
-                          empId.includes(term) ||
-                          name.includes(term) ||
-                          card.includes(term)
-                        );
-                      })
-                    : emps.slice(0, 15);
-
-                  return (
-                    <Box
-                      key={floor}
-                      sx={{ width: '50%', boxSizing: 'border-box', p: 2 }}
-                    >
-                      <Box
-                        sx={{
-                          border: '1px solid #FFC107',
-                          borderRadius: 2,
-                          height: '100%',
-                        }}
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight={600}
-                          gutterBottom
-                        >
-                          {floor} (Total {liveCounts[floor] ?? 0})
-                        </Typography>
-
-                        <TableContainer
-                          component={Paper}
-                          variant="outlined"
-                          sx={{ mb: 1 }}
-                        >
-                          <Table size="small">
-                            <TableHead>
-                              <TableRow>
-                                {columns.map(col => (
-                                  <TableCell
-                                    key={col.field}
-                                    sx={{ fontWeight: 'bold' }}
-                                  >
-                                    {col.headerName}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {rowsToShow.map((r, i) => (
-                                <TableRow
-                                  key={`${r.PersonGUID}-${i}`}
-                                  sx={
-                                    isSearching
-                                      ? {
-                                          backgroundColor:
-                                            'rgba(255, 235, 59, 0.3)',
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  <TableCell>{r.EmployeeID}</TableCell>
-                                  <TableCell>{r.ObjectName1}</TableCell>
-                                  <TableCell>
-                                    {new Date(r.LocaleMessageTime).toLocaleTimeString()}
-                                  </TableCell>
-                                  <TableCell>{r.PersonnelType}</TableCell>
-                                  <TableCell>{r.CardNumber}</TableCell>
-                                  <TableCell>{r.Door}</TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            setExpandedFloor(
-                              expandedFloor === floor ? null : floor
-                            )
-                          }
-                        >
-                          {expandedFloor === floor ? 'Hide' : 'See more…'}
-                        </Button>
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Box>
-
-              {expandedFloor && (
-                <Box sx={{ px: 2, mt: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    {expandedFloor} — All Entries
-                  </Typography>
-                  <DataTable
-                    columns={columns}
-                    rows={(floorMap[expandedFloor] || []).map(r => ({
-                      ...r,
-                      LocaleMessageTime: new Date(
-                        r.LocaleMessageTime
-                      ).toLocaleTimeString(),
-                    }))}
-                  />
-                </Box>
-              )}
-            </>
-          )}
-        </Container>
-      </Box>
-
-      <Footer />
-    </>
-  );
-}
