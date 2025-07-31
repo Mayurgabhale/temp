@@ -13,3 +13,19 @@ useEffect(() => {
 
 
 
+
+const summaryEntry = useMemo(() => {
+  if (!data || !pickedDate) return null;
+
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+
+  // Add fallback: match even partial date strings (in case format mismatches)
+  const match = data.summaryByDate.find(r =>
+    r.date.startsWith(dateStr)
+  );
+
+  return match || null;
+}, [data, pickedDate]);
+
+
+
