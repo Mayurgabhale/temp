@@ -1,1018 +1,161 @@
-in this issue in in router 
-in we go on this page  PartitionDetailDetails.jsx  this is hesotyr page after in header we select AUT.Vienna
-then we need to get this route  http://localhost:3000/partition/AUT.Vienna/history
+ <div class="filter-panel">
+            <!-- Downtime & Offline Cards -->
+            <div class="device-summary">
+                <div class="device-card">
+                    <i class="fas fa-clock icon"></i>
+                    <span class="label">Downtime &gt; 15 min:</span>
+                    <p class="value" id="count-downtime-over-15">0</p>
+                </div>
+                <div class="device-card">
+                    <i class="fas fa-power-off icon"></i>
+                    <span class="label">Currently Offline:</span>
+                    <p class="value offline" id="count-currently-offline">0</p>
+                </div>
+            </div>
 
-but the profel is we got this route http://localhost:3000/partition/AUT.Vienna
+            <!-- Region Filter -->
+            <div class="filter-group">
+                <label for="region">Select Region:</label>
+                <select id="region" onchange="fetchDeviceData()">
+                    <option value="global">Global</option>
+                    <option value="apac">APAC</option>
+                    <option value="emea">EMEA</option>
+                    <option value="laca">LACA</option>
+                    <option value="namer">NAMER</option>
+                </select>
+            </div>
 
-so read below code carefullyu and write correct code for emea, and 
-give me update correct codee
+            <!-- Device Type Filter -->
+            <div class="filter-group">
+                <label for="device-type">Filter by Device Type:</label>
+                <select id="device-type" onchange="filterData()">
+                    <option value="ALL">All</option>
+                    <option value="CONTROLLER">Controller</option>
+                    <option value="ARCHIVER">Archiver</option>
+                    <option value="CAMERA">Camera</option>
+                    <option value="SERVER">Server</option>
+                </select>
+            </div>
 
-refere laca file to create emea 
-// src/components/Header.jsx
+            <!-- Remark Filter -->
+            <div class="filter-group">
+                <label for="remark-filter">Filter by Remark:</label>
+                <select id="remark-filter" onchange="filterData()">
+                    <option value="ALL">All</option>
+                    <option value="Device needs repair">Device needs repair</option>
+                    <option value="Device is Online">Device is Online</option>
+                    <option value="Device is Offline">Device is Offline</option>
+                </select>
+            </div>
 
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  IconButton
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+            <div class="filter-group">
+                <label for="city-filter">Filter by Location:</label>
 
-import HomeIcon    from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
+                <select id="cityFilter">
+                    <option value="">All Cities</option>
+                </select>
+            </div>
 
-import WuLogo from '../assets/wu-logo.png';
-import CostaRicaFlag from '../assets/flags/costa-rica.png';
-import ArgentinaFlag  from '../assets/flags/argentina.png';
-import MexicoFlag     from '../assets/flags/mexico.png';
-import PeruFlag       from '../assets/flags/peru.png';
-import BrazilFlag     from '../assets/flags/brazil.png';
-import PanamaFlag     from '../assets/flags/panama.png';
-import LacaFlag       from '../assets/laca-flag.png';
-
-import { partitionList } from '../services/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-const displayNameMap = {
-  'CR.Costa Rica Partition': 'Costa Rica',
-  'MX.Mexico City':          'Mexico',
-  'AR.Cordoba':               'Cordoba',
-  'PA.Panama City':           'Panama',
-  'PE.Lima':                  'Lima',
-  'BR.Sao Paulo':             'Sao Paulo'
-};
-
-
-export default function Header() {
-  const navigate = useNavigate();
-  const loc = useLocation();
-
-  // live‐update timer in header
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
-
-  const parts = loc.pathname.split('/').filter(Boolean);
-  const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
-  const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
-  const suffixSegments = isPartitionPath
-    ? parts.slice(2)
-    : parts[0] === 'history'
-      ? ['history']
-      : [];
-
-  const flagMap = {
-    'CR.Costa Rica Partition': CostaRicaFlag,
-    'AR.Cordoba':               ArgentinaFlag,
-    'MX.Mexico City':           MexicoFlag,
-    'PE.Lima':                  PeruFlag,
-    'BR.Sao Paulo':             BrazilFlag,
-    'PA.Panama City':           PanamaFlag,
-  };
-  const selectedFlag = flagMap[currentPartition] || LacaFlag;
-
-  const makePartitionPath = suffix => {
-    const base = `/partition/${encodeURIComponent(currentPartition)}`;
-    return suffix ? `${base}/${suffix}` : base;
-  };
-
-  const handlePartitionChange = newPartition => {
-    if (!newPartition) return navigate('/');
-    const base = `/partition/${encodeURIComponent(newPartition)}`;
-    const full = suffixSegments.length
-      ? `${base}/${suffixSegments.join('/')}`
-      : base;
-    navigate(full);
-  };
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Left: Logo, Title, Nav */}
-        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>        
-  Western Union – LACA
-  {currentPartition && <> • {displayNameMap[currentPartition] || currentPartition}</>}
-
-          </Typography>
-
- {/* Live update timer */}
-          <Typography
-            variant="caption"
-            sx={{
-              color: '#FFC72C',
-              ml: 2,
-              gap:20,
-              fontStyle: 'Aptos Narrow',
-              opacity: data ? 1 : 0,
-              transition: 'opacity 0.8s'
-            }}
-          >
-         {/* {lastUpdate} */}
-          </Typography>
-        
-
-          {/* Home/History/Details icons */}
-          <IconButton size="large" color="inherit"
-            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
-            <HomeIcon sx={{ color: '#4caf50' }} />
-          </IconButton>
-         
-
-          <IconButton size="large" color="inherit"
-            onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
-            <HistoryIcon sx={{ color: '#F88379' }} />
-          </IconButton>
-          {/* Details icon always shown; defaults to Costa Rica if no partition yet */}
-          <IconButton size="large" color="inherit"
-            onClick={() => {
-              const target = currentPartition
-                ? makePartitionPath('details')
-                : '/partition/CR.Costa%20Rica%20Partition/details';
-              navigate(target);
-            }}>
-            <ListAltIcon sx={{ color: '#2196f3' }} />
-          </IconButton>
+        </div>
 
 
 
 
-
-        </Box>
-
- 
-
-        {/* Right: Selector + Flag */}
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={currentPartition}
-            displayEmpty
-            onChange={e => handlePartitionChange(e.target.value)}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
-          >
-            <MenuItem value="">— Select Partition —</MenuItem>
-           
-           
-       {partitionList.map(p => (
-   <MenuItem key={p} value={p}>
-     {displayNameMap[p] || p}
-   </MenuItem>
- ))}
-           
-
-          </Select>
-          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
+/* FILTER PANEL - SINGLE ROW STRUCTURE */
+.filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  gap: 44px;
+  background-color: #f9fafc;
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-
-
-
-
-
-
-
-
-//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\routes\AppRoutes.jsx
-
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoadingSpinner from '../components/LoadingSpinner';
-
-const Dashboard              = lazy(() => import('../pages/Dashboard'));
-const History                = lazy(() => import('../pages/History'));
-const PartitionDetail        = lazy(() => import('../pages/PartitionDetail'));
-const PartitionDetailDetails = lazy(() => import('../pages/PartitionDetailDetails'));
-const RealtimeDetails        = lazy(() => import('../pages/RealtimeDetails'));
-
-export default function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-
-          {/* Global history */}
-          <Route path="/history" element={<History />} />
-
-          {/* Partition-scoped history */}
-          <Route path="/partition/:partition/history" element={<History />} />
-
-          {/* Real-time detail view */}
-          <Route path="/realtime/:partition" element={<RealtimeDetails />} />
-
-          {/* Partition overview */}
-          <Route path="/partition/:partition" element={<PartitionDetail />} />
-
-          {/* Partition details (floor swipes) */}
-          <Route path="/partition/:partition/details" element={<PartitionDetailDetails />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  );
+/* Subgroup wrapper for filters */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+    background: #fff;
+  border: 1px solid var(--gray);
+    background: #fff;
+  border: 1px solid var(--gray);
+  padding: 23px 40px;
+  border-radius: var(--border-radius);
+  min-width: 200px;
+  /* text-align: center; */
+  font-family: 'Times New Roman', Times, serif;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
 }
 
-
-// src/pages/PartitionDetailDetails.jsx
-import React, { useEffect, useState, useMemo } from "react";
-import {
-  Container,
-  Box,
-  Typography,
-  Button,
-  TextField,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import LoadingSpinner from "../components/LoadingSpinner";
-import DataTable from "../components/DataTable";
-import { fetchLiveSummary } from "../api/occupancy.service";
-import { lookupFloor } from "../utils/floorLookup";
-
-export default function PartitionDetailDetails() {
-  const { partition } = useParams();
-  const navigate = useNavigate();
-
-  const [details, setDetails] = useState([]);
-  const [liveCounts, setLiveCounts] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [expandedFloor, setExpandedFloor] = useState(null);
-
-  // common lowercase term
-  const term = searchTerm.trim().toLowerCase();
-
-  // fetch initial + live updates
-  useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-
-    const load = async () => {
-      const json = await fetchLiveSummary();
-      if (!isMounted) return;
-
-      const counts = json.realtime[partition]?.floors || {};
-      setLiveCounts(counts);
-
-      const det = json.details
-        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-      setLoading(false);
-    };
-
-    load();
-
-    const interval = setInterval(async () => {
-      const json = await fetchLiveSummary();
-      if (!isMounted) return;
-      setLiveCounts(json.realtime[partition]?.floors || {});
-
-      const det = json.details
-        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-    }, 1000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [partition]);
-
-  // group rows by floor
-  const floorMap = useMemo(() => {
-    const m = {};
-    Object.keys(liveCounts).forEach(floorName => {
-      m[floorName] = [];
-    });
-    details.forEach(r => {
-      if (!(r.floor in m)) m[r.floor] = [];
-      m[r.floor].push(r);
-    });
-    return m;
-  }, [details, liveCounts]);
-
-  // filter floors based on searchTerm, then sort by headcount desc
-  const displayed = useMemo(() => {
-    return Object.entries(floorMap)
-      .filter(([floor, emps]) => {
-        if (!term) return true;
-        if (floor.toLowerCase().includes(term)) return true;
-        return emps.some(r => {
-          const empId = String(r.EmployeeID).toLowerCase();
-          const name = String(r.ObjectName1).toLowerCase();
-          const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : "";
-          return (
-            empId.includes(term) ||
-            name.includes(term) ||
-            card.includes(term)
-          );
-        });
-      })
-      .sort(
-        ([aFloor], [bFloor]) =>
-          (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0)
-      );
-  }, [floorMap, liveCounts, term]);
-
-  const columns = [
-    { field: "EmployeeID", headerName: "Emp ID" },
-    { field: "ObjectName1", headerName: "Name" },
-    { field: "LocaleMessageTime", headerName: "Swipe Time" },
-    { field: "PersonnelType", headerName: "Type" },
-    { field: "CardNumber", headerName: "Card" },
-    { field: "Door", headerName: "Door" },
-  ];
-
-  return (
-    <>
-      <Header />
-
-      <Box component="main" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth={false} disableGutters>
-          {/* Back button */}
-          <Box display="flex" alignItems="center" mb={2} sx={{ px: 2 }}>
-            <Button size="small" onClick={() => navigate(-1)}>
-              ← Back to Overview
-            </Button>
-          </Box>
-
-          {/* Title + search */}
-          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: 2 }}>
-            <Typography variant="h6">Floor Details</Typography>
-            <Typography variant="body2" color="textSecondary">
-              Last updated: {lastUpdate}
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="Search floor / emp…"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </Box>
-
-          {loading ? (
-            <Box sx={{ px: 2, py: 8 }}>
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <>
-              {/* Cards */}
-              <Box
-                component="section"
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  width: "100%",
-                  m: 0,
-                  p: 0,
-                }}
-              >
-                {displayed.map(([floor, emps]) => {
-                  // slice default rows to 25
-                  const isSearching = term.length > 0;
-                  const rowsToShow = isSearching
-                    ? emps.filter(r => {
-                        const empId = String(r.EmployeeID).toLowerCase();
-                        const name = String(r.ObjectName1).toLowerCase();
-                        const card = r.CardNumber
-                          ? String(r.CardNumber).toLowerCase()
-                          : "";
-                        return (
-                          empId.includes(term) ||
-                          name.includes(term) ||
-                          card.includes(term)
-                        );
-                      })
-                    : emps.slice(0, 15);
-
-                  return (
-                    <Box
-                      key={floor}
-                      sx={{ width: "50%", boxSizing: "border-box", p: 2 }}
-                    >
-                      <Box
-                        sx={{
-                          border: "1px solid #FFC107",
-                          borderRadius: 2,
-                          height: "100%",
-                        }}
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight={600}
-                          gutterBottom
-                        >
-                          {floor} (Total {liveCounts[floor] ?? 0})
-                        </Typography>
-
-                        <TableContainer
-                          component={Paper}
-                          variant="outlined"
-                          sx={{ mb: 1 }}
-                        >
-                          <Table size="small">
-                            <TableHead>
-                              <TableRow>
-                                {columns.map(col => (
-                                  <TableCell
-                                    key={col.field}
-                                    sx={{ fontWeight: "bold" }}
-                                  >
-                                    {col.headerName}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHead>
-
-                            <TableBody>
-                              {rowsToShow.map((r, i) => (
-                                <TableRow
-                                  key={`${r.PersonGUID}-${i}`}
-                                  sx={
-                                    isSearching
-                                      ? {
-                                          backgroundColor:
-                                            "rgba(255, 235, 59, 0.3)",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  <TableCell>{r.EmployeeID}</TableCell>
-                                  <TableCell>{r.ObjectName1}</TableCell>
-                                  <TableCell>
-                                    {new Date(
-                                      r.LocaleMessageTime
-                                    ).toLocaleTimeString()}
-                                  </TableCell>
-                                  <TableCell>{r.PersonnelType}</TableCell>
-                                  <TableCell>{r.CardNumber}</TableCell>
-                                  <TableCell>{r.Door}</TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            setExpandedFloor(
-                              expandedFloor === floor ? null : floor
-                            )
-                          }
-                        >
-                          {expandedFloor === floor
-                            ? "Hide"
-                            : "See more…"}
-                        </Button>
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Box>
-
-              {/* Expanded full table */}
-              {expandedFloor && (
-                <Box sx={{ px: 2, mt: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    {expandedFloor} — All Entries
-                  </Typography>
-                  <DataTable
-                    columns={columns}
-                    rows={(floorMap[expandedFloor] || []).map(r => ({
-                      ...r,
-                      LocaleMessageTime: new Date(
-                        r.LocaleMessageTime
-                      ).toLocaleTimeString(),
-                    }))}
-                  />
-                </Box>
-              )}
-            </>
-          )}
-        </Container>
-      </Box>
-
-      <Footer />
-    </>
-  );
+.filter-group label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #097ed7;
 }
 
-                        refere above all files carefully and write same logic for below emea file, use app route and header same logic for belwo file
-                        and give me correct update code, carefully,
-This is emea file more help to create 
-read alos this
-                        //C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Header.jsx
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-
-import wuLogo from '../assets/wu-logo.png';
-import austriaFlag from '../assets/flags/austria.png';
-import uaeFlag from '../assets/flags/uae.png';
-import irelandFlag from '../assets/flags/ireland.png';
-import italyFlag from '../assets/flags/italy.png';
-import lithuaniaFlag from '../assets/flags/lithuania.png';
-import moroccoFlag from '../assets/flags/morocco.png';
-import russiaFlag from '../assets/flags/russia.png';
-import ukFlag from '../assets/flags/uk.png';
-import spainFlag from '../assets/flags/spain.png';
-import { partitionList } from '../api/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-
-const displayNameMap = {
-
-   'AUT.Vienna':'Vienna',
-  'DU.Abu Dhab':'Abu Dhabi',
-  'IE.Dublin':'Dublin',
-  'IT.Rome':'Rome',
-  'LT.Vilnius':'Vilnius',
-  'MA.Casablanca':'Casablanca',
-  'RU.Moscow':'Moscow',
-  'UK.London':'London',
-  'ES.Madrid':'Madrid'
-};
-
-
-
-
-export default function Header() {
-  // const navigate = useNavigate();
-  // const loc = useLocation();
-  // const { data } = useLiveOccupancy(1000);
-  // const [lastUpdate, setLastUpdate] = useState('');
-
-    const navigate = useNavigate();
-  const loc = useLocation(); // ✅ correct hook usage
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
-
-  const parts = loc.pathname.split('/').filter(Boolean);
-  const isPart = parts[0] === 'partition' && parts[1];
-  const current = isPart ? decodeURIComponent(parts[1]) : '';
-   const isHome = loc.pathname === '/'; // ✅ fixed: use loc
-
-  const flagMap = {
-    'AUT.Vienna': austriaFlag,
-    'DU.Abu Dhab': uaeFlag,
-    'IE.Dublin': irelandFlag,
-    'IT.Rome': italyFlag,
-    'LT.Vilnius': lithuaniaFlag,
-    'MA.Casablanca': moroccoFlag,
-    'RU.Moscow': russiaFlag,
-    'UK.London': ukFlag,
-    'ES.Madrid': spainFlag
-  };
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-       <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
-          </Typography>
-
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <HomeIcon />
-          </IconButton>
-
-          <IconButton color="inherit" onClick={() => navigate('/history')}>
-            <HistoryIcon />
-          </IconButton>
-
-          {/* ✅ Static Vilnius button shown only on main dashboard */}
-          {isHome && (
-            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-
-          {/* ✅ Dynamic partition button shown when inside any partition */}
-          {isPart && (
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
-              <ListAltIcon />
-            </IconButton>
-          )}
-        </Box>
-
-
-
-
-{/* ,,,,,,,,,,,,,,,,,,,,,,,,,,,, */}
-         <Box display="flex" alignItems="center">
-
-          <Select
-            size="small"
-            value={current}
-            displayEmpty
-            onChange={e => {
-              const partition = e.target.value;
-              navigate(partition ? `/partition/${encodeURIComponent(partition)}` : '/');
-            }}
-            renderValue={(selected) =>
-              selected ? (
-                <Box display="flex" alignItems="center">
-                  <Box
-                    component="img"
-                    src={flagMap[selected]}
-                    alt={selected}
-                    sx={{ width: 24, height: 16, mr: 1 }}
-                  />
-                  {selected}
-                </Box>
-              ) : "— Select Site —"
-            }
-
-
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
-          >
-            <MenuItem value="">— Select Site —</MenuItem>
-
-            + {partitionList.map(p => (
-   <MenuItem key={p} value={p}>
-     {displayNameMap[p] || p}
-   </MenuItem>
- ))}
-          </Select>
-
-        </Box>
-
-
-      </Toolbar>
-    </AppBar>
-  );
+.filter-group select {
+  padding: 8px 20px;
+  font-size: 16px;
+  border-radius: var(--border-radius);
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  width: 200px;
 }
 
-
-
-
-// // // src/routes/AppRoutes.jsx
-// import React from 'react';
-// import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// import Dashboard              from '../pages/Dashboard';
-// import History                from '../pages/History';
-// import PartitionDetail        from '../pages/PartitionDetail';
-// import PartitionDetailDetails from '../pages/PartitionDetailDetails';
-
-// export default function AppRoutes() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-
-//         {/* Home dashboard */}
-//         <Route path="/" element={<Dashboard />} />
-
-//         {/* Global history */}
-//         <Route path="/history" element={<History />} />
-
-//         {/* Partition-scoped history */}
-//         <Route path="/partition/:partition/history" element={<History />} />
-
-//         {/* Partition overview (live) */}
-//         <Route path="/partition/:partition" element={<PartitionDetail />} />
-
-//         {/* Partition “see details” sub-page */}
-//         <Route
-//           path="/partition/:partition/details"
-//           element={<PartitionDetailDetails />}
-//         />
-
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoadingSpinner from '../components/LoadingSpinner';
-
-const Dashboard               = lazy(() => import('../pages/Dashboard'));
-const History                 = lazy(() => import('../pages/History'));
-const PartitionDetail         = lazy(() => import('../pages/PartitionDetail'));
-const PartitionDetailDetails  = lazy(() => import('../pages/PartitionDetailDetails'));
-
-export default function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          {/* Home dashboard */}
-          <Route path="/" element={<Dashboard />} />
-
-          {/* Global history */}
-          <Route path="/history" element={<History />} />
-
-          {/* Partition-scoped history */}
-          <Route path="/partition/:partition/history" element={<History />} />
-
-          {/* Partition overview (live) */}
-          <Route path="/partition/:partition" element={<PartitionDetail />} />
-
-          {/* Partition “see details” sub-page */}
-          <Route path="/partition/:partition/details" element={<PartitionDetailDetails />}/>
-
-
-
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  );
+.filter-group select:hover {
+  border-color: var(--blue);
 }
 
-                                                               import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Container, Box, Typography, Button, TextField,
-  TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
-} from '@mui/material';
+/* DEVICE CARDS INSIDE FILTER PANEL */
+.filter-panel .device-summary {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  flex-wrap: wrap;
+}
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import DataTable from '../components/DataTable';
-import { fetchLiveSummary } from '../api/occupancy.service';
-import { lookupFloor } from '../utils/floorLookup';
+.filter-panel .device-card {
+  background: #fff;
+  border: 1px solid var(--gray);
+  padding: 5px 16px;
+  border-radius: var(--border-radius);
+  min-width: 180px;
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  box-shadow: 0 2px 4px rgba(227, 72, 72, 0.04);
+  transition: all 0.2s ease;
+  color: rgb(213, 50, 50);
+}
 
-export default function PartitionDetailDetails() {
-  const { partition } = useParams();
-  const navigate = useNavigate();
+.filter-panel .device-card:hover {
+  transform: scale(1.03);
+  background-color: #f8f9fa;
+}
 
-  const [details, setDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState('');
-  const [search, setSearch] = useState('');
-  const [expanded, setExpanded] = useState(null);
+/* BUTTONS INSIDE FILTER PANEL */
 
-  // Load & refresh
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const json = await fetchLiveSummary();
-      if (!active) return;
-      const det = json.details
-        .filter(r => r.PartitionName2 === partition && r.Direction === 'InDirection')
-        .map(r => ({
-          ...r,
-          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction)
-        }));
-      setDetails(det);
-      setLastUpdate(new Date().toLocaleTimeString());
-      setLoading(false);
-    };
-    load();
-    const iv = setInterval(load, 1000);
-    return () => { active = false; clearInterval(iv); };
-  }, [partition]);
 
-  const floorMap = useMemo(() => {
-    return details.reduce((m, r) => {
-      m[r.floor] = m[r.floor] || [];
-      m[r.floor].push(r);
-      return m;
-    }, {});
-  }, [details]);
-
- 
-
-  const displayed = useMemo(() => {
-  const term = search.toLowerCase();
-  return Object.entries(floorMap)
-    .map(([floor, emps]) => {
-      const filteredEmps = emps.filter(e =>
-        floor.toLowerCase().includes(term) ||
-        e.ObjectName1?.toLowerCase().includes(term) ||
-        e.EmployeeID?.toString().toLowerCase().includes(term)
-      );
-      return [floor, filteredEmps];
-    })
-    .filter(([, filteredEmps]) => filteredEmps.length > 0);
-}, [floorMap, search]);
-
-  if (loading) {
-    return <>
-      <Header />
-      <Box p={4}><LoadingSpinner /></Box>
-      <Footer />
-    </>;
+/* Make filters responsive on small devices */
+@media (max-width: 992px) {
+  .filter-panel {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  return (
-    <>
-      <Header />
-      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 2 }}>
+  .filter-panel .device-summary {
+    justify-content: center;
+  }
 
-        <Box mb={1}><Button size="small" onClick={() => navigate(-1)}>← Back to Overview</Button></Box>
-
-        <Box display="flex" alignItems="center" flexWrap="wrap" gap={0.5} mb={2}>
-          {/* Title */}
-          <Typography variant="h6">Floor Details</Typography>
-
-          {/* Last updated text */}
-          <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
-            Last updated: {lastUpdate}
-          </Typography>
-
-          {/* Search field */}
-          <TextField
-            size="small"
-            placeholder="Search floor / emp…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            sx={{ ml: 1 }}
-          />
-        </Box>
-
-        <Box display="flex" flexWrap="wrap">
-  {[...displayed]
-    .sort((a, b) => b[1].length - a[1].length) // Priority: most rows first
-    .map(([floor, emps]) => {
-      const isExpanded = expanded === floor;
-      const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
-
-      return (
-        <Box
-          key={floor}
-          sx={{
-            width: { xs: '100%', sm: '50%' },
-            p: 1,
-            boxSizing: 'border-box',
-          }}
-        >
-          <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{ fontWeight: 'bold' }}
-          >
-            {floor} (Total {emps.length})
-          </Typography>
-
-          {/* Smart height layout */}
-          <Box
-            sx={{
-              border: '2px solid #FFC107',
-              borderRadius: 1,
-              p: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: 120,
-              maxHeight: isExpanded ? 600 : 'auto',
-            }}
-          >
-            <TableContainer
-              component={Paper}
-              variant="outlined"
-              sx={{
-                overflowY: 'auto',
-                flexGrow: 1,
-              }}
-            >
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map((h, idx, arr) => (
-                      <TableCell
-                        key={h}
-                        sx={{
-                          fontWeight: 'bold',
-                          py: 0.5,
-                          whiteSpace: 'nowrap',
-                          borderRight: idx !== arr.length - 1 ? '1px solid #ccc' : 'none',
-                          borderBottom: '1px solid #ccc',
-                        }}
-                      >
-                        {h}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {visibleEmps.map((r, i) => (
-                    <TableRow key={i}>
-                      {[
-                        r.EmployeeID,
-                        r.ObjectName1,
-                        new Date(r.LocaleMessageTime).toLocaleTimeString(),
-                        r.PersonnelType,
-                        r.CardNumber,
-                        r.Door,
-                      ].map((val, idx, arr) => (
-                        <TableCell
-                          key={idx}
-                          sx={{
-                            py: 0.5,
-                            minWidth: [50, 120, 100, 80, 100, 100][idx],
-                            whiteSpace: 'nowrap',
-                            borderRight: idx !== arr.length - 1 ? '1px solid #eee' : 'none',
-                          }}
-                        >
-                          {val}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            {emps.length > 10 && (
-              <Box textAlign="right" mt={1}>
-                <Button
-                  size="small"
-                  onClick={() => setExpanded(isExpanded ? null : floor)}
-                >
-                  {isExpanded ? 'Hide' : 'See more…'}
-                </Button>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      );
-    })}
-</Box>
-
-        {expanded && (
-          <Box mt={2}>
-            <Typography variant="h6" gutterBottom>{expanded} — All Entries</Typography>
-            <DataTable
-              columns={[
-                { field: 'EmployeeID', headerName: 'ID' },
-                { field: 'ObjectName1', headerName: 'Name' },
-                { field: 'LocaleMessageTime', headerName: 'Time' },
-                { field: 'PersonnelType', headerName: 'Type' },
-                { field: 'CardNumber', headerName: 'Card' },
-                { field: 'Door', headerName: 'Door' }
-              ]}
-              rows={floorMap[expanded].map(r => ({
-                ...r,
-                LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
-              }))}
-            />
-          </Box>
-        )}
-      </Container>
-      <Footer />
-    </>
-  );
+  
 }
-
-
