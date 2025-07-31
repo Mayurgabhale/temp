@@ -1,3 +1,21 @@
+const displayed = useMemo(() => {
+  const term = search.toLowerCase();
+  return Object.entries(floorMap)
+    .map(([floor, emps]) => {
+      const filteredEmps = emps.filter(e =>
+        e.ObjectName1?.toLowerCase().includes(term) ||      // Name
+        e.EmployeeID?.toString().toLowerCase().includes(term) || // Employee ID
+        e.CardNumber?.toString().toLowerCase().includes(term)    // Card Number
+      );
+      return [floor, filteredEmps];
+    })
+    .filter(([, filteredEmps]) => filteredEmps.length > 0);
+}, [floorMap, search]);
+
+
+
+
+
 
 
 import React, { useEffect, useState, useMemo } from 'react';
