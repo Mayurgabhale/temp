@@ -1,1138 +1,1008 @@
-All Cities
+// src/components/Header.jsx
 
-Quezon
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-Taguig
+import HomeIcon    from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
-Pune
+import WuLogo from '../assets/wu-logo.png';
+import CostaRicaFlag from '../assets/flags/costa-rica.png';
+import ArgentinaFlag  from '../assets/flags/argentina.png';
+import MexicoFlag     from '../assets/flags/mexico.png';
+import PeruFlag       from '../assets/flags/peru.png';
+import BrazilFlag     from '../assets/flags/brazil.png';
+import PanamaFlag     from '../assets/flags/panama.png';
+import LacaFlag       from '../assets/laca-flag.png';
 
-Pune Tower B
+import { partitionList } from '../services/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
-Kuala Lumpur
+const displayNameMap = {
+  'CR.Costa Rica Partition': 'Costa Rica',
+  'MX.Mexico City':          'Mexico',
+  'AR.Cordoba':               'Cordoba',
+  'PA.Panama City':           'Panama',
+  'PE.Lima':                  'Lima',
+  'BR.Sao Paulo':             'Sao Paulo'
+};
 
-Austria vienna
 
-Ireland dublin
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
 
-Rome
+  // live‐update timer in header
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
 
-Vilnius Delta
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
+  const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
+  const suffixSegments = isPartitionPath
+    ? parts.slice(2)
+    : parts[0] === 'history'
+      ? ['history']
+      : [];
 
-Vilnius Gama
+  const flagMap = {
+    'CR.Costa Rica Partition': CostaRicaFlag,
+    'AR.Cordoba':               ArgentinaFlag,
+    'MX.Mexico City':           MexicoFlag,
+    'PE.Lima':                  PeruFlag,
+    'BR.Sao Paulo':             BrazilFlag,
+    'PA.Panama City':           PanamaFlag,
+  };
+  const selectedFlag = flagMap[currentPartition] || LacaFlag;
 
-Moscow
+  const makePartitionPath = suffix => {
+    const base = `/partition/${encodeURIComponent(currentPartition)}`;
+    return suffix ? `${base}/${suffix}` : base;
+  };
 
-Madrid
+  const handlePartitionChange = newPartition => {
+    if (!newPartition) return navigate('/');
+    const base = `/partition/${encodeURIComponent(newPartition)}`;
+    const full = suffixSegments.length
+      ? `${base}/${suffixSegments.join('/')}`
+      : base;
+    navigate(full);
+  };
 
-Costa Rica
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Left: Logo, Title, Nav */}
+        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
 
-Mexico
+          <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>        
+  Western Union – LACA
+  {currentPartition && <> • {displayNameMap[currentPartition] || currentPartition}</>}
 
-Brazil
+          </Typography>
 
-Denver
+ {/* Live update timer */}
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#FFC72C',
+              ml: 2,
+              gap:20,
+              fontStyle: 'Aptos Narrow',
+              opacity: data ? 1 : 0,
+              transition: 'opacity 0.8s'
+            }}
+          >
+         {/* {lastUpdate} */}
+          </Typography>
+        
 
-Tokyo
+          {/* Home/History/Details icons */}
+          <IconButton size="large" color="inherit"
+            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+            <HomeIcon sx={{ color: '#4caf50' }} />
+          </IconButton>
+         
 
-Dubai
+          <IconButton size="large" color="inherit"
+            onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
+            <HistoryIcon sx={{ color: '#F88379' }} />
+          </IconButton>
+          {/* Details icon always shown; defaults to Costa Rica if no partition yet */}
+          <IconButton size="large" color="inherit"
+            onClick={() => {
+              const target = currentPartition
+                ? makePartitionPath('details')
+                : '/partition/CR.Costa%20Rica%20Partition/details';
+              navigate(target);
+            }}>
+            <ListAltIcon sx={{ color: '#2196f3' }} />
+          </IconButton>
 
-Casablanca
 
-London
 
-Argentina
 
-Panama
 
-Peru
+        </Box>
 
-Miami
+ 
 
-Austin
+        {/* Right: Selector + Flag */}
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={currentPartition}
+            displayEmpty
+            onChange={e => handlePartitionChange(e.target.value)}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Partition —</MenuItem>
+           
+           
+       {partitionList.map(p => (
+   <MenuItem key={p} value={p}>
+     {displayNameMap[p] || p}
+   </MenuItem>
+ ))}
+           
 
-New York
-
-i wantot get like this ABOVE  city but we got llocation LACA AND NAMER IN SELECT BOT 
-
-we dont require location, i want to get city in slect 
-box 
-
-red script.js file and updat summary file carefully wiht correct output 
-
-in script ued const cityFilter = document.getElementById("city-filter"); to get all city in select box same used int summary to get all city 
-
-// C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\script.js
-
-const baseUrl = "http://localhost:80/api/regions";
-let refreshInterval = 300000; // 5 minutes
-let pingInterval = 60000; // 30 seconds
-let countdownTime = refreshInterval / 1000; // Convert to seconds
-let currentRegion = "global";
-let deviceDetailsCache = {}; // Store previous details to prevent redundant updates
-let latestDetails = null; // Cache the latest fetched details
-
-document.addEventListener("DOMContentLoaded", () => {
-    fetchData("global"); // Load initial data
-    startAutoRefresh("global");
-
-    document.querySelectorAll(".region-button").forEach((button) => {
-        button.addEventListener("click", () => {
-            const region = button.getAttribute("data-region");
-            document.getElementById("region-title").textContent = `${region.toUpperCase()} Summary`;
-            switchRegion(region);
-        });
-    });
-
-    document.getElementById("close-modal").addEventListener("click", () => {
-        document.getElementById("modal").style.display = "none";
-    });
-});
-
-function switchRegion(region) {
-    clearExistingIntervals(); // Avoid interval duplication
-    currentRegion = region;
-    deviceDetailsCache = {};
-    fetchData(region);
-    startAutoRefresh(region);
+          </Select>
+          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
-// **Auto-refresh mechanism**
-function startAutoRefresh(regionName) {
-    fetchData(regionName); // Fetch initial data
 
-    clearExistingIntervals();
 
-    // Start countdown timer
-    window.countdownTimer = setInterval(() => {
-        document.getElementById("countdown").innerText = `Refreshing in ${countdownTime} seconds`;
-        countdownTime--;
-        if (countdownTime < 0) countdownTime = refreshInterval / 1000;
+
+
+
+
+
+
+//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\routes\AppRoutes.jsx
+
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const Dashboard              = lazy(() => import('../pages/Dashboard'));
+const History                = lazy(() => import('../pages/History'));
+const PartitionDetail        = lazy(() => import('../pages/PartitionDetail'));
+const PartitionDetailDetails = lazy(() => import('../pages/PartitionDetailDetails'));
+const RealtimeDetails        = lazy(() => import('../pages/RealtimeDetails'));
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+
+          {/* Global history */}
+          <Route path="/history" element={<History />} />
+
+          {/* Partition-scoped history */}
+          <Route path="/partition/:partition/history" element={<History />} />
+
+          {/* Real-time detail view */}
+          <Route path="/realtime/:partition" element={<RealtimeDetails />} />
+
+          {/* Partition overview */}
+          <Route path="/partition/:partition" element={<PartitionDetail />} />
+
+          {/* Partition details (floor swipes) */}
+          <Route path="/partition/:partition/details" element={<PartitionDetailDetails />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+
+
+// src/pages/PartitionDetailDetails.jsx
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
+import DataTable from "../components/DataTable";
+import { fetchLiveSummary } from "../api/occupancy.service";
+import { lookupFloor } from "../utils/floorLookup";
+
+export default function PartitionDetailDetails() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
+
+  const [details, setDetails] = useState([]);
+  const [liveCounts, setLiveCounts] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedFloor, setExpandedFloor] = useState(null);
+
+  // common lowercase term
+  const term = searchTerm.trim().toLowerCase();
+
+  // fetch initial + live updates
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!isMounted) return;
+
+      const counts = json.realtime[partition]?.floors || {};
+      setLiveCounts(counts);
+
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+      setLoading(false);
+    };
+
+    load();
+
+    const interval = setInterval(async () => {
+      const json = await fetchLiveSummary();
+      if (!isMounted) return;
+      setLiveCounts(json.realtime[partition]?.floors || {});
+
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction),
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
     }, 1000);
 
-    // Refresh summary & details every 5 minutes
-    window.refreshTimer = setInterval(() => {
-        fetchData(regionName);
-        countdownTime = refreshInterval / 1000;
-    }, refreshInterval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [partition]);
 
-    // Ping devices every 30 seconds using history API
-    window.pingTimer = setInterval(() => {
-        pingAllDevices(regionName);
-    }, pingInterval);
-}
-
-function clearExistingIntervals() {
-    clearInterval(window.countdownTimer);
-    clearInterval(window.refreshTimer);
-    clearInterval(window.pingTimer);
-}
-
-// **Fetch summary and details together**
-function fetchData(regionName) {
-    Promise.all([
-        fetch(`${baseUrl}/summary/${regionName}`).then(res => res.json()),
-        fetch(`${baseUrl}/details/${regionName}`).then(res => res.json())
-    ])
-        .then(([summary, details]) => {
-            console.log("Summary Data:", summary);
-            console.log("Details Data:", details);
-
-            updateSummary(summary);
-
-            if (JSON.stringify(details) !== JSON.stringify(deviceDetailsCache)) {
-                updateDetails(details);
-                deviceDetailsCache = details; // Update cache
-            }
-            // Cache details for pinging
-            latestDetails = details;
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-}
-
-/*
-   Updated pingAllDevices:
-   Instead of calling a non-existent ping endpoint, we now use the history API to fetch 
-   device history and update each device’s status by updating the separate status dot and text.
-*/
-
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        alert("IP copied: " + text);
-    }).catch(err => {
-        console.error("Copy failed", err);
+  // group rows by floor
+  const floorMap = useMemo(() => {
+    const m = {};
+    Object.keys(liveCounts).forEach(floorName => {
+      m[floorName] = [];
     });
-}
+    details.forEach(r => {
+      if (!(r.floor in m)) m[r.floor] = [];
+      m[r.floor].push(r);
+    });
+    return m;
+  }, [details, liveCounts]);
 
-function pingAllDevices(regionName) {
-    let details = latestDetails;
-    if (!details || !details.details) return;
-
-    fetch("http://localhost/api/devices/history")
-        .then(response => response.json())
-        .then(historyData => {
-            let statusChanged = false;
-
-            for (const [key, devices] of Object.entries(details.details)) {
-                if (!Array.isArray(devices) || devices.length === 0) continue;
-
-                devices.forEach((device) => {
-                    const ip = device.ip_address || "N/A";
-                    const card = document.querySelector(`[data-ip="${ip}"]`);
-                    if (!card) return;
-
-                    // Determine new status from history API if available.
-                    const historyArray = historyData[ip];
-                    let newStatus = (device.status || "offline").toLowerCase();
-                    if (Array.isArray(historyArray) && historyArray.length > 0) {
-                        const latestEntry = historyArray[historyArray.length - 1];
-                        newStatus = (latestEntry.status || "offline").toLowerCase();
-                    }
-                    const currentStatus = card.dataset.status;
-
-                    // Update UI: update the dot and the text.
-                    const statusDot = card.querySelector(".status-dot");
-                    const statusText = card.querySelector(".status-text");
-                    if (statusDot) {
-                        statusDot.style.backgroundColor = newStatus === "online" ? "green" : "red";
-                        statusDot.classList.remove("online-dot", "offline-dot");
-                        statusDot.classList.add(newStatus === "online" ? "online-dot" : "offline-dot");
-                    }
-                    else {
-                        console.warn(`Status dot element not found for IP: ${ip}`);
-                    }
-                    if (statusText) {
-                        const textColor = newStatus === "online" ? "green" : "red";
-
-                        statusText.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
-                        statusText.style.color = textColor;
-                        statusText.style.backgroundColor = "transparent";
-                        statusText.style.padding = "0";
-                        statusText.style.borderRadius = "0";
-                    } else {
-                        console.warn(`Status text element not found for IP: ${ip}`);
-                    }
-
-                    if (newStatus !== currentStatus) {
-                        statusChanged = true;
-                        card.dataset.status = newStatus;
-                    }
-                });
-            }
-
-            setTimeout(() => {
-                if (statusChanged) {
-                    fetchData(regionName);
-                }
-            }, 5000);
-        })
-        .catch(error => {
-            console.error("Error fetching device history:", error);
+  // filter floors based on searchTerm, then sort by headcount desc
+  const displayed = useMemo(() => {
+    return Object.entries(floorMap)
+      .filter(([floor, emps]) => {
+        if (!term) return true;
+        if (floor.toLowerCase().includes(term)) return true;
+        return emps.some(r => {
+          const empId = String(r.EmployeeID).toLowerCase();
+          const name = String(r.ObjectName1).toLowerCase();
+          const card = r.CardNumber ? String(r.CardNumber).toLowerCase() : "";
+          return (
+            empId.includes(term) ||
+            name.includes(term) ||
+            card.includes(term)
+          );
         });
-}
+      })
+      .sort(
+        ([aFloor], [bFloor]) =>
+          (liveCounts[bFloor] || 0) - (liveCounts[aFloor] || 0)
+      );
+  }, [floorMap, liveCounts, term]);
 
-function updateSummary(data) {
-    document.getElementById("total-devices").textContent = data.summary?.totalDevices || "0";
-    document.getElementById("online-devices").textContent = data.summary?.totalOnlineDevices || "0";
-    document.getElementById("offline-devices").textContent = data.summary?.totalOfflineDevices || "0";
+  const columns = [
+    { field: "EmployeeID", headerName: "Emp ID" },
+    { field: "ObjectName1", headerName: "Name" },
+    { field: "LocaleMessageTime", headerName: "Swipe Time" },
+    { field: "PersonnelType", headerName: "Type" },
+    { field: "CardNumber", headerName: "Card" },
+    { field: "Door", headerName: "Door" },
+  ];
 
-    document.getElementById("camera-total").textContent = data.summary?.cameras?.total || "0";
-    document.getElementById("camera-online").textContent = data.summary?.cameras?.online || "0";
-    document.getElementById("camera-offline").textContent = data.summary?.cameras?.offline || "0";
+  return (
+    <>
+      <Header />
 
-    document.getElementById("archiver-total").textContent = data.summary?.archivers?.total || "0";
-    document.getElementById("archiver-online").textContent = data.summary?.archivers?.online || "0";
-    document.getElementById("archiver-offline").textContent = data.summary?.archivers?.offline || "0";
+      <Box component="main" sx={{ pt: 1, pb: 1 }}>
+        <Container maxWidth={false} disableGutters>
+          {/* Back button */}
+          <Box display="flex" alignItems="center" mb={2} sx={{ px: 2 }}>
+            <Button size="small" onClick={() => navigate(-1)}>
+              ← Back to Overview
+            </Button>
+          </Box>
 
-    document.getElementById("controller-total").textContent = data.summary?.controllers?.total || "0";
-    document.getElementById("controller-online").textContent = data.summary?.controllers?.online || "0";
-    document.getElementById("controller-offline").textContent = data.summary?.controllers?.offline || "0";
+          {/* Title + search */}
+          <Box display="flex" alignItems="center" gap={2} mb={2} sx={{ px: 2 }}>
+            <Typography variant="h6">Floor Details</Typography>
+            <Typography variant="body2" color="textSecondary">
+              Last updated: {lastUpdate}
+            </Typography>
+            <TextField
+              size="small"
+              placeholder="Search floor / emp…"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </Box>
 
-    document.getElementById("server-total").textContent = data.summary?.servers?.total || "0";
-    document.getElementById("server-online").textContent = data.summary?.servers?.online || "0";
-    document.getElementById("server-offline").textContent = data.summary?.servers?.offline || "0";
-}
+          {loading ? (
+            <Box sx={{ px: 2, py: 8 }}>
+              <LoadingSpinner />
+            </Box>
+          ) : (
+            <>
+              {/* Cards */}
+              <Box
+                component="section"
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  m: 0,
+                  p: 0,
+                }}
+              >
+                {displayed.map(([floor, emps]) => {
+                  // slice default rows to 25
+                  const isSearching = term.length > 0;
+                  const rowsToShow = isSearching
+                    ? emps.filter(r => {
+                        const empId = String(r.EmployeeID).toLowerCase();
+                        const name = String(r.ObjectName1).toLowerCase();
+                        const card = r.CardNumber
+                          ? String(r.CardNumber).toLowerCase()
+                          : "";
+                        return (
+                          empId.includes(term) ||
+                          name.includes(term) ||
+                          card.includes(term)
+                        );
+                      })
+                    : emps.slice(0, 15);
 
-/*
-   Updated updateDetails:
-   Each device card is built with separate elements for the status dot and status text.
-   This ensures that later updates from pingAllDevices can reliably find and update them.
-*/
-function updateDetails(data) {
-    const detailsContainer = document.getElementById("device-details");
-    const deviceFilter = document.getElementById("device-filter");
-    const onlineFilterButton = document.getElementById("filter-online");
-    const offlineFilterButton = document.getElementById("filter-offline");
-    const allFilterButton = document.getElementById("filter-all");
-    const cityFilter = document.getElementById("city-filter");
+                  return (
+                    <Box
+                      key={floor}
+                      sx={{ width: "50%", boxSizing: "border-box", p: 2 }}
+                    >
+                      <Box
+                        sx={{
+                          border: "1px solid #FFC107",
+                          borderRadius: 2,
+                          height: "100%",
+                        }}
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={600}
+                          gutterBottom
+                        >
+                          {floor} (Total {liveCounts[floor] ?? 0})
+                        </Typography>
 
-    detailsContainer.innerHTML = "";
-    cityFilter.innerHTML = '<option value="all">All Cities</option>';
+                        <TableContainer
+                          component={Paper}
+                          variant="outlined"
+                          sx={{ mb: 1 }}
+                        >
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                {columns.map(col => (
+                                  <TableCell
+                                    key={col.field}
+                                    sx={{ fontWeight: "bold" }}
+                                  >
+                                    {col.headerName}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
 
-    let combinedDevices = [];
-    let citySet = new Set();
-
-    // Icon utility based on device type
-    function getDeviceIcon(type = "") {
-        type = type.toLowerCase();
-        if (type.includes("camera")) return "fas fa-video";
-        if (type.includes("controller")) return "fas fa-cogs";
-        if (type.includes("archiver")) return "fas fa-database";
-        if (type.includes("server")) return "fas fa-server";
-        return "fas fa-microchip"; // fallback
-    }
-
-
-
-
-    // Fetch real-time status if available.
-    fetch("http://localhost:80/api/region/devices/status")
-        .then((response) => response.json())
-        .then((realTimeStatus) => {
-            console.log("Live Status Data:", realTimeStatus);
-
-            for (const [key, devices] of Object.entries(data.details)) {
-                if (!Array.isArray(devices) || devices.length === 0) continue;
-                const deviceType = key.toLowerCase();
-
-                devices.forEach((device) => {
-                    const deviceIP = device.ip_address || "N/A";
-                    let currentStatus = (realTimeStatus[deviceIP] || device.status || "offline").toLowerCase();
-                    const city = device.city || "Unknown";
-                    citySet.add(city);
-
-                    // Create card element.
-                    const card = document.createElement("div");
-                    card.className = "device-card";
-                    card.dataset.type = deviceType;
-                    card.dataset.status = currentStatus;
-                    card.dataset.city = city;
-                    card.setAttribute("data-ip", deviceIP);
-
-                    // Apply background color based on online/offline status
-                    card.style.backgroundColor = currentStatus === "online" ? "#" : "#"; card.style.backgroundColor = currentStatus === "online"
-                        ? ""  // Tailwind's emerald-500 with 12% opacity
-                        : "";  // Tailwind's red-500 with 12% opacity
-
-
-                    card.style.borderColor = currentStatus === "online"
-                        ? ""
-                        : "";
-
-                    // Create a container for status
-                    const statusContainer = document.createElement("p");
-                    statusContainer.className = "device-status";
-                    // statusContainer.textContent = "Status: ";
-
-                    // Status text
-                    const statusText = document.createElement("span");
-                    statusText.className = "status-text";
-                    statusText.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
-                    statusText.style.color = currentStatus === "online" ? "green" : "red";
-
-                    // Status dot
-                    const statusDot = document.createElement("span");
-                    statusDot.classList.add(currentStatus === "online" ? "online-dot" : "offline-dot");
-                    statusDot.style.backgroundColor = (currentStatus === "online") ? "green" : "red";
-                    statusDot.style.display = "inline-block";
-                    statusDot.style.width = "10px";
-                    statusDot.style.height = "10px";
-                    statusDot.style.marginLeft = "5px";
-                    statusDot.style.marginRight = "5px";
-                    statusDot.style.borderRadius = "50%";
-
-                    // Combine status parts
-                    statusContainer.appendChild(statusDot);
-                    statusContainer.appendChild(statusText);
-
-                    // Use insertAdjacentHTML to avoid overwriting statusContainer
-                    // ,,,, ,,m, 
-
-                        card.insertAdjacentHTML("beforeend", `
-                                <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700;  font-family: 'Times New Roman', Times, serif;, sans-serif; margin-bottom: 10px;">
-                                    ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-                                </h3>
-
-                                <div class="card-content">
-                                <p class="device-type-label ${deviceType}" style="font-size: 1.05rem;  font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: 600; margin-bottom: 10px;">
-
-                                <strong><i class="${getDeviceIcon(deviceType)}" style="margin-right: 5px;"></i> ${deviceType.toUpperCase()}</strong>
-                                    </p>
-
-                            <p style="font-size: 1.1rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;">
-                                <strong style="color:rgb(8, 8, 8);">
-                                    <i class="fas fa-network-wired" style="margin-right: 6px;"></i>
-                                </strong>
-                                <span 
-                                    class="device-ip" 
-                                    style="font-weight: 900; color: #00adb5; cursor: pointer; text-shadow: 0 0 1px rgba(0, 173, 181, 0.3); font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
-" 
-                                    onclick="copyToClipboard('${deviceIP}')"
-                                    title="Click to copy IP"
+                            <TableBody>
+                              {rowsToShow.map((r, i) => (
+                                <TableRow
+                                  key={`${r.PersonGUID}-${i}`}
+                                  sx={
+                                    isSearching
+                                      ? {
+                                          backgroundColor:
+                                            "rgba(255, 235, 59, 0.3)",
+                                        }
+                                      : {}
+                                  }
                                 >
-                                    ${deviceIP}
-                                </span>
-                            </p>
+                                  <TableCell>{r.EmployeeID}</TableCell>
+                                  <TableCell>{r.ObjectName1}</TableCell>
+                                  <TableCell>
+                                    {new Date(
+                                      r.LocaleMessageTime
+                                    ).toLocaleTimeString()}
+                                  </TableCell>
+                                  <TableCell>{r.PersonnelType}</TableCell>
+                                  <TableCell>{r.CardNumber}</TableCell>
+                                  <TableCell>{r.Door}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
 
-                                <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 6px;">
-                                    <strong style="color: rgb(13, 13, 13);;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i></strong>
-                                    <span style=" font-size: 1rem; font-weight: bold; color: rgb(8, 9, 9);  margin-left: 12px;">${device.location || "N/A"}</span>
-                                </p>
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            setExpandedFloor(
+                              expandedFloor === floor ? null : floor
+                            )
+                          }
+                        >
+                          {expandedFloor === floor
+                            ? "Hide"
+                            : "See more…"}
+                        </Button>
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
 
-                                <p style="font-size: 0.95rem; font-family: 'Segoe UI', sans-serif;">
-                                    <strong style="color: rgb(215, 217, 222);;"><i class="fas fa-city" style="margin-right: 5px;"></i></strong>
-                                    <span style="font-weight: bold; color: rgb(7, 7, 7);; margin-left: 4px;">${city}</span>
-                                </p>
+              {/* Expanded full table */}
+              {expandedFloor && (
+                <Box sx={{ px: 2, mt: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    {expandedFloor} — All Entries
+                  </Typography>
+                  <DataTable
+                    columns={columns}
+                    rows={(floorMap[expandedFloor] || []).map(r => ({
+                      ...r,
+                      LocaleMessageTime: new Date(
+                        r.LocaleMessageTime
+                      ).toLocaleTimeString(),
+                    }))}
+                  />
+                </Box>
+              )}
+            </>
+          )}
+        </Container>
+      </Box>
 
-                                </div>
+      <Footer />
+    </>
+  );
+}
 
-                            `);
+                        refere above all files carefully and write same logic for below emea file, use app route and header same logic for belwo file
+                        and give me correct update code, carefully,
+This is emea file more help to create 
+read alos this
+                        //C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\components\Header.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+import wuLogo from '../assets/wu-logo.png';
+import austriaFlag from '../assets/flags/austria.png';
+import uaeFlag from '../assets/flags/uae.png';
+import irelandFlag from '../assets/flags/ireland.png';
+import italyFlag from '../assets/flags/italy.png';
+import lithuaniaFlag from '../assets/flags/lithuania.png';
+import moroccoFlag from '../assets/flags/morocco.png';
+import russiaFlag from '../assets/flags/russia.png';
+import ukFlag from '../assets/flags/uk.png';
+import spainFlag from '../assets/flags/spain.png';
+import { partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+
+const displayNameMap = {
+
+   'AUT.Vienna':'Vienna',
+  'DU.Abu Dhab':'Abu Dhabi',
+  'IE.Dublin':'Dublin',
+  'IT.Rome':'Rome',
+  'LT.Vilnius':'Vilnius',
+  'MA.Casablanca':'Casablanca',
+  'RU.Moscow':'Moscow',
+  'UK.London':'London',
+  'ES.Madrid':'Madrid'
+};
 
 
 
-//                 card.insertAdjacentHTML("beforeend", `
-//   <h3 class="device-name" style="font-size: 1.1rem; font-weight: 700; font-family: 'Times New Roman', Times, serif; margin-bottom: 10px;">
-//     ${device.cameraname || device.controllername || device.archivername || device.servername || "Unknown Device"}
-//   </h3>
 
-//   <div class="card-content">
-//     <i class="${getDeviceIcon(deviceType)}" style="color: #3b3f46;"></i>
-//     <strong>${deviceType.toUpperCase()}</strong>
+export default function Header() {
+  // const navigate = useNavigate();
+  // const loc = useLocation();
+  // const { data } = useLiveOccupancy(1000);
+  // const [lastUpdate, setLastUpdate] = useState('');
 
-//     <i class="fas fa-network-wired" style="color: #d7d9de;"></i>
-//     <span 
-//       class="device-ip" 
-//       onclick="copyToClipboard('${deviceIP}')" 
-//       title="Click to copy IP" 
-//       style="cursor: pointer; color: #0077b6;">
-//       ${deviceIP}
-//     </span>
+    const navigate = useNavigate();
+  const loc = useLocation(); // ✅ correct hook usage
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
 
-//     <i class="fas fa-map-marker-alt" style="color: rgb(215, 217, 222);"></i>
-//     <span>${device.location || "N/A"}</span>
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
 
-//     <i class="fas fa-city" style="color: rgb(215, 217, 222);"></i>
-//     <span>${city}</span>
-//   </div>
-// `);
-                    card.appendChild(statusContainer);
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPart = parts[0] === 'partition' && parts[1];
+  const current = isPart ? decodeURIComponent(parts[1]) : '';
+   const isHome = loc.pathname === '/'; // ✅ fixed: use loc
+
+  const flagMap = {
+    'AUT.Vienna': austriaFlag,
+    'DU.Abu Dhab': uaeFlag,
+    'IE.Dublin': irelandFlag,
+    'IT.Rome': italyFlag,
+    'LT.Vilnius': lithuaniaFlag,
+    'MA.Casablanca': moroccoFlag,
+    'RU.Moscow': russiaFlag,
+    'UK.London': ukFlag,
+    'ES.Madrid': spainFlag
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+       <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            EMEA Occupancy{current && ` • ${current.split('.').pop()}`}
+          </Typography>
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+
+          <IconButton color="inherit" onClick={() => navigate('/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* ✅ Static Vilnius button shown only on main dashboard */}
+          {isHome && (
+            <IconButton color="inherit" onClick={() => navigate('/partition/LT.Vilnius/details')}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+
+          {/* ✅ Dynamic partition button shown when inside any partition */}
+          {isPart && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate(`/partition/${encodeURIComponent(current)}/details`)}>
+              <ListAltIcon />
+            </IconButton>
+          )}
+        </Box>
 
 
 
-                    // ............
-                    combinedDevices.push({
-                        card: card,
-                        device: {
-                            type: deviceType,
-                            status: currentStatus,
-                            city: city
-                        }
-                    });
-                });
+
+{/* ,,,,,,,,,,,,,,,,,,,,,,,,,,,, */}
+         <Box display="flex" alignItems="center">
+
+          <Select
+            size="small"
+            value={current}
+            displayEmpty
+            onChange={e => {
+              const partition = e.target.value;
+              navigate(partition ? `/partition/${encodeURIComponent(partition)}` : '/');
+            }}
+            renderValue={(selected) =>
+              selected ? (
+                <Box display="flex" alignItems="center">
+                  <Box
+                    component="img"
+                    src={flagMap[selected]}
+                    alt={selected}
+                    sx={{ width: 24, height: 16, mr: 1 }}
+                  />
+                  {selected}
+                </Box>
+              ) : "— Select Site —"
             }
 
-            combinedDevices.sort((a, b) => {
-                const statusA = (a.device.status === "offline") ? 0 : 1;
-                const statusB = (b.device.status === "offline") ? 0 : 1;
-                return statusA - statusB;
-            });
 
-            const allDevices = combinedDevices.map(item => item.card);
-            const deviceObjects = combinedDevices.map(item => item.device);
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
 
-            citySet.forEach((city) => {
-                const option = document.createElement("option");
-                option.value = city;
-                option.textContent = city;
-                cityFilter.appendChild(option);
-            });
+            + {partitionList.map(p => (
+   <MenuItem key={p} value={p}>
+     {displayNameMap[p] || p}
+   </MenuItem>
+ ))}
+          </Select>
 
-            deviceFilter.value = "all";
-            cityFilter.value = "all";
-            document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
-            allFilterButton.classList.add("active");
-
-            function filterDevices() {
-                const selectedType = deviceFilter.value;
-                const selectedStatus = document.querySelector(".status-filter.active")?.dataset.status || "all";
-                const selectedCity = cityFilter.value;
-                // Search bar input
-                const searchTerm = document.getElementById("device-search").value.toLowerCase();
-
-                detailsContainer.innerHTML = "";
-
-                // const filteredDevices = allDevices.filter((device) =>
-                //     (selectedType === "all" || device.dataset.type === selectedType) &&
-                //     (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
-                //     (selectedCity === "all" || device.dataset.city === selectedCity)
-                // );
-
-                const filteredDevices = allDevices.filter((device) =>
-                    (selectedType === "all" || device.dataset.type === selectedType) &&
-                    (selectedStatus === "all" || device.dataset.status === selectedStatus) &&
-                    (selectedCity === "all" || device.dataset.city === selectedCity) &&
-                    (
-                        !searchTerm ||
-                        device.innerText.toLowerCase().includes(searchTerm)
-                    )
-                );
-
-                filteredDevices.forEach((deviceCard) => {
-                    detailsContainer.appendChild(deviceCard);
-                });
-
-                // const region = currentRegion?.toUpperCase() || "GLOBAL";
-                // if (selectedCity !== "all") {
-                //     document.getElementById("region-title").textContent = `${region}, ${selectedCity} Summary`;
-                // } else {
-                //     document.getElementById("region-title").textContent = `${region} Summary`;
-                // }
+        </Box>
 
 
-                const region = currentRegion?.toUpperCase() || "GLOBAL";
-                const titleElement = document.getElementById("region-title");
-
-                const logoHTML = `
-                    <span>
-
-                     
-                        <img src="images/wu-header.png" alt="Logo"
-                            style="height: 50px; width: auto; object-fit: contain; margin-right: 5px;  margin-top: 10px;" />
-                    </span>
-                    `;
-                if (selectedCity !== "all") {
-                    titleElement.innerHTML = `${logoHTML}<span>${region}, ${selectedCity} Summary</span>`;
-                } else {
-                    titleElement.innerHTML = `${logoHTML}<span>${region} Summary</span>`;
-                }
-
-                const filteredSummaryDevices = deviceObjects.filter((deviceObj, index) => {
-                    const correspondingCard = allDevices[index];
-                    return (
-                        (selectedType === "all" || correspondingCard.dataset.type === selectedType) &&
-                        (selectedStatus === "all" || correspondingCard.dataset.status === selectedStatus) &&
-                        (selectedCity === "all" || correspondingCard.dataset.city === selectedCity)
-                    );
-                });
-
-                const summary = calculateCitySummary(filteredSummaryDevices);
-                updateSummary(summary);
-            }
-
-            function calculateCitySummary(devices) {
-                const summary = {
-                    summary: {
-                        totalDevices: devices.length,
-                        totalOnlineDevices: devices.filter(d => d.status === "online").length,
-                        totalOfflineDevices: devices.filter(d => d.status === "offline").length,
-                        cameras: { total: 0, online: 0, offline: 0 },
-                        archivers: { total: 0, online: 0, offline: 0 },
-                        controllers: { total: 0, online: 0, offline: 0 },
-                        servers: { total: 0, online: 0, offline: 0 },
-                    }
-                };
-
-                devices.forEach((device) => {
-                    if (!summary.summary[device.type]) return;
-                    summary.summary[device.type].total += 1;
-                    if (device.status === "online") summary.summary[device.type].online += 1;
-                    else summary.summary[device.type].offline += 1;
-                });
-
-                return summary;
-            }
-
-            filterDevices();
-
-            setTimeout(() => {
-                const selectedCity = cityFilter.value;
-                const selectedType = deviceFilter.value;
-                const selectedStatus = document.querySelector(".status-filter.active")?.dataset.status || "all";
-
-                const filteredSummaryDevices = deviceObjects.filter((deviceObj, index) => {
-                    const correspondingCard = allDevices[index];
-                    return (
-                        (selectedType === "all" || correspondingCard.dataset.type === selectedType) &&
-                        (selectedStatus === "all" || correspondingCard.dataset.status === selectedStatus) &&
-                        (selectedCity === "all" || correspondingCard.dataset.city === selectedCity)
-                    );
-                });
-
-                const summary = calculateCitySummary(filteredSummaryDevices);
-                updateSummary(summary);
-            }, 100);
-
-            deviceFilter.addEventListener("change", filterDevices);
-            // Search bar input
-            document.getElementById("device-search").addEventListener("input", filterDevices);
-            cityFilter.addEventListener("change", filterDevices);
-            allFilterButton.addEventListener("click", () => {
-                document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
-                allFilterButton.classList.add("active");
-                filterDevices();
-            });
-            onlineFilterButton.addEventListener("click", () => {
-                document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
-                onlineFilterButton.classList.add("active");
-                filterDevices();
-            });
-            offlineFilterButton.addEventListener("click", () => {
-                document.querySelectorAll(".status-filter").forEach(btn => btn.classList.remove("active"));
-                offlineFilterButton.classList.add("active");
-                filterDevices();
-            });
-        })
-        .catch((error) => {
-            console.error("Error fetching real-time device status:", error);
-            detailsContainer.innerHTML = "<p>Failed to load device details.</p>";
-        });
-}
-
-function showModal(name, ip, location, status, city) {
-    document.getElementById("modal-title").textContent = `Details for ${name}`;
-    document.getElementById("modal-body").innerHTML = `
-            <li><strong>Name:</strong> ${name}</li>
-            <li><strong>IP:</strong> ${ip}</li>
-            <li><strong>Location:</strong> ${location}</li>
-            <li><strong>Status:</strong> ${status}</li>
-            <li><strong>City:</strong> ${city}</li>
-        `;
-    document.getElementById("modal").style.display = "block";
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 
-// Show/hide button on scroll
-window.addEventListener("scroll", () => {
-    const btn = document.getElementById("scrollToTopBtn");
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        btn.style.display = "block";
-    } else {
-        btn.style.display = "none";
-    }
-});
-
-// Scroll to top on click
-document.getElementById("scrollToTopBtn").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
 
 
-                this is summary code update it carefully
-                  
+// // // src/routes/AppRoutes.jsx
+// import React from 'react';
+// import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+// import Dashboard              from '../pages/Dashboard';
+// import History                from '../pages/History';
+// import PartitionDetail        from '../pages/PartitionDetail';
+// import PartitionDetailDetails from '../pages/PartitionDetailDetails';
 
-//C:\Users\W0024618\Desktop\NewFrontend\Device Dashboard\summary.js
-let deviceUptimeTimers = {};
-let deviceDowntimeTimers = {};
+// export default function AppRoutes() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
 
-// Utility to turn an IP (or any string) into a safe DOM‑ID fragment
-function sanitizeId(str) {
-    return (str || '').replace(/[^a-zA-Z0-9]/g, '_');
-}
+//         {/* Home dashboard */}
+//         <Route path="/" element={<Dashboard />} />
 
-function fetchDeviceData() {
-    const selectedRegion = document.getElementById('region').value;
+//         {/* Global history */}
+//         <Route path="/history" element={<History />} />
 
-    if (selectedRegion === 'All') {
-        fetch(`http://localhost/api/regions/all-details`)
-            .then(res => res.json())
-            .then(allRegionsData => {
-                let combinedDetails = { cameras: [], archivers: [], controllers: [], servers: [] };
-                Object.values(allRegionsData).forEach(regionData => {
-                    if (regionData.details) {
-                        ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
-                            combinedDetails[type].push(...(regionData.details[type] || []));
-                        });
-                    }
-                });
-                fetchDeviceHistory(combinedDetails);
-            })
-            .catch(err => console.error('Error fetching all regions data:', err));
-    } else {
-        fetch(`http://localhost/api/regions/details/${selectedRegion}`)
-            .then(res => res.json())
-            .then(regionData => {
-                const d = regionData.details;
-                const total = (d.cameras?.length || 0) + (d.archivers?.length || 0) + (d.controllers?.length || 0) + (d.servers?.length || 0);
-                const online = ([...(d.cameras || []), ...(d.archivers || []), ...(d.controllers || []), ...(d.servers || [])]
-                    .filter(dev => dev.status === "Online").length);
+//         {/* Partition-scoped history */}
+//         <Route path="/partition/:partition/history" element={<History />} />
 
+//         {/* Partition overview (live) */}
+//         <Route path="/partition/:partition" element={<PartitionDetail />} />
 
+//         {/* Partition “see details” sub-page */}
+//         <Route
+//           path="/partition/:partition/details"
+//           element={<PartitionDetailDetails />}
+//         />
 
-                const setWithIcon = (id, iconClass, label, value, colorClass = "") => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.innerHTML = `<i class="${iconClass}"></i> ${label}: <span class="${colorClass}" style="font-weight: 700;">${value}</span>`;
-                    }
-                };
-                setWithIcon("total-devices", "fas fa-network-wired", "Total Devices", total,"text-green");
-                setWithIcon("total-online", "fas fa-signal", "Total Online Devices", online, "text-green");
-                setWithIcon("total-cameras", "fas fa-video", "Total Cameras", d.cameras?.length || 0,"text-green");
-                setWithIcon("total-controllers", "fas fa-microchip", "Total Controllers", d.controllers?.length || 0,"text-green");
-                setWithIcon("total-archivers", "fas fa-database", "Total Archivers", d.archivers?.length || 0,"text-green");
-                setWithIcon("total-servers", "fas fa-server", "Total Servers", d.servers?.length || 0,"text-green");
-
-                fetchDeviceHistory(d);
-            })
-            .catch(err => console.error('Error fetching device data:', err));
-    }
-}
-
-function fetchDeviceHistory(details) {
-    fetch(`http://localhost/api/devices/history`)
-        .then(res => res.json())
-        .then(historyData => {
-            populateDeviceTable(details, historyData);
-            window.deviceHistoryData = historyData;
-        })
-        .catch(err => console.error('Error fetching device history:', err));
-}
-
-function populateDeviceTable(details, historyData) {
-    const tbody = document.getElementById('device-table').getElementsByTagName('tbody')[0];
-    tbody.innerHTML = '';
-    let list = [];
-
-    ['cameras', 'archivers', 'controllers', 'servers'].forEach(type => {
-        details[type]?.forEach(dev => {
-            const ip = dev.ip_address;
-            const safe = sanitizeId(ip);
-            const name = dev[type.slice(0, -1) + 'name'] || 'Unknown';
-            const category = type.slice(0, -1).toUpperCase();
-            const region = dev.location || 'Unknown';
-            const hist = filterHistoryForDisplay(historyData[ip] || [], category);
-            const current = dev.status || (hist.length ? hist[hist.length - 1].status : 'Unknown');
-            const downCount = hist.filter(e => e.status === 'Offline').length;
-
-            // Only show offline or >15 downtimes
-            if (current === 'Offline' || downCount > 15) {
-                list.push({ ip, safe, name, category, region, current, hist, downCount });
-            }
-        });
-    });
-
-
-    // Collect cities from devices
-const citySet = new Set();
-list.forEach(dev => {
-    if (dev.region) {
-        citySet.add(dev.region);
-    }
-});
-
-
-// 👇 Populate City Filter
-const cityFilter = document.getElementById("city-filter");
-if (cityFilter) {
-    const cities = [...new Set(list.map(dev => dev.region).filter(Boolean))].sort();
-    cityFilter.innerHTML = '<option value="all">All Cities</option>';
-    cities.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city;
-        option.textContent = city;
-        cityFilter.appendChild(option);
-    });
-}
-
-
-    list.sort((a, b) => b.downCount - a.downCount);
-
-    // compute our two new summary counts:
-    const downtimeOver15Count = list.filter(d => d.downCount > 15).length;
-    const currentlyOfflineCount = list.filter(d => d.current === 'Offline').length;
-    const setIf = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
-    setIf('count-downtime-over-15', `Devices with >15 downtimes: ${downtimeOver15Count}`);
-    setIf('count-currently-offline', `Devices currently Offline: ${currentlyOfflineCount}`);
-
-    if (!list.length) {
-        const row = tbody.insertRow();
-        const cell = row.insertCell();
-        cell.colSpan = 10;
-        cell.textContent = "No devices found";
-        cell.style.textAlign = "center";
-        cell.style.fontWeight = "bold";
-        updateDisplayedDeviceCount(0);
-        return;
-    }
-
-    list.forEach((dev, idx) => {
-        const row = tbody.insertRow();
-
-        //  row.classList.add(dev.current === "Online" ? "online-row" : "offline-row");
-
-        if (dev.current === 'Offline') {
-  row.classList.add('row-offline');
-} else if (dev.current === 'Online') {
-  row.classList.add('row-online');
-} else {
-  row.classList.add('row-repair');
-}
-
-        row.style.border = "1px solid black";
-        row.innerHTML = `
-   <td>${idx + 1}</td>
-    <td><span onclick="copyText('${dev.ip}')" style="cursor:pointer; ;">${dev.ip}</span></td>
-    <td><span onclick="copyText('${dev.name}')" style="cursor:pointer; ;">${dev.name}</span></td>
-    <td>${dev.category}</td>
-    <td>${dev.region}</td>
-    <td id="uptime-${dev.safe}">0h/0m/0s</td>
-    <td id="downtime-count-${dev.safe}">${dev.downCount}</td>
-    <td id="downtime-${dev.safe}">0h/0m/0s</td>
-    <td><button  class="history-btn" onclick="openDeviceHistory('${dev.ip}','${dev.name}','${dev.category}')">View History</button></td>
-    <td id="remark-${dev.safe}">Device working properly</td>
-`;
-        row.style.color = dev.current === "Online" ? "#000" : "#000";
-
-
-        if (dev.current === "Online") {
-            startUptime(dev.ip, dev.hist);
-        } else {
-            startDowntime(dev.ip, dev.hist, dev.category);
-        }
-        updateRemarks(dev.ip, dev.hist, dev.category);
-    });
-
-    filterData();
-}
-
-function filterHistoryForDisplay(hist, category) {
-    if (category === 'SERVER') return hist.slice(); // show all
-    // else: remove any offline entries that resolve within 5 minutes
-    const filtered = [];
-    let lastOff = null;
-    hist.forEach(e => {
-        if (e.status === 'Offline') {
-            lastOff = e;
-        } else if (e.status === 'Online' && lastOff) {
-            const diff = (new Date(e.timestamp) - new Date(lastOff.timestamp)) / 1000;
-            if (diff >= 300) {
-                // keep the offline event and the matching online event
-                filtered.push(lastOff, e);
-            }
-            lastOff = null;
-        } else {
-            filtered.push(e);
-        }
-    });
-    // If an Offline at end with no Online, and it's >5min ago, keep it
-    if (lastOff) {
-        const diff = (Date.now() - new Date(lastOff.timestamp)) / 1000;
-        if (diff >= 300) filtered.push(lastOff);
-    }
-    return filtered.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-}
-
-function startUptime(ip, hist) {
-    const safe = sanitizeId(ip);
-    clearInterval(deviceDowntimeTimers[safe]);
-    const lastOn = hist.filter(e => e.status === 'Online').pop();
-    if (!lastOn) return;
-    const start = new Date(lastOn.timestamp).getTime();
-    deviceUptimeTimers[safe] = setInterval(() => {
-        const secs = Math.floor((Date.now() - start) / 1000);
-        const el = document.getElementById(`uptime-${safe}`);
-        if (el) el.innerText = formatDuration(secs);
-    }, 1000);
-}
-
-function startDowntime(ip, hist, category) {
-    const safe = sanitizeId(ip);
-    clearInterval(deviceUptimeTimers[safe]);
-    const lastOff = hist.filter(e => e.status === 'Offline').pop();
-    if (!lastOff) return;
-    const start = new Date(lastOff.timestamp).getTime();
-    deviceDowntimeTimers[safe] = setInterval(() => {
-        const secs = Math.floor((Date.now() - start) / 1000);
-        const el = document.getElementById(`downtime-${safe}`);
-        if (el) el.innerText = formatDuration(secs);
-        updateDowntimeCount(ip, hist, category);
-    }, 1000);
-}
-
-function updateDowntimeCount(ip, hist, category) {
-    const safe = sanitizeId(ip);
-    const offs = filterHistoryForDisplay(hist, category).filter(e => e.status === 'Offline');
-    const count = offs.length;
-    const el = document.getElementById(`downtime-count-${safe}`);
-    if (el) el.innerText = count;
-    updateRemarks(ip, hist, category);
-}
-
-function updateRemarks(ip, hist, category) {
-    const safe = sanitizeId(ip);
-    const filteredOffs = filterHistoryForDisplay(hist, category).filter(e => e.status === 'Offline');
-    const count = filteredOffs.length;
-    const lastStatus = hist.length ? hist[hist.length - 1].status : 'Unknown';
-    const el = document.getElementById(`remark-${safe}`);
-    if (!el) return;
-
-    if (lastStatus === 'Offline') {
-        el.innerText = count >= 10 ? "Device is Offline, needs repair." : "Device is Offline.";
-    }
-    else if (lastStatus === 'Online') {
-        if (count >= 10) el.innerText = "Device is Online, needs repair.";
-        else if (count > 0) el.innerText = `Device is Online, it had ${count} downtime occurrences.`;
-        else el.innerText = "Device is Online.";
-    }
-    else {
-        el.innerText = "Device status unknown.";
-    }
-    const dc = document.getElementById(`downtime-count-${safe}`);
-    if (dc) dc.innerText = count;
-}
-
-function formatDuration(seconds) {
-    const d = Math.floor(seconds / 86400);
-    const h = Math.floor((seconds % 86400) / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.round(seconds % 60);
-    const parts = [];
-    if (d) parts.push(`${d}d`);
-    if (h) parts.push(`${h}h`);
-    if (m) parts.push(`${m}m`);
-    if (s || !parts.length) parts.push(`${s}s`);
-    return parts.join('/');
-}
-
-function openDeviceHistory(ip, name, category) {
-    if (!window.deviceHistoryData) return console.error("No history loaded");
-    const raw = window.deviceHistoryData[ip] || [];
-    const hist = filterHistoryForDisplay(raw, category);
-    displayDeviceHistory(ip, name, category, hist);
-    const modal = document.getElementById('device-history-modal');
-    if (modal) modal.style.display = 'block';
-}
-
-function calculateDowntimeDuration(ts, hist) {
-    const start = new Date(ts).getTime();
-    const nextUp = hist.find(e => e.status === 'Online' && new Date(e.timestamp).getTime() > start);
-    if (nextUp) return formatDuration((new Date(nextUp.timestamp).getTime() - start) / 1000);
-    return formatDuration((Date.now() - start) / 1000);
-}
-
-// function displayDeviceHistory(ip, name, category, hist) {
-//     const header = document.getElementById('device-history-header');
-//     const container = document.getElementById('device-history');
-//     if (header) {
-//         header.innerHTML = `
-//             <h3>Device History</h3>
-//             <p><strong>Device Name:</strong> ${name}</p>
-//             <p><strong>Device IP:</strong> ${ip}</p>
-//             <hr>`;
-//     }
-//     if (!container) return;
-//     container.innerHTML = '';
-//     if (!hist.length) {
-//         container.innerHTML = '<p>No significant history (all brief outages &lt;5 min).</p>';
-//         return;
-//     }
-//     let html = `
-//         <table border="1" style="width:100%; text-align:center; border-collapse:collapse;">
-//             <thead><tr>
-//                 <th>Sr. No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Downtime Duration</th>
-//             </tr></thead><tbody>`;
-//     let lastOff = null;
-//     hist.forEach((e, i) => {
-//         const d = new Date(e.timestamp);
-//         const date = d.toLocaleDateString();
-//         const day = d.toLocaleString('en-US', { weekday: 'long' });
-//         const time = d.toLocaleTimeString();
-//         let dur = '-';
-//         if (e.status === 'Offline') lastOff = e.timestamp;
-//         else if (e.status === 'Online' && lastOff) {
-//             dur = calculateDowntimeDuration(lastOff, hist);
-//             lastOff = null;
-//         }
-//         html += `
-//             <tr>
-//                 <td>${i + 1}</td><td>${date}</td><td>${day}</td><td>${time}</td>
-//                 <td style="color:${e.status === 'Online' ? '#212529' : '#212529'}">${e.status}</td>
-//                 <td>${dur}</td>
-//             </tr>`;
-//     });
-//     html += `</tbody></table>`;
-//     container.innerHTML = html;
+//       </Routes>
+//     </BrowserRouter>
+//   );
 // }
 
 
-function displayDeviceHistory(ip, name, category, hist) {
-    const header = document.getElementById('device-history-header');
-    const container = document.getElementById('device-history');
 
-    if (header) {
-        header.innerHTML = `
-            <h2 style="color: var(--yellow); font-size: 24px; margin-bottom: 10px;">Device History</h2>
-            <p><strong>Device Name:</strong> ${name}</p>
-            <p><strong>Device IP:</strong> ${ip}</p>
-            <hr style="margin: 15px 0; border-color: var(--gray);">`;
-    }
 
-    if (!container) return;
 
-    container.innerHTML = '';
 
-    if (!hist.length) {
-        container.innerHTML = `<p style="font-style: italic; color: #555;">No significant history (all brief outages &lt; 5 min).</p>`;
-        return;
-    }
 
-    let html = `
-        <div class="history-table-wrapper">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>Sr. No</th>
-                <th>Date</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Status</th>
-                <th>Downtime Duration</th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
 
-    let lastOff = null;
-    hist.forEach((e, i) => {
-        const d = new Date(e.timestamp);
-        const date = d.toLocaleDateString();
-        const day = d.toLocaleString('en-US', { weekday: 'long' });
-        const time = d.toLocaleTimeString();
-        let dur = '-';
-        if (e.status === 'Offline') lastOff = e.timestamp;
-        else if (e.status === 'Online' && lastOff) {
-            dur = calculateDowntimeDuration(lastOff, hist);
-            lastOff = null;
-        }
 
-        html += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${date}</td>
-            <td>${day}</td>
-            <td>${time}</td>
-            <td class="${e.status === 'Offline' ? 'status-offline' : 'status-online'}">${e.status}</td>
-            <td>${dur}</td>
-          </tr>`;
-    });
 
-    html += `</tbody></table></div>`;
-    container.innerHTML = html;
+
+
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const Dashboard               = lazy(() => import('../pages/Dashboard'));
+const History                 = lazy(() => import('../pages/History'));
+const PartitionDetail         = lazy(() => import('../pages/PartitionDetail'));
+const PartitionDetailDetails  = lazy(() => import('../pages/PartitionDetailDetails'));
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          {/* Home dashboard */}
+          <Route path="/" element={<Dashboard />} />
+
+          {/* Global history */}
+          <Route path="/history" element={<History />} />
+
+          {/* Partition-scoped history */}
+          <Route path="/partition/:partition/history" element={<History />} />
+
+          {/* Partition overview (live) */}
+          <Route path="/partition/:partition" element={<PartitionDetail />} />
+
+          {/* Partition “see details” sub-page */}
+          <Route path="/partition/:partition/details" element={<PartitionDetailDetails />}/>
+
+
+
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
 }
 
+                                                               import React, { useEffect, useState, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  Container, Box, Typography, Button, TextField,
+  TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
+} from '@mui/material';
 
-function closeHistoryModal() {
-    const modal = document.getElementById('device-history-modal');
-    if (modal) modal.style.display = 'none';
-}
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import DataTable from '../components/DataTable';
+import { fetchLiveSummary } from '../api/occupancy.service';
+import { lookupFloor } from '../utils/floorLookup';
 
-// function filterData() {
-//     const typeSel = document.getElementById('device-type').value.toUpperCase();
-//     const remarkSel = document.getElementById('remark-filter').value.toUpperCase();
-//     const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
-//     let count = 0;
-//     for (let row of rows) {
-//         const type = row.cells[3].textContent.toUpperCase();
-//         const remark = row.cells[9].textContent.trim().toUpperCase();
-//         const show = (typeSel === 'ALL' || type === typeSel) && (remarkSel === 'ALL' || remark.includes(remarkSel));
-//         row.style.display = show ? '' : 'none';
-//         if (show) count++;
-//     }
-//     updateDisplayedDeviceCount(count);
-// }
+export default function PartitionDetailDetails() {
+  const { partition } = useParams();
+  const navigate = useNavigate();
 
-function filterData() {
-    const typeSel = document.getElementById('device-type')?.value.toUpperCase();
-    const remarkSel = document.getElementById('remark-filter')?.value.toUpperCase();
-    const citySel = document.getElementById('city-filter')?.value.toUpperCase();
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState('');
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(null);
 
-    const rows = document.getElementById('device-table').getElementsByTagName('tbody')[0].rows;
-    let count = 0;
+  // Load & refresh
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!active) return;
+      const det = json.details
+        .filter(r => r.PartitionName2 === partition && r.Direction === 'InDirection')
+        .map(r => ({
+          ...r,
+          floor: lookupFloor(r.PartitionName2, r.Door, r.Direction)
+        }));
+      setDetails(det);
+      setLastUpdate(new Date().toLocaleTimeString());
+      setLoading(false);
+    };
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { active = false; clearInterval(iv); };
+  }, [partition]);
 
-    for (let row of rows) {
-        const type = row.cells[3].textContent.toUpperCase();
-        const remark = row.cells[9].textContent.trim().toUpperCase();
-        const city = row.cells[4].textContent.toUpperCase(); // Location column
+  const floorMap = useMemo(() => {
+    return details.reduce((m, r) => {
+      m[r.floor] = m[r.floor] || [];
+      m[r.floor].push(r);
+      return m;
+    }, {});
+  }, [details]);
 
-        const show =
-            (typeSel === 'ALL' || type === typeSel) &&
-            (remarkSel === 'ALL' || remark.includes(remarkSel)) &&
-            (citySel === 'ALL' || city === citySel);
+ 
 
-        row.style.display = show ? '' : 'none';
-        if (show) count++;
-    }
+  const displayed = useMemo(() => {
+  const term = search.toLowerCase();
+  return Object.entries(floorMap)
+    .map(([floor, emps]) => {
+      const filteredEmps = emps.filter(e =>
+        floor.toLowerCase().includes(term) ||
+        e.ObjectName1?.toLowerCase().includes(term) ||
+        e.EmployeeID?.toString().toLowerCase().includes(term)
+      );
+      return [floor, filteredEmps];
+    })
+    .filter(([, filteredEmps]) => filteredEmps.length > 0);
+}, [floorMap, search]);
 
-    updateDisplayedDeviceCount(count);
-}
+  if (loading) {
+    return <>
+      <Header />
+      <Box p={4}><LoadingSpinner /></Box>
+      <Footer />
+    </>;
+  }
 
-function updateDisplayedDeviceCount(count) {
-    const el = document.getElementById('device-count');
-    if (el) el.innerText = `Displayed Devices: ${count}`;
-}
+  return (
+    <>
+      <Header />
+      <Container maxWidth={false} disableGutters sx={{ px: 2, py: 2 }}>
 
-// document.addEventListener("DOMContentLoaded", () => {
-//     ['region', 'device-type', 'remark-filter'].forEach(id => {
-//         const el = document.getElementById(id);
-//         if (el) el.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
-//     });
-//     fetchDeviceData();
-// });
+        <Box mb={1}><Button size="small" onClick={() => navigate(-1)}>← Back to Overview</Button></Box>
 
+        <Box display="flex" alignItems="center" flexWrap="wrap" gap={0.5} mb={2}>
+          {/* Title */}
+          <Typography variant="h6">Floor Details</Typography>
 
+          {/* Last updated text */}
+          <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+            Last updated: {lastUpdate}
+          </Typography>
 
-document.addEventListener("DOMContentLoaded", () => {
-    ['region', 'device-type', 'remark-filter'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
-    });
+          {/* Search field */}
+          <TextField
+            size="small"
+            placeholder="Search floor / emp…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            sx={{ ml: 1 }}
+          />
+        </Box>
 
-    const cityFilter = document.getElementById('city-filter');
-    if (cityFilter) {
-        cityFilter.addEventListener('change', filterData);
-    }
+        <Box display="flex" flexWrap="wrap">
+  {[...displayed]
+    .sort((a, b) => b[1].length - a[1].length) // Priority: most rows first
+    .map(([floor, emps]) => {
+      const isExpanded = expanded === floor;
+      const visibleEmps = isExpanded ? emps : emps.slice(0, 10);
 
-    fetchDeviceData();
-});
+      return (
+        <Box
+          key={floor}
+          sx={{
+            width: { xs: '100%', sm: '50%' },
+            p: 1,
+            boxSizing: 'border-box',
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ fontWeight: 'bold' }}
+          >
+            {floor} (Total {emps.length})
+          </Typography>
 
+          {/* Smart height layout */}
+          <Box
+            sx={{
+              border: '2px solid #FFC107',
+              borderRadius: 1,
+              p: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 120,
+              maxHeight: isExpanded ? 600 : 'auto',
+            }}
+          >
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{
+                overflowY: 'auto',
+                flexGrow: 1,
+              }}
+            >
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    {['ID', 'Name', 'Time', 'Type', 'Card', 'Door'].map((h, idx, arr) => (
+                      <TableCell
+                        key={h}
+                        sx={{
+                          fontWeight: 'bold',
+                          py: 0.5,
+                          whiteSpace: 'nowrap',
+                          borderRight: idx !== arr.length - 1 ? '1px solid #ccc' : 'none',
+                          borderBottom: '1px solid #ccc',
+                        }}
+                      >
+                        {h}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
 
-function exportDeviceTableToExcel() {
-    const tbl = document.getElementById("device-table");
-    if (!tbl) return;
-    const wb = XLSX.utils.table_to_book(tbl, { sheet: "Device Table" });
-    XLSX.writeFile(wb, "Device_Table.xlsx");
-}
+                <TableBody>
+                  {visibleEmps.map((r, i) => (
+                    <TableRow key={i}>
+                      {[
+                        r.EmployeeID,
+                        r.ObjectName1,
+                        new Date(r.LocaleMessageTime).toLocaleTimeString(),
+                        r.PersonnelType,
+                        r.CardNumber,
+                        r.Door,
+                      ].map((val, idx, arr) => (
+                        <TableCell
+                          key={idx}
+                          sx={{
+                            py: 0.5,
+                            minWidth: [50, 120, 100, 80, 100, 100][idx],
+                            whiteSpace: 'nowrap',
+                            borderRight: idx !== arr.length - 1 ? '1px solid #eee' : 'none',
+                          }}
+                        >
+                          {val}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-function exportDeviceHistoryToExcel() {
-    const histTbl = document.querySelector("#device-history-modal table");
-    if (!histTbl) return alert("Please open a device's history first.");
-    const wb = XLSX.utils.table_to_book(histTbl, { sheet: "Device History" });
-    XLSX.writeFile(wb, "Device_History.xlsx");
-}
+            {emps.length > 10 && (
+              <Box textAlign="right" mt={1}>
+                <Button
+                  size="small"
+                  onClick={() => setExpanded(isExpanded ? null : floor)}
+                >
+                  {isExpanded ? 'Hide' : 'See more…'}
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      );
+    })}
+</Box>
 
-function copyText(text) {
-    navigator.clipboard.writeText(text)
-        .then(() => showToast(`Copied: ${text}`))
-        .catch(err => console.error("Copy failed: ", err));
-}
-
-
-
-function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.className = "toast show";
-    setTimeout(() => {
-        toast.className = toast.className.replace("show", "");
-    }, 2500);
-}
-
-function copyToClipboard(elementId) {
-    const text = document.getElementById(elementId)?.innerText;
-    if (text) {
-        navigator.clipboard.writeText(text)
-            .then(() => showToast(`Copied: ${text}`))
-            .catch(err => console.error("Failed to copy:", err));
-    }
+        {expanded && (
+          <Box mt={2}>
+            <Typography variant="h6" gutterBottom>{expanded} — All Entries</Typography>
+            <DataTable
+              columns={[
+                { field: 'EmployeeID', headerName: 'ID' },
+                { field: 'ObjectName1', headerName: 'Name' },
+                { field: 'LocaleMessageTime', headerName: 'Time' },
+                { field: 'PersonnelType', headerName: 'Type' },
+                { field: 'CardNumber', headerName: 'Card' },
+                { field: 'Door', headerName: 'Door' }
+              ]}
+              rows={floorMap[expanded].map(r => ({
+                ...r,
+                LocaleMessageTime: new Date(r.LocaleMessageTime).toLocaleTimeString()
+              }))}
+            />
+          </Box>
+        )}
+      </Container>
+      <Footer />
+    </>
+  );
 }
 
 
