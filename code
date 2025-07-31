@@ -1,6 +1,4 @@
-
-
-// src/components/Header.jsx (for EMEA)
+// src/components/Header.jsx — APAC Edition
 import React, { useEffect, useState } from 'react';
 import {
   AppBar, Toolbar, Box, Typography,
@@ -13,41 +11,29 @@ import HistoryIcon from '@mui/icons-material/History';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
 import wuLogo from '../assets/wu-logo.png';
-import austriaFlag from '../assets/flags/austria.png';
-import uaeFlag from '../assets/flags/uae.png';
-import irelandFlag from '../assets/flags/ireland.png';
-import italyFlag from '../assets/flags/italy.png';
-import lithuaniaFlag from '../assets/flags/lithuania.png';
-import moroccoFlag from '../assets/flags/morocco.png';
-import russiaFlag from '../assets/flags/russia.png';
-import ukFlag from '../assets/flags/uk.png';
-import spainFlag from '../assets/flags/spain.png';
+import indiaFlag from '../assets/flags/india.png';
+import malaysiaFlag from '../assets/flags/malaysia.png';
+import philippinesFlag from '../assets/flags/philippines.png';
+import taguigFlag from '../assets/flags/Taguig.png';
+import japanFlag from '../assets/flags/japan.png';
 
-import { partitionList } from '../api/occupancy.service';
+import { partitionList } from '../services/occupancy.service';
 import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
 
 const displayNameMap = {
-  'AUT.Vienna': 'Vienna',
-  'DU.Abu Dhab': 'Abu Dhabi',
-  'IE.Dublin': 'Dublin',
-  'IT.Rome': 'Rome',
-  'LT.Vilnius': 'Vilnius',
-  'MA.Casablanca': 'Casablanca',
-  'RU.Moscow': 'Moscow',
-  'UK.London': 'London',
-  'ES.Madrid': 'Madrid',
+  'IN.Pune': 'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon': 'Quezon City',
+  'PH.Taguig': 'Taguig',
+  'JP.Tokyo': 'Tokyo',
 };
 
 const flagMap = {
-  'AUT.Vienna': austriaFlag,
-  'DU.Abu Dhab': uaeFlag,
-  'IE.Dublin': irelandFlag,
-  'IT.Rome': italyFlag,
-  'LT.Vilnius': lithuaniaFlag,
-  'MA.Casablanca': moroccoFlag,
-  'RU.Moscow': russiaFlag,
-  'UK.London': ukFlag,
-  'ES.Madrid': spainFlag,
+  'IN.Pune': indiaFlag,
+  'MY.Kuala Lumpur': malaysiaFlag,
+  'PH.Quezon': philippinesFlag,
+  'PH.Taguig': taguigFlag,
+  'JP.Tokyo': japanFlag,
 };
 
 export default function Header() {
@@ -92,7 +78,7 @@ export default function Header() {
         <Box display="flex" alignItems="center">
           <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EMEA Occupancy
+            APAC Occupancy
             {currentPartition && ` • ${displayNameMap[currentPartition] || currentPartition}`}
           </Typography>
 
@@ -112,7 +98,7 @@ export default function Header() {
             onClick={() =>
               navigate(currentPartition
                 ? makePartitionPath('details')
-                : '/partition/LT.Vilnius/details'
+                : '/partition/IN.Pune/details'
               )
             }
           >
@@ -144,170 +130,6 @@ export default function Header() {
               </MenuItem>
             ))}
           </Select>
-          {/* {selectedFlag && <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />} */}
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
-}
-
-
-refere apaove code to wrie as it is code for apac header, carefully and correct 
-Rad above header code and apply same logic for apac header
-
-
-// src/components/Header.jsx — APAC Edition
-
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  IconButton
-} from '@mui/material';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-
-import HomeIcon    from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import InfoIcon    from '@mui/icons-material/Info';
-
-import WuLogo        from '../assets/wu-logo.png';
-import IndiaFlag     from '../assets/flags/india.png';
-import MalaysiaFlag  from '../assets/flags/malaysia.png';
-import PhilippinesFlag from '../assets/flags/philippines.png';
-import TaguigFlag    from '../assets/flags/Taguig.png';
-import JapanFlag     from '../assets/flags/japan.png';
-import DefaultFlag   from '../assets/flags/default.png';
-
-import { partitionList }    from '../services/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-// Friendly display names
-const displayNameMap = {
-  'IN.Pune':         'Pune',
-  'MY.Kuala Lumpur': 'Kuala Lumpur',
-  'PH.Quezon':       'Quezon City',
-  'PH.Taguig':       'Taguig',
-  'JP.Tokyo':        'Tokyo',
-};
-
-// Flag lookup by partition code
-const flagMap = {
-  'IN.Pune':         IndiaFlag,
-  'MY.Kuala Lumpur': MalaysiaFlag,
-  'PH.Quezon':       PhilippinesFlag,
-  'PH.Taguig':       TaguigFlag,
-  'JP.Tokyo':        JapanFlag,
-};
-
-export default function Header() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const { data }  = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  // Update timestamp on each new live-data push
-  // useEffect(() => {
-  //   if (data) {
-  //     setLastUpdate(new Date().toLocaleTimeString());
-  //   }
-  // }, [data]);
-
-  // Parse path to detect /partition/:code and any trailing "history" or "details"
-  const segments        = location.pathname.split('/').filter(Boolean);
-  const isPartitionPage = segments[0] === 'partition' && Boolean(segments[1]);
-  const currentCode     = isPartitionPage ? decodeURIComponent(segments[1]) : '';
-  const extraSegments   = isPartitionPage ? segments.slice(2) : [];
-
-  // Choose flag (or default)
-  const selectedFlag = flagMap[currentCode] || DefaultFlag;
-
-  // Preserve any /history or /details suffix when changing region
-  const handlePartitionChange = (newCode) => {
-    const base   = newCode ? `/partition/${encodeURIComponent(newCode)}` : '/';
-    const suffix = extraSegments.length ? `/${extraSegments.join('/')}` : '';
-    navigate(base + suffix);
-  };
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2, bgcolor: '#28282B' }}>
-      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-
-        {/* Left: Logo + Title + Nav Icons */}
-        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
-
-          <Typography variant="h6" sx={{ color: '#FFC107', mr: 3, fontWeight: 600 }}>
-            APAC Live Headcount
-            {currentCode && ` • ${displayNameMap[currentCode] || currentCode}`}
-          </Typography>
-
-          <Typography
-            variant="caption"
-            sx={{
-              color: '#FFC107',
-              ml: 2,
-              opacity: data ? 1 : 0,
-              transition: 'opacity 0.8s'
-            }}
-          >
-            {lastUpdate}
-          </Typography>
-
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}`
-              : '/' }
-            color="inherit"
-          >
-            <HomeIcon />
-          </IconButton>
-
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}/history`
-              : '/history' }
-            color="inherit"
-          >
-            <HistoryIcon />
-          </IconButton>
-
-          <IconButton
-            component={Link}
-            to={ isPartitionPage
-              ? `/partition/${encodeURIComponent(currentCode)}/details`
-              : '/partition/Pune/details' }
-            color="inherit"
-          >
-            <InfoIcon />
-          </IconButton>
-        </Box>
-
-        {/* Right: Region Selector + Flag */}
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={currentCode}
-            displayEmpty
-            onChange={e => handlePartitionChange(e.target.value)}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 160 }}
-            renderValue={val =>
-              val ? displayNameMap[val] || val : '— Select Region —'
-            }
-          >
-            <MenuItem value="">— Select Region —</MenuItem>
-            {partitionList.map(code => (
-              <MenuItem key={code} value={code}>
-                {displayNameMap[code] || code}
-              </MenuItem>
-            ))}
-          </Select>
-          <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />
         </Box>
       </Toolbar>
     </AppBar>
