@@ -1,6 +1,4 @@
-.filter(([key]) =>
-  !decodedPartition ? true : key.includes(decodedPartition)
-)
+const filterCode = decodedPartition?.split('.')[0] || null;
 
 
 
@@ -8,11 +6,8 @@
 
 
 
-.filter(([key]) => {
-  if (!decodedPartition) return true;
-  const feKey = Object.keys(apacForwardKey).find(k => k.endsWith(decodedPartition));
-  return feKey && key === apacForwardKey[feKey];
-})
+
+
 
 
 
@@ -24,7 +19,7 @@ const partitionRows = useMemo(() => {
 
   return Object.entries(summaryEntry.partitions)
     .filter(([key]) =>
-      !decodedPartition ? true : key.includes(decodedPartition)
+      !filterCode ? true : key.startsWith(filterCode + '.')
     )
     .map(([key, vals]) => {
       const feCode = apacReverseKey[key];
@@ -38,4 +33,6 @@ const partitionRows = useMemo(() => {
         total:      vals.total      ?? 0,
       };
     });
-}, [summaryEntry, decodedPartition]);
+}, [summaryEntry, filterCode]);
+
+
