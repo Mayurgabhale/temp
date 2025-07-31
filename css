@@ -7,6 +7,7 @@ but the profel is we got this route http://localhost:3000/partition/AUT.Vienna
 so read below code carefullyu and write correct code for emea, and 
 give me update correct codee
 
+refere laca file to create emea 
 // src/components/Header.jsx
 
 import React, { useEffect, useState } from 'react';
