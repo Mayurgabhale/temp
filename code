@@ -26,3 +26,27 @@ const summaryEntry = useMemo(() => {
 
 
 
+
+
+
+const partitionRows = useMemo(() => {
+  if (!summaryEntry) return [];
+
+  return Object.entries(summaryEntry.partitions)
+    .filter(([key]) => {
+      if (!backendFilterKey) return true;
+      return key === backendFilterKey;
+    })
+    .map(([key, vals]) => {
+      const feCode = apacReverseKey[key];
+      const display = feCode && apacPartitionDisplay[feCode];
+
+      return {
+        country: display?.country ?? 'Unknown',
+        city: display?.city ?? key,
+        employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+        contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+        total: vals.total ?? 0,
+      };
+    });
+}, [summaryEntry, backendFilterKey]);
