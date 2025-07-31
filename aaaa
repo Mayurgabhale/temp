@@ -1,17 +1,167 @@
-import React from 'react';
-import Header from './Header';
 
-export default function Layout({ children }) {
+
+// src/components/Header.jsx (for EMEA)
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Toolbar, Box, Typography,
+  Select, MenuItem, IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+import HomeIcon from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+import wuLogo from '../assets/wu-logo.png';
+import austriaFlag from '../assets/flags/austria.png';
+import uaeFlag from '../assets/flags/uae.png';
+import irelandFlag from '../assets/flags/ireland.png';
+import italyFlag from '../assets/flags/italy.png';
+import lithuaniaFlag from '../assets/flags/lithuania.png';
+import moroccoFlag from '../assets/flags/morocco.png';
+import russiaFlag from '../assets/flags/russia.png';
+import ukFlag from '../assets/flags/uk.png';
+import spainFlag from '../assets/flags/spain.png';
+
+import { partitionList } from '../api/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+const displayNameMap = {
+  'AUT.Vienna': 'Vienna',
+  'DU.Abu Dhab': 'Abu Dhabi',
+  'IE.Dublin': 'Dublin',
+  'IT.Rome': 'Rome',
+  'LT.Vilnius': 'Vilnius',
+  'MA.Casablanca': 'Casablanca',
+  'RU.Moscow': 'Moscow',
+  'UK.London': 'London',
+  'ES.Madrid': 'Madrid',
+};
+
+const flagMap = {
+  'AUT.Vienna': austriaFlag,
+  'DU.Abu Dhab': uaeFlag,
+  'IE.Dublin': irelandFlag,
+  'IT.Rome': italyFlag,
+  'LT.Vilnius': lithuaniaFlag,
+  'MA.Casablanca': moroccoFlag,
+  'RU.Moscow': russiaFlag,
+  'UK.London': ukFlag,
+  'ES.Madrid': spainFlag,
+};
+
+export default function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = location.pathname.split('/').filter(Boolean);
+  const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
+  const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
+  const suffixSegments = isPartitionPath
+    ? parts.slice(2)
+    : parts[0] === 'history'
+      ? ['history']
+      : [];
+
+  const selectedFlag = flagMap[currentPartition];
+
+  const makePartitionPath = (suffix) => {
+    const base = `/partition/${encodeURIComponent(currentPartition)}`;
+    return suffix ? `${base}/${suffix}` : base;
+  };
+
+  const handlePartitionChange = (newPartition) => {
+    if (!newPartition) return navigate('/');
+    const base = `/partition/${encodeURIComponent(newPartition)}`;
+    const full = suffixSegments.length
+      ? `${base}/${suffixSegments.join('/')}`
+      : base;
+    navigate(full);
+  };
+
   return (
-    <>
-      <Header />
-      <div style={{ padding: '16px' }}>
-        {children}
-      </div>
-    </>
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        {/* Left: Logo + Navigation */}
+        <Box display="flex" alignItems="center">
+          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            EMEA Occupancy
+            {currentPartition && ` • ${displayNameMap[currentPartition] || currentPartition}`}
+          </Typography>
+
+          {/* Home */}
+          {/* <IconButton color="inherit" onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+            <HomeIcon />
+          </IconButton> */}
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
+            <HomeIcon />
+          </IconButton>
+
+          {/* History */}
+          <IconButton color="inherit" onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
+            <HistoryIcon />
+          </IconButton>
+
+          {/* Details */}
+          <IconButton
+            color="inherit"
+            onClick={() =>
+              navigate(currentPartition
+                ? makePartitionPath('details')
+                : '/partition/LT.Vilnius/details'
+              )
+            }
+          >
+            <ListAltIcon />
+          </IconButton>
+        </Box>
+
+        {/* Right: Dropdown Selector + Flag */}
+        <Box display="flex" alignItems="center">
+          <Select
+            size="small"
+            value={currentPartition}
+            displayEmpty
+            onChange={(e) => handlePartitionChange(e.target.value)}
+            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
+            renderValue={(selected) =>
+              selected ? (
+                <Box display="flex" alignItems="center">
+                  <Box component="img" src={flagMap[selected]} alt={selected} sx={{ width: 24, height: 16, mr: 1 }} />
+                  {displayNameMap[selected] || selected}
+                </Box>
+              ) : "— Select Site —"
+            }
+          >
+            <MenuItem value="">— Select Site —</MenuItem>
+            {partitionList.map((p) => (
+              <MenuItem key={p} value={p}>
+                {displayNameMap[p] || p}
+              </MenuItem>
+            ))}
+          </Select>
+          {/* {selectedFlag && <Box component="img" src={selectedFlag} alt="Flag" sx={{ height: 50 }} />} */}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
 
+
+
+
+
+
+this above is my header code,
+and below is your so update my code correct
 
 
 
