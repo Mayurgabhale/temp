@@ -4,3 +4,25 @@ useEffect(() => {
     setPickedDate(new Date(latestDate));
   }
 }, [data, pickedDate]);
+
+
+
+
+
+
+
+const summaryEntry = useMemo(() => {
+  if (!data || !pickedDate) return null;
+
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+
+  const match = data.summaryByDate.find(r =>
+    r.date === dateStr || r.date.startsWith(dateStr)
+  );
+
+  return match || null;
+}, [data, pickedDate]);
+
+
+
+
