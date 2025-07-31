@@ -1,4 +1,28 @@
+in this one issues in in table total count are not 
+disply 
+mens this 
+http://localhost:3001/partition/Pune/history
+Wednesday, 30 July, 2025
+Country	City	Employees	Contractors	Total
+Total	0	0	0
+all is wokr good but only totla coujt are not disply 
+Employees	Contractors	Total these are show 0 
 
+
+
+
+http://localhost:3001/history
+Wednesday, 30 July, 2025
+Country	City	Employees	Contractors	Total   
+Philippines	Quezon City	367	42	409 <------- this is correct 
+India	Pune	874	113	987
+Philippines	Taguig	10	3	13
+Japan	Tokyo	7	1	8
+MY.Kuala Lumpur	MY.Kuala Lumpur	5	1	6
+Total	1263	160	1423
+
+
+slove this issu and give me correct update code 
 
 // src/pages/History.jsx — APAC Edition
 
