@@ -1,8 +1,8 @@
-C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\routes\AppRoutes.jsx
+in this one page to another page redirect are take more time, one minute or 30 seconds to redirect to one page to another pag
 
+so check all code carefully, and find out the what is the problem,
 
-
-
+and slove this issue
 
 // C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\routes\AppRoutes.jsx
 import React, { lazy, Suspense } from 'react';
