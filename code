@@ -1,3 +1,15 @@
+// Mapping for country codes to full country names
+const codeToCountry = {
+  IN: 'India',
+  MY: 'Malaysia',
+  PH: 'Philippines',
+  JP: 'Japan',
+  CR: 'Costa Rica',
+  // Add more as needed
+};
+
+
+
 Compiled with problems:
 ×
 ERROR
