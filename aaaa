@@ -1,3 +1,11 @@
+<Suspense fallback={<LoadingSpinner />}>
+
+
+
+
+
+
+
 if (!data) {
   return (
     <>
