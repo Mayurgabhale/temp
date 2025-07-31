@@ -1,3 +1,23 @@
+
+return data?.summaryByDate?.find(r => r.date === ds) || null;
+
+
+
+
+
+return (data?.details || []).filter(r => r.SwipeDate?.startsWith(ds))
+
+
+
+
+
+
+
+
+
+
+
+......m
 Wednesday, 23 July, 2025
 Country	Site	Employees	Contractors	Total
 Total	0	0	0
