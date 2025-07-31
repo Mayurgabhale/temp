@@ -1,9 +1,12 @@
-const summaryEntry = useMemo(() => {
-  if (!data || !pickedDate) return null;
-  const dateStr = format(pickedDate, 'yyyy-MM-dd');
-  return data.summaryByDate.find(r => r.date === dateStr) || null;
-}, [data, pickedDate]);
-
+useEffect(() => {
+  setLoading(true);
+  fetchHistory(decodedPartition)
+    .then(json => {
+      console.log("Fetched data:", json);
+      setData(json);
+    })
+    .finally(() => setLoading(false));
+}, [decodedPartition]);
 
 
 
