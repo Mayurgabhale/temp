@@ -1,137 +1,20 @@
-// src/components/Header.jsx — APAC Edition
-import React, { useEffect, useState } from 'react';
-import {
-  AppBar, Toolbar, Box, Typography,
-  Select, MenuItem, IconButton
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+const partitionRows = useMemo(() => {
+  if (!summaryEntry) return [];
 
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import ListAltIcon from '@mui/icons-material/ListAlt';
+  return Object.entries(summaryEntry.partitions)
+    .filter(([key]) =>
+      !backendFilterKey ? true : key === backendFilterKey
+    )
+    .map(([key, vals]) => {
+      const feCode = apacReverseKey[key];
+      const display = feCode && apacPartitionDisplay[feCode];
 
-import wuLogo from '../assets/wu-logo.png';
-import indiaFlag from '../assets/flags/india.png';
-import malaysiaFlag from '../assets/flags/malaysia.png';
-import philippinesFlag from '../assets/flags/philippines.png';
-import taguigFlag from '../assets/flags/Taguig.png';
-import japanFlag from '../assets/flags/japan.png';
-
-import { partitionList } from '../services/occupancy.service';
-import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
-
-const displayNameMap = {
-  'IN.Pune': 'Pune',
-  'MY.Kuala Lumpur': 'Kuala Lumpur',
-  'PH.Quezon': 'Quezon City',
-  'PH.Taguig': 'Taguig',
-  'JP.Tokyo': 'Tokyo',
-};
-
-const flagMap = {
-  'IN.Pune': indiaFlag,
-  'MY.Kuala Lumpur': malaysiaFlag,
-  'PH.Quezon': philippinesFlag,
-  'PH.Taguig': taguigFlag,
-  'JP.Tokyo': japanFlag,
-};
-
-export default function Header() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { data } = useLiveOccupancy(1000);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  useEffect(() => {
-    if (data) setLastUpdate(new Date().toLocaleTimeString());
-  }, [data]);
-
-  const parts = location.pathname.split('/').filter(Boolean);
-  const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
-  const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
-  const suffixSegments = isPartitionPath
-    ? parts.slice(2)
-    : parts[0] === 'history'
-      ? ['history']
-      : [];
-
-  const selectedFlag = flagMap[currentPartition];
-
-  const makePartitionPath = (suffix) => {
-    const base = `/partition/${encodeURIComponent(currentPartition)}`;
-    return suffix ? `${base}/${suffix}` : base;
-  };
-
-  const handlePartitionChange = (newPartition) => {
-    if (!newPartition) return navigate('/');
-    const base = `/partition/${encodeURIComponent(newPartition)}`;
-    const full = suffixSegments.length
-      ? `${base}/${suffixSegments.join('/')}`
-      : base;
-    navigate(full);
-  };
-
-  return (
-    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        {/* Left: Logo + Navigation */}
-        <Box display="flex" alignItems="center">
-          <Box component="img" src={wuLogo} alt="WU" sx={{ height: 36, mr: 2 }} />
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            APAC Occupancy
-            {currentPartition && ` • ${displayNameMap[currentPartition] || currentPartition}`}
-          </Typography>
-
-          {/* Home */}
-          <IconButton color="inherit" onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
-            <HomeIcon />
-          </IconButton>
-
-          {/* History */}
-          <IconButton color="inherit" onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
-            <HistoryIcon />
-          </IconButton>
-
-          {/* Details */}
-          <IconButton
-            color="inherit"
-            onClick={() =>
-              navigate(currentPartition
-                ? makePartitionPath('details')
-                : '/partition/IN.Pune/details'
-              )
-            }
-          >
-            <ListAltIcon />
-          </IconButton>
-        </Box>
-
-        {/* Right: Dropdown Selector + Flag */}
-        <Box display="flex" alignItems="center">
-          <Select
-            size="small"
-            value={currentPartition}
-            displayEmpty
-            onChange={(e) => handlePartitionChange(e.target.value)}
-            sx={{ bgcolor: 'background.paper', mr: 2, minWidth: 150 }}
-            renderValue={(selected) =>
-              selected ? (
-                <Box display="flex" alignItems="center">
-                  <Box component="img" src={flagMap[selected]} alt={selected} sx={{ width: 24, height: 16, mr: 1 }} />
-                  {displayNameMap[selected] || selected}
-                </Box>
-              ) : "— Select Site —"
-            }
-          >
-            <MenuItem value="">— Select Site —</MenuItem>
-            {partitionList.map((p) => (
-              <MenuItem key={p} value={p}>
-                {displayNameMap[p] || p}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
-}
+      return {
+        country: display ? display.country : key,
+        city:    display ? display.city    : key,
+        employee:   vals.Employee   ?? 0,
+        contractor: vals.Contractor ?? 0,
+        total:      vals.total      ?? 0,
+      };
+    });
+}, [summaryEntry, backendFilterKey]);
