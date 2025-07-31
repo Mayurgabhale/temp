@@ -1,161 +1,32 @@
- <div class="filter-panel">
-            <!-- Downtime & Offline Cards -->
-            <div class="device-summary">
-                <div class="device-card">
-                    <i class="fas fa-clock icon"></i>
-                    <span class="label">Downtime &gt; 15 min:</span>
-                    <p class="value" id="count-downtime-over-15">0</p>
-                </div>
-                <div class="device-card">
-                    <i class="fas fa-power-off icon"></i>
-                    <span class="label">Currently Offline:</span>
-                    <p class="value offline" id="count-currently-offline">0</p>
-                </div>
-            </div>
-
-            <!-- Region Filter -->
-            <div class="filter-group">
-                <label for="region">Select Region:</label>
-                <select id="region" onchange="fetchDeviceData()">
-                    <option value="global">Global</option>
-                    <option value="apac">APAC</option>
-                    <option value="emea">EMEA</option>
-                    <option value="laca">LACA</option>
-                    <option value="namer">NAMER</option>
-                </select>
-            </div>
-
-            <!-- Device Type Filter -->
-            <div class="filter-group">
-                <label for="device-type">Filter by Device Type:</label>
-                <select id="device-type" onchange="filterData()">
-                    <option value="ALL">All</option>
-                    <option value="CONTROLLER">Controller</option>
-                    <option value="ARCHIVER">Archiver</option>
-                    <option value="CAMERA">Camera</option>
-                    <option value="SERVER">Server</option>
-                </select>
-            </div>
-
-            <!-- Remark Filter -->
-            <div class="filter-group">
-                <label for="remark-filter">Filter by Remark:</label>
-                <select id="remark-filter" onchange="filterData()">
-                    <option value="ALL">All</option>
-                    <option value="Device needs repair">Device needs repair</option>
-                    <option value="Device is Online">Device is Online</option>
-                    <option value="Device is Offline">Device is Offline</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="city-filter">Filter by Location:</label>
-
-                <select id="cityFilter">
-                    <option value="">All Cities</option>
-                </select>
-            </div>
-
-        </div>
-
-
-
-
-/* FILTER PANEL - SINGLE ROW STRUCTURE */
-.filter-panel {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 30px;
-  gap: 44px;
-  background-color: #f9fafc;
-  border: 1px solid var(--gray);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Subgroup wrapper for filters */
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  min-width: 200px;
-    background: #fff;
-  border: 1px solid var(--gray);
-    background: #fff;
-  border: 1px solid var(--gray);
-  padding: 23px 40px;
-  border-radius: var(--border-radius);
-  min-width: 200px;
-  /* text-align: center; */
-  font-family: 'Times New Roman', Times, serif;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-  transition: all 0.2s ease;
-}
-
-.filter-group label {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #097ed7;
-}
-
-.filter-group select {
-  padding: 8px 20px;
-  font-size: 16px;
-  border-radius: var(--border-radius);
-  border: 1px solid #ccc;
-  background-color: #fff;
-  transition: all 0.3s ease;
-  width: 200px;
-}
-
-.filter-group select:hover {
-  border-color: var(--blue);
-}
-
-/* DEVICE CARDS INSIDE FILTER PANEL */
-.filter-panel .device-summary {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  flex-wrap: wrap;
-}
-
-.filter-panel .device-card {
-  background: #fff;
-  border: 1px solid var(--gray);
-  padding: 5px 16px;
-  border-radius: var(--border-radius);
-  min-width: 180px;
-  text-align: center;
-  font-family: 'Times New Roman', Times, serif;
-  box-shadow: 0 2px 4px rgba(227, 72, 72, 0.04);
-  transition: all 0.2s ease;
-  color: rgb(213, 50, 50);
-}
-
-.filter-panel .device-card:hover {
-  transform: scale(1.03);
-  background-color: #f8f9fa;
-}
-
-/* BUTTONS INSIDE FILTER PANEL */
-
-
-/* Make filters responsive on small devices */
 @media (max-width: 992px) {
   .filter-panel {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: nowrap;           /* Prevent wrapping */
+    justify-content: flex-start;
+    gap: 12px;                   /* Reduce gap for tighter layout */
+    padding: 10px 15px;          /* Less padding on small screens */
   }
 
-  .filter-panel .device-summary {
-    justify-content: center;
+  .filter-group {
+    min-width: auto;
+    flex: 1 1 0;                 /* Allow shrinking */
+    padding: 10px 12px;
   }
 
-  
+  .filter-group select {
+    width: 100%;                 /* Responsive width */
+    font-size: 14px;
+  }
+
+  .device-summary {
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+
+  .device-card {
+    min-width: auto;
+    flex: 1 1 0;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
 }
