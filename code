@@ -1,17 +1,23 @@
 const rows = useMemo(() => {
   if (!summary || !summary.partitions) return [];
-  return Object.entries(summary.partitions)
-    .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
-    .map(([k, v]) => {
-      const [code, site] = k.split('.');
-      const employee = v.Employee ?? v.EmployeeCount ?? 0;
-      const contractor = v.Contractor ?? v.ContractorCount ?? 0;
-      return {
-        country: codeToCountry[code] || code,
-        site,
-        employee,
-        contractor,
-        total: v.total ?? (employee + contractor)
-      };
-    });
+
+  const filtered = Object.entries(summary.partitions)
+    .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'));
+
+  // If no data matches the filter, we return nothing.
+  if (filtered.length === 0) return [];
+
+  return filtered.map(([k, v]) => {
+    const [code, site] = k.split('.');
+    const employee = v.Employee ?? v.EmployeeCount ?? 0;
+    const contractor = v.Contractor ?? v.ContractorCount ?? 0;
+    const total = employee + contractor;
+    return {
+      country: codeToCountry[code] || code,
+      site,
+      employee,
+      contractor,
+      total
+    };
+  });
 }, [summary, filterCode]);
