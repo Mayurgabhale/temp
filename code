@@ -1,46 +1,36 @@
-const partitionRows = Object.entries(data.Partition ?? {}).map(([key, vals]) => {
-  const [code, cityRaw] = key.split('.');
-
-  const city = cityRaw
-    ? cityRaw.replace('Partition', '').trim()
-    : 'Unknown'; // or '' or key itself depending on your needs
-
-  return {
-    country: codeToCountry[code] || code,
-    city,
-    employee: vals.Employee ?? vals.EmployeeCount ?? 0,
-    contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
-    tempBadge: vals.TempBadge ?? 0,
-    total: vals.total ?? 0,
-  };
-});
-
-
-
-
-
-
-
-
-Uncaught runtime errors:
+Compiled with problems:
 ×
 ERROR
-Cannot read properties of undefined (reading 'replace')
-TypeError: Cannot read properties of undefined (reading 'replace')
-    at http://localhost:3001/static/js/src_pages_History_jsx.chunk.js:943:23
-    at Array.map (<anonymous>)
-    at http://localhost:3001/static/js/src_pages_History_jsx.chunk.js:938:125
-    at updateMemo (http://localhost:3001/static/js/bundle.js:18686:17)
-    at Object.useMemo (http://localhost:3001/static/js/bundle.js:27120:16)
-    at exports.useMemo (http://localhost:3001/static/js/bundle.js:41571:32)
-    at History (http://localhost:3001/static/js/src_pages_History_jsx.chunk.js:935:71)
-    at react-stack-bottom-frame (http://localhost:3001/static/js/bundle.js:27761:18)
-    at renderWithHooks (http://localhost:3001/static/js/bundle.js:17971:20)
-    at updateFunctionComponent (http://localhost:3001/static/js/bundle.js:19664:17)
+[eslint] 
+src\pages\History.jsx
+  Line 933:14:  'codeToCountry' is not defined  no-undef
+
+Search for the keywords to learn more about each error.
 
 
 
-slove this error 
+check also commment code to slove the error
+because this part is mission in real code
+// // APAC display mapping (country + city) by front-end code
+// const apacPartitionDisplay = {
+//   'IN.Pune':         { country: 'India',       city: 'Pune' },
+//   'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' },
+//   'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' },
+//   'PH.Taguig':       { country: 'Philippines', city: 'Taguig' },
+//   'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' },
+// };
+
+// // Forward map: front-end code → backend key
+// const apacForwardKey = {
+//   'IN.Pune':         'Pune',
+//   'MY.Kuala Lumpur': 'Kuala Lumpur',
+//   'PH.Quezon':       'Quezon City',
+//   'PH.Taguig':       'Taguig City',
+//   'JP.Tokyo':        'JP.Tokyo',
+// };
+
+
+
 
 
 // // src/pages/History.jsx — APAC Edition
@@ -543,29 +533,24 @@ export default function History() {
   }, [data, pickedDate]);
 
   // 2) Build & filter partitionRows
-  const partitionRows = useMemo(() => {
-    if (!summaryEntry) return [];
-    const codeToCountry = {
-     
-    };
+const partitionRows = Object.entries(data.Partition ?? {}).map(([key, vals]) => {
+  const [code, cityRaw] = key.split('.');
 
-    return Object.entries(summaryEntry.partitions)
-      .filter(([key]) =>
-        !filterCode ? true : key.startsWith(filterCode + '.')
-      )
-      .map(([key, vals]) => {
-        const [code, cityRaw] = key.split('.');
-        return {
-          country: codeToCountry[code] || code,
-          city: cityRaw.replace('Partition','').trim(),
-          employee: vals.Employee  ?? vals.EmployeeCount  ?? 0,
-          contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
-          // only CR gets tempBadge
-          tempBadge: vals.TempBadge ?? 0,
-          total: vals.total ?? 0,
-        };
-      });
-  }, [summaryEntry, filterCode]);
+  const city = cityRaw
+    ? cityRaw.replace('Partition', '').trim()
+    : 'Unknown'; // or '' or key itself depending on your needs
+
+  return {
+    country: codeToCountry[code] || code,
+    city,
+    employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+    contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+    tempBadge: vals.TempBadge ?? 0,
+    total: vals.total ?? 0,
+  };
+});
+
+
 
   // 3) Build & filter detailRows
   const detailRows = useMemo(() => {
