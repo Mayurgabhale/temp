@@ -1,4 +1,6 @@
-
+home icon not work propar
+if i click on home then we got this route http://localhost:3000/partition/LT.Vilnius
+afte goin on this route we redireact to home page means thsi route http://localhost:3001/
 
 // src/components/Header.jsx (for EMEA)
 import React, { useEffect, useState } from 'react';
