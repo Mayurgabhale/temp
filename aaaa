@@ -1,12 +1,11 @@
-<IconButton color="inherit" onClick={() => navigate('/')}>
-  <HomeIcon />
-</IconButton>
 
+ok work, 
+but the problem is we got correct route in google search bar,
+page not disply,
+we do page refresh then disply correct route, 
+i want to click on any route hoome, or history, or any, we wantot get thsi route not do page refreshs ok 
+, so read all code carefullym and what is the chekc what is the proplem 
 
-
-
-
-After click on home icon emidatley redirect to this route http://localhost:3001/ 
 // src/components/Header.jsx (for EMEA)
 import React, { useEffect, useState } from 'react';
 import {
@@ -104,7 +103,11 @@ export default function Header() {
           </Typography>
 
           {/* Home */}
-          <IconButton color="inherit" onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+          {/* <IconButton color="inherit" onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+            <HomeIcon />
+          </IconButton> */}
+
+          <IconButton color="inherit" onClick={() => navigate('/')}>
             <HomeIcon />
           </IconButton>
 
@@ -163,3 +166,43 @@ export default function Header() {
 
 
 
+
+
+
+// C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\routes\AppRoutes.jsx
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const Dashboard               = lazy(() => import('../pages/Dashboard'));
+const History                 = lazy(() => import('../pages/History'));
+const PartitionDetail         = lazy(() => import('../pages/PartitionDetail'));
+const PartitionDetailDetails  = lazy(() => import('../pages/PartitionDetailDetails'));
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          {/* Home dashboard */}
+          <Route path="/" element={<Dashboard />} />
+
+          {/* Global history */}
+          <Route path="/history" element={<History />} />
+
+          {/* Partition-scoped history */}
+          <Route path="/partition/:partition/history" element={<History />} />
+
+          {/* Partition overview (live) */}
+          <Route path="/partition/:partition" element={<PartitionDetail />} />
+
+          {/* Partition “see details” sub-page */}
+          <Route path="/partition/:partition/details" element={<PartitionDetailDetails />}/>
+
+
+
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
