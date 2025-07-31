@@ -1,3 +1,27 @@
+const partitionRows = Object.entries(data.Partition ?? {}).map(([key, vals]) => {
+  const [code, cityRaw] = key.split('.');
+
+  const city = cityRaw
+    ? cityRaw.replace('Partition', '').trim()
+    : 'Unknown'; // or '' or key itself depending on your needs
+
+  return {
+    country: codeToCountry[code] || code,
+    city,
+    employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+    contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+    tempBadge: vals.TempBadge ?? 0,
+    total: vals.total ?? 0,
+  };
+});
+
+
+
+
+
+
+
+
 Uncaught runtime errors:
 ×
 ERROR
