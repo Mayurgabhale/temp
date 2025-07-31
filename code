@@ -2,9 +2,13 @@ const partitionRows = useMemo(() => {
   if (!summaryEntry) return [];
 
   return Object.entries(summaryEntry.partitions)
-    .filter(([key]) =>
-      !backendFilterKey ? true : key === backendFilterKey
-    )
+    .filter(([key]) => {
+      // if viewing all partitions, include all
+      if (!backendFilterKey) return true;
+
+      // if viewing a specific partition, match exactly with the backend key
+      return key === backendFilterKey;
+    })
     .map(([key, vals]) => {
       const feCode = apacReverseKey[key];
       const display = feCode && apacPartitionDisplay[feCode];
@@ -12,8 +16,8 @@ const partitionRows = useMemo(() => {
       return {
         country: display ? display.country : key,
         city:    display ? display.city    : key,
-        employee:   vals.Employee   ?? 0,
-        contractor: vals.Contractor ?? 0,
+        employee:   vals.Employee   ?? vals.EmployeeCount   ?? 0,
+        contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
         total:      vals.total      ?? 0,
       };
     });
