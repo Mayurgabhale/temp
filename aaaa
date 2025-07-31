@@ -1,3 +1,10 @@
+<IconButton color="inherit" onClick={() => navigate('/')}>
+  <HomeIcon />
+</IconButton>
+
+
+
+
 
 After click on home icon emidatley redirect to this route http://localhost:3001/ 
 // src/components/Header.jsx (for EMEA)
