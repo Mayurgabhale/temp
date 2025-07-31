@@ -1,3 +1,28 @@
+const rows = useMemo(() => {
+  if (!summary || !summary.partitions) return [];
+  return Object.entries(summary.partitions)
+    .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
+    .map(([k, v]) => {
+      const [code, site] = k.split('.');
+      const employee = v.Employee ?? v.EmployeeCount ?? 0;
+      const contractor = v.Contractor ?? v.ContractorCount ?? 0;
+      return {
+        country: codeToCountry[code] || code,
+        site,
+        employee,
+        contractor,
+        total: employee + contractor
+      };
+    });
+}, [summary, filterCode]);
+
+
+
+
+
+
+
+
 
 return data?.summaryByDate?.find(r => r.date === ds) || null;
 
