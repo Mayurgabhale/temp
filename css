@@ -1,3 +1,12 @@
+in this issue in in router 
+in we go on this page  PartitionDetailDetails.jsx  this is hesotyr page after in header we select AUT.Vienna
+then we need to get this route  http://localhost:3000/partition/AUT.Vienna/history
+
+but the profel is we got this route http://localhost:3000/partition/AUT.Vienna
+
+so read below code carefullyu and write correct code for emea, and 
+give me update correct codee
+
 // src/components/Header.jsx
 
 import React, { useEffect, useState } from 'react';
