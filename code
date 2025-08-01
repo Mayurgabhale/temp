@@ -1,3 +1,190 @@
+http://localhost:3007/api/occupancy/history
+
+{
+  "success": true,
+  "summaryByDate": [
+    {
+      "date": "2025-07-25",
+      "day": "Friday",
+      "region": {
+        "name": "APAC",
+        "total": 733,
+        "Employee": 611,
+        "Contractor": 122
+      },
+      "partitions": {
+        "Quezon City": {
+          "total": 271,
+          "Employee": 230,
+          "Contractor": 41
+        },
+        "Pune": {
+          "total": 439,
+          "Employee": 362,
+          "Contractor": 77
+        },
+        "JP.Tokyo": {
+          "total": 10,
+          "Employee": 9,
+          "Contractor": 1
+        },
+        "Taguig City": {
+          "total": 8,
+          "Employee": 6,
+          "Contractor": 2
+        },
+        "MY.Kuala Lumpur": {
+          "total": 5,
+          "Employee": 4,
+          "Contractor": 1
+        }
+      }
+    },
+    {
+      "date": "2025-07-26",
+      "day": "Saturday",
+      "region": {
+        "name": "APAC",
+        "total": 211,
+        "Employee": 135,
+        "Contractor": 76
+      },
+      "partitions": {
+        "Quezon City": {
+          "total": 161,
+          "Employee": 129,
+          "Contractor": 32
+        },
+        "Pune": {
+          "total": 48,
+          "Employee": 5,
+          "Contractor": 43
+        },
+        "Taguig City": {
+          "total": 1,
+          "Employee": 0,
+          "Contractor": 1
+        },
+        "JP.Tokyo": {
+          "total": 1,
+          "Employee": 1,
+          "Contractor": 0
+        }
+      }
+    },
+    {
+      "date": "2025-07-27",
+      "day": "Sunday",
+      "region": {
+        "name": "APAC",
+        "total": 162,
+        "Employee": 77,
+        "Contractor": 85
+      },
+      "partitions": {
+        "Quezon City": {
+          "total": 106,
+          "Employee": 74,
+          "Contractor": 32
+        },
+        "Pune": {
+          "total": 55,
+          "Employee": 2,
+          "Contractor": 53
+        },
+        "JP.Tokyo": {
+          "total": 1,
+          "Employee": 1,
+          "Contractor": 0
+        }
+      }
+    },
+    {
+      "date": "2025-07-28",
+      "day": "Monday",
+      "region": {
+        "name": "APAC",
+        "total": 1099,
+        "Employee": 953,
+        "Contractor": 146
+      },
+      "partitions": {
+        "Pune": {
+          "total": 795,
+          "Employee": 693,
+          "Contractor": 102
+        },
+        "Quezon City": {
+          "total": 272,
+          "Employee": 234,
+          "Contractor": 38
+        },
+        "Taguig City": {
+          "total": 15,
+          "Employee": 12,
+          "Contractor": 3
+        },
+        "JP.Tokyo": {
+          "total": 7,
+          "Employee": 6,
+          "Contractor": 1
+        },
+        "MY.Kuala Lumpur": {
+          "total": 10,
+          "Employee": 8,
+          "Contractor": 2
+        }
+      }
+    },
+    {
+      "date": "2025-07-29",
+      "day": "Tuesday",
+      "region": {
+        "name": "APAC",
+        "total": 1334,
+        "Employee": 1187,
+        "Contractor": 147
+      },
+      "partitions": {
+        "Quezon City": {
+          "total": 392,
+          "Employee": 353,
+          "Contractor": 39
+        },
+        "Pune": {
+          "total": 902,
+          "Employee": 799,
+          "Contractor": 103
+        },
+        "Taguig City": {
+          "total": 22,
+          "Employee": 19,
+          "Contractor": 3
+        },
+        "JP.Tokyo": {
+          "total": 11,
+          "Employee": 10,
+          "Contractor": 1
+        },
+        "MY.Kuala Lumpur": {
+          "total": 7,
+          "Employee": 6,
+          "Contractor": 1
+        }
+      }
+    },
+    {
+      "date": "2025-07-30",
+      "day": "Wednesday",
+      "region": {
+        "name": "APAC",
+        "total": 1423,
+        "Employee": 1263,
+        "Contractor": 160
+      },
+
+check also above  api response to help more
+
 issue are not slove pleache chekc alos this file 
 
 C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\api\occupancy.service.js
