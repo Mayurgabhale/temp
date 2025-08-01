@@ -1,134 +1,214 @@
-// Add this at the top of your script.js file
-const offlineTimestamps = {}; // Track when devices go offline
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\floorCapacities.js
 
-// Then modify the updateDetails function to track offline timestamps
-function updateDetails(data) {
-    const detailsContainer = document.getElementById("device-details");
-    // ... existing code ...
 
-    fetch("http://localhost:80/api/region/devices/status")
-        .then((response) => response.json())
-        .then((realTimeStatus) => {
-            console.log("Live Status Data:", realTimeStatus);
-            
-            // Update offline timestamps
-            const currentTime = new Date().getTime();
-            for (const [ip, status] of Object.entries(realTimeStatus)) {
-                if (status.toLowerCase() === "offline") {
-                    if (!offlineTimestamps[ip]) {
-                        offlineTimestamps[ip] = currentTime; // Record first offline time
-                    }
-                } else {
-                    delete offlineTimestamps[ip]; // Remove if device comes back online
-                }
-            }
+AUT.Vienna, LT.Vilnius, MA.Casablanca
 
-            // ... rest of the existing code ...
-        })
-        .catch((error) => {
-            console.error("Error fetching real-time device status:", error);
-            detailsContainer.innerHTML = "<p>Failed to load device details.</p>";
-        });
-}
+in thsi there location has floor, thats way in this 
+in tooltip usage and seat capacity value are not show,
+
+AUT.Vienna, LT.Vilnius, MA.Casablanca this is alos not declare 
 
 
 
+ const floorCapacities = {
+    '1st Floor': 90,
+    '2nd Floor': 74,
+    '3rd Floor': 97,
+    '4th Floor': 97,
+    '5th Floor': 97,
+    '6th Floor': 143,    this is our dashboard composite chart 
+    '7th Floor': 141,
+    '8th Floor': 147,
+    '9th Floor': 153,
+    '10th Floor': 135,
+
+    // Add/adjust these based on real capacity per floor
+  };
+
+
+so write correct code to disply in tooltip usage and seat capacity value
+
+
+
+C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\data\buildingCapacities.js
+
+const seatCapacities = {
+  Dubai: 53,
+  Dublin: 78,
+  Rome: 39,
+  London: 41,
+  Moscow: 108,
+  Casablanca: 55,
+  Madrid: 65,
+};
+
+export default seatCapacities;
 
 
 
 
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Container, Box, Typography, Button } from '@mui/material';
 
+import Header         from '../components/Header';
+import Footer         from '../components/Footer';
+import SummaryCard    from '../components/SummaryCard';
+import ChartCard      from '../components/ChartCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 
-function filterDevices() {
-    const selectedType = deviceFilter.value;
-    const selectedStatus = document.querySelector(".status-filter.active")?.dataset.status || "all";
-    const selectedCity = cityFilter.value;
-    const searchTerm = document.getElementById("device-search").value.toLowerCase();
-    
-    const currentTime = new Date().getTime();
-    const twoMinutesInMs = 2 * 60 * 1000; // 2 minutes in milliseconds
+import GroupIcon          from '@mui/icons-material/Group';
+import TrackChangesIcon   from '@mui/icons-material/TrackChanges';
+import PeopleIcon         from '@mui/icons-material/People';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 
-    detailsContainer.innerHTML = "";
+import { fetchLiveSummary, fetchHistory } from '../api/occupancy.service';
+// import buildingCapacities                from '../data/buildingCapacities';
+import doorMapRaw                        from '../utils/doorMap';
+import { lookupFloor }                   from '../utils/floorLookup';
+import seatCapacities from '../data/buildingCapacities';
 
-    const filteredDevices = allDevices.filter((device) => {
-        const ip = device.getAttribute("data-ip");
-        const isOffline = device.dataset.status === "offline";
-        const offlineDuration = isOffline ? currentTime - (offlineTimestamps[ip] || currentTime) : 0;
-        
-        // For offline devices, only show if offline for 2+ minutes
-        const showOfflineDevice = !isOffline || offlineDuration >= twoMinutesInMs;
-        
-        return (
-            (selectedType === "all" || device.dataset.type === selectedType) &&
-            (selectedStatus === "all" || 
-                (device.dataset.status === selectedStatus && showOfflineDevice)) &&
-            (selectedCity === "all" || device.dataset.city === selectedCity) &&
-            (!searchTerm || device.innerText.toLowerCase().includes(searchTerm))
-        );
+export default function PartitionDetail() {
+  const { partition } = useParams();
+  const navigate      = useNavigate();
+
+  const [live, setLive]         = useState(null);
+  const [history, setHistory]   = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState('');
+
+  // Poll live
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const json = await fetchLiveSummary();
+      if (!active) return;
+      setLive(json);
+      setLastUpdate(new Date().toLocaleTimeString());
+    };
+    load();
+    const iv = setInterval(load, 1000);
+    return () => { active = false; clearInterval(iv); };
+  }, [partition]);
+
+  // Load history once
+  useEffect(() => {
+    setLoadingHistory(true);
+    fetchHistory(partition).then(json => {
+      setHistory(json);
+      setLoadingHistory(false);
     });
+  }, [partition]);
 
-    filteredDevices.forEach((deviceCard) => {
-        detailsContainer.appendChild(deviceCard);
-    });
+  if (!live || !history) return <LoadingSpinner />;
 
-    // ... rest of the existing filterDevices function ...
+  const today  = history.summaryByDate.at(-1).region;
+  const realtime = live.realtime[partition] || { total:0, Employee:0, Contractor:0, floors:{} };
+
+  // Build floor entries
+ const floorEntries = Object.entries(realtime.floors).map(([floor, cnt]) => {
+  const rawName = floor.trim();                   // original floor name
+  const name = rawName.split(' ')[0];             // extract first word (e.g. "London Floor 1" → "London")
+  const capacity = seatCapacities[name] || 0; // match with buildingCapacities.js
+  const percentage = capacity ? Math.round((cnt / capacity) * 100) : 0;
+
+  console.log(`Floor: "${floor}" → name: "${name}", capacity: ${capacity}, percentage: ${percentage}`);
+
+  return {
+    name: rawName,         // keep full name for chart X-axis
+    headcount: cnt,
+    capacity,
+    percentage
+  };
+});
+
+
+
+
+
+  // Six cards
+  const cards = [
+  {
+    title: "Today's Total Headcount",
+    value: loadingHistory ? <LoadingSpinner size={25} /> : today.total,
+    icon: <i className="fa-solid fa-users" style={{ color: '#E57373', fontSize: 25 }} />,
+    border: '#FFB300'
+  },
+  {
+    title: "Today's Employees Count",
+    value: loadingHistory ? <LoadingSpinner size={25} /> : today.Employee,
+    icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+    border: '#8BC34A'
+  },
+  {
+    title: "Today's Contractors Count",
+    value: loadingHistory ? <LoadingSpinner size={25} /> : today.Contractor,
+    icon: <i className="fa-solid fa-circle-user" style={{ color: '#81C784', fontSize: 25 }} />,
+    border: '#E57373'
+  },
+  {
+    title: "Realtime Headcount",
+    value: realtime.total,
+    icon: <i className="fa-solid fa-users" style={{ color: '#BA68C8', fontSize: 25 }} />,
+    border: '#FFD180'
+  },
+  {
+    title: "Realtime Employees Count",
+    value: realtime.Employee,
+    icon: <i className="bi bi-people" style={{ color: '#81C784', fontSize: 25 }} />,
+    border: '#AED581'
+  },
+  {
+    title: "Realtime Contractors Count",
+    value: realtime.Contractor,
+    icon: <i className="fa-solid fa-circle-user" style={{ color: '#BA68C8', fontSize: 25 }} />,
+    border: '#EF5350'
+  }
+];
+
+  return (
+    <>
+      <Header />
+
+      <Container maxWidth={false} disableGutters sx={{ px:2, py:2 }}>
+        <Box mb={1}>
+          <Button size="small" onClick={() => navigate(-1)}>← Back</Button>
+        </Box>
+
+        <Box display="flex" flexWrap="wrap" gap={1} mb={3}>
+          {cards.map(c => (
+            <Box key={c.title} sx={{ flex: '1 1 calc(16.66% - 8px)' }}>
+              <SummaryCard
+                title={c.title}
+                total={c.value}
+                stats={[]}
+                icon={c.icon}
+                sx={{ height: 140, border: `2px solid ${c.border}` }}
+              />
+            </Box>
+          ))}
+        </Box>
+
+        <Box sx={{ border:'2px solid #FFC107', p:2, borderRadius:2, background:'rgba(0,0,0,0.6)' }}>
+          <Box display="flex" justifyContent="space-between" mb={1}>
+            <Typography variant="h6">Live Floor Headcount vs Capacity</Typography>
+            <Typography variant="body2" color="textSecondary">Last updated: {lastUpdate}</Typography>
+          </Box>
+
+          <ChartCard
+            data={floorEntries}
+            dataKey="headcount"
+            chartHeight={320}
+            colors={{ head:'#28B463', cap:'#FDDA0D' }}
+            axisProps={{
+              xAxis: { tick:{ fill:'#fff' }, angle: -0, textAnchor:'end' },
+              yAxis: { tick:{ fill:'#fff' } }
+            }}
+          />
+        </Box>
+      </Container>
+
+      <Footer />
+    </>
+  );
 }
-
-
-
-
-
-
-
-
-
-function pingAllDevices(regionName) {
-    let details = latestDetails;
-    if (!details || !details.details) return;
-
-    fetch("http://localhost/api/devices/history")
-        .then(response => response.json())
-        .then(historyData => {
-            const currentTime = new Date().getTime();
-            let statusChanged = false;
-            
-            for (const [key, devices] of Object.entries(details.details)) {
-                if (!Array.isArray(devices) || devices.length === 0) continue;
-                
-                devices.forEach((device) => {
-                    const ip = device.ip_address || "N/A";
-                    const card = document.querySelector(`[data-ip="${ip}"]`);
-                    if (!card) return;
-
-                    // Determine new status
-                    const historyArray = historyData[ip];
-                    let newStatus = (device.status || "offline").toLowerCase();
-                    if (Array.isArray(historyArray) && historyArray.length > 0) {
-                        const latestEntry = historyArray[historyArray.length - 1];
-                        newStatus = (latestEntry.status || "offline").toLowerCase();
-                    }
-
-                    // Update offline timestamp if status changed to offline
-                    if (newStatus === "offline" && card.dataset.status !== "offline") {
-                        offlineTimestamps[ip] = currentTime;
-                    } else if (newStatus === "online") {
-                        delete offlineTimestamps[ip];
-                    }
-
-                    // ... rest of the existing pingAllDevices code ...
-                });
-            }
-            
-            // ... rest of the existing pingAllDevices code ...
-        })
-        .catch(error => {
-            console.error("Error fetching device history:", error);
-        });
-}
-
-
-
-
-
-
-
