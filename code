@@ -1,3 +1,46 @@
+const detailRows = useMemo(() => {
+  if (!data || !pickedDate || !data.details) return [];
+  
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+  
+  return data.details
+    .filter(r => {
+      const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+      return recordDate === dateStr;
+    })
+    .filter(r => {
+      if (!backendFilterKey) return true;
+      
+      // Handle special case for Kuala Lumpur
+      const recordPartition = (r.PartitionName2 || r.PartitionNameFriendly || '').replace('MY.', '');
+      if (!recordPartition) return false;
+      
+      // Normalize keys for comparison (remove country prefix and ' City' suffix)
+      const normalizedRecord = recordPartition.replace(' City', '').trim();
+      const normalizedFilter = backendFilterKey.replace('MY.', '').replace(' City', '').trim();
+      
+      return normalizedRecord === normalizedFilter;
+    })
+    .filter(r => r.Direction === 'InDirection')
+    .reduce((unique, row) => {
+      const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+      if (!unique._seen.has(keyGUID)) {
+        unique._seen.add(keyGUID);
+        unique.rows.push(row);
+      }
+      return unique;
+    }, { _seen: new Set(), rows: [] })
+    .rows;
+}, [data, pickedDate, backendFilterKey]);
+
+
+
+
+
+
+
+
+
 ok good
 but last issue is the 
 http://localhost:3000/partition/MY.Kuala%20Lumpur/history
