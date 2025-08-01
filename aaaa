@@ -1,4 +1,3 @@
-
 const partitionRows = useMemo(() => {
   if (!summaryEntry) return [];
 
@@ -6,51 +5,26 @@ const partitionRows = useMemo(() => {
     .filter(([key]) => {
       if (!backendFilterKey) return true;
       
-      // Handle both possible key formats (Pune vs IN.Pune)
-      const normalizedBackendKey = key.replace(' City', ''); // Remove ' City' suffix if present
-      return normalizedBackendKey === backendFilterKey || 
-             key === backendFilterKey;
+      // Normalize keys for comparison
+      const normalizedKey = key.replace(' City', '');
+      const normalizedFilter = backendFilterKey.replace(' City', '');
+      
+      return normalizedKey === normalizedFilter;
     })
     .map(([key, vals]) => {
-      // First try direct mapping
-      const feCode = apacReverseKey[key];
-      const display = feCode && apacPartitionDisplay[feCode];
-      
-      // If not found, try alternative mappings
-      if (!display) {
-        const altKey = Object.keys(apacForwardKey).find(
-          k => apacForwardKey[k] === key || apacForwardKey[k] === `${key} City`
-        );
-        if (altKey) {
-          return {
-            country: apacPartitionDisplay[altKey].country,
-            city: apacPartitionDisplay[altKey].city,
-            employee: vals.Employee ?? vals.EmployeeCount ?? 0,
-            contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
-            total: vals.total ?? 0,
-          };
-        }
-      }
+      // Find matching frontend code
+      const feCode = Object.entries(apacForwardKey).find(
+        ([code, beKey]) => beKey === key || `${beKey} City` === key
+      )?.[0];
+
+      const display = feCode ? apacPartitionDisplay[feCode] : null;
 
       return {
-        country: display?.country ?? 'Unknown',
-        city: display?.city ?? key,
+        country: display?.country || 'Unknown',
+        city: display?.city || key.replace(' City', ''),
         employee: vals.Employee ?? vals.EmployeeCount ?? 0,
         contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
         total: vals.total ?? 0,
       };
     });
 }, [summaryEntry, backendFilterKey]);
-
-
-
-
-// Try to find the matching front-end key (e.g., "IN.Pune") for "Pune"
-const frontendKey = Object.keys(apacForwardKey).find(
-  feKey => apacForwardKey[feKey] === decodedPartition
-);
-
-// Now map to backend key
-const backendFilterKey = frontendKey
-  ? apacForwardKey[frontendKey]
-  : null;
