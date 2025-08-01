@@ -1,53 +1,14 @@
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate || !data.details) return [];
-  
-  const dateStr = format(pickedDate, 'yyyy-MM-dd');
-  
-  return data.details
-    .filter(r => {
-      const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
-      return recordDate === dateStr;
-    })
-    .filter(r => {
-      if (!backendFilterKey) return true;
-      
-      // Handle special case for Kuala Lumpur
-      const recordPartition = (r.PartitionName2 || r.PartitionNameFriendly || '').replace('MY.', '');
-      if (!recordPartition) return false;
-      
-      // Normalize keys for comparison (remove country prefix and ' City' suffix)
-      const normalizedRecord = recordPartition.replace(' City', '').trim();
-      const normalizedFilter = backendFilterKey.replace('MY.', '').replace(' City', '').trim();
-      
-      return normalizedRecord === normalizedFilter;
-    })
-    .filter(r => r.Direction === 'InDirection')
-    .reduce((unique, row) => {
-      const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
-      if (!unique._seen.has(keyGUID)) {
-        unique._seen.add(keyGUID);
-        unique.rows.push(row);
-      }
-      return unique;
-    }, { _seen: new Set(), rows: [] })
-    .rows;
-}, [data, pickedDate, backendFilterKey]);
+what is the proble in MY.Kuala Lumpur country name show 
+Unknown
 
-
-
-
-
-
-
-
-
-ok good
-but last issue is the 
-http://localhost:3000/partition/MY.Kuala%20Lumpur/history
-MY.Kuala Lumpur table are not displu they get this message
-No swipe records found for this date.
-
-read all code carefully and slove theis last issue, carefully 
+Friday, 1 August, 2025
+Country	City	Employees	Contractors	Total
+India	Pune	329	71	400
+Philippines	Quezon City	152	40	192
+Philippines	Taguig	9	2	11
+Japan	Tokyo	6	1	7
+Unknown	MY.Kuala Lumpur	3	1	4
+Total	499	115	614
 
 
 // src/pages/History.jsx — APAC Edition
@@ -297,53 +258,65 @@ const partitionRows = useMemo(() => {
     });
 }, [summaryEntry, backendFilterKey]);
 
+//  this is wroking details rows only not my.kl
+
+//   const detailRows = useMemo(() => {
+//   if (!data || !pickedDate || !data.details) return [];
+  
+//   const dateStr = format(pickedDate, 'yyyy-MM-dd');
+  
+//   return data.details
+//     .filter(r => {
+//       // More flexible date comparison
+//       const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+//       return recordDate === dateStr;
+//     })
+//     .filter(r => {
+//       if (!backendFilterKey) return true;
+      
+//       // Handle both direct and mapped partition names
+//       const recordPartition = r.PartitionName2 || r.PartitionNameFriendly;
+//       if (!recordPartition) return false;
+      
+//       // Normalize keys for comparison
+//       const normalizedRecord = recordPartition.replace(' City', '');
+//       const normalizedFilter = backendFilterKey.replace(' City', '');
+      
+//       return normalizedRecord === normalizedFilter;
+//     })
+//     .filter(r => r.Direction === 'InDirection')
+//     .reduce((unique, row) => {
+//       const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+//       if (!unique._seen.has(keyGUID)) {
+//         unique._seen.add(keyGUID);
+//         unique.rows.push(row);
+//       }
+//       return unique;
+//     }, { _seen: new Set(), rows: [] })
+//     .rows;
+// }, [data, pickedDate, backendFilterKey]);
 
 
-  // const detailRows = useMemo(() => {
-  //   if (!data || !pickedDate) return [];
-  //   const dateStr = format(pickedDate, 'yyyy-MM-dd');
-  //   return data.details
-  //     .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
-  //     .filter(r =>
-  //       !backendFilterKey
-  //         ? true
-  //         : // backend detail uses PartitionName2 exactly
-  //           r.PartitionName2 === backendFilterKey
-  //     )
-  //     .filter(r => r.Direction === 'InDirection')
-  //     .reduce((unique, row) => {
-  //       const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
-  //       if (!unique._seen.has(keyGUID)) {
-  //         unique._seen.add(keyGUID);
-  //         unique.rows.push(row);
-  //       }
-  //       return unique;
-  //     }, { _seen: new Set(), rows: [] })
-  //     .rows;
-  // }, [data, pickedDate, backendFilterKey]);
-
-
-  const detailRows = useMemo(() => {
+const detailRows = useMemo(() => {
   if (!data || !pickedDate || !data.details) return [];
   
   const dateStr = format(pickedDate, 'yyyy-MM-dd');
   
   return data.details
     .filter(r => {
-      // More flexible date comparison
       const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
       return recordDate === dateStr;
     })
     .filter(r => {
       if (!backendFilterKey) return true;
       
-      // Handle both direct and mapped partition names
-      const recordPartition = r.PartitionName2 || r.PartitionNameFriendly;
+      // Handle special case for Kuala Lumpur
+      const recordPartition = (r.PartitionName2 || r.PartitionNameFriendly || '').replace('MY.', '');
       if (!recordPartition) return false;
       
-      // Normalize keys for comparison
-      const normalizedRecord = recordPartition.replace(' City', '');
-      const normalizedFilter = backendFilterKey.replace(' City', '');
+      // Normalize keys for comparison (remove country prefix and ' City' suffix)
+      const normalizedRecord = recordPartition.replace(' City', '').trim();
+      const normalizedFilter = backendFilterKey.replace('MY.', '').replace(' City', '').trim();
       
       return normalizedRecord === normalizedFilter;
     })
@@ -358,7 +331,6 @@ const partitionRows = useMemo(() => {
     }, { _seen: new Set(), rows: [] })
     .rows;
 }, [data, pickedDate, backendFilterKey]);
-
 
 
   const handleExport = () => {
@@ -638,6 +610,10 @@ const partitionRows = useMemo(() => {
 
 
 
+
+
+
+
 // src/api/occupancy.service.js
 
 const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
@@ -670,7 +646,7 @@ export async function fetchLiveSummary() {
 export async function fetchHistory(location) {
   const codeMap = {
     'IN.Pune': 'Pune',
-    'MY.Kuala Lumpur': 'Kuala Lumpur',
+    'MY.Kuala Lumpur': 'MY.Kuala Lumpur',
     'PH.Quezon': 'Quezon City',
     'PH.Taguig': 'Taguig City',
     'JP.Tokyo': 'JP.Tokyo'
@@ -722,4 +698,6 @@ export const partitionList = [
   'PH.Taguig',
   'JP.Tokyo'
 ];
+
+
 
