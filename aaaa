@@ -1,7 +1,7 @@
 const partitionRows = useMemo(() => {
   if (!summaryEntry) return [];
 
-  return Object.entries(summaryEntry.partitions)
+  const rows = Object.entries(summaryEntry.partitions)
     .filter(([key]) => {
       if (!backendFilterKey) return true;
       
@@ -27,4 +27,29 @@ const partitionRows = useMemo(() => {
         total: vals.total ?? 0,
       };
     });
+
+  // DEBUG LOGS - Add these lines
+  console.log('--- DEBUG PARTITION DATA ---');
+  console.log('Backend filter:', backendFilterKey);
+  console.log('Available partitions:', Object.keys(summaryEntry.partitions));
+  console.log('Filtered results:', rows);
+  console.log('----------------------------');
+
+  return rows;
 }, [summaryEntry, backendFilterKey]);
+
+
+
+
+
+
+useEffect(() => {
+  setLoading(true);
+  fetchHistory(decodedPartition)
+    .then(json => {
+      setData(json);
+      // DEBUG LOG - Add this line
+      console.log('Initial data loaded:', json);
+    })
+    .finally(() => setLoading(false));
+}, [decodedPartition]);
