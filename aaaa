@@ -1,3 +1,50 @@
+
+const partitionRows = useMemo(() => {
+  if (!summaryEntry) return [];
+
+  return Object.entries(summaryEntry.partitions)
+    .filter(([key]) => {
+      if (!backendFilterKey) return true;
+      
+      // Handle both possible key formats (Pune vs IN.Pune)
+      const normalizedBackendKey = key.replace(' City', ''); // Remove ' City' suffix if present
+      return normalizedBackendKey === backendFilterKey || 
+             key === backendFilterKey;
+    })
+    .map(([key, vals]) => {
+      // First try direct mapping
+      const feCode = apacReverseKey[key];
+      const display = feCode && apacPartitionDisplay[feCode];
+      
+      // If not found, try alternative mappings
+      if (!display) {
+        const altKey = Object.keys(apacForwardKey).find(
+          k => apacForwardKey[k] === key || apacForwardKey[k] === `${key} City`
+        );
+        if (altKey) {
+          return {
+            country: apacPartitionDisplay[altKey].country,
+            city: apacPartitionDisplay[altKey].city,
+            employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+            contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+            total: vals.total ?? 0,
+          };
+        }
+      }
+
+      return {
+        country: display?.country ?? 'Unknown',
+        city: display?.city ?? key,
+        employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+        contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+        total: vals.total ?? 0,
+      };
+    });
+}, [summaryEntry, backendFilterKey]);
+
+
+
+
 // Try to find the matching front-end key (e.g., "IN.Pune") for "Pune"
 const frontendKey = Object.keys(apacForwardKey).find(
   feKey => apacForwardKey[feKey] === decodedPartition
