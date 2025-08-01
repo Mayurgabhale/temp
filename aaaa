@@ -1,3 +1,308 @@
+--- DEBUG PARTITION DATA ---
+History.jsx:663 Backend filter: undefined
+History.jsx:665 Available partitions: []length: 0[[Prototype]]: Array(0)
+History.jsx:666 Filtered results: []length: 0[[Prototype]]: Array(0)
+History.jsx:667 ----------------------------
+History.jsx:526 Initial data loaded: {success: true, summaryByDate: Array(8), details: Array(4257)}details: (4257) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …][0 … 99]0: {LocaleMessageTime: '2025-07-25T00:01:08.000Z', ObjectName1: 'Maurya, Anil', Door: 'APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)', EmployeeID: '', PersonnelType: 'Property Management', …}1: {LocaleMessageTime: '2025-07-25T00:05:32.000Z', ObjectName1: 'Raza, Ahmed', Door: 'APAC_IN_PUN_PODIUM_GREEN-_IDF ROOM 1-Restricted Door', EmployeeID: 'W0024552', PersonnelType: 'Contractor', …}2: {LocaleMessageTime: '2025-07-25T00:12:22.000Z', ObjectName1: 'Chavan, Jairam', Door: 'APAC_IN_PUN_TOWER B_RECEPTION LEFT DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}3: {LocaleMessageTime: '2025-07-25T00:12:50.000Z', ObjectName1: 'Hajare, Nagnath', Door: 'APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}4: {LocaleMessageTime: '2025-07-25T00:17:24.000Z', ObjectName1: 'Kadam, Krishnakant', Door: 'APAC_IN_PUN_PODIUM_RED_RECEPTION TO WS ENTRY 1-DOOR NEW', EmployeeID: '', PersonnelType: 'Property Management', …}5: {LocaleMessageTime: '2025-07-25T00:52:04.000Z', ObjectName1: 'Satpute, Sejal', Door: 'APAC_IN_PUN_PODIUM_ST2 DOOR 2 (YELLOW)', EmployeeID: 'W0019059', PersonnelType: 'Contractor', …}6: {LocaleMessageTime: '2025-07-25T00:53:11.000Z', ObjectName1: 'JAGTAP, SHASHIKANT', Door: 'APAC_IN_PUN_PODIUM_YELLOW_RECEPTION ENTRY-DOOR', EmployeeID: '323404', PersonnelType: 'Employee', …}7: {LocaleMessageTime: '2025-07-25T05:34:16.000Z', ObjectName1: 'Tatipamula, Prashant', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '325665', PersonnelType: 'Employee', …}8: {LocaleMessageTime: '2025-07-25T06:32:47.000Z', ObjectName1: 'Upadhyay, Tribhuwan', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}9: {LocaleMessageTime: '2025-07-25T06:34:36.000Z', ObjectName1: 'Barik, Smruti Ranjan', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '320643', PersonnelType: 'Employee', …}10: {LocaleMessageTime: '2025-07-25T06:44:08.000Z', ObjectName1: 'Shaikh, Sharif', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}11: {LocaleMessageTime: '2025-07-25T06:44:51.000Z', ObjectName1: 'Singh, Harvinder', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}12: {LocaleMessageTime: '2025-07-25T06:45:16.000Z', ObjectName1: 'Vasulkar, Sachin', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}13: {LocaleMessageTime: '2025-07-25T06:47:39.000Z', ObjectName1: 'Argel, Sachin', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}14: {LocaleMessageTime: '2025-07-25T06:49:31.000Z', ObjectName1: 'Khandare, Ganesh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}15: {LocaleMessageTime: '2025-07-25T06:52:35.000Z', ObjectName1: 'Kumar, Ayush', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: 'W0024616', PersonnelType: 'Contractor', …}16: {LocaleMessageTime: '2025-07-25T06:54:37.000Z', ObjectName1: 'Rathod, Dilip', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}17: {LocaleMessageTime: '2025-07-25T06:55:22.000Z', ObjectName1: 'Ghodke, Ganesh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}18: {LocaleMessageTime: '2025-07-25T06:56:15.000Z', ObjectName1: 'Paste, Vrutik', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: 'W0019061', PersonnelType: 'Contractor', …}19: {LocaleMessageTime: '2025-07-25T06:57:24.000Z', ObjectName1: 'Minekar, Kisan', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}20: {LocaleMessageTime: '2025-07-25T06:58:11.000Z', ObjectName1: 'Patil, Shivanand (Teapoint)', Door: 'APAC_IN_PUN_PODIUM_ST 1-DOOR 1 (RED)', EmployeeID: '', PersonnelType: 'Property Management', …}21: {LocaleMessageTime: '2025-07-25T06:58:14.000Z', ObjectName1: 'Londhe, Santosh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}22: {LocaleMessageTime: '2025-07-25T07:01:21.000Z', ObjectName1: 'Medge, Shaila', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}23: {LocaleMessageTime: '2025-07-25T07:03:30.000Z', ObjectName1: 'Shaikh, Yasmin', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}24: {LocaleMessageTime: '2025-07-25T07:04:41.000Z', ObjectName1: 'Minekar, Mohini', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}25: {LocaleMessageTime: '2025-07-25T07:07:32.000Z', ObjectName1: 'Kharat, Mahadev', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}26: {LocaleMessageTime: '2025-07-25T07:10:06.000Z', ObjectName1: 'Kale, Rahul', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}27: {LocaleMessageTime: '2025-07-25T07:21:35.000Z', ObjectName1: 'More, Mahesh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '325230', PersonnelType: 'Employee', …}28: {LocaleMessageTime: '2025-07-25T07:46:18.000Z', ObjectName1: 'Kanade, Sameer', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '311084', PersonnelType: 'Employee', …}29: {LocaleMessageTime: '2025-07-25T07:47:18.000Z', ObjectName1: 'Gupta, Sachin Kumar', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '314986', PersonnelType: 'Employee', …}30: {LocaleMessageTime: '2025-07-25T07:49:56.000Z', ObjectName1: 'Bhogal, Ravindra', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}31: {LocaleMessageTime: '2025-07-25T07:52:27.000Z', ObjectName1: 'Barathe, Santosh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}32: {LocaleMessageTime: '2025-07-25T07:54:36.000Z', ObjectName1: 'Thumma, Vijay', Door: 'APAC_IN_PUN_PODIUM_MAIN PODIUM RIGHT ENTRY-DOOR NEW', EmployeeID: '328220', PersonnelType: 'Employee', …}33: {LocaleMessageTime: '2025-07-25T08:04:38.000Z', ObjectName1: 'More, Omkar', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: 'W0025526', PersonnelType: 'Contractor', …}34: {LocaleMessageTime: '2025-07-25T08:06:39.000Z', ObjectName1: 'Sonawane, Vilas', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}35: {LocaleMessageTime: '2025-07-25T08:10:34.000Z', ObjectName1: 'Sharma, Aaditya', Door: 'APAC_IN_PUN_TOWER B_RECEPTION LEFT DOOR', EmployeeID: '310608', PersonnelType: 'Employee', …}36: {LocaleMessageTime: '2025-07-25T08:11:14.000Z', ObjectName1: 'Rathod, Pandit', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}37: {LocaleMessageTime: '2025-07-25T08:16:45.000Z', ObjectName1: 'Maganahalli, Rupa', Door: 'APAC_IN_PUN_PODIUM_MAIN PODIUM LEFT ENTRY-DOOR NEW', EmployeeID: '316051', PersonnelType: 'Employee', …}38: {LocaleMessageTime: '2025-07-25T08:30:53.000Z', ObjectName1: 'Teke, Sunil Gopinath', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '316342', PersonnelType: 'Employee', …}39: {LocaleMessageTime: '2025-07-25T08:30:59.000Z', ObjectName1: 'Bollikonda, Sandeep Goud', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '314176', PersonnelType: 'Employee', …}40: {LocaleMessageTime: '2025-07-25T08:35:00.000Z', ObjectName1: 'more, shivendrasinh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '323713', PersonnelType: 'Employee', …}41: {LocaleMessageTime: '2025-07-25T08:36:20.000Z', ObjectName1: 'Pawar, Sanjay', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}42: {LocaleMessageTime: '2025-07-25T08:37:02.000Z', ObjectName1: 'Pandey, Vishal Rajkumar', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '319502', PersonnelType: 'Employee', …}43: {LocaleMessageTime: '2025-07-25T08:38:05.000Z', ObjectName1: 'Sanyal, Arindam', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '325382', PersonnelType: 'Employee', …}44: {LocaleMessageTime: '2025-07-25T08:38:07.000Z', ObjectName1: 'Mahadik, Atharva Nilesh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '324025', PersonnelType: 'Terminated Personnel', …}45: {LocaleMessageTime: '2025-07-25T08:40:22.000Z', ObjectName1: 'Navale, Dhiraj Jaysingh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '327606', PersonnelType: 'Employee', …}46: {LocaleMessageTime: '2025-07-25T08:43:08.000Z', ObjectName1: 'Shirbhate, Ankush Rambhau', Door: 'APAC_IN_PUN_2NDFLR_LIFTLOBBY TO RECEPTION EMTRY DOOR_10:05:74', EmployeeID: '327573', PersonnelType: 'Employee', …}47: {LocaleMessageTime: '2025-07-25T08:43:38.000Z', ObjectName1: 'Agarwal, Aseem', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '309779', PersonnelType: 'Employee', …}48: {LocaleMessageTime: '2025-07-25T08:45:53.000Z', ObjectName1: 'Panda, Rajat Bhusan', Door: 'APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR', EmployeeID: '321041', PersonnelType: 'Employee', …}49: {LocaleMessageTime: '2025-07-25T08:49:08.000Z', ObjectName1: 'Kakade, Pallavi', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '315391', PersonnelType: 'Employee', …}50: {LocaleMessageTime: '2025-07-25T08:51:46.000Z', ObjectName1: 'Kanade, Arpita Rajendra', Door: 'APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR', EmployeeID: '328321', PersonnelType: 'Employee', …}51: {LocaleMessageTime: '2025-07-25T08:53:10.000Z', ObjectName1: 'Chopra, Ramandeep', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '321681', PersonnelType: 'Employee', …}52: {LocaleMessageTime: '2025-07-25T08:56:46.000Z', ObjectName1: 'Kabadi, Rudra Shyamrao', Door: 'APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR', EmployeeID: '324107', PersonnelType: 'Employee', …}53: {LocaleMessageTime: '2025-07-25T08:57:40.000Z', ObjectName1: 'Ablankar, Sujit Manohar', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '312751', PersonnelType: 'Employee', …}54: {LocaleMessageTime: '2025-07-25T08:58:15.000Z', ObjectName1: 'Chandak, Kanehaiya', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '316747', PersonnelType: 'Employee', …}55: {LocaleMessageTime: '2025-07-25T08:58:27.000Z', ObjectName1: 'Shelly, Keshav', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '311981', PersonnelType: 'Employee', …}56: {LocaleMessageTime: '2025-07-25T08:58:27.000Z', ObjectName1: 'Jejurkar, Prashant Harishchandra', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '323471', PersonnelType: 'Employee', …}57: {LocaleMessageTime: '2025-07-25T08:59:19.000Z', ObjectName1: 'Jeggacheruvukindi, Srikanth', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '316756', PersonnelType: 'Employee', …}58: {LocaleMessageTime: '2025-07-25T09:00:24.000Z', ObjectName1: 'Prachand, Jyotin', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '325140', PersonnelType: 'Employee', …}59: {LocaleMessageTime: '2025-07-25T09:00:40.000Z', ObjectName1: 'Sonawane, Ruchita', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}60: {LocaleMessageTime: '2025-07-25T09:03:29.000Z', ObjectName1: 'Sorte, Praneet Vijat', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '322873', PersonnelType: 'Employee', …}61: {LocaleMessageTime: '2025-07-25T09:03:49.000Z', ObjectName1: 'Negi, Naveen', Door: 'APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR', EmployeeID: '320694', PersonnelType: 'Employee', …}62: {LocaleMessageTime: '2025-07-25T09:04:09.000Z', ObjectName1: 'Misal, Atul', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '', PersonnelType: 'Property Management', …}63: {LocaleMessageTime: '2025-07-25T09:05:49.000Z', ObjectName1: 'Honrao, Prasad', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '315115', PersonnelType: 'Employee', …}64: {LocaleMessageTime: '2025-07-25T09:06:05.000Z', ObjectName1: 'Somani, Mahak', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '311000', PersonnelType: 'Employee', …}65: {LocaleMessageTime: '2025-07-25T09:06:08.000Z', ObjectName1: 'Waghmare, Siddhant Sanjay', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '326935', PersonnelType: 'Employee', …}66: {LocaleMessageTime: '2025-07-25T09:06:23.000Z', ObjectName1: 'Singh, Uday Prakash', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '328422', PersonnelType: 'Employee', …}67: {LocaleMessageTime: '2025-07-25T09:07:21.000Z', ObjectName1: 'Mistry, Tejas Sanjay', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '323437', PersonnelType: 'Employee', …}68: {LocaleMessageTime: '2025-07-25T09:07:30.000Z', ObjectName1: 'Khandelwal, Siddhi Sanjay', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 4-DOOR', EmployeeID: '323856', PersonnelType: 'Employee', …}69: {LocaleMessageTime: '2025-07-25T09:07:31.000Z', ObjectName1: 'Shubham, Shubham', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '322226', PersonnelType: 'Employee', …}70: {LocaleMessageTime: '2025-07-25T09:09:04.000Z', ObjectName1: 'Mohanty, Chandan Kumar', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '321112', PersonnelType: 'Employee', …}71: {LocaleMessageTime: '2025-07-25T09:09:08.000Z', ObjectName1: 'Sharma, Ankur Pramod', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '329057', PersonnelType: 'Employee', …}72: {LocaleMessageTime: '2025-07-25T09:09:20.000Z', ObjectName1: 'Chavan, Subrahmanyam', Door: 'APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR', EmployeeID: '317072', PersonnelType: 'Employee', …}73: {LocaleMessageTime: '2025-07-25T09:09:35.000Z', ObjectName1: 'Mundra, Robin', Door: 'APAC_IN_PUN_TOWER B_RECEPTION RIGHT DOOR', EmployeeID: '312609', PersonnelType: 'Employee', …}74: {LocaleMessageTime: '2025-07-25T09:10:03.000Z', ObjectName1: 'Patwardhan, Ketan', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '314425', PersonnelType: 'Employee', …}75: {LocaleMessageTime: '2025-07-25T09:10:13.000Z', ObjectName1: 'Abidi, Syed Farqaleeta Asghar', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '325241', PersonnelType: 'Employee', …}76: {LocaleMessageTime: '2025-07-25T09:10:17.000Z', ObjectName1: 'Sajan, Arshad', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '325513', PersonnelType: 'Employee', …}77: {LocaleMessageTime: '2025-07-25T09:10:27.000Z', ObjectName1: 'Upadhye, Priyanka', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '321174', PersonnelType: 'Employee', …}78: {LocaleMessageTime: '2025-07-25T09:10:27.000Z', ObjectName1: 'Agarwal, Shivam', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '323880', PersonnelType: 'Employee', …}79: {LocaleMessageTime: '2025-07-25T09:11:10.000Z', ObjectName1: 'Gupta, Shashwat', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '323851', PersonnelType: 'Employee', …}80: {LocaleMessageTime: '2025-07-25T09:11:14.000Z', ObjectName1: 'Dattalkar, Krishna', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '315562', PersonnelType: 'Employee', …}81: {LocaleMessageTime: '2025-07-25T09:11:19.000Z', ObjectName1: 'Gujrati, Brij Vallabh Das', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '328732', PersonnelType: 'Employee', …}82: {LocaleMessageTime: '2025-07-25T09:11:23.000Z', ObjectName1: 'Bhaskar, Kartikendra', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '323842', PersonnelType: 'Employee', …}83: {LocaleMessageTime: '2025-07-25T09:11:36.000Z', ObjectName1: 'Kharade, Krishna Vitthal', Door: 'APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR', EmployeeID: '322584', PersonnelType: 'Employee', …}84: {LocaleMessageTime: '2025-07-25T09:13:35.000Z', ObjectName1: 'Gupta, Km Mansi', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '323970', PersonnelType: 'Employee', …}85: {LocaleMessageTime: '2025-07-25T09:14:05.000Z', ObjectName1: 'Nakhare, Hani', Door: 'APAC_IN_PUN_2NDFLR_LIFTLOBBY TO RECEPTION EMTRY DOOR_10:05:74', EmployeeID: '321527', PersonnelType: 'Employee', …}86: {LocaleMessageTime: '2025-07-25T09:14:07.000Z', ObjectName1: 'Pathak, Sameer Bhushan', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '324026', PersonnelType: 'Employee', …}87: {LocaleMessageTime: '2025-07-25T09:14:13.000Z', ObjectName1: 'Modi, Pradeep', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '328221', PersonnelType: 'Employee', …}88: {LocaleMessageTime: '2025-07-25T09:14:18.000Z', ObjectName1: 'Kumar, Bibhuti', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '315167', PersonnelType: 'Employee', …}89: {LocaleMessageTime: '2025-07-25T09:14:26.000Z', ObjectName1: 'Yadav, Rajan', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '323788', PersonnelType: 'Employee', …}90: {LocaleMessageTime: '2025-07-25T09:14:34.000Z', ObjectName1: 'Dhole, Abhijeet Ashok', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '321545', PersonnelType: 'Employee', …}91: {LocaleMessageTime: '2025-07-25T09:14:38.000Z', ObjectName1: 'Chothe, Urmila', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '312083', PersonnelType: 'Employee', …}92: {LocaleMessageTime: '2025-07-25T09:14:56.000Z', ObjectName1: 'Raj, Ritik', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '323855', PersonnelType: 'Employee', …}93: {LocaleMessageTime: '2025-07-25T09:15:24.000Z', ObjectName1: 'Gupta, Tripti', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 1-DOOR', EmployeeID: '317941', PersonnelType: 'Employee', …}94: {LocaleMessageTime: '2025-07-25T09:15:27.000Z', ObjectName1: 'Ikhar, Jaishree Nilesh', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 2-DOOR', EmployeeID: '322950', PersonnelType: 'Employee', …}95: {LocaleMessageTime: '2025-07-25T09:15:37.000Z', ObjectName1: 'Mohanty, Udaya Kumar', Door: 'APAC_IN_PUN_TOWER B_LIFT LOBBY DOOR', EmployeeID: '328731', PersonnelType: 'Employee', …}96: {LocaleMessageTime: '2025-07-25T09:15:40.000Z', ObjectName1: 'Mago, Rajeev', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '325365', PersonnelType: 'Employee', …}97: {LocaleMessageTime: '2025-07-25T09:16:23.000Z', ObjectName1: 'Awadhwal, Lalit', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '329087', PersonnelType: 'Employee', …}98: {LocaleMessageTime: '2025-07-25T09:16:36.000Z', ObjectName1: 'Gupta, Akash', Door: 'APAC_IN_PUN_PODIUM_P-1 TURNSTILE 3-DOOR', EmployeeID: '323899', PersonnelType: 'Employee', …}99: {LocaleMessageTime: '2025-07-25T09:16:36.000Z', ObjectName1: 'Kumar, Anmol', Door: 'APAC_IN_PUN_TOWER B_MAIN RECEPTION DOOR', EmployeeID: '325086', PersonnelType: 'Employee', …}[100 … 199][200 … 299][300 … 399][400 … 499][500 … 599][600 … 699][700 … 799][800 … 899][900 … 999][1000 … 1099][1100 … 1199][1200 … 1299][1300 … 1399][1400 … 1499][1500 … 1599][1600 … 1699][1700 … 1799][1800 … 1899][1900 … 1999][2000 … 2099][2100 … 2199][2200 … 2299][2300 … 2399][2400 … 2499][2500 … 2599][2600 … 2699][2700 … 2799][2800 … 2899][2900 … 2999][3000 … 3099][3100 … 3199][3200 … 3299][3300 … 3399][3400 … 3499][3500 … 3599][3600 … 3699][3700 … 3799][3800 … 3899][3900 … 3999][4000 … 4099][4100 … 4199][4200 … 4256]length: 4257[[Prototype]]: Array(0)success: truesummaryByDate: Array(8)0: date: "2025-07-25"day: "Friday"partitions: {}region: {name: 'Pune', total: 439, Employee: 362, Contractor: 77}[[Prototype]]: Object1: {date: '2025-07-26', day: 'Saturday', region: {…}, partitions: {…}}2: {date: '2025-07-27', day: 'Sunday', region: {…}, partitions: {…}}3: {date: '2025-07-28', day: 'Monday', region: {…}, partitions: {…}}4: {date: '2025-07-29', day: 'Tuesday', region: {…}, partitions: {…}}5: {date: '2025-07-30', day: 'Wednesday', region: {…}, partitions: {…}}6: {date: '2025-07-31', day: 'Thursday', region: {…}, partitions: {…}}7: {date: '2025-08-01', day: 'Friday', region: {…}, partitions: {…}}length: 8[[Prototype]]: Array(0)[[Prototype]]: Object
+
+see this get in consol output,
+check what is the problme 
+
+see all code carefully
+C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\api\occupancy.service.js
+// src/api/occupancy.service.js
+
+const BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3007';
+
+// In‐memory cache
+const cache = {
+  liveSummary: null,
+  history: new Map(),  // key: either 'global' or the partition name the backend expects
+};
+
+
+
+/**
+ * Fetch live summary (always fresh).
+ */
+export async function fetchLiveSummary() {
+  const res = await fetch(`${BASE}/api/occupancy/live-summary`);
+  if (!res.ok) {
+    throw new Error(`Live summary fetch failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+
+/**
+ * Fetch history (global or per‐partition), with in‐memory caching.
+ * @param {string} [location] — e.g. 'IN.Pune' from your front‐end router param
+ */
+
+
+export async function fetchHistory(location) {
+   // Map our front-end codes to exactly what the history API expects:
+  // (backend PartitionName2 values)
+  const codeMap = {
+    'IN.Pune':         'Pune',
+    'MY.Kuala Lumpur': 'Kuala Lumpur',
+    'PH.Quezon':       'Quezon City',
+    'PH.Taguig':       'Taguig City',
+    'JP.Tokyo':        'JP.Tokyo'
+  };
+  const key = location
+    ? codeMap[location] || location
+    : 'global';
+
+  // Return cached if available
+  if (cache.history.has(key)) {
+    return cache.history.get(key);
+  }
+
+  // Build URL: global vs. per‐partition
+  const url =
+    key === 'global'
+      ? `${BASE}/api/occupancy/history`
+      : `${BASE}/api/occupancy/history/${encodeURIComponent(key)}`;
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`History fetch failed: ${res.status}`);
+  }
+  const json = await res.json();
+  cache.history.set(key, json);
+  return json;
+}
+
+/** Clear in‐memory caches (for dev/testing) */
+export function clearCache() {
+  cache.liveSummary = null;
+  cache.history.clear();
+}
+
+// APAC partition list for any selector UI
+export const partitionList = [
+  'IN.Pune',
+  'MY.Kuala Lumpur',
+  'PH.Quezon',
+  'PH.Taguig',
+  'JP.Tokyo'
+];
+
+
+
+// src/pages/History.jsx — APAC Edition
+
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+  TextField
+} from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchHistory } from '../api/occupancy.service';
+
+// APAC display mapping (country + city) by front-end code
+const apacPartitionDisplay = {
+  'IN.Pune':         { country: 'India',       city: 'Pune' },
+  'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' },
+  'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' },
+  'PH.Taguig':       { country: 'Philippines', city: 'Taguig' },
+  'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' },
+};
+
+// Forward map: front-end code → backend key
+const apacForwardKey = {
+  'IN.Pune':         'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon':       'Quezon City',
+  'PH.Taguig':       'Taguig City',
+  'JP.Tokyo':        'JP.Tokyo',
+};
+
+
+
+// Reverse map: backend key → front-end code
+const apacReverseKey = Object.fromEntries(
+  Object.entries(apacForwardKey).map(([fe, be]) => [be, fe])
+);
+
+
+// Format a backend partition key into "Country • City"
+const formatPartition = key => {
+  const feCode = apacReverseKey[key];
+  const display = feCode && apacPartitionDisplay[feCode];
+  return display
+    ? `${display.city}`
+    : key;  // fallback to raw if missing
+};
+
+
+export default function History() {
+  const { partition } = useParams();
+  const decodedPartition = partition ? decodeURIComponent(partition) : null;
+
+  // the exact backend key to filter on, if any
+  const backendFilterKey = decodedPartition
+    ? apacForwardKey[decodedPartition]
+    : null;
+
+
+  // Try to find the matching front-end key (e.g., "IN.Pune") for "Pune"
+
+  const [data, setData]               = useState(null);
+  const [loading, setLoading]         = useState(true);
+  const [pickedDate, setPickedDate]   = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetchHistory(decodedPartition)
+  //     .then(json => setData(json))
+  //     .finally(() => setLoading(false));
+  // }, [decodedPartition]);
+
+  useEffect(() => {
+  setLoading(true);
+  fetchHistory(decodedPartition)
+    .then(json => {
+      setData(json);
+      // DEBUG LOG - Add this line
+      console.log('Initial data loaded:', json);
+    })
+    .finally(() => setLoading(false));
+}, [decodedPartition]);
+
+
+// useEffect(() => {
+//   if (data && !pickedDate && data.summaryByDate?.length > 0) {
+//     const latestDate = data.summaryByDate[data.summaryByDate.length - 1].date;
+//     setPickedDate(new Date(latestDate));
+//   }
+// }, [data, pickedDate]);
+
+  // const summaryEntry = useMemo(() => {
+  //   if (!data || !pickedDate) return null;
+  //   const dateStr = format(pickedDate, 'yyyy-MM-dd');
+  //   return data.summaryByDate.find(r => r.date === dateStr) || null;
+  // }, [data, pickedDate]);
+
+
+const summaryEntry = useMemo(() => {
+  if (!data || !pickedDate) return null;
+
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+
+  const match = data.summaryByDate.find(r =>
+    r.date === dateStr || r.date.startsWith(dateStr)
+  );
+
+  return match || null;
+}, [data, pickedDate]);
+
+//   const partitionRows = useMemo(() => {
+//     if (!summaryEntry) return [];
+
+//     return Object.entries(summaryEntry.partitions)
+//       // 1. if a partition filter is set, only include that backend key
+//       // .filter(([key]) =>
+//       //   !backendFilterKey ? true : key === backendFilterKey
+//       // )
+
+
+// .filter(([key]) => {
+//   if (!decodedPartition) return true;
+//   const feKey = Object.keys(apacForwardKey).find(k => k.endsWith(decodedPartition));
+//   return feKey && key === apacForwardKey[feKey];
+// })
+
+
+
+//       .map(([key, vals]) => {
+//         // look up front-end code from backend key
+//         const feCode = apacReverseKey[key];
+//         // look up display info from front-end code
+//         const display = feCode && apacPartitionDisplay[feCode];
+
+//         return {
+//           country: display
+//             ? display.country
+//             : // if missing, just use the raw key
+//               key,
+//           city:    display
+//             ? display.city
+//             : key,
+//           employee:   vals.Employee   ?? 0,
+//           contractor: vals.Contractor ?? 0,
+//           total:      vals.total      ?? 0,
+//         };
+//       });
+//   }, [summaryEntry, backendFilterKey]);
+
+
+
+
+
+
+// const partitionRows = useMemo(() => {
+//   if (!summaryEntry) return [];
+
+//   return Object.entries(summaryEntry.partitions)
+//     .filter(([key]) => {
+//       if (!backendFilterKey) return true;
+      
+//       // Handle both possible key formats (Pune vs IN.Pune)
+//       const normalizedBackendKey = key.replace(' City', ''); // Remove ' City' suffix if present
+//       return normalizedBackendKey === backendFilterKey || 
+//              key === backendFilterKey;
+//     })
+//     .map(([key, vals]) => {
+//       // First try direct mapping
+//       const feCode = apacReverseKey[key];
+//       const display = feCode && apacPartitionDisplay[feCode];
+      
+//       // If not found, try alternative mappings
+//       if (!display) {
+//         const altKey = Object.keys(apacForwardKey).find(
+//           k => apacForwardKey[k] === key || apacForwardKey[k] === `${key} City`
+//         );
+//         if (altKey) {
+//           return {
+//             country: apacPartitionDisplay[altKey].country,
+//             city: apacPartitionDisplay[altKey].city,
+//             employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+//             contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+//             total: vals.total ?? 0,
+//           };
+//         }
+//       }
+
+//       return {
+//         country: display?.country ?? 'Unknown',
+//         city: display?.city ?? key,
+//         employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+//         contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+//         total: vals.total ?? 0,
+//       };
+//     });
+// }, [summaryEntry, backendFilterKey]);
 const partitionRows = useMemo(() => {
   if (!summaryEntry) return [];
 
@@ -38,18 +343,300 @@ const partitionRows = useMemo(() => {
   return rows;
 }, [summaryEntry, backendFilterKey]);
 
+  const detailRows = useMemo(() => {
+    if (!data || !pickedDate) return [];
+    const dateStr = format(pickedDate, 'yyyy-MM-dd');
+    return data.details
+      .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
+      .filter(r =>
+        !backendFilterKey
+          ? true
+          : // backend detail uses PartitionName2 exactly
+            r.PartitionName2 === backendFilterKey
+      )
+      .filter(r => r.Direction === 'InDirection')
+      .reduce((unique, row) => {
+        const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+        if (!unique._seen.has(keyGUID)) {
+          unique._seen.add(keyGUID);
+          unique.rows.push(row);
+        }
+        return unique;
+      }, { _seen: new Set(), rows: [] })
+      .rows;
+  }, [data, pickedDate, backendFilterKey]);
+
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      detailRows.map((r, i) => ({
+        Sr: i + 1,
+        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
+        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
+        EmployeeID: r.EmployeeID,
+        Name: r.ObjectName1,
+        PersonnelType: r.PersonnelType,
+        Door: r.Door,
+     Partition: formatPartition(r.PartitionNameFriendly)
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Details');
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (!data)    return null;
+
+  // Styles for DatePicker's TextField
+  const datePickerSx = {
+    backgroundColor: '#000',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#FFC107',
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#FFC107',
+    },
+    '& .MuiInputBase-input': {
+      color: '#FFC107',
+    },
+    '& .MuiInputLabel-root': {
+      color: '#FFC107',
+    },
+    '& .MuiInputAdornment-root svg': {
+      color: '#FFC107',
+    },
+  };
+
+  return (
+    <>
+      <Header />
+
+      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        {pickedDate && summaryEntry ? (
+          <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
+            {/* DatePicker */}
+            <Box sx={{ flex: '0 0 200px' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Select date"
+                  value={pickedDate}
+                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                  renderInput={params => (
+                    <TextField
+                      fullWidth
+                      {...params}
+                      sx={datePickerSx}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+
+            {/* Summary Table */}
+            <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
+                <Table sx={{ border: '2px solid #000' }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={5} align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          fontSize: 16,
+                          bgcolor: '#000',
+                          color: '#FFC107',
+                          border: '2px solid #000'
+                        }}
+                      >
+                        {format(pickedDate, 'EEEE, d MMMM, yyyy')}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#FFC107' }}>
+                      {['Country','City','Employees','Contractors','Total'].map(h => (
+                        <TableCell
+                          key={h}
+                          align={['Country','City'].includes(h) ? 'left' : 'right'}
+                          sx={{
+                            color: '#000',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            border: '2px solid #000'
+                          }}
+                        >
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {partitionRows.map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{row.country}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{row.city}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.employee}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.contractor}</TableCell>
+                        <TableCell
+                          align="right"
+                          sx={{
+                            backgroundColor: '#FFC107',
+                            fontWeight: 'bold',
+                            border: '2px solid #000'
+                          }}
+                        >
+                          {row.total}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow sx={{ bgcolor: '#666' }}>
+                      <TableCell colSpan={2} align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        Total
+                      </TableCell>
+                      <TableCell align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {partitionRows.reduce((s, r) => s + r.employee, 0)}
+                      </TableCell>
+                      <TableCell align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {partitionRows.reduce((s, r) => s + r.contractor, 0)}
+                      </TableCell>
+                      <TableCell align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
+                        {partitionRows.reduce((s, r) => s + r.total, 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Paper>
+
+              {/* Toggle Details & Export */}
+              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
+                <Button
+                  variant="contained"
+                  sx={{ bgcolor: '#FFC107', color: '#000' }}
+                  onClick={() => setShowDetails(v => !v)}
+                >
+                  {showDetails ? 'Hide Details' : 'See Details'}
+                </Button>
+                {showDetails && (
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
+                    onClick={handleExport}
+                  >
+                    Export to Excel
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ px: '20px', mb: 3 }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select date"
+                value={pickedDate}
+                onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                renderInput={params => (
+                  <TextField
+                    fullWidth
+                    {...params}
+                    sx={datePickerSx}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+            {!pickedDate && (
+              <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
+                Please pick a date to view region summary.
+              </Typography>
+            )}
+          </Box>
+        )}
+
+        {/* Details Table */}
+        {showDetails && (
+          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
+            <Paper
+              elevation={1}
+              sx={{
+                px: '40px',
+                py: 1,
+                width: '100%',
+                border: '3px solid #000',
+                borderRadius: 2,
+              }}
+            >
+              {detailRows.length > 0 ? (
+                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: '#000' }}>
+                      {[
+                        'Sr','Date','Time',
+                        'Employee ID','Name','Personnel Type',
+                        'Door','Partition'
+                      ].map(h => (
+                        <TableCell
+                          key={h}
+                          align="center"
+                          sx={{
+                            color: '#FFC107',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            border: '2px solid #000',
+                          }}
+                        >
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {detailRows.map((r, i) => (
+                      <TableRow key={`${r.PersonGUID}-${i}`}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>
+                          {format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}
+                        </TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>
+                          {format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}
+                        </TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
+
+
+                              <TableCell sx={{ border: '2px solid #000' }}>
+                          {formatPartition(r.PartitionNameFriendly)}
+                      </TableCell>
+
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#666',
+                    textAlign: 'center',
+                    mt: 2,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  No swipe records found for this date.
+                </Typography>
+              )}
+            </Paper>
+          </Box>
+        )}
+      </Container>
+
+      <Footer />
+    </>
+  );
+}
 
 
 
-
-
-useEffect(() => {
-  setLoading(true);
-  fetchHistory(decodedPartition)
-    .then(json => {
-      setData(json);
-      // DEBUG LOG - Add this line
-      console.log('Initial data loaded:', json);
-    })
-    .finally(() => setLoading(false));
-}, [decodedPartition]);
