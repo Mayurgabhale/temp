@@ -1,69 +1,123 @@
-.filter(([key]) => {
-  if (!decodedPartition) return true;
+// src/pages/History.jsx — APAC Edition (FIXED)
 
-  // Find FE code (e.g. 'IN.Pune') for current summary partition key (e.g. 'IN.Pune')
-  const currentFECode = apacReverseKey[key];
-  return currentFECode === decodedPartition;
-})
+import React, { useEffect, useState, useMemo } from 'react'; import { useParams } from 'react-router-dom'; import { Container, Box, Button, Typography, Table, TableHead, TableBody, TableRow, TableCell, Paper, TextField } from '@mui/material'; import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'; import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers'; import { format } from 'date-fns'; import * as XLSX from 'xlsx'; import { saveAs } from 'file-saver';
 
+import Header from '../components/Header'; import Footer from '../components/Footer'; import LoadingSpinner from '../components/LoadingSpinner'; import { fetchHistory } from '../api/occupancy.service';
 
+const apacPartitionDisplay = { 'IN.Pune':         { country: 'India',       city: 'Pune' }, 'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' }, 'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' }, 'PH.Taguig':       { country: 'Philippines', city: 'Taguig' }, 'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' }, };
 
+const apacForwardKey = { 'IN.Pune':         'IN.Pune', 'MY.Kuala Lumpur': 'MY.Kuala Lumpur', 'PH.Quezon':       'PH.Quezon', 'PH.Taguig':       'PH.Taguig', 'JP.Tokyo':        'JP.Tokyo', };
 
+const apacReverseKey = Object.fromEntries( Object.entries(apacForwardKey).map(([fe, be]) => [be, fe]) );
 
+const formatPartition = key => { const feCode = apacReverseKey[key]; const display = feCode && apacPartitionDisplay[feCode]; return display ? ${display.city} : key; };
 
+export default function History() { const { partition } = useParams(); const decodedPartition = partition ? decodeURIComponent(partition) : null; const [data, setData] = useState(null); const [loading, setLoading] = useState(true); const [pickedDate, setPickedDate] = useState(null); const [showDetails, setShowDetails] = useState(false);
 
+useEffect(() => { setLoading(true); fetchHistory() .then(json => setData(json)) .finally(() => setLoading(false)); }, []);
 
+const summaryEntry = useMemo(() => { if (!data || !pickedDate) return null; const dateStr = format(pickedDate, 'yyyy-MM-dd'); return data.summaryByDate.find(r => r.date === dateStr) || null; }, [data, pickedDate]);
 
+const partitionRows = useMemo(() => { if (!summaryEntry) return [];
 
-const partitionRows = useMemo(() => {
-  if (!summaryEntry) return [];
+return Object.entries(summaryEntry.partitions)
+  .filter(([key, vals]) => {
+    const feCode = apacReverseKey[key];
+    const valid = vals.total > 0 && apacPartitionDisplay[feCode];
+    if (!decodedPartition) return valid;
+    return valid && feCode === decodedPartition;
+  })
+  .map(([key, vals]) => {
+    const feCode = apacReverseKey[key];
+    const display = feCode && apacPartitionDisplay[feCode];
 
-  return Object.entries(summaryEntry.partitions)
-    .filter(([key]) => {
-      if (!decodedPartition) return true;
-      const currentFECode = apacReverseKey[key];
-      return currentFECode === decodedPartition;
-    })
-    .map(([key, vals]) => {
-      const feCode = apacReverseKey[key];
-      const display = feCode && apacPartitionDisplay[feCode];
-      return {
-        country: display ? display.country : key,
-        city: display ? display.city : key,
-        employee: vals.Employee ?? 0,
-        contractor: vals.Contractor ?? 0,
-        total: vals.total ?? 0,
-      };
-    });
+    return {
+      country: display.country,
+      city: display.city,
+      employee: vals.Employee ?? 0,
+      contractor: vals.Contractor ?? 0,
+      total: vals.total ?? 0,
+    };
+  });
+
 }, [summaryEntry, decodedPartition]);
 
+const detailRows = useMemo(() => { if (!data || !pickedDate) return []; const dateStr = format(pickedDate, 'yyyy-MM-dd'); return data.details .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr) .filter(r => { if (!decodedPartition) return true; const feCode = apacReverseKey[r.PartitionName2]; return feCode === decodedPartition; }) .filter(r => r.Direction === 'InDirection') .reduce((unique, row) => { const keyGUID = ${row.PersonGUID}-${row.PersonnelType}; if (!unique._seen.has(keyGUID)) { unique._seen.add(keyGUID); unique.rows.push(row); } return unique; }, { _seen: new Set(), rows: [] }).rows; }, [data, pickedDate, decodedPartition]);
 
+const handleExport = () => { const ws = XLSX.utils.json_to_sheet( detailRows.map((r, i) => ({ Sr: i + 1, Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'), Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'), EmployeeID: r.EmployeeID, Name: r.ObjectName1, PersonnelType: r.PersonnelType, Door: r.Door, Partition: formatPartition(r.PartitionNameFriendly) })) ); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Details'); const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }); saveAs(new Blob([buf]), apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx); };
 
+return ( <Container> <Header /> <Box> <LocalizationProvider dateAdapter={AdapterDateFns}> <DatePicker label="Pick a date" value={pickedDate} onChange={setPickedDate} renderInput={(params) => <TextField {...params} fullWidth />} /> </LocalizationProvider>
 
+{partitionRows.length > 0 && (
+      <Paper sx={{ my: 3 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Country</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell align="right">Employees</TableCell>
+              <TableCell align="right">Contractors</TableCell>
+              <TableCell align="right">Total</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {partitionRows.map((row, i) => (
+              <TableRow key={i}>
+                <TableCell>{row.country}</TableCell>
+                <TableCell>{row.city}</TableCell>
+                <TableCell align="right">{row.employee}</TableCell>
+                <TableCell align="right">{row.contractor}</TableCell>
+                <TableCell align="right">{row.total}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+    )}
 
+    <Button onClick={() => setShowDetails(!showDetails)}>
+      {showDetails ? 'Hide Details' : 'See Details'}
+    </Button>
 
+    {showDetails && (
+      <Box>
+        {detailRows.length === 0 ? (
+          <Typography>No data available for selected date.</Typography>
+        ) : (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Sr</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Time</TableCell>
+                <TableCell>Employee ID</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Personnel Type</TableCell>
+                <TableCell>Door</TableCell>
+                <TableCell>Partition</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {detailRows.map((row, i) => (
+                <TableRow key={i}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{format(new Date(row.LocaleMessageTime), 'yyyy-MM-dd')}</TableCell>
+                  <TableCell>{format(new Date(row.LocaleMessageTime), 'HH:mm:ss')}</TableCell>
+                  <TableCell>{row.EmployeeID}</TableCell>
+                  <TableCell>{row.ObjectName1}</TableCell>
+                  <TableCell>{row.PersonnelType}</TableCell>
+                  <TableCell>{row.Door}</TableCell>
+                  <TableCell>{formatPartition(row.PartitionNameFriendly)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Box>
+    )}
+  </Box>
+  <Footer />
+</Container>
 
+); }
 
-
-
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate) return [];
-  const dateStr = format(pickedDate, 'yyyy-MM-dd');
-  return data.details
-    .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
-    .filter(r => {
-      if (!decodedPartition) return true;
-      const feCode = apacReverseKey[r.PartitionName2];
-      return feCode === decodedPartition;
-    })
-    .filter(r => r.Direction === 'InDirection')
-    .reduce((unique, row) => {
-      const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
-      if (!unique._seen.has(keyGUID)) {
-        unique._seen.add(keyGUID);
-        unique.rows.push(row);
-      }
-      return unique;
-    }, { _seen: new Set(), rows: [] })
-    .rows;
-}, [data, pickedDate, decodedPartition]);
