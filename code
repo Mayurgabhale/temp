@@ -1,6 +1,112 @@
-""const detailRows = useMemo(() => { if (!data || !pickedDate) return [];
+// APAC display mapping (country + city) by front-end code
+const apacPartitionDisplay = {
+  'IN.Pune':         { country: 'India',       city: 'Pune' },
+  'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' },
+  'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' },
+  'PH.Taguig':       { country: 'Philippines', city: 'Taguig' },
+  'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' },
+};
 
-const dateStr = format(pickedDate, 'yyyy-MM-dd'); const filteredDetails = data.details .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr) .filter(r => { if (!decodedPartition) return true; const feCode = apacReverseKey[r.PartitionName2]; return feCode === decodedPartition; }) .filter(r => r.Direction === 'InDirection') .reduce( (unique, row) => { const keyGUID = ${row.PersonGUID}-${row.PersonnelType}; if (!unique._seen.has(keyGUID)) { unique._seen.add(keyGUID); unique.rows.push(row); } return unique; }, { _seen: new Set(), rows: [] } ).rows;
+// Forward map: front-end code → backend key
+const apacForwardKey = {
+  'IN.Pune':         'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon':       'Quezon City',
+  'PH.Taguig':       'Taguig',
+  'JP.Tokyo':        'JP.Tokyo',
+};
 
-return filteredDetails; }, [data, pickedDate, decodedPartition]);
+// Reverse map: backend key → front-end code
+const apacReverseKey = {
+  'Pune': 'IN.Pune',
+  'Kuala Lumpur': 'MY.Kuala Lumpur',
+  'Quezon City': 'PH.Quezon',
+  'Taguig': 'PH.Taguig',
+  'Taguig City': 'PH.Taguig',  // Add alternative backend key
+  'JP.Tokyo': 'JP.Tokyo'
+};
 
+
+
+
+
+
+
+useEffect(() => {
+  setLoading(true);
+  fetchHistory(backendFilterKey)  // Pass the backend filter key
+    .then(json => setData(json))
+    .finally(() => setLoading(false));
+}, [backendFilterKey]);
+
+
+
+
+
+
+
+
+
+const partitionRows = useMemo(() => {
+  if (!summaryEntry) return [];
+
+  return Object.entries(summaryEntry.partitions)
+    // Filter based on backend key
+    .filter(([key]) => {
+      if (!backendFilterKey) return true;
+      
+      // Handle special cases
+      if (backendFilterKey === 'Taguig' && key === 'Taguig City') return true;
+      if (backendFilterKey === 'Quezon City' && key === 'Quezon') return true;
+      
+      return key === backendFilterKey;
+    })
+    .map(([key, vals]) => {
+      // look up front-end code from backend key
+      const feCode = apacReverseKey[key];
+      // look up display info from front-end code
+      const display = feCode && apacPartitionDisplay[feCode];
+
+      return {
+        country: display ? display.country : key,
+        city: display ? display.city : key,
+        employee: vals.Employee ?? 0,
+        contractor: vals.Contractor ?? 0,
+        total: vals.total ?? 0,
+      };
+    });
+}, [summaryEntry, backendFilterKey]);
+
+
+
+
+
+
+
+
+
+const detailRows = useMemo(() => {
+  if (!data || !pickedDate) return [];
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+  return data.details
+    .filter(r => format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === dateStr)
+    .filter(r => {
+      if (!backendFilterKey) return true;
+      
+      // Handle special cases
+      if (backendFilterKey === 'Taguig' && r.PartitionName2 === 'Taguig City') return true;
+      if (backendFilterKey === 'Quezon City' && r.PartitionName2 === 'Quezon') return true;
+      
+      return r.PartitionName2 === backendFilterKey;
+    })
+    .filter(r => r.Direction === 'InDirection')
+    .reduce((unique, row) => {
+      const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+      if (!unique._seen.has(keyGUID)) {
+        unique._seen.add(keyGUID);
+        unique.rows.push(row);
+      }
+      return unique;
+    }, { _seen: new Set(), rows: [] })
+    .rows;
+}, [data, pickedDate, backendFilterKey]);
