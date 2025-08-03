@@ -19,3 +19,38 @@ const det = json.details
 
 
 
+
+
+
+
+// Replace the detailRows useMemo with:
+const detailRows = useMemo(() => {
+  if (!data || !pickedDate || !data.details) return [];
+
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+
+  return data.details
+    .filter(r => {
+      const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+      return recordDate === dateStr;
+    })
+    .filter(r => {
+      if (!backendFilterKey) return true;
+      const recordPartition = (r.PartitionName2 || r.PartitionNameFriendly || '').replace('MY.', '');
+      if (!recordPartition) return false;
+      const normalizedRecord = recordPartition.replace(' City', '').trim();
+      const normalizedFilter = backendFilterKey.replace('MY.', '').replace(' City', '').trim();
+      return normalizedRecord === normalizedFilter;
+    })
+    // First get only the most recent entry per person
+    .reduce((unique, row) => {
+      const key = row.PersonGUID;
+      if (!unique[key] || new Date(row.LocaleMessageTime) > new Date(unique[key].LocaleMessageTime)) {
+        unique[key] = row;
+      }
+      return unique;
+    }, {})
+    // Then filter for InDirection
+    .filter(r => r.Direction === "InDirection");
+}, [data, pickedDate, backendFilterKey]);
+
