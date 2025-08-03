@@ -19,6 +19,12 @@ our isssue is in summary section we got different count and below details show d
 
 
 so read all code line by line and slove the issue. and give me update code correct. 
+***
+same issue in detail page Podium Floor (Total 22)
+
+ but data only show thie 
+Podium Floor — All Entries
+Emp ID	Name	Swipe Time	Type	Card	Door  show only 14 entry 
 //C:\Users\W0024618\Desktop\apac-occupancy-backend\src\services\occupancy.service.js
 
 const { poolPromise, sql } = require('../config/db');
