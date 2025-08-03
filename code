@@ -1,4 +1,124 @@
+// Updated History.jsx with count matching fixes
 
+// ... (keep all imports same)
+
+export default function History() {
+  // ... (keep all existing state and params declarations)
+
+  const detailRows = useMemo(() => {
+    if (!data || !pickedDate || !data.details) return [];
+    
+    const dateStr = format(pickedDate, 'yyyy-MM-dd');
+    
+    // First get all records for the date
+    const dateRecords = data.details.filter(r => {
+      const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+      return recordDate === dateStr;
+    });
+    
+    // Then filter by location if specified
+    const locationFiltered = backendFilterKey 
+      ? dateRecords.filter(r => {
+          const recordPartition = r.PartitionName2 || r.PartitionNameFriendly;
+          if (!recordPartition) return false;
+          
+          // Normalize comparison
+          const normalizedRecord = recordPartition.replace(' City', '').replace('MY.', '').trim();
+          const normalizedFilter = backendFilterKey.replace(' City', '').replace('MY.', '').trim();
+          
+          return normalizedRecord === normalizedFilter;
+        })
+      : dateRecords;
+    
+    // Finally deduplicate by PersonGUID and PersonnelType, keeping latest entry
+    const uniqueMap = new Map();
+    
+    locationFiltered
+      .filter(r => r.Direction === 'InDirection')
+      .sort((a, b) => new Date(b.LocaleMessageTime) - new Date(a.LocaleMessageTime))
+      .forEach(row => {
+        const key = `${row.PersonGUID}-${row.PersonnelType}`;
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, row);
+        }
+      });
+    
+    return Array.from(uniqueMap.values());
+  }, [data, pickedDate, backendFilterKey]);
+
+  // Update partitionRows to ensure counts match detailRows
+  const partitionRows = useMemo(() => {
+    if (!summaryEntry) return [];
+    
+    // For single-city view
+    if (backendFilterKey && summaryEntry.region) {
+      const counts = {
+        employee: detailRows.filter(r => r.PersonnelType === 'Employee').length,
+        contractor: detailRows.filter(r => r.PersonnelType === 'Contractor').length,
+        total: detailRows.length
+      };
+      
+      const feCode = Object.keys(apacPartitionDisplay).find(
+        code => apacForwardKey[code] === backendFilterKey || 
+               code === backendFilterKey
+      );
+      
+      const display = feCode ? apacPartitionDisplay[feCode] : null;
+      
+      return [{
+        country: display?.country || 'Unknown',
+        city: display?.city || backendFilterKey.replace(' City', ''),
+        employee: counts.employee,
+        contractor: counts.contractor,
+        total: counts.total
+      }];
+    }
+
+    // For global view
+    return Object.entries(summaryEntry.partitions || {})
+      .filter(([key]) => !backendFilterKey || 
+        key.replace(' City', '') === backendFilterKey.replace(' City', ''))
+      .map(([key, vals]) => {
+        const feCode = Object.entries(apacForwardKey).find(
+          ([code, beKey]) => beKey === key || `${beKey} City` === key || code === key
+        )?.[0];
+        
+        const display = feCode ? apacPartitionDisplay[feCode] : 
+          Object.entries(apacPartitionDisplay).find(
+            ([code]) => code.endsWith(key.replace(' City', ''))
+          )?.[1];
+        
+        // Calculate actual counts from detailRows for this partition
+        const partitionDetailRows = detailRows.filter(r => {
+          const recordPartition = r.PartitionName2 || r.PartitionNameFriendly;
+          if (!recordPartition) return false;
+          return recordPartition.replace(' City', '') === key.replace(' City', '');
+        });
+        
+        return {
+          country: display?.country || 'Unknown',
+          city: display?.city || key.replace(' City', ''),
+          employee: partitionDetailRows.filter(r => r.PersonnelType === 'Employee').length,
+          contractor: partitionDetailRows.filter(r => r.PersonnelType === 'Contractor').length,
+          total: partitionDetailRows.length,
+        };
+      });
+  }, [summaryEntry, backendFilterKey, detailRows]);
+
+  // ... (keep rest of the code same)
+}
+
+
+
+
+
+
+
+
+
+
+
+........................
 
 import React, { useEffect, useState, useMemo } from "react";
 import {
