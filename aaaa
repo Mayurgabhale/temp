@@ -1,5 +1,24 @@
 
 th issue is in history and PartitionDetailDetails.jsx is 
+
+Sunday, 3 August, 2025
+Country	City	Employees	Contractors	Total
+Philippines	Quezon City	51	31	82
+India	Pune	2	44	46
+Japan	Tokyo	1	0	1
+Total	54	75	129
+
+and 
+this Sr	Date	Time	Employee ID	Name	Personnel Type	Door	Partition <---- this sow only totla 103, 
+
+problme is count is mismatch mean some time min or some time max ok 
+
+in this table are show 129 counttotla but in detail section show only  103 count 
+
+our isssue is in summary section we got different count and below details show different count 
+
+
+so read all code line by line and slove the issue. and give me update code correct. 
 //C:\Users\W0024618\Desktop\apac-occupancy-backend\src\services\occupancy.service.js
 
 const { poolPromise, sql } = require('../config/db');
