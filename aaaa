@@ -1,116 +1,28 @@
-// 1. First, improve the partition matching logic
-const normalizePartitionName = (name) => {
-  if (!name) return '';
-  // Handle all known cases
-  return name.replace('MY.', '')
-            .replace(' City', '')
-            .replace('JP.', '')
-            .replace('PH.', '')
-            .replace('IN.', '')
-            .trim();
-};
+SELECT
+  ...
+FROM Ranked
+WHERE rn = 1
+  AND Direction = 'InDirection';
 
-// 2. Update partitionRows calculation
-const partitionRows = useMemo(() => {
-  if (!summaryEntry) return [];
 
-  console.log('Summary entry data:', summaryEntry);
 
-  // Handle single-city response
-  if (backendFilterKey && summaryEntry.region) {
-    const normalizedBackendKey = normalizePartitionName(backendFilterKey);
-    const display = apacPartitionDisplay[decodedPartition] || 
-                   Object.values(apacPartitionDisplay).find(d => 
-                     normalizePartitionName(d.city) === normalizedBackendKey
-                   );
-    
-    return [{
-      country: display?.country || 'Unknown',
-      city: display?.city || backendFilterKey,
-      employee: summaryEntry.region.Employee ?? 0,
-      contractor: summaryEntry.region.Contractor ?? 0,
-      total: summaryEntry.region.total ?? 0
-    }];
-  }
 
-  // Handle global view
-  return Object.entries(summaryEntry.partitions || {}).map(([key, vals]) => {
-    const normalizedKey = normalizePartitionName(key);
-    const display = Object.values(apacPartitionDisplay).find(d => 
-      normalizePartitionName(d.city) === normalizedKey
-    );
-    
-    return {
-      country: display?.country || 'Unknown',
-      city: display?.city || key,
-      employee: vals.Employee ?? vals.EmployeeCount ?? 0,
-      contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
-      total: vals.total ?? 0,
-    };
-  });
-}, [summaryEntry, backendFilterKey, decodedPartition]);
 
-// 3. Update detailRows calculation
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate || !data.details) return [];
-  
-  const dateStr = format(pickedDate, 'yyyy-MM-dd');
-  const normalizedFilter = backendFilterKey ? normalizePartitionName(backendFilterKey) : null;
 
-  // Get all records for the selected date
-  const dateFiltered = data.details.filter(r => {
-    const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
-    return recordDate === dateStr;
-  });
-
-  // Group by PersonGUID and keep only the latest record per person
-  const latestByPerson = dateFiltered.reduce((acc, row) => {
-    const key = row.PersonGUID;
-    if (!acc[key] || new Date(row.LocaleMessageTime) > new Date(acc[key].LocaleMessageTime)) {
-      acc[key] = row;
+const filteredRows = rows
+  .reduce((unique, row) => {
+    const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+    if (!unique._seen.has(keyGUID)) {
+      unique._seen.add(keyGUID);
+      unique.rows.push(row);
     }
-    return acc;
-  }, {});
+    return unique;
+  }, { _seen: new Set(), rows: [] })
+  .rows;
 
-  // Convert to array and apply filters
-  let result = Object.values(latestByPerson);
 
-  if (normalizedFilter) {
-    result = result.filter(row => {
-      const recordPartition = normalizePartitionName(row.PartitionName2 || row.PartitionNameFriendly);
-      return recordPartition === normalizedFilter;
-    });
-  }
 
-  // Apply InDirection filter
-  result = result.filter(row => row.Direction === 'InDirection');
 
-  // Debug logs
-  console.log('Processing details:');
-  console.log('- Total for date:', dateFiltered.length);
-  console.log('- Unique people:', Object.keys(latestByPerson).length);
-  console.log('- After location filter:', result.length);
-  console.log('- Sample records:', result.slice(0, 3));
-  
-  return result;
-}, [data, pickedDate, backendFilterKey]);
 
-// 4. Add verification useEffect
-useEffect(() => {
-  if (!partitionRows.length || !detailRows.length || !data || !pickedDate) return;
-  
-  const summaryTotal = partitionRows.reduce((sum, r) => sum + r.total, 0);
-  const detailTotal = detailRows.length;
-  
-  if (summaryTotal !== detailTotal) {
-    console.warn(`Count mismatch! Summary: ${summaryTotal}, Details: ${detailTotal}`);
-    
-    // Compare the actual data structures
-    console.log('Summary data structure:', partitionRows);
-    console.log('Detail data structure sample:', detailRows.slice(0, 3));
-    
-    // Check if we're looking at the same date
-    const dateStr = format(pickedDate, 'yyyy-MM-dd');
-    console.log('Verifying date:', dateStr);
-  }
-}, [partitionRows, detailRows, data, pickedDate]);
+
+
