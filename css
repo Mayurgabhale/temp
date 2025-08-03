@@ -2,12 +2,8 @@ read the below each file line by line, all files
 our isssue is in summary section we got different count and below details show different count 
 for example in apac summary table show 500 count in below detail section disply 490 count.
 check below file line by line and slow this issue 
-
-
 //C:\Users\W0024618\Desktop\apac-occupancy-backend\src\services\occupancy.service.js
-
 const { poolPromise, sql } = require('../config/db');
-
 const partitionList = [
   'APAC.Default',
   'CN.Beijing',
@@ -20,10 +16,6 @@ const partitionList = [
 function quoteList(arr) {
   return arr.map(p => `'${p.replace("'", "''")}'`).join(',');
 }
-
-/**
- * Live occupancy (today) for APAC
- */
 exports.fetchLiveOccupancy = async () => {
   const pool = await poolPromise;
   const parts = quoteList(partitionList);
@@ -92,14 +84,6 @@ exports.fetchLiveOccupancy = async () => {
   const result = await pool.request().query(query);
   return result.recordset;
 };
-
-
-
-
-/**
- * Historical raw‐data fetch for the past N days, all or by location.
- */
-
 
 exports.fetchHistoricalData = async ({ days = 7, location = null }) => {
   const pool = await poolPromise;
@@ -181,10 +165,6 @@ exports.fetchHistoricalData = async ({ days = 7, location = null }) => {
 
 exports.fetchHistoricalOccupancy = async (location) =>
   exports.fetchHistoricalData({ days: 7, location: location || null });
-
-
-
-
 
 http://localhost:3007/api/occupancy/live-summary
 {
@@ -295,8 +275,6 @@ const apacForwardKey = {
   'JP.Tokyo':        'JP.Tokyo',
 };
 
-
-
 // Reverse map: backend key → front-end code
 const apacReverseKey = Object.fromEntries(
   Object.entries(apacForwardKey).map(([fe, be]) => [be, fe])
@@ -326,7 +304,6 @@ const backendFilterKey = decodedPartition
   ? apacForwardKey[decodedPartition] || decodedPartition
   : null;
 
-
   // Try to find the matching front-end key (e.g., "IN.Pune") for "Pune"
 
   const [data, setData]               = useState(null);
@@ -352,10 +329,6 @@ const backendFilterKey = decodedPartition
     .finally(() => setLoading(false));
 }, [decodedPartition]);
 
-
-
-
-
 const summaryEntry = useMemo(() => {
   if (!data || !pickedDate) return null;
 
@@ -367,9 +340,6 @@ const summaryEntry = useMemo(() => {
 
   return match || null;
 }, [data, pickedDate]);
-
-
-
 
 // const partitionRows = useMemo(() => {
 //   if (!summaryEntry) return [];
@@ -411,12 +381,6 @@ const summaryEntry = useMemo(() => {
 //       };
 //     });
 // }, [summaryEntry, backendFilterKey]);
-
-
-
-
-
-
 //  this is wroking details rows only not my.kl
 
 //   const detailRows = useMemo(() => {
@@ -536,8 +500,6 @@ const detailRows = useMemo(() => {
     }, { _seen: new Set(), rows: [] })
     .rows;
 }, [data, pickedDate, backendFilterKey]);
-
-
   const handleExport = () => {
     const ws = XLSX.utils.json_to_sheet(
       detailRows.map((r, i) => ({
@@ -809,18 +771,6 @@ const detailRows = useMemo(() => {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
 //C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetailDetails.jsx
 
 import React, { useEffect, useState, useMemo } from "react";
@@ -864,9 +814,6 @@ export default function PartitionDetailDetails() {
     });
     return () => { active = false };
   }, [partition]);
-
-
-
   // poll
   useEffect(() => {
     const iv = setInterval(async () => {
@@ -891,10 +838,6 @@ export default function PartitionDetailDetails() {
     });
     return m;
   }, [details, liveCounts]);
-
-
-
-
   const displayed = useMemo(() => {
   const term = search.toLowerCase();
   return Object.entries(floorMap)
@@ -1034,11 +977,6 @@ export default function PartitionDetailDetails() {
   );
 }
 
-
-
-
-
-
 C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\PartitionDetail.jsx
 
                  // src/pages/PartitionDetail.jsx
@@ -1121,12 +1059,6 @@ export default function PartitionDetail() {
     'JP.Tokyo':        'JP.Tokyo'
   };
   const realKey = codeMap[partition] || partition;
-
-
-
-
-
-
   const live = liveSummary.realtime[realKey] || {
     total: 0,
     Employee: 0,
@@ -1297,12 +1229,6 @@ export default function PartitionDetail() {
     </>
   );
 }
-
-
-
-
-C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\Dashboard.jsx
-
 
 //C:\Users\W0024618\Desktop\apac-occupancy-frontend\src\pages\Dashboard.jsx
 import React, { useMemo } from 'react';
@@ -1589,6 +1515,3 @@ data={puneChartData}
     </>
   );
 }
-
-
-
