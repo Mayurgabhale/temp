@@ -1,3 +1,143 @@
+Summary count: 0
+History.jsx:828 Detail count: 0
+History.jsx:537 Raw data from API: {success: true, summaryByDate: Array(8), details: Array(4008)}
+History.jsx:538 Summary records count: {Pune: {…}}
+History.jsx:539 Detail records count: 4008
+History.jsx:827 Summary count: 0
+History.jsx:828 Detail count: 0
+History.jsx:700 Summary entry data: {date: '2025-08-03', day: 'Sunday', region: {…}, partitions: {…}}
+History.jsx:818 Processing details:
+History.jsx:819 - Total for date: 47
+History.jsx:820 - Unique people: 46
+History.jsx:821 - After location filter: 45
+History.jsx:827 Summary count: 42
+History.jsx:828 Detail count: 45
+History.jsx:700 Summary entry data: {date: '2025-08-03', day: 'Sunday', region: {…}, partitions: {…}}
+History.jsx:818 Processing details:
+History.jsx:819 - Total for date: 47
+History.jsx:820 - Unique people: 46
+History.jsx:821 - After location filter: 0
+History.jsx:827 Summary count: 42
+History.jsx:828 Detail count: 0
+History.jsx:827 Summary count: 42
+History.jsx:828 Detail count: 0
+History.jsx:537 Raw data from API: {success: true, summaryByDate: Array(8), details: Array(1934)}
+History.jsx:538 Summary records count: {Quezon City: {…}}
+History.jsx:539 Detail records count: 1934
+History.jsx:700 Summary entry data: {date: '2025-08-03', day: 'Sunday', region: {…}, partitions: {…}}
+History.jsx:818 Processing details:
+History.jsx:819 - Total for date: 86
+History.jsx:820 - Unique people: 78
+History.jsx:821 - After location filter: 43
+History.jsx:827 Summary count: 78
+History.jsx:828 Detail count: 43
+
+
+
+see this console output it is wrong, 
+
+
+
+// src/pages/History.jsx — APAC Edition
+
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+  TextField
+} from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchHistory } from '../api/occupancy.service';
+
+// APAC display mapping (country + city) by front-end code
+const apacPartitionDisplay = {
+  'IN.Pune':         { country: 'India',       city: 'Pune' },
+  'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' },
+  'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' },
+  'PH.Taguig':       { country: 'Philippines', city: 'Taguig' },
+  'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' },
+};
+
+// Forward map: front-end code → backend key
+const apacForwardKey = {
+  'IN.Pune':         'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon':       'Quezon City',
+  'PH.Taguig':       'Taguig City',
+  'JP.Tokyo':        'JP.Tokyo',
+};
+
+
+
+// Reverse map: backend key → front-end code
+const apacReverseKey = Object.fromEntries(
+  Object.entries(apacForwardKey).map(([fe, be]) => [be, fe])
+);
+
+
+// Format a backend partition key into "Country • City"
+const formatPartition = key => {
+  const feCode = apacReverseKey[key];
+  const display = feCode && apacPartitionDisplay[feCode];
+  return display
+    ? `${display.city}`
+    : key;  // fallback to raw if missing
+};
+
+
+export default function History() {
+  const { partition } = useParams();
+  const decodedPartition = partition ? decodeURIComponent(partition) : null;
+
+  // the exact backend key to filter on, if any
+  // const backendFilterKey = decodedPartition
+  //   ? apacForwardKey[decodedPartition]
+  //   : null;
+
+const backendFilterKey = decodedPartition
+  ? apacForwardKey[decodedPartition] || decodedPartition
+  : null;
+
+
+  // Try to find the matching front-end key (e.g., "IN.Pune") for "Pune"
+
+  const [data, setData]               = useState(null);
+  const [loading, setLoading]         = useState(true);
+  const [pickedDate, setPickedDate]   = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+
+
+//   useEffect(() => {
+//   setLoading(true);
+//   fetchHistory(decodedPartition)
+//     .then(json => {
+//       setData(json);
+//       // DEBUG LOG - Add this line
+//       console.log('Initial data loaded:', json);
+//     })
+//     .finally(() => setLoading(false));
+// }, [decodedPartition]);
+
+
+
+
 useEffect(() => {
   setLoading(true);
   fetchHistory(decodedPartition)
@@ -14,56 +154,153 @@ useEffect(() => {
 
 
 
+const summaryEntry = useMemo(() => {
+  if (!data || !pickedDate) return null;
 
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate || !data.details) return [];
-  
   const dateStr = format(pickedDate, 'yyyy-MM-dd');
+
+  const match = data.summaryByDate.find(r =>
+    r.date === dateStr || r.date.startsWith(dateStr)
+  );
+
+  return match || null;
+}, [data, pickedDate]);
+
+
+
+
+// const partitionRows = useMemo(() => {
+//   if (!summaryEntry) return [];
+
+//   // Handle single-city response (data is in region)
+//   if (backendFilterKey && summaryEntry.region) {
+//     const feCode = Object.entries(apacForwardKey).find(
+//       ([code, beKey]) => beKey === backendFilterKey || `${beKey} City` === backendFilterKey
+//     )?.[0];
+    
+//     const display = feCode ? apacPartitionDisplay[feCode] : null;
+    
+//     return [{
+//       country: display?.country || 'Unknown',
+//       city: display?.city || backendFilterKey.replace(' City', ''),
+//       employee: summaryEntry.region.Employee ?? 0,
+//       contractor: summaryEntry.region.Contractor ?? 0,
+//       total: summaryEntry.region.total ?? 0
+//     }];
+//   }
+
+//   // Handle global view (data is in partitions)
+//   return Object.entries(summaryEntry.partitions || {})
+//     .filter(([key]) => !backendFilterKey || 
+//       key.replace(' City', '') === backendFilterKey.replace(' City', ''))
+//     .map(([key, vals]) => {
+//       const feCode = Object.entries(apacForwardKey).find(
+//         ([code, beKey]) => beKey === key || `${beKey} City` === key
+//       )?.[0];
+      
+//       const display = feCode ? apacPartitionDisplay[feCode] : null;
+      
+//       return {
+//         country: display?.country || 'Unknown',
+//         city: display?.city || key.replace(' City', ''),
+//         employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+//         contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+//         total: vals.total ?? 0,
+//       };
+//     });
+// }, [summaryEntry, backendFilterKey]);
+
+
+
+
+
+
+//  this is wroking details rows only not my.kl
+
+//   const detailRows = useMemo(() => {
+//   if (!data || !pickedDate || !data.details) return [];
   
-  // Get all records for the selected date
-  const dateFiltered = data.details.filter(r => {
-    const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
-    return recordDate === dateStr;
-  });
-
-  // Group by PersonGUID and keep only the latest record per person
-  const latestByPerson = dateFiltered.reduce((acc, row) => {
-    const key = row.PersonGUID;
-    if (!acc[key] || new Date(row.LocaleMessageTime) > new Date(acc[key].LocaleMessageTime)) {
-      acc[key] = row;
-    }
-    return acc;
-  }, {});
-
-  // Convert to array and apply location filter
-  let result = Object.values(latestByPerson);
+//   const dateStr = format(pickedDate, 'yyyy-MM-dd');
   
-  if (backendFilterKey) {
-    result = result.filter(row => {
-      const recordPartition = (row.PartitionName2 || row.PartitionNameFriendly || '');
-      return recordPartition.replace(' City', '') === backendFilterKey.replace(' City', '');
-    });
-  }
+//   return data.details
+//     .filter(r => {
+//       // More flexible date comparison
+//       const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+//       return recordDate === dateStr;
+//     })
+//     .filter(r => {
+//       if (!backendFilterKey) return true;
+      
+//       // Handle both direct and mapped partition names
+//       const recordPartition = r.PartitionName2 || r.PartitionNameFriendly;
+//       if (!recordPartition) return false;
+      
+//       // Normalize keys for comparison
+//       const normalizedRecord = recordPartition.replace(' City', '');
+//       const normalizedFilter = backendFilterKey.replace(' City', '');
+      
+//       return normalizedRecord === normalizedFilter;
+//     })
+//     .filter(r => r.Direction === 'InDirection')
+//     .reduce((unique, row) => {
+//       const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+//       if (!unique._seen.has(keyGUID)) {
+//         unique._seen.add(keyGUID);
+//         unique.rows.push(row);
+//       }
+//       return unique;
+//     }, { _seen: new Set(), rows: [] })
+//     .rows;
+// }, [data, pickedDate, backendFilterKey]);
 
-  // Now apply the InDirection filter (same as backend)
-  result = result.filter(row => row.Direction === 'InDirection');
-
-  // Debug logs
-  console.log('Processing details:');
-  console.log('- Total for date:', dateFiltered.length);
-  console.log('- Unique people:', Object.keys(latestByPerson).length);
-  console.log('- After location filter:', result.length);
-  
-  return result;
-}, [data, pickedDate, backendFilterKey]);
 
 
+// const partitionRows = useMemo(() => {
+//   if (!summaryEntry) return [];
 
+//   // Handle single-city response (data is in region)
+//   if (backendFilterKey && summaryEntry.region) {
+//     const feCode = Object.keys(apacPartitionDisplay).find(
+//       code => apacForwardKey[code] === backendFilterKey || 
+//              code === backendFilterKey
+//     );
+    
+//     const display = feCode ? apacPartitionDisplay[feCode] : null;
+    
+//     return [{
+//       country: display?.country || 'Unknown',
+//       city: display?.city || backendFilterKey.replace(' City', ''),
+//       employee: summaryEntry.region.Employee ?? 0,
+//       contractor: summaryEntry.region.Contractor ?? 0,
+//       total: summaryEntry.region.total ?? 0
+//     }];
+//   }
 
-
-
-
-
+//   // Handle global view (data is in partitions)
+//   return Object.entries(summaryEntry.partitions || {})
+//     .filter(([key]) => !backendFilterKey || 
+//       key.replace(' City', '') === backendFilterKey.replace(' City', ''))
+//     .map(([key, vals]) => {
+//       // First try to find exact match in forward keys
+//       const feCode = Object.entries(apacForwardKey).find(
+//         ([code, beKey]) => beKey === key || `${beKey} City` === key || code === key
+//       )?.[0];
+      
+//       // If not found, try to match with country prefix (MY., PH., etc.)
+//       const display = feCode ? apacPartitionDisplay[feCode] : 
+//         Object.entries(apacPartitionDisplay).find(
+//           ([code]) => code.endsWith(key.replace(' City', ''))
+//         )?.[1];
+      
+//       return {
+//         country: display?.country || 'Unknown',
+//         city: display?.city || key.replace(' City', ''),
+//         employee: vals.Employee ?? vals.EmployeeCount ?? 0,
+//         contractor: vals.Contractor ?? vals.ContractorCount ?? 0,
+//         total: vals.total ?? 0,
+//       };
+//     });
+// }, [summaryEntry, backendFilterKey]);
 
 const partitionRows = useMemo(() => {
   if (!summaryEntry) return [];
@@ -117,35 +354,360 @@ const partitionRows = useMemo(() => {
 
 
 
-
-
-
-
-
-
-
-// Verification logic
-useEffect(() => {
-  if (!partitionRows.length || !detailRows.length) return;
+// const detailRows = useMemo(() => {
+//   if (!data || !pickedDate || !data.details) return [];
   
-  const summaryTotal = partitionRows.reduce((sum, r) => sum + r.total, 0);
-  const detailTotal = detailRows.length;
+//   const dateStr = format(pickedDate, 'yyyy-MM-dd');
   
-  if (summaryTotal !== detailTotal) {
-    console.warn(`Count mismatch! Summary: ${summaryTotal}, Details: ${detailTotal}`);
-    
-    // Find GUIDs in summary but missing in details
-    const summaryGuids = new Set(data.details
-      .filter(r => {
-        const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
-        return recordDate === format(pickedDate, 'yyyy-MM-dd');
-      })
-      .filter(r => r.Direction === 'InDirection')
-      .map(r => r.PersonGUID));
-    
-    const detailGuids = new Set(detailRows.map(r => r.PersonGUID));
-    
-    const missingInDetails = [...summaryGuids].filter(x => !detailGuids.has(x));
-    console.log('Records in summary missing from details:', missingInDetails);
+//   return data.details
+//     .filter(r => {
+//       const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+//       return recordDate === dateStr;
+//     })
+//     .filter(r => {
+//       if (!backendFilterKey) return true;
+      
+//       // Handle special case for Kuala Lumpur
+//       const recordPartition = (r.PartitionName2 || r.PartitionNameFriendly || '').replace('MY.', '');
+//       if (!recordPartition) return false;
+      
+//       // Normalize keys for comparison (remove country prefix and ' City' suffix)
+//       const normalizedRecord = recordPartition.replace(' City', '').trim();
+//       const normalizedFilter = backendFilterKey.replace('MY.', '').replace(' City', '').trim();
+      
+//       return normalizedRecord === normalizedFilter;
+//     })
+//     .filter(r => r.Direction === 'InDirection')
+//     .reduce((unique, row) => {
+//       const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
+//       if (!unique._seen.has(keyGUID)) {
+//         unique._seen.add(keyGUID);
+//         unique.rows.push(row);
+//       }
+//       return unique;
+//     }, { _seen: new Set(), rows: [] })
+//     .rows;
+// }, [data, pickedDate, backendFilterKey]);
+
+
+const detailRows = useMemo(() => {
+  if (!data || !pickedDate || !data.details) return [];
+  
+  const dateStr = format(pickedDate, 'yyyy-MM-dd');
+  
+  // Get all records for the selected date
+  const dateFiltered = data.details.filter(r => {
+    const recordDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+    return recordDate === dateStr;
+  });
+
+  // Group by PersonGUID and keep only the latest record per person
+  const latestByPerson = dateFiltered.reduce((acc, row) => {
+    const key = row.PersonGUID;
+    if (!acc[key] || new Date(row.LocaleMessageTime) > new Date(acc[key].LocaleMessageTime)) {
+      acc[key] = row;
+    }
+    return acc;
+  }, {});
+
+  // Convert to array and apply location filter
+  let result = Object.values(latestByPerson);
+  
+  if (backendFilterKey) {
+    result = result.filter(row => {
+      const recordPartition = (row.PartitionName2 || row.PartitionNameFriendly || '');
+      return recordPartition.replace(' City', '') === backendFilterKey.replace(' City', '');
+    });
   }
-}, [partitionRows, detailRows, data, pickedDate]);
+
+  // Now apply the InDirection filter (same as backend)
+  result = result.filter(row => row.Direction === 'InDirection');
+
+  // Debug logs
+  console.log('Processing details:');
+  console.log('- Total for date:', dateFiltered.length);
+  console.log('- Unique people:', Object.keys(latestByPerson).length);
+  console.log('- After location filter:', result.length);
+  
+  return result;
+}, [data, pickedDate, backendFilterKey])
+
+// In History.jsx
+console.log('Summary count:', partitionRows.reduce((s, r) => s + r.total, 0));
+console.log('Detail count:', detailRows.length);
+
+
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      detailRows.map((r, i) => ({
+        Sr: i + 1,
+        Date: format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
+        Time: format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
+        EmployeeID: r.EmployeeID,
+        Name: r.ObjectName1,
+        PersonnelType: r.PersonnelType,
+        Door: r.Door,
+     Partition: formatPartition(r.PartitionNameFriendly)
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Details');
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (!data)    return null;
+
+  // Styles for DatePicker's TextField
+  const datePickerSx = {
+    backgroundColor: '#000',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#FFC107',
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#FFC107',
+    },
+    '& .MuiInputBase-input': {
+      color: '#FFC107',
+    },
+    '& .MuiInputLabel-root': {
+      color: '#FFC107',
+    },
+    '& .MuiInputAdornment-root svg': {
+      color: '#FFC107',
+    },
+  };
+
+  return (
+    <>
+      <Header />
+
+      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        {pickedDate && summaryEntry ? (
+          <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 2, gap: '10px' }}>
+            {/* DatePicker */}
+            <Box sx={{ flex: '0 0 200px' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Select date"
+                  value={pickedDate}
+                  onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                  renderInput={params => (
+                    <TextField
+                      fullWidth
+                      {...params}
+                      sx={datePickerSx}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+
+            {/* Summary Table */}
+            <Box sx={{ flex: 1, maxWidth: 900, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Paper elevation={3} sx={{ px: 4, py: 3, border: '3px solid #000', borderRadius: 2 }}>
+                <Table sx={{ border: '2px solid #000' }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={5} align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          fontSize: 16,
+                          bgcolor: '#000',
+                          color: '#FFC107',
+                          border: '2px solid #000'
+                        }}
+                      >
+                        {format(pickedDate, 'EEEE, d MMMM, yyyy')}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#FFC107' }}>
+                      {['Country','City','Employees','Contractors','Total'].map(h => (
+                        <TableCell
+                          key={h}
+                          align={['Country','City'].includes(h) ? 'left' : 'right'}
+                          sx={{
+                            color: '#000',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            border: '2px solid #000'
+                          }}
+                        >
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {partitionRows.map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{row.country}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{row.city}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.employee}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{row.contractor}</TableCell>
+                        <TableCell
+                          align="right"
+                          sx={{
+                            backgroundColor: '#FFC107',
+                            fontWeight: 'bold',
+                            border: '2px solid #000'
+                          }}
+                        >
+                          {row.total}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow sx={{ bgcolor: '#666' }}>
+                      <TableCell colSpan={2} align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        Total
+                      </TableCell>
+                      <TableCell align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {partitionRows.reduce((s, r) => s + r.employee, 0)}
+                      </TableCell>
+                      <TableCell align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {partitionRows.reduce((s, r) => s + r.contractor, 0)}
+                      </TableCell>
+                      <TableCell align="right"
+                        sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
+                        {partitionRows.reduce((s, r) => s + r.total, 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Paper>
+
+              {/* Toggle Details & Export */}
+              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
+                <Button
+                  variant="contained"
+                  sx={{ bgcolor: '#FFC107', color: '#000' }}
+                  onClick={() => setShowDetails(v => !v)}
+                >
+                  {showDetails ? 'Hide Details' : 'See Details'}
+                </Button>
+                {showDetails && (
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
+                    onClick={handleExport}
+                  >
+                    Export to Excel
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ px: '20px', mb: 3 }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select date"
+                value={pickedDate}
+                onChange={d => { setPickedDate(d); setShowDetails(false); }}
+                renderInput={params => (
+                  <TextField
+                    fullWidth
+                    {...params}
+                    sx={datePickerSx}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+            {!pickedDate && (
+              <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
+                Please pick a date to view region summary.
+              </Typography>
+            )}
+          </Box>
+        )}
+
+        {/* Details Table */}
+        {showDetails && (
+          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
+            <Paper
+              elevation={1}
+              sx={{
+                px: '40px',
+                py: 1,
+                width: '100%',
+                border: '3px solid #000',
+                borderRadius: 2,
+              }}
+            >
+              {detailRows.length > 0 ? (
+                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: '#000' }}>
+                      {[
+                        'Sr','Date','Time',
+                        'Employee ID','Name','Personnel Type',
+                        'Door','Partition'
+                      ].map(h => (
+                        <TableCell
+                          key={h}
+                          align="center"
+                          sx={{
+                            color: '#FFC107',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            border: '2px solid #000',
+                          }}
+                        >
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {detailRows.map((r, i) => (
+                      <TableRow key={`${r.PersonGUID}-${i}`}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>
+                          {format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd')}
+                        </TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>
+                          {format(new Date(r.LocaleMessageTime), 'HH:mm:ss')}
+                        </TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
+
+
+                              <TableCell sx={{ border: '2px solid #000' }}>
+                          {formatPartition(r.PartitionNameFriendly)}
+                      </TableCell>
+
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#666',
+                    textAlign: 'center',
+                    mt: 2,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  No swipe records found for this date.
+                </Typography>
+              )}
+            </Paper>
+          </Box>
+        )}
+      </Container>
+
+      <Footer />
+    </>
+  );
+}
+
+
+
