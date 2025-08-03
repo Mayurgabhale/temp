@@ -1,12 +1,21 @@
-––– src/pages/History.jsx
-@@ const detailRows = useMemo(() => {
--  return data.details
--    // …
--    .filter(r => r.Direction === 'InDirection')    // ❌ drops half your events
-+  return data.details
-+    // … (other filters stay the same)
-+    // (remove the Direction filter entirely so it matches summary's logic)
+// Replace the details filtering logic with:
+const det = json.details
+  .filter(r => r.PartitionName2 === partition)
+  // Get only the most recent entry per person
+  .reduce((unique, row) => {
+    const key = row.PersonGUID;
+    if (!unique[key] || new Date(row.LocaleMessageTime) > new Date(unique[key].LocaleMessageTime)) {
+      unique[key] = row;
+    }
+    return unique;
+  }, {})
+  // Convert back to array and filter for InDirection
+  .filter(r => r.Direction === "InDirection")
+  .map(r => ({ ...r, floor: lookupFloor(r.PartitionName2, r.Door, r.Direction) }));
 
-@@ .reduce((unique, row) => {
--    const keyGUID = `${row.PersonGUID}-${row.PersonnelType}`;
-+    const keyGUID = row.PersonGUID;                 // de-dupe on GUID only
+
+
+
+
+
+
