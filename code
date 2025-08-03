@@ -1,77 +1,10 @@
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate || !data.details) return [];
-  
-  const dateStr = format(pickedDate, 'yyyy-MM-dd');
-  
-  // First get most recent swipe per person
-  const latestSwipes = data.details.reduce((acc, row) => {
-    const recordDate = format(new Date(row.LocaleMessageTime), 'yyyy-MM-dd');
-    if (recordDate !== dateStr) return acc;
-    
-    const key = row.PersonGUID;
-    if (!acc[key] || new Date(row.LocaleMessageTime) > new Date(acc[key].LocaleMessageTime)) {
-      acc[key] = row;
-    }
-    return acc;
-  }, {});
-
-  // Then apply filters
-  return Object.values(latestSwipes)
-    .filter(row => {
-      if (!backendFilterKey) return true;
-      const recordPartition = (row.PartitionName2 || row.PartitionNameFriendly || '');
-      return recordPartition.replace(' City', '') === 
-             backendFilterKey.replace(' City', '');
-    })
-    .filter(row => row.Direction === 'InDirection');
-}, [data, pickedDate, backendFilterKey]);
-
-
-
-
-
-
-
-
-
-
-
-useEffect(() => {
-  let active = true;
-  fetchLiveSummary().then(json => {
-    if (!active) return;
-    
-    // Get most recent swipe per person first
-    const latestSwipes = json.details.reduce((acc, row) => {
-      const key = row.PersonGUID;
-      if (!acc[key] || new Date(row.LocaleMessageTime) > new Date(acc[key].LocaleMessageTime)) {
-        acc[key] = row;
-      }
-      return acc;
-    }, {});
-
-    // Then filter by partition and direction
-    const det = Object.values(latestSwipes)
-      .filter(r => r.PartitionName2 === partition && r.Direction === "InDirection")
-      .map(r => ({ ...r, floor: lookupFloor(r.PartitionName2, r.Door, r.Direction) }));
-
-    setLiveCounts(json.realtime[partition]?.floors || {});
-    setDetails(det);
-    setLastUpdate(new Date().toLocaleTimeString());
-    setLoading(false);
-  });
-  return () => { active = false };
-}, [partition]);
-
-
-
-
-
-
-// In History.jsx
-console.log('Summary count:', partitionRows.reduce((s, r) => s + r.total, 0));
-console.log('Detail count:', detailRows.length);
-
-// In PartitionDetailDetails.jsx
-console.log('Live count:', Object.values(liveCounts).reduce((a, b) => a + b, 0));
-console.log('Detail count:', details.length);
+.reduce((unique, row) => {
+  // Use a more accurate key: PersonGUID + PersonnelType + CardNumber
+  const keyGUID = `${row.PersonGUID}-${row.PersonnelType}-${row.CardNumber}`;
+  if (!unique._seen.has(keyGUID)) {
+    unique._seen.add(keyGUID);
+    unique.rows.push(row);
+  }
+  return unique;
+}, { _seen: new Set(), rows: [] })
+.rows;
