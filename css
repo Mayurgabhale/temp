@@ -1,3 +1,20 @@
+<DatePicker
+  value={from}
+  onChange={d=>setFrom(d)}
+  onClose={()=>setShowFromCal(false)}
+  renderInput={(params) => <TextField {...params} />}
+  open
+  onAccept={()=>setShowFromCal(false)} // Closes after OK
+/>
+
+
+
+
+
+
+
+
+
  {/* Filter Section */}
    <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Box display="flex" flexWrap="wrap" gap={2} mb={4}>
