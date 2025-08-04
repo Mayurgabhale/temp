@@ -1,3 +1,17 @@
+else if (tab === 4) {
+  const baseURL = 'http://10.199.22.57:3003/';
+  if (location) {
+    const encodedLoc = encodeURIComponent(location);
+    window.location.href = `${baseURL}partition/${encodedLoc}/history`;
+  } else {
+    window.location.href = baseURL;
+  }
+}
+
+
+
+
+
 now we add new <Tab label="HeadCount" /> 
 this work 
 for example if i select  <FormControl sx={{ minWidth: 250 }}>
