@@ -1,29 +1,15 @@
-if (tab === 0) {
-  const params = {
-    ...baseParams,
-    from: formatLocalDate(from),
-    to: formatLocalDate(to, true),
-    employees: selectedEmps.join(',')
-  };
-  const resp = await axios.get('/api/reports/daily-access', { params });
+daily access data not filte correclty 
 
-  // --- FIX: Ensure filtering uses local day range ---
-  const startDate = new Date(from);
-  startDate.setHours(0, 0, 0, 0);
-  const endDate = new Date(to);
-  endDate.setHours(23, 59, 59, 999);
+if i select start date is 02/08/2025 and and To DAte 03/08/2025 is 
+but in daily access this Vainilaitis, Valdas gett correct filte date data mesn  02/08/2025 and and To DAte 03/08/2025 is 
 
-  const filtered = resp.data.data.filter(r => {
-    const dt = new Date(r.LocaleMessageTime);
-    return dt >= startDate && dt <= endDate;
-  });
-
-  await generateDailyAccessExcel(filtered);
-}
+but in Tomasevic, Kazimez not correct 01/08/2025 and and To DAte 02/08/2025 is 
+and Valiunas, Sigitas this only get 03/08/2025
+this is issue 
 
 
-
-
+but my select data is 02/08/2025 and and To DAte 03/08/2025 is 
+so i want only this data data ok 
 
 
 
@@ -417,17 +403,9 @@ export default function ReportsPage() {
           `T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
       };
 
-      // if (tab === 0) {
-      //   // Daily Access
-      //   const params = {
-      //     ...baseParams,
-      //     from: formatLocalDate(from),
-      //     to: formatLocalDate(to, true),
-      //     employees: selectedEmps.join(',')
-      //   };
-      //   const resp = await axios.get('/api/reports/daily-access', { params });
-      //   await generateDailyAccessExcel(resp.data.data);
-      // }
+     
+
+      // this work some correctly not all
 
       if (tab === 0) {
         const params = {
@@ -883,3 +861,4 @@ export default function ReportsPage() {
 
 
 }
+
