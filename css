@@ -1,118 +1,177 @@
-
-  return (
-    <Box p={4}>
-      <Typography variant="h4" gutterBottom>
+return (
+  <Box p={4} sx={{ backgroundColor: '#121212', minHeight: '100vh' }}>
+    {/* Header Section */}
+    <Box
+      sx={{
+        backgroundColor: '#000',
+        color: 'yellow',
+        textAlign: 'center',
+        py: 2,
+        mb: 4,
+        borderBottom: '4px solid yellow',
+        borderRadius: 2,
+      }}
+    >
+      <Typography variant="h4">
         Global Security Operation Center Reports
       </Typography>
+    </Box>
 
-      <Tabs value={tab} onChange={handleTabChange} sx={{ mb:3 }}>
-        <Tab label="Daily Access"/>
-        <Tab label="Raw"/>
-        <Tab label="Rejection"/>
-        <Tab label="Time Duration"/>
-      </Tabs>
+    {/* Tabs */}
+    <Tabs
+      value={tab}
+      onChange={handleTabChange}
+      centered
+      textColor="inherit"
+      indicatorColor="secondary"
+      sx={{
+        mb: 3,
+        '.Mui-selected': { color: 'yellow' },
+        '.MuiTabs-indicator': { backgroundColor: 'yellow' },
+      }}
+    >
+      <Tab label="Daily Access" />
+      <Tab label="Raw" />
+      <Tab label="Rejection" />
+      <Tab label="Time Duration" />
+    </Tabs>
 
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
-          {/* Region */}
-          <FormControl sx={{minWidth:140}}>
-            <InputLabel>Region</InputLabel>
-            <Select
-              value={region}
-              onChange={e=>{setRegion(e.target.value); setLocation('');}}
-              input={<OutlinedInput label="Region"/>}
-            >
-              {REGION_OPTIONS.map(r=>
-                <MenuItem key={r} value={r}>{r.toUpperCase()}</MenuItem>
-              )}
-            </Select>
-          </FormControl>
+    {/* Filter Section */}
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Box
+        display="grid"
+        gridTemplateColumns={{
+          xs: '1fr',
+          sm: '1fr 1fr',
+          md: 'repeat(3, 1fr)',
+          lg: 'repeat(4, 1fr)',
+        }}
+        gap={2}
+        mb={4}
+      >
+        {/* Region */}
+        <FormControl fullWidth>
+          <InputLabel>Region</InputLabel>
+          <Select
+            value={region}
+            onChange={e => {
+              setRegion(e.target.value);
+              setLocation('');
+            }}
+            input={<OutlinedInput label="Region" />}
+          >
+            {REGION_OPTIONS.map(r => (
+              <MenuItem key={r} value={r}>
+                {r.toUpperCase()}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {/* Location */}
-          <FormControl sx={{minWidth:200}}>
-            <InputLabel>Location</InputLabel>
-            <Select
-              value={location}
-              onChange={e=>setLocation(e.target.value)}
-              input={<OutlinedInput label="Location"/>}
-              disabled={!region}
-            >
-              {(LOCATION_MAP[region]||[]).map(loc=>
-                <MenuItem key={loc} value={loc}>
-                  {loc.split('.').pop()}
-                </MenuItem>
-              )}
-            </Select>
-          </FormControl>
+        {/* Location */}
+        <FormControl fullWidth disabled={!region}>
+          <InputLabel>Location</InputLabel>
+          <Select
+            value={location}
+            onChange={e => setLocation(e.target.value)}
+            input={<OutlinedInput label="Location" />}
+          >
+            {(LOCATION_MAP[region] || []).map(loc => (
+              <MenuItem key={loc} value={loc}>
+                {loc.split('.').pop()}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {/* From/To */}
-          <Box sx={{position:'relative'}}>
-            <TextField
-              label={tab===0?'From Date':'Start Date'}
-              value={from?from.toLocaleDateString():''}
-              readOnly
-              onClick={()=>setShowFromCal(true)}
+        {/* From Date */}
+        <Box sx={{ position: 'relative' }}>
+          <TextField
+            label={tab === 0 ? 'From Date' : 'Start Date'}
+            value={from ? from.toLocaleDateString() : ''}
+            readOnly
+            onClick={() => setShowFromCal(true)}
+            fullWidth
+          />
+          {showFromCal && (
+            <StaticDatePicker
+              displayStaticWrapperAs="desktop"
+              value={from}
+              onChange={d => {
+                setFrom(d);
+                setShowFromCal(false);
+              }}
+              renderInput={params => <TextField fullWidth {...params} />}
             />
-            {showFromCal && (
-              <StaticDatePicker
-                displayStaticWrapperAs="desktop"
-                value={from}
-                onChange={d=>{setFrom(d);setShowFromCal(false);}}
-                renderInput={p=><TextField {...p}/>}
-              />
-            )}
-          </Box>
-          <Box sx={{position:'relative'}}>
-            <TextField
-              label={tab===0?'To Date':'End Date'}
-              value={to?to.toLocaleDateString():''}
-              readOnly
-              onClick={()=>setShowToCal(true)}
-              disabled={tab===1}
-            />
-            {showToCal && (
-              <StaticDatePicker
-                displayStaticWrapperAs="desktop"
-                value={to}
-                onChange={d=>{setTo(d);setShowToCal(false);}}
-                renderInput={p=><TextField {...p}/>}
-              />
-            )}
-          </Box>
-
-          {/* Employees (only Daily) */}
-          {tab===0 && (
-            <FormControl sx={{minWidth:240}}>
-              <InputLabel>Employees</InputLabel>
-              <Select
-                multiple
-                value={selectedEmps}
-                onChange={e=>setSelectedEmps(e.target.value)}
-                input={<OutlinedInput label="Employees"/>}
-                renderValue={vals=>vals.join(', ')}
-              >
-                {EMPLOYEE_OPTIONS.map(n=>(
-                  <MenuItem key={n} value={n}>
-                    <Checkbox checked={selectedEmps.includes(n)}/>
-                    <ListItemText primary={n}/>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           )}
         </Box>
-      </LocalizationProvider>
 
+        {/* To Date */}
+        <Box sx={{ position: 'relative' }}>
+          <TextField
+            label={tab === 0 ? 'To Date' : 'End Date'}
+            value={to ? to.toLocaleDateString() : ''}
+            readOnly
+            onClick={() => setShowToCal(true)}
+            disabled={tab === 1}
+            fullWidth
+          />
+          {showToCal && (
+            <StaticDatePicker
+              displayStaticWrapperAs="desktop"
+              value={to}
+              onChange={d => {
+                setTo(d);
+                setShowToCal(false);
+              }}
+              renderInput={params => <TextField fullWidth {...params} />}
+            />
+          )}
+        </Box>
+
+        {/* Employees - only for Daily */}
+        {tab === 0 && (
+          <FormControl fullWidth sx={{ gridColumn: 'span 2' }}>
+            <InputLabel>Employees</InputLabel>
+            <Select
+              multiple
+              value={selectedEmps}
+              onChange={e => setSelectedEmps(e.target.value)}
+              input={<OutlinedInput label="Employees" />}
+              renderValue={vals => vals.join(', ')}
+            >
+              {EMPLOYEE_OPTIONS.map(n => (
+                <MenuItem key={n} value={n}>
+                  <Checkbox checked={selectedEmps.includes(n)} />
+                  <ListItemText primary={n} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      </Box>
+    </LocalizationProvider>
+
+    {/* Action Button */}
+    <Box textAlign="center">
       <Button
         variant="contained"
         size="large"
         onClick={handleGenerate}
         disabled={disabled}
-        startIcon={loading?<CircularProgress size={20}/> : null}
+        startIcon={loading ? <CircularProgress size={20} /> : null}
+        sx={{
+          backgroundColor: 'yellow',
+          color: 'black',
+          fontWeight: 'bold',
+          px: 4,
+          '&:hover': {
+            backgroundColor: '#f4d03f',
+          },
+        }}
       >
-        {loading?'Generating…':'Export to Excel'}
+        {loading ? 'Generating…' : 'Export to Excel'}
       </Button>
     </Box>
-  );
-}
-
+  </Box>
+);
