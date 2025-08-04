@@ -1,68 +1,57 @@
-// Helper function to format dates in local time without timezone issues
-const formatLocalDate = (date, endOfDay = false) => {
-  const d = new Date(date);
-  if (endOfDay) {
-    d.setHours(23, 59, 59, 999);
-  } else {
-    d.setHours(0, 0, 0, 0);
-  }
-  return d.toISOString(); // Use ISO string for consistent comparison
-};
+the issue in daily access report generet 
+my select date is 03/08/2025 TO 04/08/2025
 
-// In the Daily Access section (tab === 0):
-if (tab === 0) {
-  const params = {
-    ...baseParams,
-    from: formatLocalDate(from),
-    to: formatLocalDate(to, true),
-    employees: selectedEmps.join(',')
-  };
-  
-  const resp = await axios.get('/api/reports/daily-access', { params });
-  
-  // Create date objects for comparison (time set to 00:00:00 and 23:59:59)
-  const startDate = new Date(from);
-  startDate.setHours(0, 0, 0, 0);
-  
-  const endDate = new Date(to);
-  endDate.setHours(23, 59, 59, 999);
-  
-  // Filter the data to ensure it falls within the selected range
-  const filtered = resp.data.data.filter(r => {
-    const recordDate = new Date(r.LocaleMessageTime);
-    return recordDate >= startDate && recordDate <= endDate;
-  });
-  
-  await generateDailyAccessExcel(filtered);
-}
+
+but i got this data 
+Date	Time	Name	Contractor ID	Card No	Door Name	Message Type	Partition	Swipe
+02-Aug-25	6:35:10 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+02-Aug-25	6:39:06 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+02-Aug-25	6:39:48 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+02-Aug-25	6:43:19 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardRejected	LT.Vilnius	OUT
+02-Aug-25	6:43:26 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+02-Aug-25	6:47:47 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+02-Aug-25	6:48:30 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+02-Aug-25	7:00:56 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+
+03-Aug-25	5:45:16 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+03-Aug-25	5:47:57 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	5:48:29 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	6:20:40 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+03-Aug-25	6:24:07 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	6:24:57 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	6:30:15 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	OUT
+03-Aug-25	6:32:43 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+03-Aug-25	6:38:07 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	6:38:46 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+
+
+04-Aug-25	4:36:24 PM	Tomasevic, Kazimez	86140423	619063	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
 
 
 
+03-Aug-25	6:57:27 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+03-Aug-25	7:10:34 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	7:11:02 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	10:55:31 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	10:56:27 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	IN
+03-Aug-25	10:59:48 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	OUT
+
+04-Aug-25	6:26:37 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Lift Lobby	CardAdmitted	LT.Vilnius	OUT
+04-Aug-25	6:26:50 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
+04-Aug-25	6:27:02 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Bikes Storage	CardAdmitted	LT.Vilnius	IN
+04-Aug-25	6:27:19 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
+04-Aug-25	6:27:48 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+04-Aug-25	6:33:51 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	IN
+04-Aug-25	6:37:14 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	OUT
+04-Aug-25	6:37:22 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
+
+this data i got 
+but i want to get data only select data not other, 
+this is my main issue
+
+read below all code each line and slove this issue carefully
 
 
-
-
-
-const onlyDate = d => d.toISOString().slice(0, 10);
-return onlyDate(dt) >= onlyDate(startDate) && onlyDate(dt) <= onlyDate(endDate);
-
-
-
-
-
-
-daily access data not filte correclty 
-
-if i select start date is 02/08/2025 and and To DAte 03/08/2025 is 
-but in daily access this Vainilaitis, Valdas gett correct filte date data mesn  02/08/2025 and and To DAte 03/08/2025 is 
-
-but in Tomasevic, Kazimez not correct 01/08/2025 and and To DAte 02/08/2025 is 
-and Valiunas, Sigitas this only get 03/08/2025
-this is issue 
-
-
-but my select data is 02/08/2025 and and To DAte 03/08/2025 is 
-so i want only this data data ok 
 
 
 
@@ -91,7 +80,7 @@ const EMPLOYEE_OPTIONS = [
 const REGION_OPTIONS = ['apac', 'emea', 'laca', 'namer'];
 const LOCATION_MAP = {
   apac: ['APAC.Default', 'CN.Beijing', 'JP.Tokyo', 'PH.Manila', 'MY.Kuala Lumpur', 'IN.Pune'],
-  emea: ['AUT.Vienna', 'DU.Abu Dhab', 'IE.Dublin', 'IT.Rome', 'LT.Vilnius', 'MA.Casablanca', 'RU.Moscow', 'UK.London', 'ES.Madrid'],
+  emea: ['AUT.Vienna', 'DU.Abu Dhabi', 'IE.Dublin', 'IT.Rome', 'LT.Vilnius', 'MA.Casablanca', 'RU.Moscow', 'UK.London', 'ES.Madrid'],
   laca: ['AR.Cordoba', 'CR.Costa Rica Partition', 'MX.Mexico City', 'PE.Lima', 'BR.Sao Paulo', 'PA.Panama City'],
   namer: ['US.NYC', 'US.Denver', 'US.Austin', 'US.Miami']
 };
@@ -586,7 +575,7 @@ export default function ReportsPage() {
           } else {
             const EMEA_URLS = {
               'AUT.Vienna': 'http://10.199.22.57:3001history',
-              'DU.Abu Dhab': 'http://10.199.22.57:3001/history',
+              'DU.Abu Dhabi': 'http://10.199.22.57:3001/history',
               'IE.Dublin': 'http://10.199.22.57:3001/history',
               'IT.Rome': 'http://10.199.22.57:3001/history',
               'LT.Vilnius': 'http://10.199.22.57:3001/history',
@@ -914,4 +903,5 @@ export default function ReportsPage() {
 
 
 }
+
 
