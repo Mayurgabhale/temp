@@ -1,5 +1,6 @@
 
 
+
 // src/pages/ReportsPage.jsx
 import React, { useState } from 'react';
 import {
@@ -615,7 +616,7 @@ const disabled = loading
               value={to ? to.toLocaleDateString() : ''}
               readOnly
               onClick={() => setShowToCal(true)}
-              disabled={tab === 1}
+              disabled={false}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
@@ -704,6 +705,4 @@ const disabled = loading
   );
 
 
-
 }
-
