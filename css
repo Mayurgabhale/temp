@@ -1,3 +1,30 @@
+if (tab === 0) {
+  const params = {
+    ...baseParams,
+    from: formatLocalDate(from),
+    to: formatLocalDate(to, true),
+    employees: selectedEmps.join(',')
+  };
+  const resp = await axios.get('/api/reports/daily-access', { params });
+
+  // --- FIX: Ensure filtering uses local day range ---
+  const startDate = new Date(from);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(to);
+  endDate.setHours(23, 59, 59, 999);
+
+  const filtered = resp.data.data.filter(r => {
+    const dt = new Date(r.LocaleMessageTime);
+    return dt >= startDate && dt <= endDate;
+  });
+
+  await generateDailyAccessExcel(filtered);
+}
+
+
+
+
+
 
 
 // src/pages/ReportsPage.jsx
