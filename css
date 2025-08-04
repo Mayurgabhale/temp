@@ -8,18 +8,12 @@
     sx={{
       '& .MuiOutlinedInput-root': {
         '& fieldset': {
-          borderColor: '#FFF', // White border
+          borderColor: '#FFF', // ONLY border color changed to white
         },
         '&:hover fieldset': {
-          borderColor: '#FFF', // White border on hover
-        },
-      },
-      '& .MuiInputLabel-root': {
-        color: '#FFF', // Optional: White label text
-      },
-      '& .MuiInputBase-input': {
-        color: '#FFF', // Optional: White text color
-      },
+          borderColor: '#FFF', // ONLY border color changed to white
+        }
+      }
     }}
   />
   {showFromCal && (
@@ -45,23 +39,12 @@
     sx={{
       '& .MuiOutlinedInput-root': {
         '& fieldset': {
-          borderColor: '#FFF', // White border
+          borderColor: '#FFF', // ONLY border color changed to white
         },
         '&:hover fieldset': {
-          borderColor: '#FFF', // White border on hover
-        },
-      },
-      '& .MuiInputLabel-root': {
-        color: '#FFF', // Optional: White label text
-      },
-      '& .MuiInputBase-input': {
-        color: '#FFF', // Optional: White text color
-      },
-      '&.Mui-disabled': {
-        '& fieldset': {
-          borderColor: '#555', // Gray border when disabled (optional)
-        },
-      },
+          borderColor: '#FFF', // ONLY border color changed to white
+        }
+      }
     }}
   />
   {showToCal && (
