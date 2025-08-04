@@ -1,15 +1,15 @@
-return (
+
+  return (
   <Box p={4} sx={{ backgroundColor: '#121212', minHeight: '100vh' }}>
     {/* Header Section */}
     <Box
       sx={{
         backgroundColor: '#000',
-        color: 'yellow',
+        color: '#FFCC00',
         textAlign: 'center',
         py: 2,
-        mb: 4,
-        borderBottom: '4px solid yellow',
-        borderRadius: 2,
+        // mb: 4,
+        borderBottom: '4px solid #FFCC00',
       }}
     >
       <Typography variant="h4">
@@ -26,8 +26,9 @@ return (
       indicatorColor="secondary"
       sx={{
         mb: 3,
-        '.Mui-selected': { color: 'yellow' },
-        '.MuiTabs-indicator': { backgroundColor: 'yellow' },
+        '.Mui-selected': { color: '#FFCC00' },
+        '.MuiTabs-indicator': { backgroundColor: '#FFCC00' },
+        borderColor: ' #FFCC00',
       }}
     >
       <Tab label="Daily Access" />
@@ -43,7 +44,7 @@ return (
         gridTemplateColumns={{
           xs: '1fr',
           sm: '1fr 1fr',
-          md: 'repeat(3, 1fr)',
+          md: 'repeat(4, 1fr)',
           lg: 'repeat(4, 1fr)',
         }}
         gap={2}
@@ -175,3 +176,8 @@ return (
     </Box>
   </Box>
 );
+
+
+
+}
+
