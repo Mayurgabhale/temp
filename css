@@ -1,6 +1,22 @@
 
 
 
+
+
+const params = {
+  ...baseParams,
+  from: from.toISOString().slice(0, 10) + 'T00:00:00',
+  to: to.toISOString().slice(0, 10) + 'T23:59:59',
+  employees: selectedEmps.join(',')
+};
+
+
+
+
+
+
+
+
 // src/pages/ReportsPage.jsx
 import React, { useState } from 'react';
 import {
