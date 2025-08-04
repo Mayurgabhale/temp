@@ -6,37 +6,40 @@ const handleGenerate = async () => {
       location: location || undefined
     };
 
-    // Helper function to format dates with time
-    const formatDateWithTime = (date, endOfDay = false) => {
+    // Helper function to format dates in local time without timezone conversion
+    const formatLocalDate = (date, endOfDay = false) => {
       const d = new Date(date);
       if (endOfDay) {
         d.setHours(23, 59, 59, 999);
       } else {
         d.setHours(0, 0, 0, 0);
       }
-      return d.toISOString();
+      // Format as YYYY-MM-DDTHH:mm:ss without timezone
+      const pad = n => n.toString().padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}` +
+        `T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     };
 
     if (tab === 0) {
-      // Daily Access - already correct
+      // Daily Access
       const params = {
         ...baseParams,
-        from: formatDateWithTime(from),
-        to: formatDateWithTime(to, true),
+        from: formatLocalDate(from),
+        to: formatLocalDate(to, true),
         employees: selectedEmps.join(',')
       };
       const resp = await axios.get('/api/reports/daily-access', { params });
       await generateDailyAccessExcel(resp.data.data);
     }
     else if (tab === 1) {
-      // Raw - modified to include time
+      // Raw
       const params = {
         ...baseParams,
-        startDate: formatDateWithTime(from),
-        endDate: formatDateWithTime(to, true)
+        startDate: formatLocalDate(from),
+        endDate: formatLocalDate(to, true)
       };
       const resp = await axios.get('/api/reports/raw', { params });
-      // filter by date range
+      // Create local date objects for comparison
       const startDate = new Date(params.startDate);
       const endDate = new Date(params.endDate);
       const rows = resp.data.data.filter(r => {
@@ -50,11 +53,11 @@ const handleGenerate = async () => {
       XLSX.writeFile(wb, `RawReport_${region}_${startDate.toISOString().slice(0, 10)}_to_${endDate.toISOString().slice(0, 10)}.xlsx`);
     }
     else if (tab === 2) {
-      // Rejection - modified to include time
+      // Rejection
       const params = {
         ...baseParams,
-        startDate: formatDateWithTime(from),
-        endDate: formatDateWithTime(to, true)
+        startDate: formatLocalDate(from),
+        endDate: formatLocalDate(to, true)
       };
       const resp = await axios.get('/api/reports/rejection', { params });
       const startDate = new Date(params.startDate);
@@ -67,11 +70,11 @@ const handleGenerate = async () => {
       await generateRejectionExcel(rows);
     }
     else if (tab === 3) {
-      // Time Duration - modified to include time
+      // Time Duration
       const params = {
         ...baseParams,
-        startDate: formatDateWithTime(from),
-        endDate: formatDateWithTime(to, true),
+        startDate: formatLocalDate(from),
+        endDate: formatLocalDate(to, true),
         partition: location.split('.').pop()
       };
       const resp = await axios.get('/api/reports/time-duration', { params });
