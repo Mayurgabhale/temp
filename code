@@ -1,13 +1,12 @@
-<StaticDatePicker
-  displayStaticWrapperAs="desktop"
-  value={from}
-  onChange={(newValue) => setFrom(newValue)}
-  onAccept={() => setShowFromCal(false)}
-  onClose={() => setShowFromCal(false)}
-  views={['year', 'month', 'day']}  // 👈 Add this line
-  renderInput={(params) => <TextField {...params} />}
-/>
-
+ <StaticDatePicker
+                  displayStaticWrapperAs="desktop"
+                  value={to}
+                  onChange={(newValue) => setTo(newValue)}
+                  onAccept={() => setShowToCal(false)}
+                  onClose={() => setShowToCal(false)}
+                  renderInput={(params) => <TextField {...params} />}
+                  views={['year', 'month', 'day']}  
+                />
 
 
 
