@@ -1,3 +1,48 @@
+// Helper function to format dates in local time without timezone issues
+const formatLocalDate = (date, endOfDay = false) => {
+  const d = new Date(date);
+  if (endOfDay) {
+    d.setHours(23, 59, 59, 999);
+  } else {
+    d.setHours(0, 0, 0, 0);
+  }
+  return d.toISOString(); // Use ISO string for consistent comparison
+};
+
+// In the Daily Access section (tab === 0):
+if (tab === 0) {
+  const params = {
+    ...baseParams,
+    from: formatLocalDate(from),
+    to: formatLocalDate(to, true),
+    employees: selectedEmps.join(',')
+  };
+  
+  const resp = await axios.get('/api/reports/daily-access', { params });
+  
+  // Create date objects for comparison (time set to 00:00:00 and 23:59:59)
+  const startDate = new Date(from);
+  startDate.setHours(0, 0, 0, 0);
+  
+  const endDate = new Date(to);
+  endDate.setHours(23, 59, 59, 999);
+  
+  // Filter the data to ensure it falls within the selected range
+  const filtered = resp.data.data.filter(r => {
+    const recordDate = new Date(r.LocaleMessageTime);
+    return recordDate >= startDate && recordDate <= endDate;
+  });
+  
+  await generateDailyAccessExcel(filtered);
+}
+
+
+
+
+
+
+
+
 const onlyDate = d => d.toISOString().slice(0, 10);
 return onlyDate(dt) >= onlyDate(startDate) && onlyDate(dt) <= onlyDate(endDate);
 
