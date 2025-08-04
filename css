@@ -1,3 +1,52 @@
+<Box textAlign="center">
+  {tab === 4 ? (
+    // HeadCount tab: show "Navigate To" button
+    <Button
+      variant="contained"
+      size="large"
+      onClick={handleGenerate}
+      disabled={!region || loading}
+      startIcon={loading ? <CircularProgress size={20} /> : null}
+      sx={{
+        backgroundColor: '#FFCC00',
+        color: 'black',
+        fontWeight: 'bold',
+        px: 4,
+        '&:hover': {
+          backgroundColor: '#f4d03f',
+        },
+      }}
+    >
+      {loading ? 'Loading…' : 'Navigate To'}
+    </Button>
+  ) : (
+    // Other tabs: show "Export to Excel" button
+    <Button
+      variant="contained"
+      size="large"
+      onClick={handleGenerate}
+      disabled={disabled}
+      startIcon={loading ? <CircularProgress size={20} /> : null}
+      sx={{
+        backgroundColor: '#FFCC00',
+        color: 'black',
+        fontWeight: 'bold',
+        px: 4,
+        '&:hover': {
+          backgroundColor: '#f4d03f',
+        },
+      }}
+    >
+      {loading ? 'Generating…' : 'Export to Excel'}
+    </Button>
+  )}
+</Box>
+
+
+
+
+
+
 {/* From Date */}
 {tab !== 4 && (
   <Box sx={{ position: 'relative' }}>
