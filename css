@@ -1,5 +1,4 @@
-
-  return (
+return (
   <Box p={4} sx={{ backgroundColor: '#121212', minHeight: '100vh' }}>
     {/* Header Section */}
     <Box
@@ -8,8 +7,8 @@
         color: '#FFCC00',
         textAlign: 'center',
         py: 2,
-        // mb: 4,
         borderBottom: '4px solid #FFCC00',
+        width: '100%',
       }}
     >
       <Typography variant="h4">
@@ -28,7 +27,6 @@
         mb: 3,
         '.Mui-selected': { color: '#FFCC00' },
         '.MuiTabs-indicator': { backgroundColor: '#FFCC00' },
-        borderColor: ' #FFCC00',
       }}
     >
       <Tab label="Daily Access" />
@@ -40,18 +38,34 @@
     {/* Filter Section */}
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box
-        display="grid"
-        gridTemplateColumns={{
-          xs: '1fr',
-          sm: '1fr 1fr',
-          md: 'repeat(4, 1fr)',
-          lg: 'repeat(4, 1fr)',
-        }}
-        gap={2}
+        display="flex"
+        flexWrap="nowrap"
+        gap={3}
         mb={4}
+        sx={{
+          overflowX: 'auto',
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#fff',
+          },
+          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#FFCC00',
+          },
+          '& .MuiInputLabel-root': {
+            color: '#fff',
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFCC00',
+          },
+          '& .MuiSelect-icon': {
+            color: '#fff',
+          },
+          '& .MuiFormControl-root': {
+            minWidth: 180,
+          },
+        }}
       >
         {/* Region */}
-        <FormControl fullWidth>
+        <FormControl>
           <InputLabel>Region</InputLabel>
           <Select
             value={region}
@@ -70,7 +84,7 @@
         </FormControl>
 
         {/* Location */}
-        <FormControl fullWidth disabled={!region}>
+        <FormControl disabled={!region}>
           <InputLabel>Location</InputLabel>
           <Select
             value={location}
@@ -86,13 +100,25 @@
         </FormControl>
 
         {/* From Date */}
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative', minWidth: 180 }}>
           <TextField
             label={tab === 0 ? 'From Date' : 'Start Date'}
             value={from ? from.toLocaleDateString() : ''}
             readOnly
             onClick={() => setShowFromCal(true)}
             fullWidth
+            InputLabelProps={{ style: { color: '#fff' } }}
+            InputProps={{
+              sx: {
+                color: '#fff',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#fff',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#FFCC00',
+                },
+              },
+            }}
           />
           {showFromCal && (
             <StaticDatePicker
@@ -108,7 +134,7 @@
         </Box>
 
         {/* To Date */}
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative', minWidth: 180 }}>
           <TextField
             label={tab === 0 ? 'To Date' : 'End Date'}
             value={to ? to.toLocaleDateString() : ''}
@@ -116,6 +142,18 @@
             onClick={() => setShowToCal(true)}
             disabled={tab === 1}
             fullWidth
+            InputLabelProps={{ style: { color: '#fff' } }}
+            InputProps={{
+              sx: {
+                color: '#fff',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#fff',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#FFCC00',
+                },
+              },
+            }}
           />
           {showToCal && (
             <StaticDatePicker
@@ -132,7 +170,7 @@
 
         {/* Employees - only for Daily */}
         {tab === 0 && (
-          <FormControl fullWidth sx={{ gridColumn: 'span 2' }}>
+          <FormControl sx={{ minWidth: 240 }}>
             <InputLabel>Employees</InputLabel>
             <Select
               multiple
@@ -176,8 +214,3 @@
     </Box>
   </Box>
 );
-
-
-
-}
-
