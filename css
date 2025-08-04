@@ -1,96 +1,77 @@
-{/* Region */}
-<FormControl sx={{ minWidth: 250 }}>
-  <InputLabel>Region</InputLabel>
-  <Select
-    value={region}
-    onChange={e => { setRegion(e.target.value); setLocation(''); }}
-    input={<OutlinedInput label="Region" sx={{ 
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border
-      },
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border on hover
-      }
-    }} />}
+{/* From Date */}
+<Box sx={{ position: 'relative' }}>
+  <TextField
+    label={tab === 0 ? 'From Date' : 'Start Date'}
+    value={from ? from.toLocaleDateString() : ''}
+    readOnly
+    onClick={() => setShowFromCal(true)}
     sx={{
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#FFF', // White border
+        },
+        '&:hover fieldset': {
+          borderColor: '#FFF', // White border on hover
+        },
       },
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border on hover
-      }
+      '& .MuiInputLabel-root': {
+        color: '#FFF', // Optional: White label text
+      },
+      '& .MuiInputBase-input': {
+        color: '#FFF', // Optional: White text color
+      },
     }}
-  >
-    {REGION_OPTIONS.map(r =>
-      <MenuItem key={r} value={r}>{r.toUpperCase()}</MenuItem>
-    )}
-  </Select>
-</FormControl>
+  />
+  {showFromCal && (
+    <StaticDatePicker
+      displayStaticWrapperAs="desktop"
+      value={from}
+      onChange={(newValue) => setFrom(newValue)}
+      onAccept={() => setShowFromCal(false)}
+      onClose={() => setShowFromCal(false)}
+      renderInput={(params) => <TextField {...params} />}
+    />
+  )}
+</Box>
 
-{/* Location */}
-<FormControl sx={{ minWidth: 250 }}>
-  <InputLabel>Location</InputLabel>
-  <Select
-    value={location}
-    onChange={e => setLocation(e.target.value)}
-    input={<OutlinedInput label="Location" sx={{ 
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border
-      },
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border on hover
-      }
-    }} />}
+{/* To Date */}
+<Box sx={{ position: 'relative' }}>
+  <TextField
+    label={tab === 0 ? 'To Date' : 'End Date'}
+    value={to ? to.toLocaleDateString() : ''}
+    readOnly
+    onClick={() => setShowToCal(true)}
+    disabled={tab === 1}
     sx={{
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#FFF', // White border
+        },
+        '&:hover fieldset': {
+          borderColor: '#FFF', // White border on hover
+        },
       },
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#FFF' // White border on hover
-      }
+      '& .MuiInputLabel-root': {
+        color: '#FFF', // Optional: White label text
+      },
+      '& .MuiInputBase-input': {
+        color: '#FFF', // Optional: White text color
+      },
+      '&.Mui-disabled': {
+        '& fieldset': {
+          borderColor: '#555', // Gray border when disabled (optional)
+        },
+      },
     }}
-    disabled={!region}
-  >
-    {(LOCATION_MAP[region] || []).map(loc =>
-      <MenuItem key={loc} value={loc}>
-        {loc.split('.').pop()}
-      </MenuItem>
-    )}
-  </Select>
-</FormControl>
-
-{/* Employees (only Daily) */}
-{tab === 0 && (
-  <FormControl sx={{ minWidth: 250 }}>
-    <InputLabel>Employees</InputLabel>
-    <Select
-      multiple
-      value={selectedEmps}
-      onChange={e => setSelectedEmps(e.target.value)}
-      input={<OutlinedInput label="Employees" sx={{ 
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#FFF' // White border
-        },
-        '&:hover .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#FFF' // White border on hover
-        }
-      }} />}
-      sx={{
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#FFF' // White border
-        },
-        '&:hover .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#FFF' // White border on hover
-        }
-      }}
-      renderValue={vals => vals.join(', ')}
-    >
-      {EMPLOYEE_OPTIONS.map(n => (
-        <MenuItem key={n} value={n}>
-          <Checkbox checked={selectedEmps.includes(n)} />
-          <ListItemText primary={n} />
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-)}
+  />
+  {showToCal && (
+    <StaticDatePicker
+      displayStaticWrapperAs="desktop"
+      value={to}
+      onChange={(newValue) => setTo(newValue)}
+      onAccept={() => setShowToCal(false)}
+      onClose={() => setShowToCal(false)}
+      renderInput={(params) => <TextField {...params} />}
+    />
+  )}
+</Box>
