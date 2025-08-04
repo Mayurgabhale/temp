@@ -21,6 +21,7 @@ Austin Texas ------------- http://10.199.22.57:3002/partition/USA%2FCanada%20Def
 LIKE THAT WRITE CODE CAREFULY 
  
 
+
 // src/pages/ReportsPage.jsx
 import React, { useState } from 'react';
 import {
@@ -575,7 +576,7 @@ export default function ReportsPage() {
         await generateTimeDurationExcel(resp.data.data);
       }
       else if (tab === 4) {
-        const baseURL = 'http://10.199.22.57:3003/';
+        const baseURL = 'http://10.199.22.57:3003/history';
         if (location) {
           const encodedLoc = encodeURIComponent(location);
           window.location.href = `${baseURL}partition/${encodedLoc}/history`;
@@ -883,4 +884,10 @@ export default function ReportsPage() {
 
 
 }
+
+
+
+
+
+
 
