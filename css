@@ -1,3 +1,11 @@
+const onlyDate = d => d.toISOString().slice(0, 10);
+return onlyDate(dt) >= onlyDate(startDate) && onlyDate(dt) <= onlyDate(endDate);
+
+
+
+
+
+
 daily access data not filte correclty 
 
 if i select start date is 02/08/2025 and and To DAte 03/08/2025 is 
