@@ -1,85 +1,114 @@
+// Add this utility function at the top of your file
+function formatDateForAPI(date, isEndOfDay = false) {
+  const d = new Date(date);
+  if (isEndOfDay) {
+    d.setHours(23, 59, 59, 999);
+  } else {
+    d.setHours(0, 0, 0, 0);
+  }
+  // Format as YYYY-MM-DDTHH:mm:ss (local time)
+  return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}T${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const handleGenerate = async () => {
   setLoading(true);
   try {
     const baseParams = { region, location: location || undefined };
 
     if (tab === 0) { // Daily Access
-      // Create new Date objects to avoid modifying the original ones
-      const fromDate = new Date(from);
-      const toDate = new Date(to);
-      
-      // Set time to UTC midnight for from date
-      fromDate.setUTCHours(0, 0, 0, 0);
-      
-      // Set time to UTC 23:59:59 for to date
-      toDate.setUTCHours(23, 59, 59, 999);
+      if (!from || !to) {
+        alert('Please select both From and To dates');
+        return;
+      }
 
       const params = {
         ...baseParams,
-        from: fromDate.toISOString(),
-        to: toDate.toISOString(),
+        from: formatDateForAPI(from),
+        to: formatDateForAPI(to, true), // End of day
         employees: selectedEmps.join(',')
       };
+      
       const resp = await axios.get('/api/reports/daily-access', { params });
       await generateDailyAccessExcel(resp.data.data);
     }
     else if (tab === 1) { // Raw
-      const fromDate = new Date(from);
-      const toDate = new Date(to);
-      
-      fromDate.setUTCHours(0, 0, 0, 0);
-      toDate.setUTCHours(23, 59, 59, 999);
+      if (!from || !to) {
+        alert('Please select both Start and End dates');
+        return;
+      }
 
       const params = {
         ...baseParams,
-        startDate: fromDate.toISOString(),
-        endDate: toDate.toISOString()
+        startDate: formatDateForAPI(from),
+        endDate: formatDateForAPI(to, true) // End of day
       };
+
       const resp = await axios.get('/api/reports/raw', { params });
       
-      // filter by date range
-      const startIso = fromDate.toISOString().slice(0, 10);
-      const endIso = toDate.toISOString().slice(0, 10);
-      const rows = resp.data.data.filter(r => {
-        const date = (r.DateOnly || r.LocaleMessageTime).slice(0, 10);
-        return date >= startIso && date <= endIso;
+      // Filter by date range on client side if needed
+      const filteredData = resp.data.data.filter(r => {
+        const recordDate = r.DateOnly || r.LocaleMessageTime;
+        return recordDate >= params.startDate && recordDate <= params.endDate;
       });
-      const ws = XLSX.utils.json_to_sheet(rows);
+
+      const ws = XLSX.utils.json_to_sheet(filteredData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Raw');
-      XLSX.writeFile(wb, `RawReport_${region}_${startIso}to${endIso}.xlsx`);
+      XLSX.writeFile(wb, `RawReport_${region}_${params.startDate.slice(0,10)}_to_${params.endDate.slice(0,10)}.xlsx`);
     }
     else if (tab === 2) { // Rejection
-      const date = new Date(from);
-      date.setUTCHours(0, 0, 0, 0);
-      
+      if (!from) {
+        alert('Please select a date');
+        return;
+      }
+
       const params = {
         ...baseParams,
-        date: date.toISOString()
+        date: formatDateForAPI(from)
       };
+
       const resp = await axios.get('/api/reports/rejection', { params });
-      const iso = params.date.slice(0, 10);
-      const rows = resp.data.data.filter(r => 
-        (r.DateOnly || r.LocaleMessageTime).slice(0, 10) === iso
+      const filteredData = resp.data.data.filter(r => 
+        (r.DateOnly || r.LocaleMessageTime).startsWith(params.date.slice(0, 10))
       );
-      await generateRejectionExcel(rows);
+      await generateRejectionExcel(filteredData);
     }
-    else if (tab === 3) {
-      const date = new Date(from);
-      date.setUTCHours(0, 0, 0, 0);
-      
+    else if (tab === 3) { // Time Duration
+      if (!from) {
+        alert('Please select a date');
+        return;
+      }
+
       const params = {
         ...baseParams,
-        startDate: date.toISOString(),
-        partition: location.split('.').pop() // e.g. "Default"
+        startDate: formatDateForAPI(from),
+        partition: location?.split('.')?.pop() || ''
       };
+
       const resp = await axios.get('/api/reports/time-duration', { params });
       await generateTimeDurationExcel(resp.data.data);
     }
   } catch (err) {
     console.error(err);
-    alert('Failed to generate report');
+    alert('Failed to generate report: ' + (err.response?.data?.message || err.message));
   } finally {
     setLoading(false);
   }
 };
+
