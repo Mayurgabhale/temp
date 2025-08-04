@@ -1,3 +1,23 @@
+const filtered = resp.data.data.filter(r => {
+  const dt = new Date(r.LocaleMessageTime);
+  const dtDateOnly = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  return dtDateOnly >= startDateOnly && dtDateOnly <= endDateOnly;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 the issue in daily access report generet 
 my select date is 03/08/2025 TO 04/08/2025
 
