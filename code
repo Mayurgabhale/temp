@@ -1,3 +1,31 @@
+<Button
+  variant="contained"
+  size="large"
+  onClick={handleGenerate}
+  disabled={!region || loading}
+  startIcon={loading ? <CircularProgress size={20} /> : null}
+  sx={{
+    backgroundColor: '#FFCC00',
+    color: 'black',
+    fontWeight: 'bold',
+    px: 4,
+    '&:hover': {
+      backgroundColor: '#f4d03f',
+    },
+  }}
+>
+  {loading
+    ? 'Loading…'
+    : location
+      ? `Navigate to ${location.split('.').pop()}`
+      : `Navigate to ${region.toUpperCase()}`}
+</Button>
+
+
+
+
+
+
 
 
 // src/pages/ReportsPage.jsx
