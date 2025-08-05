@@ -1,67 +1,4 @@
-GET http://localhost:5173/src/pages/ReportsPage.jsx?t=1754371618256 net::ERR_ABORTED 500 (Internal Server Error)Understand this error
-client.ts:270 [vite] Internal Server Error
-C:\Users\W0024618\Desktop\global-page\frontend\src\pages\ReportsPage.jsx: 'return' outside of function. (1181:4)
-
-  1179 |   if (!from || !to) {
-  1180 |     alert('Please select both From and To dates');
-> 1181 |     return;
-       |     ^
-  1182 |   }
-  1183 |
-  1184 |   if (from > to) {
-    at constructor (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:367:19)
-    at JSXParserMixin.raise (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:6627:19)
-    at JSXParserMixin.parseReturnStatement (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13136:12)
-    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12798:21)
-    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
-    at JSXParserMixin.parseStatementListItem (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12747:17)
-    at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13316:61)
-    at JSXParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
-    at JSXParserMixin.parseBlock (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13297:10)
-    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12858:21)
-    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
-    at JSXParserMixin.parseStatementOrSloppyAnnexBFunctionDeclaration (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12757:17)
-    at JSXParserMixin.parseIfStatement (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13130:28)
-    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12796:21)
-    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
-    at JSXParserMixin.parseStatementListItem (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12747:17)
-    at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13316:61)
-    at JSXParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
-    at JSXParserMixin.parseBlock (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13297:10)
-    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12858:21)
-    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
-    at JSXParserMixin.parseStatementOrSloppyAnnexBFunctionDeclaration (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12757:17)
-    at JSXParserMixin.parseIfStatement (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13130:28)
-    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12796:21)
-    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
-    at JSXParserMixin.parseModuleItem (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
-    at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
-    at JSXParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
-    at JSXParserMixin.parseProgram (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12625:10)
-    at JSXParserMixin.parseTopLevel (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12615:25)
-    at JSXParserMixin.parse (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:14492:10)
-    at parse (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:14526:38)
-    at parser (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
-    at parser.next (<anonymous>)
-    at normalizeFile (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
-    at normalizeFile.next (<anonymous>)
-    at run (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
-    at run.next (<anonymous>)
-    at transform (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\transform.js:22:33)
-    at transform.next (<anonymous>)
-    at step (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:261:32)
-    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:273:13
-    at async.call.result.err.err (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:223:11)
-    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:189:28
-    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
-    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:113:33
-    at step (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:287:14)
-    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:273:13
-    at async.call.result.err.err (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:223:11)
-handleMessage @ client.ts:270
-(anonymous) @ client.ts:96Understand this error
-
-// Add this utility function at the top of your file
+// 1. Move utility functions outside the component
 const normalizeDateToUTC = (date) => {
   if (!date) return null;
   return new Date(Date.UTC(
@@ -74,159 +11,62 @@ const normalizeDateToUTC = (date) => {
   ));
 };
 
-// In your handleGenerate function, modify the Daily Access section:
-if (tab === 0) {
-  if (!from || !to) {
-    alert('Please select both From and To dates');
-    return;
-  }
+// 2. Keep the component function
+export default function ReportsPage() {
+  // ... existing state and other functions ...
 
-  if (from > to) {
-    alert('From date must be before To date');
-    return;
-  }
+  // 3. Modified handleGenerate function
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const baseParams = {
+        region,
+        location: location || undefined
+      };
 
-  // Normalize input dates to UTC at start of day and end of day
-  const startDate = new Date(Date.UTC(from.getFullYear(), from.getMonth(), from.getDate(), 0, 0, 0));
-  const endDate = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59));
+      if (tab === 0) {
+        // Date validation - now properly inside the handleGenerate function
+        if (!from || !to) {
+          alert('Please select both From and To dates');
+          setLoading(false);
+          return;
+        }
 
-  const params = {
-    ...baseParams,
-    from: from.toISOString().split('T')[0], // YYYY-MM-DD format
-    to: to.toISOString().split('T')[0],
-    employees: selectedEmps.join(',')
+        if (from > to) {
+          alert('From date must be before To date');
+          setLoading(false);
+          return;
+        }
+
+        // Normalize input dates to UTC
+        const startDate = new Date(Date.UTC(from.getFullYear(), from.getMonth(), from.getDate(), 0, 0, 0));
+        const endDate = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59));
+
+        const params = {
+          ...baseParams,
+          from: from.toISOString().split('T')[0],
+          to: to.toISOString().split('T')[0],
+          employees: selectedEmps.join(',')
+        };
+
+        const resp = await axios.get('/api/reports/daily-access', { params });
+        
+        const filteredData = resp.data.data.filter(record => {
+          if (!record.LocaleMessageTime) return false;
+          const recordDate = normalizeDateToUTC(new Date(record.LocaleMessageTime));
+          return recordDate >= startDate && recordDate <= endDate;
+        });
+
+        await generateDailyAccessExcel(filteredData);
+      }
+      // ... rest of your tab handling logic ...
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate report');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    const resp = await axios.get('/api/reports/daily-access', { params });
-    
-    // Normalize all dates to UTC for accurate comparison
-    const filteredData = resp.data.data.filter(record => {
-      if (!record.LocaleMessageTime) return false;
-      
-      const recordDate = normalizeDateToUTC(new Date(record.LocaleMessageTime));
-      return recordDate >= startDate && recordDate <= endDate;
-    });
-
-    // Verify date ranges per employee
-    const employeeData = {};
-    selectedEmps.forEach(emp => {
-      employeeData[emp] = filteredData.filter(r => r.ObjectName1 === emp);
-    });
-
-    // Generate the report with normalized dates
-    await generateDailyAccessExcel(filteredData);
-  } catch (error) {
-    console.error('Error generating report:', error);
-    alert('Failed to generate report. Please check console for details.');
-  }
+  // ... rest of your component code ...
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const generateDailyAccessExcel = async allRows => {
-  const wb = new ExcelJS.Workbook();
-  
-  // Create a map of worksheets by employee
-  const worksheets = {};
-  selectedEmps.forEach(emp => {
-    worksheets[emp] = wb.addWorksheet(emp.substring(0, 31));
-    const ws = worksheets[emp];
-    
-    // Add headers
-    ws.addRow([
-      'Date', 'Time', 'Name', 'Contractor ID', 'Card No',
-      'Door Name', 'Message Type', 'Partition', 'Swipe'
-    ]);
-    
-    // Format headers
-    const hdr = ws.getRow(1);
-    hdr.font = { bold: true };
-    hdr.alignment = { vertical: 'middle', horizontal: 'center' };
-    hdr.eachCell(c => {
-      c.border = {
-        top: { style: 'thin' }, left: { style: 'thin' },
-        bottom: { style: 'thin' }, right: { style: 'thin' }
-      };
-    });
-    
-    // Set column widths
-    ws.columns = [
-      { key: 'date', width: 12 },
-      { key: 'time', width: 12 },
-      { key: 'name', width: 25 },
-      { key: 'id', width: 15 },
-      { key: 'card', width: 15 },
-      { key: 'door', width: 40 },
-      { key: 'msg', width: 15 },
-      { key: 'part', width: 15 },
-      { key: 'swipe', width: 10 }
-    ];
-  });
-
-  // Process all rows
-  allRows.forEach(r => {
-    const ws = worksheets[r.ObjectName1];
-    if (!ws) return; // Skip if employee not selected
-    
-    const dt = new Date(r.LocaleMessageTime);
-    const row = ws.addRow([
-      dt, dt,
-      r.ObjectName1,
-      r.EmployeeID,
-      r.CardNumber,
-      r.Door || r.ObjectName2 || '',
-      r.AdmitCode || r.Messagetype || '',
-      r.location,
-      r.Swipe || r.Direction || ''
-    ]);
-    
-    // Format date cells
-    row.getCell(1).numFmt = 'dd-mmm-yy';
-    row.getCell(2).numFmt = 'h:mm:ss AM/PM';
-    
-    row.eachCell(c => {
-      c.border = {
-        top: { style: 'thin' }, left: { style: 'thin' },
-        bottom: { style: 'thin' }, right: { style: 'thin' }
-      };
-      c.alignment = { vertical: 'middle', horizontal: 'left' };
-    });
-  });
-
-  // Handle empty worksheets
-  selectedEmps.forEach(emp => {
-    const ws = worksheets[emp];
-    if (ws.rowCount <= 1) { // Only header row exists
-      ws.mergeCells('A2', 'I2');
-      ws.getCell('A2').value = 'There is no swipe records found in Ccure';
-      ws.getCell('A2').alignment = { horizontal: 'center' };
-    } else {
-      ws.autoFilter = 'A1:I1';
-    }
-  });
-
-  // Generate and download the file
-  const buf = await wb.xlsx.writeBuffer();
-  const blob = new Blob([buf], { 
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-  });
-  const filename = `Daily Access Report(${formatDisplayDate(from)} to ${formatDisplayDate(to)}).xlsx`;
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
-};
-
-
