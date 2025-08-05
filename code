@@ -1,3 +1,12 @@
+&& (
+  !backendFilterKey ||
+  r.PartitionNameFriendly === backendFilterKey ||
+  apacForwardKey[r.PartitionNameFriendly] === backendFilterKey
+)
+
+
+
+
 Kuala Lumpur details section not disply means this | Sr	Date	Time	Employee ID	Name	Personnel Type	Door	Card Number	Partition
 
 OTHE ALL ARE DISPLY ONLY kuala Lumpur not disply 
