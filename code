@@ -1,40 +1,20 @@
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate || !showDetails) return [];
-
-  const selectedDay = format(pickedDate, 'yyyy-MM-dd');
-
-  const filtered = data.details.filter(r => {
-    const localDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
-    const matchesDate = localDate === selectedDay;
-    const matchesPartition = !filterCode || r.PartitionName2?.startsWith(filterCode + '.');
-    return matchesDate && matchesPartition;
-  });
-
-  // Sort by local time (oldest first)
-  filtered.sort((a, b) =>
-    new Date(a.LocaleMessageTime) - new Date(b.LocaleMessageTime)
-  );
-
-  // Deduplicate by PersonGUID (keep first entry)
-  const seen = new Set();
-  return filtered.filter(r => {
-    if (seen.has(r.PersonGUID)) return false;
-    seen.add(r.PersonGUID);
-    return true;
-  });
-}, [data, pickedDate, showDetails, filterCode]);
-
-
-
-
-
-
-
-
-
-
 use local message and time, and filte using GUID 
 
+the issue is 
+Tuesday, 5 August, 2025
+Country	City	Employee	Contractors	Total
+Lithuania	Vilnius	539	23	562
+Ireland	Dublin	30	2	32
+Austria	Vienna	37	3	40
+Morocco	Casablanca	20	1	21
+UK	London	22	1	23
+Italy	Rome	26	2	28
+Spain	Madrid	55	3	58
+UAE	Abu Dhab	21	1	22
+Russia	Moscow	5	0	5
+Total	755	36	791 <--- this is the totla 
+
+but in detail section we got 794 the count are mismatch 
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
