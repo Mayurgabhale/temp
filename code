@@ -14,7 +14,8 @@ UAE	Abu Dhab	21	1	22
 Russia	Moscow	5	0	5
 Total	755	36	791 <--- this is the totla 
 
-but in detail section we got 794 the count are mismatch 
+but in detail section we got 794 records but in table 791,
+791 is correct ok details section got wrong records 
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
