@@ -1,3 +1,34 @@
+- // client‐side filter
+- const startDate = new Date(params.startDate);
+- const endDate   = new Date(params.endDate);
++ // normalize to the very start/end of the selected calendar days
++ const startDate = new Date(from);
++ startDate.setHours(0,  0,   0,   0);
++ const endDate = new Date(to);
++ endDate.setHours(23, 59,  59, 999);
+
+  const filtered = resp.data.data.filter(r => {
+-   const dt = new Date(r.LocaleMessageTime);
+-   return dt >= startDate && dt <= endDate;
++   // if your API also returns a date‐only field, prefer that:
++   const dateStr = r.DateOnly || r.LocaleMessageTime;
++   const dt = new Date(dateStr);
++   // compare full timestamp against our local‐day boundaries
++   return dt >= startDate && dt <= endDate;
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
 - const params = {
 -   ...baseParams,
 -   from: formatLocalDate(from),
