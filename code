@@ -1,3 +1,40 @@
+if (tab === 0) {
+  // 1) Build “YYYY-MM-DD” strings directly
+  const fromDate = from.toISOString().slice(0,10); // "2025-08-02"
+  const toDate   = to  .toISOString().slice(0,10); // "2025-08-04"
+
+  const params = {
+    ...baseParams,
+    from:      fromDate,
+    to:        toDate,
+    employees: selectedEmps.join(',')    // e.g. "Vainilaitis, Valdas,Tomasevic, Kazimez,…"
+  };
+
+  const resp = await axios.get('/api/reports/daily-access', { params });
+
+  // 2) (Optional) Client-side filter in case some stragglers slip through
+  const startISO = fromDate;  
+  const endISO   = toDate;
+  const filtered = resp.data.data.filter(r => {
+    // DateOnly if you have it, otherwise pull YYYY-MM-DD off the timestamp
+    const recISO = (r.DateOnly || r.LocaleMessageTime).slice(0,10);
+    return recISO >= startISO && recISO <= endISO;
+  });
+
+  await generateDailyAccessExcel(filtered);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 ReportsPage.jsx:1545 
  GET http://localhost:5173/api/reports/daily-access?region=emea&from=2025-08-02T…masevic,+Kazimez&employees[]=Sesickis,+Janas&employees[]=Valiunas,+Sigitas 400 (Bad Request)
 handleGenerate	@	ReportsPage.jsx:1545
