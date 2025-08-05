@@ -1,3 +1,14 @@
+in the daily access report generate has mainy issues, 
+the main issue is the Date, report are not generete for selected Date 
+for example I select Date is From Date is 02/08/2025 and To date is 04/08/2025
+but the issue is report are genere wiht different date this is the mian issue 
+
+if i select employee Vainilaitis, Valdas   generet report date is 02-08-2025  to 03-08-2025   this is wrong 
+Tomasevic, Kazimez 01-08-2025 To 04-08-2025
+Valiunas, Sigitas 03-Aug-25 To 04-Aug-25
+this all i select at a time ok 
+
+REad all code carefully and slove the issue. 
 
 // src/pages/ReportsPage.jsx
 import React, { useState } from 'react';
