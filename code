@@ -1,4 +1,42 @@
+.filter(([k]) => {
+  if (!filterCode) return true;
+  if (!decoded) return true;
+  return k === decoded;
+})
 
+
+
+
+const rows = useMemo(() => {
+  if (!summary || !summary.partitions) return [];
+  return Object.entries(summary.partitions)
+    .filter(([k]) => {
+      if (!filterCode) return true;
+      if (!decoded) return true;
+      return k === decoded;
+    })
+    .map(([k, v]) => {
+      const [code, site] = k.split('.');
+      return {
+        country: codeToCountry[code] || code,
+        site,
+        employee: v.Employee ?? v.EmployeeCount ?? 0,
+        contractor: v.Contractor ?? v.ContractorCount ?? 0,
+        total:
+          v.TotalCount ??
+          v.Total ??
+          v.total ??
+          ((v.Employee ?? v.EmployeeCount ?? 0) +
+            (v.Contractor ?? v.ContractorCount ?? 0)),
+      };
+    });
+}, [summary, filterCode, decoded]);
+
+
+
+
+
+......
 total: v.TotalCount ?? v.Total ?? v.total ?? (
           (v.Employee     ?? v.EmployeeCount ?? 0) +
           (v.Contractor   ?? v.ContractorCount ?? 0)
