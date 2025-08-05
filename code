@@ -1,3 +1,15 @@
+
+total: v.TotalCount ?? v.Total ?? v.total ?? (
+          (v.Employee     ?? v.EmployeeCount ?? 0) +
+          (v.Contractor   ?? v.ContractorCount ?? 0)
+        ),
+
+
+
+
+
+
+
 in the one issue is only onle change this issue dont change any other ok 
 
 http://localhost:3000/history this is all site head count in one table it is correct 
