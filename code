@@ -1,3 +1,66 @@
+GET http://localhost:5173/src/pages/ReportsPage.jsx?t=1754371618256 net::ERR_ABORTED 500 (Internal Server Error)Understand this error
+client.ts:270 [vite] Internal Server Error
+C:\Users\W0024618\Desktop\global-page\frontend\src\pages\ReportsPage.jsx: 'return' outside of function. (1181:4)
+
+  1179 |   if (!from || !to) {
+  1180 |     alert('Please select both From and To dates');
+> 1181 |     return;
+       |     ^
+  1182 |   }
+  1183 |
+  1184 |   if (from > to) {
+    at constructor (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:367:19)
+    at JSXParserMixin.raise (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:6627:19)
+    at JSXParserMixin.parseReturnStatement (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13136:12)
+    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at JSXParserMixin.parseStatementListItem (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+    at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+    at JSXParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at JSXParserMixin.parseBlock (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12858:21)
+    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at JSXParserMixin.parseStatementOrSloppyAnnexBFunctionDeclaration (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12757:17)
+    at JSXParserMixin.parseIfStatement (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13130:28)
+    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12796:21)
+    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at JSXParserMixin.parseStatementListItem (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+    at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+    at JSXParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at JSXParserMixin.parseBlock (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12858:21)
+    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at JSXParserMixin.parseStatementOrSloppyAnnexBFunctionDeclaration (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12757:17)
+    at JSXParserMixin.parseIfStatement (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13130:28)
+    at JSXParserMixin.parseStatementContent (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12796:21)
+    at JSXParserMixin.parseStatementLike (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at JSXParserMixin.parseModuleItem (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at JSXParserMixin.parseBlockBody (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at JSXParserMixin.parseProgram (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12625:10)
+    at JSXParserMixin.parseTopLevel (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:12615:25)
+    at JSXParserMixin.parse (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:14492:10)
+    at parse (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\parser\lib\index.js:14526:38)
+    at parser (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:223:11)
+    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:189:28
+    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:113:33
+    at step (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:287:14)
+    at C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\W0024618\Desktop\global-page\frontend\node_modules\gensync\index.js:223:11)
+handleMessage @ client.ts:270
+(anonymous) @ client.ts:96Understand this error
+
 // Add this utility function at the top of your file
 const normalizeDateToUTC = (date) => {
   if (!date) return null;
