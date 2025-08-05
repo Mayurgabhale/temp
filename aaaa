@@ -1,4 +1,35 @@
+const rows = useMemo(() => {
+  if (!summary || !summary.partitions) return [];
+  
+  return Object.entries(summary.partitions)
+    .filter(([partitionKey]) => {
+      if (!filterCode) return true;
+      
+      // Handle both formats: "AUT.Vienna" and "AUT.ViennaPartition"
+      const [code, city] = partitionKey.split('.');
+      const normalizedCity = city.replace('Partition', '').trim();
+      const normalizedPartition = `${code}.${normalizedCity}`;
+      
+      return normalizedPartition === decoded;
+    })
+    .map(([partitionKey, counts]) => {
+      const [code, city] = partitionKey.split('.');
+      const normalizedCity = city.replace('Partition', '').trim();
+      
+      return {
+        country: codeToCountry[code] || code,
+        site: normalizedCity,
+        employee: counts.Employee ?? counts.EmployeeCount ?? 0,
+        contractor: counts.Contractor ?? counts.ContractorCount ?? 0,
+        total: counts.total ?? 0
+      };
+    });
+}, [summary, filterCode, decoded]);
 
+
+
+
+...
 
 //C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\History.jsx
 
