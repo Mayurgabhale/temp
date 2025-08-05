@@ -1,77 +1,3 @@
-if (tab === 0) {
-  // 1) Build “YYYY-MM-DD” strings directly
-  const fromDate = from.toISOString().slice(0,10); // "2025-08-02"
-  const toDate   = to  .toISOString().slice(0,10); // "2025-08-04"
-
-  const params = {
-    ...baseParams,
-    from:      fromDate,
-    to:        toDate,
-    employees: selectedEmps.join(',')    // e.g. "Vainilaitis, Valdas,Tomasevic, Kazimez,…"
-  };
-
-  const resp = await axios.get('/api/reports/daily-access', { params });
-
-  // 2) (Optional) Client-side filter in case some stragglers slip through
-  const startISO = fromDate;  
-  const endISO   = toDate;
-  const filtered = resp.data.data.filter(r => {
-    // DateOnly if you have it, otherwise pull YYYY-MM-DD off the timestamp
-    const recISO = (r.DateOnly || r.LocaleMessageTime).slice(0,10);
-    return recISO >= startISO && recISO <= endISO;
-  });
-
-  await generateDailyAccessExcel(filtered);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-ReportsPage.jsx:1545 
- GET http://localhost:5173/api/reports/daily-access?region=emea&from=2025-08-02T…masevic,+Kazimez&employees[]=Sesickis,+Janas&employees[]=Valiunas,+Sigitas 400 (Bad Request)
-handleGenerate	@	ReportsPage.jsx:1545
-
-ReportsPage.jsx:1691 
-AxiosError {message: 'Request failed with status code 400', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
-code
-: 
-"ERR_BAD_REQUEST"
-config
-: 
-{transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 0, …}
-message
-: 
-"Request failed with status code 400"
-name
-: 
-"AxiosError"
-request
-: 
-XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
-response
-: 
-{data: {…}, status: 400, statusText: 'Bad Request', headers: AxiosHeaders, config: {…}, …}
-status
-: 
-400
-stack
-: 
-"AxiosError: Request failed with status code 400\n    at settle (http://localhost:5173/node_modules/.vite/deps/axios.js?v=25177ea9:1264:12)\n    at XMLHttpRequest.onloadend (http://localhost:5173/node_modules/.vite/deps/axios.js?v=25177ea9:1596:7)\n    at Axios.request (http://localhost:5173/node_modules/.vite/deps/axios.js?v=25177ea9:2154:41)\n    at async handleGenerate (http://localhost:5173/src/pages/ReportsPage.jsx?t=1754372299197:507:22)"
-[[Prototype]]
-: 
-Error
-handleGenerate	@	ReportsPage.jsx:1691
-
-
-
 
 // src/pages/ReportsPage.jsx
 import React, { useState } from 'react';
@@ -467,49 +393,26 @@ export default function ReportsPage() {
 
       // this work some correctly not all
 
-      // if (tab === 0) {
-      //   const params = {
-      //     ...baseParams,
-      //     from: formatLocalDate(from),
-      //     to: formatLocalDate(to, true),
-      //     employees: selectedEmps.join(',')
-      //   };
-      //   const resp = await axios.get('/api/reports/daily-access', { params });
-
-      //   // Add this filtering step to ensure full date range is respected
-      //   const startDate = new Date(params.from);
-      //   const endDate = new Date(params.to);
-
-      //   const filtered = resp.data.data.filter(r => {
-      //     const dt = new Date(r.LocaleMessageTime);
-      //     return dt >= startDate && dt <= endDate;
-      //   });
-
-      //   await generateDailyAccessExcel(filtered);
-      // }
-
       if (tab === 0) {
-  const params = {
-    ...baseParams,
-    from:      formatLocalDate(from),
-    to:        formatLocalDate(to,   true),
-    employees: selectedEmps
-  };
-  const resp = await axios.get('/api/reports/daily-access', { params });
+        const params = {
+          ...baseParams,
+          from: formatLocalDate(from),
+          to: formatLocalDate(to, true),
+          employees: selectedEmps.join(',')
+        };
+        const resp = await axios.get('/api/reports/daily-access', { params });
 
-  // normalize your pickers
-  const startDate = new Date(from); startDate.setHours(0,0,0,0);
-  const endDate   = new Date(to);   endDate.setHours(23,59,59,999);
-  const startISO = startDate.toISOString().slice(0,10);
-  const endISO   = endDate.toISOString().slice(0,10);
+        // Add this filtering step to ensure full date range is respected
+        const startDate = new Date(params.from);
+        const endDate = new Date(params.to);
 
-  const filtered = resp.data.data.filter(r => {
-    const recISO = r.DateOnly || r.LocaleMessageTime.slice(0,10);
-    return recISO >= startISO && recISO <= endISO;
-  });
+        const filtered = resp.data.data.filter(r => {
+          const dt = new Date(r.LocaleMessageTime);
+          return dt >= startDate && dt <= endDate;
+        });
 
-  await generateDailyAccessExcel(filtered);
-}
+        await generateDailyAccessExcel(filtered);
+      }
 
       else if (tab === 1) {
         // Raw
@@ -944,3 +847,10 @@ export default function ReportsPage() {
 
 
 }
+
+
+
+
+
+
+
