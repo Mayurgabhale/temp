@@ -1,72 +1,15 @@
-// 1. Move utility functions outside the component
-const normalizeDateToUTC = (date) => {
-  if (!date) return null;
-  return new Date(Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds()
-  ));
-};
+if (tab === 0) {
+-  const params = {
+-    ...baseParams,
+-    from: formatLocalDate(from),
+-    to:   formatLocalDate(to, true),
+-    employees: selectedEmps.join(',')
+-  };
++  const params = {
++    ...baseParams,
++    from:      formatLocalDate(from),
++    to:        formatLocalDate(to,   true),
++    employees: selectedEmps              // ← array, not CSV string
++  };
 
-// 2. Keep the component function
-export default function ReportsPage() {
-  // ... existing state and other functions ...
-
-  // 3. Modified handleGenerate function
-  const handleGenerate = async () => {
-    setLoading(true);
-    try {
-      const baseParams = {
-        region,
-        location: location || undefined
-      };
-
-      if (tab === 0) {
-        // Date validation - now properly inside the handleGenerate function
-        if (!from || !to) {
-          alert('Please select both From and To dates');
-          setLoading(false);
-          return;
-        }
-
-        if (from > to) {
-          alert('From date must be before To date');
-          setLoading(false);
-          return;
-        }
-
-        // Normalize input dates to UTC
-        const startDate = new Date(Date.UTC(from.getFullYear(), from.getMonth(), from.getDate(), 0, 0, 0));
-        const endDate = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59));
-
-        const params = {
-          ...baseParams,
-          from: from.toISOString().split('T')[0],
-          to: to.toISOString().split('T')[0],
-          employees: selectedEmps.join(',')
-        };
-
-        const resp = await axios.get('/api/reports/daily-access', { params });
-        
-        const filteredData = resp.data.data.filter(record => {
-          if (!record.LocaleMessageTime) return false;
-          const recordDate = normalizeDateToUTC(new Date(record.LocaleMessageTime));
-          return recordDate >= startDate && recordDate <= endDate;
-        });
-
-        await generateDailyAccessExcel(filteredData);
-      }
-      // ... rest of your tab handling logic ...
-    } catch (err) {
-      console.error(err);
-      alert('Failed to generate report');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ... rest of your component code ...
-}
+  const resp = await axios.get('/api/reports/daily-access', { params });
