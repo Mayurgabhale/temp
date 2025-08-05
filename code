@@ -1,3 +1,38 @@
+const detailRows = useMemo(() => {
+  if (!data || !pickedDate || !showDetails) return [];
+
+  const selectedDay = format(pickedDate, 'yyyy-MM-dd');
+
+  const filtered = data.details.filter(r => {
+    const localDate = format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd');
+    const matchesDate = localDate === selectedDay;
+    const matchesPartition = !filterCode || r.PartitionName2?.startsWith(filterCode + '.');
+    return matchesDate && matchesPartition;
+  });
+
+  // Sort by local time (oldest first)
+  filtered.sort((a, b) =>
+    new Date(a.LocaleMessageTime) - new Date(b.LocaleMessageTime)
+  );
+
+  // Deduplicate by PersonGUID (keep first entry)
+  const seen = new Set();
+  return filtered.filter(r => {
+    if (seen.has(r.PersonGUID)) return false;
+    seen.add(r.PersonGUID);
+    return true;
+  });
+}, [data, pickedDate, showDetails, filterCode]);
+
+
+
+
+
+
+
+
+
+
 use local message and time, and filte using GUID 
 
 
