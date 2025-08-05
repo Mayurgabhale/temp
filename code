@@ -1,15 +1,22 @@
 if (tab === 0) {
--  const params = {
--    ...baseParams,
--    from: formatLocalDate(from),
--    to:   formatLocalDate(to, true),
--    employees: selectedEmps.join(',')
--  };
-+  const params = {
-+    ...baseParams,
-+    from:      formatLocalDate(from),
-+    to:        formatLocalDate(to,   true),
-+    employees: selectedEmps              // ← array, not CSV string
-+  };
-
+  const params = {
+    ...baseParams,
+    from:      formatLocalDate(from),
+    to:        formatLocalDate(to,   true),
+    employees: selectedEmps
+  };
   const resp = await axios.get('/api/reports/daily-access', { params });
+
+  // normalize your pickers
+  const startDate = new Date(from); startDate.setHours(0,0,0,0);
+  const endDate   = new Date(to);   endDate.setHours(23,59,59,999);
+  const startISO = startDate.toISOString().slice(0,10);
+  const endISO   = endDate.toISOString().slice(0,10);
+
+  const filtered = resp.data.data.filter(r => {
+    const recISO = r.DateOnly || r.LocaleMessageTime.slice(0,10);
+    return recISO >= startISO && recISO <= endISO;
+  });
+
+  await generateDailyAccessExcel(filtered);
+}
