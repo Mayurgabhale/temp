@@ -1,77 +1,14 @@
-const filtered = resp.data.data.filter(r => {
-  const dt = new Date(r.LocaleMessageTime);
-  const dtDateOnly = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-  const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-  const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-  return dtDateOnly >= startDateOnly && dtDateOnly <= endDateOnly;
-});
+in the daily access report generate has mainy issues, 
+the main issue is the Date, report are not generete for selected Date 
+for example I select Date is From Date is 02/08/2025 and To date is 04/08/2025
+but the issue is report are genere wiht different date this is the mian issue 
 
+if i select employee Vainilaitis, Valdas   generet report date is 02-08-2025  to 03-08-2025   this is wrong 
+Tomasevic, Kazimez 01-08-2025 To 04-08-2025
+Valiunas, Sigitas 03-Aug-25 To 04-Aug-25
+this all i select at a time ok 
 
-
-
-
-
-
-
-
-
-
-
-
-the issue in daily access report generet 
-my select date is 03/08/2025 TO 04/08/2025
-
-
-but i got this data 
-Date	Time	Name	Contractor ID	Card No	Door Name	Message Type	Partition	Swipe
-02-Aug-25	6:35:10 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-02-Aug-25	6:39:06 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-02-Aug-25	6:39:48 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-02-Aug-25	6:43:19 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardRejected	LT.Vilnius	OUT
-02-Aug-25	6:43:26 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-02-Aug-25	6:47:47 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-02-Aug-25	6:48:30 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-02-Aug-25	7:00:56 PM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-
-03-Aug-25	5:45:16 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-03-Aug-25	5:47:57 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	5:48:29 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	6:20:40 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-03-Aug-25	6:24:07 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	6:24:57 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	6:30:15 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	OUT
-03-Aug-25	6:32:43 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-03-Aug-25	6:38:07 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	6:38:46 AM	Vainilaitis, Valdas	86142354	619062	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-
-
-04-Aug-25	4:36:24 PM	Tomasevic, Kazimez	86140423	619063	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-
-
-
-03-Aug-25	6:57:27 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-03-Aug-25	7:10:34 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	7:11:02 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	10:55:31 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	10:56:27 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	IN
-03-Aug-25	10:59:48 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	OUT
-
-04-Aug-25	6:26:37 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Lift Lobby	CardAdmitted	LT.Vilnius	OUT
-04-Aug-25	6:26:50 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	OUT
-04-Aug-25	6:27:02 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Bikes Storage	CardAdmitted	LT.Vilnius	IN
-04-Aug-25	6:27:19 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Parking	CardAdmitted	LT.Vilnius	IN
-04-Aug-25	6:27:48 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-04-Aug-25	6:33:51 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	IN
-04-Aug-25	6:37:14 AM	Valiunas, Sigitas	86142356	615409	EMEA_LTU_VNO_GAMA_1st Floor_Community Space	CardAdmitted	LT.Vilnius	OUT
-04-Aug-25	6:37:22 AM	Valiunas, Sigitas	86142356	615409	EMEA_LT_VNO_GAMA_1st Flr_Security Room	CardAdmitted	LT.Vilnius	IN
-
-this data i got 
-but i want to get data only select data not other, 
-this is my main issue
-
-read below all code each line and slove this issue carefully
-
-
+REad all code carefully and slove the issue. 
 
 
 
@@ -923,5 +860,4 @@ export default function ReportsPage() {
 
 
 }
-
 
