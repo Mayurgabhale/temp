@@ -1,3 +1,37 @@
+const rows = useMemo(() => {
+  if (!summary || !summary.partitions) return [];
+  
+  return Object.entries(summary.partitions)
+    .filter(([partitionKey]) => {
+      if (!filterCode) return true;
+      
+      const [code, site] = partitionKey.split('.');
+      const normalizedSite = site.replace('Partition', '').trim();
+      const normalizedFilterSite = filterSite?.replace('Partition', '').trim();
+      
+      // Match both code and site if site filter exists
+      if (filterSite) {
+        return code === filterCode && 
+               normalizedSite.toLowerCase() === normalizedFilterSite.toLowerCase();
+      }
+      return code === filterCode;
+    })
+    .map(([partitionKey, counts]) => {
+      const [code, site] = partitionKey.split('.');
+      const normalizedSite = site.replace('Partition', '').trim();
+      return {
+        country: codeToCountry[code] || code,
+        site: normalizedSite,
+        employee: counts.Employee ?? counts.EmployeeCount ?? 0,
+        contractor: counts.Contractor ?? counts.ContractorCount ?? 0,
+        total: counts.total ?? 0
+      };
+    });
+}, [summary, filterCode, filterSite]);
+
+
+
+
 the main issue are not slove 
 http://localhost:3000/partition/DU.Abu%20Dhab/history
 see this table
