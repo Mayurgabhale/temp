@@ -1,55 +1,8 @@
-const detailRows = useMemo(() => {
-  if (!data || !pickedDate || !showDetails) return [];
-  const ds = format(pickedDate, 'yyyy-MM-dd');
+Kuala Lumpur details section not disply means this | Sr	Date	Time	Employee ID	Name	Personnel Type	Door	Card Number	Partition
 
-  const filtered = data.details.filter(r => {
-    const messageTime = new Date(r.LocaleMessageTime);
-    const messageDate = format(messageTime, 'yyyy-MM-dd');
+OTHE ALL ARE DISPLY ONLY kuala Lumpur not disply 
 
-    const inDay = messageDate === ds;
-    const inPartition = !filterCode || r.PartitionName2.startsWith(filterCode + '.');
-
-    return inDay && inPartition;
-  });
-
-  // Sort by time
-  filtered.sort((a, b) => new Date(a.LocaleMessageTime) - new Date(b.LocaleMessageTime));
-
-  // Dedupe by PersonGUID
-  const seen = new Set();
-  return filtered.filter(r => {
-    if (seen.has(r.PersonGUID)) return false;
-    seen.add(r.PersonGUID);
-    return true;
-  });
-}, [data, pickedDate, showDetails, filterCode]);
-
-
-
-
-
-
-
-
-
-use local message and time, and filte using GUID 
-
-the issue is 
-Tuesday, 5 August, 2025
-Country	City	Employee	Contractors	Total
-Lithuania	Vilnius	539	23	562
-Ireland	Dublin	30	2	32
-Austria	Vienna	37	3	40
-Morocco	Casablanca	20	1	21
-UK	London	22	1	23
-Italy	Rome	26	2	28
-Spain	Madrid	55	3	58
-UAE	Abu Dhab	21	1	22
-Russia	Moscow	5	0	5
-Total	755	36	791 <--- this is the totla 
-
-but in detail section we got 794 records but in table 791,
-791 is correct ok details section got wrong records 
+// src/pages/History.jsx — APAC Edition
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -77,17 +30,56 @@ import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { fetchHistory } from '../api/occupancy.service';
 
+// APAC display mapping
+const apacPartitionDisplay = {
+  'IN.Pune':         { country: 'India',       city: 'Pune' },
+  'MY.Kuala Lumpur': { country: 'Malaysia',    city: 'Kuala Lumpur' },
+  'PH.Quezon':       { country: 'Philippines', city: 'Quezon City' },
+  'PH.Taguig':       { country: 'Philippines', city: 'Taguig' },
+  'JP.Tokyo':        { country: 'Japan',       city: 'Tokyo' },
+};
+
+// FE ↔ BE keys
+const apacForwardKey = {
+  'IN.Pune':         'Pune',
+  'MY.Kuala Lumpur': 'Kuala Lumpur',
+  'PH.Quezon':       'Quezon City',
+  'PH.Taguig':       'Taguig City',
+  'JP.Tokyo':        'JP.Tokyo',
+};
+const apacReverseKey = Object.fromEntries(
+  Object.entries(apacForwardKey).map(([fe, be]) => [be, fe])
+);
+
+// helper to display “Quezon City” → “Quezon City”
+const formatPartition = key => {
+  const fe = apacReverseKey[key];
+  return fe
+    ? apacPartitionDisplay[fe].city
+    : key;
+};
+
 export default function History() {
   const { partition } = useParams();
   const decodedPartition = partition ? decodeURIComponent(partition) : null;
-  const filterCode = decodedPartition?.split('.')[0] || null;
+  const backendFilterKey = decodedPartition
+    ? apacForwardKey[decodedPartition] || decodedPartition
+    : null;
 
-  const [data, setData]               = useState(null);
-  const [loading, setLoading]         = useState(true);
-  const [pickedDate, setPickedDate]   = useState(null);
+  const [data, setData]             = useState(null);
+  const [loading, setLoading]       = useState(true);
+  const [pickedDate, setPickedDate] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // 1) pick summary for the date
+  useEffect(() => {
+    setLoading(true);
+    fetchHistory(decodedPartition)
+      .then(json => {
+        setData(json);
+      })
+      .finally(() => setLoading(false));
+  }, [decodedPartition]);
+
   const summaryEntry = useMemo(() => {
     if (!data || !pickedDate) return null;
     const ds = format(pickedDate, 'yyyy-MM-dd');
@@ -96,146 +88,132 @@ export default function History() {
     ) || null;
   }, [data, pickedDate]);
 
-  // 2) build partitionRows (unchanged)
   const partitionRows = useMemo(() => {
     if (!summaryEntry) return [];
-    const codeToCountry = {
-     AUT: 'Austria', DU: 'UAE', IE: 'Ireland', IT: 'Italy',
-      LT: 'Lithuania', MA: 'Morocco', RU: 'Russia', UK: 'UK', ES: 'Spain'
-    };
-    return Object.entries(summaryEntry.partitions)
-      .filter(([key]) =>
-        !filterCode ? true : key.startsWith(filterCode + '.')
-      )
-      .map(([key, v]) => {
-        const [code, cityRaw] = key.split('.');
-        return {
-          country: codeToCountry[code] || code,
-          city: cityRaw.replace('Partition','').trim(),
-          employee:   v.Employee   ?? v.EmployeeCount   ?? 0,
-          contractor: v.Contractor ?? v.ContractorCount ?? 0,
-          tempBadge:  v.TempBadge  ?? 0,
-          total:      v.total      ?? 0,
-        };
-      });
-  }, [summaryEntry, filterCode]);
+    if (backendFilterKey && summaryEntry.region) {
+      const fe = Object.keys(apacPartitionDisplay).find(
+        code => apacForwardKey[code] === backendFilterKey || code === backendFilterKey
+      );
+      const disp = fe ? apacPartitionDisplay[fe] : {};
+      return [{
+        country:    disp.country  || 'Unknown',
+        city:       disp.city     || backendFilterKey.replace(' City',''),
+        employee:   summaryEntry.region.Employee   || 0,
+        contractor: summaryEntry.region.Contractor || 0,
+        total:      summaryEntry.region.total      || 0
+      }];
+    }
+    return Object.entries(summaryEntry.partitions).map(([key, v]) => {
+      const fe = Object.entries(apacForwardKey).find(([,be]) =>
+        be === key || `${be} City` === key
+      )?.[0];
+      const disp = fe
+        ? apacPartitionDisplay[fe]
+        : Object.values(apacPartitionDisplay)
+            .find(d => d.city === key.replace(' City',''));
+      return {
+        country:    disp?.country   || 'Unknown',
+        city:       disp?.city      || key.replace(' City',''),
+        employee:   v.Employee   || v.EmployeeCount   || 0,
+        contractor: v.Contractor || v.ContractorCount || 0,
+        total:      v.total      || 0
+      };
+    });
+  }, [summaryEntry, backendFilterKey]);
 
-  // 3) build detailRows exactly like APAC:
+  // ←——— FIXED detailRows: only filter by date & partition, no dedupe, no Direction check
   const detailRows = useMemo(() => {
     if (!data || !pickedDate || !showDetails) return [];
     const ds = format(pickedDate, 'yyyy-MM-dd');
 
-    // filter by date field (SwipeDate OR LocaleMessageTime) & partition
-    const filtered = data.details.filter(r => {
-      const inDay = (r.SwipeDate && r.SwipeDate.startsWith(ds))
-        || format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd') === ds;
-      const inPartition = !filterCode
-        || r.PartitionName2.startsWith(filterCode + '.');
-      return inDay && inPartition;
-    });
+    return data.details
+      .filter(r =>
+        // match the date portion of the ISO timestamp
+        r.LocaleMessageTime.slice(0, 10) === ds
+        // if a partition filter is active, match that too
+        && (!backendFilterKey || r.PartitionNameFriendly === backendFilterKey)
+      )
+      .sort((a, b) =>
+        a.LocaleMessageTime.localeCompare(b.LocaleMessageTime)
+      );
+  }, [data, pickedDate, showDetails, backendFilterKey]);
 
-    // sort oldest → newest
-    filtered.sort((a,b) =>
-      new Date(a.LocaleMessageTime) - new Date(b.LocaleMessageTime)
-    );
-
-    // dedupe by PersonGUID, keep first
-    const seen = new Set();
-    return filtered.filter(r => {
-      if (seen.has(r.PersonGUID)) return false;
-      seen.add(r.PersonGUID);
-      return true;
-    });
-  }, [data, pickedDate, showDetails, filterCode]);
-
-  // fetch on mount
-  useEffect(() => {
-    setLoading(true);
-    fetchHistory()
-      .then(json => setData(json))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <LoadingSpinner />;
-  if (!data)    return null;
-
-  // Export
   const handleExport = () => {
     const ws = XLSX.utils.json_to_sheet(
-      detailRows.map((r,i) => ({
-        Sr: i + 1,
-        Date: format(new Date(r.LocaleMessageTime),'yyyy-MM-dd'),
-        Time: format(new Date(r.LocaleMessageTime),'HH:mm:ss'),
-        EmployeeID: r.EmployeeID,
-        Name: r.ObjectName1,
+      detailRows.map((r, i) => ({
+        Sr:            i + 1,
+        Date:          format(new Date(r.LocaleMessageTime), 'yyyy-MM-dd'),
+        Time:          format(new Date(r.LocaleMessageTime), 'HH:mm:ss'),
+        EmployeeID:    r.EmployeeID,
+        Name:          r.ObjectName1,
         PersonnelType: r.PersonnelType,
-        CardNumber: r.CardNumber,
-        Door: r.Door,
-        Partition: r.PartitionName2
+        Door:          r.Door,
+        CardNumber:    r.CardNumber,
+        Partition:     formatPartition(r.PartitionNameFriendly)
       }))
     );
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    const buf = XLSX.write(wb, { bookType:'xlsx', type:'array' });
-    saveAs(new Blob([buf]), `history_${format(pickedDate,'yyyyMMdd')}.xlsx`);
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([buf]), `apac_history_${format(pickedDate, 'yyyyMMdd')}.xlsx`);
   };
 
-  const isCostaRica = filterCode === 'CR';
+  if (loading) return <LoadingSpinner />;
+  if (!data)    return null;
+
+  const datePickerSx = {
+    backgroundColor: '#000',
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#FFC107' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#FFC107' },
+    '& .MuiInputBase-input': { color: '#FFC107' },
+    '& .MuiInputLabel-root': { color: '#FFC107' },
+    '& .MuiInputAdornment-root svg': { color: '#FFC107' },
+  };
 
   return (
     <>
       <Header />
       <Container maxWidth={false} disableGutters sx={{ pt:2, pb:4 }}>
+        {/* ‣ Date & summary */}
         {pickedDate && summaryEntry ? (
           <Box display="flex" alignItems="flex-start" sx={{ px:2, mb:2, gap:1 }}>
-            {/* DatePicker */}
             <Box sx={{ width:200 }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Select date"
                   value={pickedDate}
                   onChange={d => { setPickedDate(d); setShowDetails(false); }}
-                  renderInput={params => <TextField fullWidth {...params} />}
+                  renderInput={params => <TextField fullWidth {...params} sx={datePickerSx}/>}
                 />
               </LocalizationProvider>
             </Box>
-            {/* Summary */}
             <Box sx={{ flex:1, maxWidth:900, display:'flex', flexDirection:'column', gap:2 }}>
-              <Paper elevation={3} sx={{ px:4, py:3, border:'3px solid #000', borderRadius:2 }}>
+              <Paper elevation={3} sx={{ p:3, border:'3px solid #000', borderRadius:2 }}>
                 <Table sx={{ border:'2px solid #000' }}>
                   <TableHead>
-                    <TableRow>
-                      <TableCell colSpan={isCostaRica?6:5} align="center"
-                        sx={{ fontWeight:'bold', fontSize:16, bgcolor:'#000', color:'#fff', border:'2px solid #000' }}
-                      >
-                        {format(pickedDate,'EEEE, d MMMM, yyyy')}
-                      </TableCell>
-                    </TableRow>
+                    <TableRow><TableCell colSpan={5} align="center"
+                      sx={{ fontWeight:'bold', fontSize:16, bgcolor:'#000', color:'#FFC107', border:'2px solid #000' }}
+                    >
+                      {format(pickedDate,'EEEE, d MMMM, yyyy')}
+                    </TableCell></TableRow>
                     <TableRow sx={{ bgcolor:'#FFC107' }}>
-                      {[
-                        'Country','City','Employee','Contractors',
-                        ...(isCostaRica?['Temp Badge']:[]),
-                        'Total'
-                      ].map(h=>(
-                        <TableCell key={h}
-                          align={['Country','City'].includes(h)?'left':'right'}
-                          sx={{ color:'#000', fontWeight:'bold', fontSize:14, border:'2px solid #000' }}
-                        >{h}</TableCell>
+                      {['Country','City','Employees','Contractors','Total'].map(h=>(
+                        <TableCell key={h} align={h==='Country'||h==='City'?'left':'right'}
+                          sx={{ color:'#000', fontWeight:'bold', fontSize:14, border:'2px solid #000' }}>
+                          {h}
+                        </TableCell>
                       ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {partitionRows.map((row,i)=>(
+                    {partitionRows.map((r,i)=>(
                       <TableRow key={i}>
-                        <TableCell sx={{border:'2px solid #000'}}>{row.country}</TableCell>
-                        <TableCell sx={{border:'2px solid #000'}}>{row.city}</TableCell>
-                        <TableCell align="right" sx={{border:'2px solid #000'}}>{row.employee}</TableCell>
-                        <TableCell align="right" sx={{border:'2px solid #000'}}>{row.contractor}</TableCell>
-                        {isCostaRica && (
-                          <TableCell align="right" sx={{border:'2px solid #000'}}>{row.tempBadge}</TableCell>
-                        )}
+                        <TableCell sx={{border:'2px solid #000'}}>{r.country}</TableCell>
+                        <TableCell sx={{border:'2px solid #000'}}>{r.city}</TableCell>
+                        <TableCell align="right" sx={{border:'2px solid #000'}}>{r.employee}</TableCell>
+                        <TableCell align="right" sx={{border:'2px solid #000'}}>{r.contractor}</TableCell>
                         <TableCell align="right" sx={{bgcolor:'#FFC107',fontWeight:'bold',border:'2px solid #000'}}>
-                          {row.total}
+                          {r.total}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -249,26 +227,20 @@ export default function History() {
                       <TableCell align="right" sx={{ color:'#fff', fontWeight:'bold', border:'2px solid #000' }}>
                         {partitionRows.reduce((s,r)=>s+r.contractor,0)}
                       </TableCell>
-                      {isCostaRica && (
-                        <TableCell align="right" sx={{ color:'#fff', fontWeight:'bold', border:'2px solid #000' }}>
-                          {partitionRows.reduce((s,r)=>s+r.tempBadge,0)}
-                        </TableCell>
-                      )}
-                      <TableCell align="right" sx={{ color:'#fff', fontWeight:'bold', bgcolor:'#333',border:'2px solid #000' }}>
+                      <TableCell align="right" sx={{ color:'#fff', fontWeight:'bold', bgcolor:'#333', border:'2px solid #000' }}>
                         {partitionRows.reduce((s,r)=>s+r.total,0)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               </Paper>
-              {/* Details toggle & export */}
               <Box display="flex" justifyContent="center" sx={{ mt:1 }}>
                 <Button variant="contained" sx={{ bgcolor:'#FFC107', color:'#000' }}
                   onClick={()=>setShowDetails(v=>!v)}>
                   {showDetails?'Hide Details':'See Details'}
                 </Button>
                 {showDetails && (
-                  <Button variant="outlined" sx={{ ml:2,borderColor:'#FFC107',color:'#FFC107' }}
+                  <Button variant="outlined" sx={{ ml:2, borderColor:'#FFC107', color:'#FFC107' }}
                     onClick={handleExport}>
                     Export to Excel
                   </Button>
@@ -283,7 +255,7 @@ export default function History() {
                 label="Select date"
                 value={pickedDate}
                 onChange={d=>{ setPickedDate(d); setShowDetails(false); }}
-                renderInput={params=><TextField fullWidth {...params}/>}
+                renderInput={params=> <TextField fullWidth {...params} sx={datePickerSx}/>}
               />
             </LocalizationProvider>
             {!pickedDate && (
@@ -294,10 +266,10 @@ export default function History() {
           </Box>
         )}
 
-        {/* Details table */}
+        {/* ‣ Details */}
         {showDetails && (
           <Box display="flex" justifyContent="center" mb={2} sx={{ width:'100%' }}>
-            <Paper elevation={1} sx={{ px:4,py:1,width:'100%',border:'3px solid #000',borderRadius:2 }}>
+            <Paper elevation={1} sx={{ p:1, width:'100%', border:'3px solid #000', borderRadius:2 }}>
               {detailRows.length > 0 ? (
                 <Table sx={{ border:'2px solid #000', borderCollapse:'collapse' }}>
                   <TableHead>
@@ -305,11 +277,12 @@ export default function History() {
                       {[
                         'Sr','Date','Time',
                         'Employee ID','Name','Personnel Type',
-                        'Card Number','Door','Partition'
+                        'Door','Card Number','Partition'
                       ].map(h=>(
                         <TableCell key={h} align="center"
-                          sx={{ color:'#FFC107', fontWeight:'bold', fontSize:14, border:'2px solid #000' }}
-                        >{h}</TableCell>
+                          sx={{ color:'#FFC107', fontWeight:'bold', fontSize:14, border:'2px solid #000' }}>
+                          {h}
+                        </TableCell>
                       ))}
                     </TableRow>
                   </TableHead>
@@ -317,18 +290,16 @@ export default function History() {
                     {detailRows.map((r,i)=>(
                       <TableRow key={`${r.PersonGUID}-${i}`}>
                         <TableCell sx={{border:'2px solid #000'}}>{i+1}</TableCell>
-                        <TableCell sx={{border:'2px solid #000'}}>
-                          {format(new Date(r.LocaleMessageTime),'yyyy-MM-dd')}
-                        </TableCell>
-                        <TableCell sx={{border:'2px solid #000'}}>
-                          {format(new Date(r.LocaleMessageTime),'HH:mm:ss')}
-                        </TableCell>
+                        <TableCell sx={{border:'2px solid #000'}}>{r.LocaleMessageTime.slice(0,10)}</TableCell>
+                        <TableCell sx={{border:'2px solid #000'}}>{r.LocaleMessageTime.slice(11,19)}</TableCell>
                         <TableCell sx={{border:'2px solid #000'}}>{r.EmployeeID}</TableCell>
                         <TableCell sx={{border:'2px solid #000'}}>{r.ObjectName1}</TableCell>
                         <TableCell sx={{border:'2px solid #000'}}>{r.PersonnelType}</TableCell>
-                        <TableCell sx={{border:'2px solid #000'}}>{r.CardNumber}</TableCell>
                         <TableCell sx={{border:'2px solid #000'}}>{r.Door}</TableCell>
-                        <TableCell sx={{border:'2px solid #000'}}>{r.PartitionName2}</TableCell>
+                        <TableCell sx={{border:'2px solid #000'}}>{r.CardNumber}</TableCell>
+                        <TableCell sx={{border:'2px solid #000'}}>
+                          {formatPartition(r.PartitionNameFriendly)}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
