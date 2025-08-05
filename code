@@ -1,27 +1,285 @@
+Read the below laca code carefully and write same for emea only do nassary changes ok 
+
+in emea http://localhost:3000/history
+this is disply correclty 
+Tuesday, 5 August, 2025
+Country	Site	Employees	Contractors	Total
+Lithuania	Vilnius	504	16	520
+Ireland	Dublin	15	1	16
+Austria	Vienna	26	3	29
+Morocco	Casablanca	3	1	4
+UK	London	3	1	4
+Italy	Rome	26	2	28
+Spain	Madrid	31	3	34
+UAE	Abu Dhab	21	1	22
+Russia	Moscow	2	0	2
+Total	631	28	659
+
+
+But the main issue is 
+in this http://localhost:3000/partition/AUT.Vienna/history
+if select only single table for side see this table not dipsly anything 
+Tuesday, 5 August, 2025
+Country	Site	Employees	Contractors	Total
+Total	0	0	0
+
+
+
+//C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\History.jsx
+
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  Container, Box, Typography, Paper, Table, TableHead, TableBody,
+  TableRow, TableCell, Button, TextField
+} from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchHistory } from '../api/occupancy.service';
+
+const codeToCountry = {
+  AUT: 'Austria', DU: 'UAE', IE: 'Ireland', IT: 'Italy',
+  LT: 'Lithuania', MA: 'Morocco', RU: 'Russia', UK: 'UK', ES: 'Spain'
+};
+
+export default function History() {
+  const { partition } = useParams();
+  const decoded = partition ? decodeURIComponent(partition) : null;
+  const filterCode = decoded?.split('.')[0] || null;
+
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    fetchHistory(partition).then(json => {
+      setData(json);
+      setLoading(false);
+    });
+  }, [partition]);
+
+  const summary = useMemo(() => {
+    if (!data || !date) return null;
+    const ds = format(date, 'yyyy-MM-dd');
+    return data.summaryByDate.find(r => r.date === ds) || null;
+  }, [data, date]);
+
+//  const rows = useMemo(() => {
+//   if (!summary || !summary.partitions) return [];
+//   return Object.entries(summary.partitions)
+//     .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
+//     .map(([k, v]) => {
+//       const [code, site] = k.split('.');
+//       return {
+//         country: codeToCountry[code] || code,
+//         site,                                                        // this is correct only totla are not disply 
+//         employee: v.Employee ?? v.EmployeeCount ?? 0,
+//         contractor: v.Contractor ?? v.ContractorCount ?? 0,
+//         total: v.total ?? 0
+//       };
+//     });
+// }, [summary, filterCode]);
+
 const rows = useMemo(() => {
   if (!summary || !summary.partitions) return [];
+  
   return Object.entries(summary.partitions)
-    .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
-    .map(([k, v]) => {
-      const [code, site] = k.split('.');
-      // Handle both partition structures - some have nested counts, some have flat
-      const employee = v.Employee ?? v.EmployeeCount ?? 
-                      (v.counts ? v.counts.Employee : 0) ?? 0;
-      const contractor = v.Contractor ?? v.ContractorCount ?? 
-                        (v.counts ? v.counts.Contractor : 0) ?? 0;
-      const total = v.total ?? 
-                   (v.counts ? v.counts.total : 0) ?? 
-                   (employee + contractor);
+    .filter(([partitionKey]) => {
+      if (!filterCode) return true;
+      
+      // Handle both formats: "AUT.Vienna" and "AUT.ViennaPartition"
+      const [code, city] = partitionKey.split('.');
+      const normalizedCity = city.replace('Partition', '').trim();
+      const normalizedPartition = `${code}.${normalizedCity}`;
+      
+      return normalizedPartition === decoded;
+    })
+    .map(([partitionKey, counts]) => {
+      const [code, city] = partitionKey.split('.');
+      const normalizedCity = city.replace('Partition', '').trim();
       
       return {
         country: codeToCountry[code] || code,
-        site: site.replace('Partition', '').trim(),
-        employee,
-        contractor,
-        total
+        site: normalizedCity,
+        employee: counts.Employee ?? counts.EmployeeCount ?? 0,
+        contractor: counts.Contractor ?? counts.ContractorCount ?? 0,
+        total: counts.total ?? 0
       };
     });
-}, [summary, filterCode]);
+}, [summary, filterCode, decoded]);
+
+
+
+  const details = useMemo(() => {
+    if (!data || !date || !showDetails) return [];
+    const ds = format(date, 'yyyy-MM-dd');
+    return data.details.filter(r => r.SwipeDate.startsWith(ds))
+      .filter(r => !filterCode || r.PartitionName2.startsWith(filterCode + '.'));
+  }, [data, date, filterCode, showDetails]);
+
+  const exportExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(details.map((r, i) => ({
+      Sr: i + 1, Date: r.SwipeDate.slice(0, 10),
+      Time: r.LocaleMessageTime.slice(11, 19),
+      EmployeeID: r.EmployeeID, Name: r.ObjectName1,
+      Type: r.PersonnelType, Door: r.Door,
+      Partition: r.PartitionName2
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Details');
+    saveAs(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]),
+      `history_${format(date, 'yyyyMMdd')}.xlsx`);
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <>
+      <Header />
+
+    
+
+      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
+        {/* Flex row: DatePicker + Summary Table */}
+        <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 1, gap: '10px' }}>
+
+          {/* Left: Date Picker */}
+          <Box sx={{ flex: '0 0 200px' }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select date"
+                value={date}
+                onChange={d => { setDate(d); setShowDetails(false); }}
+                renderInput={params => <TextField fullWidth {...params} />}
+              />
+            </LocalizationProvider>
+          </Box>
+
+          {/* Right: Summary table */}
+          {date && summary && (
+            <Box sx={{ flex: 1, maxWidth: 800, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Paper elevation={3} sx={{ px: 2, py: 1, border: '3px solid #000', borderRadius: 2 }}>
+                <Table size='small' sx={{ border: '2px solid #000' }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={5} align="center"
+                        sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
+                        {format(date, 'EEEE, d MMMM, yyyy')}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#FFC107' }}>
+                      {['Country', 'Site', 'Employees', 'Contractors', 'Total'].map(h => (
+                        <TableCell key={h} align={['Country', 'Site'].includes(h) ? 'left' : 'right'}
+                          sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((r, i) => (
+                      <TableRow key={i}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.country}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.site}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.employee}</TableCell>
+                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.contractor}</TableCell>
+                        <TableCell align="right" sx={{ backgroundColor: '#FFC107', fontWeight: 'bold', border: '2px solid #000' }}>{r.total}</TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow sx={{ bgcolor: '#666' }}>
+                      <TableCell colSpan={2} align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        Total
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {rows.reduce((s, r) => s + r.employee, 0)}
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
+                        {rows.reduce((s, r) => s + r.contractor, 0)}
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
+                        {rows.reduce((s, r) => s + r.total, 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Paper>
+
+              {/* Buttons */}
+              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
+                <Button
+                  variant="contained"
+                  sx={{ bgcolor: '#FFC107', color: '#000' }}
+                  onClick={() => setShowDetails(v => !v)}
+                >
+                  {showDetails ? 'Hide Details' : 'See Details'}
+                </Button>
+                {showDetails && (
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
+                    onClick={exportExcel}
+                  >
+                    Export to Excel
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          )}
+        </Box>
+
+        {/* Details Table: Still below, only if toggled */}
+        {showDetails && (
+          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
+            <Paper elevation={1} sx={{ px: '40px', py: 1, width: '100%', border: '3px solid #000', borderRadius: 2 }}>
+              {details.length > 0 ? (
+                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: '#000' }}>
+                      {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
+                        <TableCell key={h} align="center"
+                          sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {details.map((r, i) => (
+                      <TableRow key={`${r.PersonGUID}-${i}`}>
+                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.SwipeDate.slice(0, 10)}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.LocaleMessageTime.slice(11, 19)}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
+                        <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography variant="body2" sx={{ color: '#666', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
+                  No swipe records found for this date.
+                </Typography>
+              )}
+            </Paper>
+          </Box>
+        )}
+      </Container>
+      
+      <Footer />
+    </>
+  );
+}
 
 
 
@@ -30,8 +288,22 @@ const rows = useMemo(() => {
 
 
 
-......
+____________________________________________________________________________________
+see this is laca 
+disply correclty 
+http://localhost:3002/history
 // src/pages/History.jsx
+Tuesday, 5 August, 2025
+Country	City	Employee	Contractors	Total
+Costa Rica	Costa Rica	1	4	5
+Argentina	Cordoba	0	1	1
+Total	1	5	6
+
+http://localhost:3002/partition/CR.Costa%20Rica%20Partition/history
+uesday, 5 August, 2025
+Country	City	Employee	Contractors	Temp Badge	Total
+Costa Rica	Costa Rica	1	4	0	5
+Total	1	4	0	5
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -332,261 +604,4 @@ export default function History() {
     </>
   );
 }
-Read above all code carefuly and slove below issue correctly to refer above code 
-______________________________________________________________________________________
-
-
-
-
-
-in the one issue is only onle change this issue dont change any other ok 
-
-http://localhost:3000/history this is all site head count in one table it is correct 
-but the in single talble
-http://localhost:3000/partition/AUT.Vienna/history
-Tuesday, 5 August, 2025
-Country	Site	Employees	Contractors	Total
-Total	0	0	0
-
-http://localhost:3000/partition/DU.Abu%20Dhab/history
-Tuesday, 5 August, 2025
-Country	Site	Employees	Contractors	Total
-Total	0	0	0 
-
-like all 
-count are not disply in table ok 
-
-read all code each line carefully and write correct code only for thie issue and slov ethe issue corect 
-
-
-
-//C:\Users\W0024618\Desktop\emea-occupancy-frontend\src\pages\History.jsx
-
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Container, Box, Typography, Paper, Table, TableHead, TableBody,
-  TableRow, TableCell, Button, TextField
-} from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchHistory } from '../api/occupancy.service';
-
-const codeToCountry = {
-  AUT: 'Austria', DU: 'UAE', IE: 'Ireland', IT: 'Italy',
-  LT: 'Lithuania', MA: 'Morocco', RU: 'Russia', UK: 'UK', ES: 'Spain'
-};
-
-export default function History() {
-  const { partition } = useParams();
-  const decoded = partition ? decodeURIComponent(partition) : null;
-  const filterCode = decoded?.split('.')[0] || null;
-
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [date, setDate] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-
-  useEffect(() => {
-    fetchHistory(partition).then(json => {
-      setData(json);
-      setLoading(false);
-    });
-  }, [partition]);
-
-  const summary = useMemo(() => {
-    if (!data || !date) return null;
-    const ds = format(date, 'yyyy-MM-dd');
-    return data.summaryByDate.find(r => r.date === ds) || null;
-  }, [data, date]);
-
- const rows = useMemo(() => {
-  if (!summary || !summary.partitions) return [];
-  return Object.entries(summary.partitions)
-    .filter(([k]) => !filterCode || k.startsWith(filterCode + '.'))
-    .map(([k, v]) => {
-      const [code, site] = k.split('.');
-      return {
-        country: codeToCountry[code] || code,
-        site,                                                        // this is correct only totla are not disply 
-        employee: v.Employee ?? v.EmployeeCount ?? 0,
-        contractor: v.Contractor ?? v.ContractorCount ?? 0,
-        total: v.total ?? 0
-      };
-    });
-}, [summary, filterCode]);
-
-
-
-
-  const details = useMemo(() => {
-    if (!data || !date || !showDetails) return [];
-    const ds = format(date, 'yyyy-MM-dd');
-    return data.details.filter(r => r.SwipeDate.startsWith(ds))
-      .filter(r => !filterCode || r.PartitionName2.startsWith(filterCode + '.'));
-  }, [data, date, filterCode, showDetails]);
-
-  const exportExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(details.map((r, i) => ({
-      Sr: i + 1, Date: r.SwipeDate.slice(0, 10),
-      Time: r.LocaleMessageTime.slice(11, 19),
-      EmployeeID: r.EmployeeID, Name: r.ObjectName1,
-      Type: r.PersonnelType, Door: r.Door,
-      Partition: r.PartitionName2
-    })));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Details');
-    saveAs(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]),
-      `history_${format(date, 'yyyyMMdd')}.xlsx`);
-  };
-
-  if (loading) return <LoadingSpinner />;
-
-  return (
-    <>
-      <Header />
-
-    
-
-      <Container maxWidth={false} disableGutters sx={{ pt: 2, pb: 4 }}>
-        {/* Flex row: DatePicker + Summary Table */}
-        <Box display="flex" alignItems="flex-start" sx={{ px: '20px', mb: 1, gap: '10px' }}>
-
-          {/* Left: Date Picker */}
-          <Box sx={{ flex: '0 0 200px' }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Select date"
-                value={date}
-                onChange={d => { setDate(d); setShowDetails(false); }}
-                renderInput={params => <TextField fullWidth {...params} />}
-              />
-            </LocalizationProvider>
-          </Box>
-
-          {/* Right: Summary table */}
-          {date && summary && (
-            <Box sx={{ flex: 1, maxWidth: 800, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Paper elevation={3} sx={{ px: 2, py: 1, border: '3px solid #000', borderRadius: 2 }}>
-                <Table size='small' sx={{ border: '2px solid #000' }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell colSpan={5} align="center"
-                        sx={{ fontWeight: 'bold', fontSize: 16, bgcolor: '#000', color: '#fff', border: '2px solid #000' }}>
-                        {format(date, 'EEEE, d MMMM, yyyy')}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow sx={{ bgcolor: '#FFC107' }}>
-                      {['Country', 'Site', 'Employees', 'Contractors', 'Total'].map(h => (
-                        <TableCell key={h} align={['Country', 'Site'].includes(h) ? 'left' : 'right'}
-                          sx={{ color: '#000', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((r, i) => (
-                      <TableRow key={i}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.country}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.site}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.employee}</TableCell>
-                        <TableCell align="right" sx={{ border: '2px solid #000' }}>{r.contractor}</TableCell>
-                        <TableCell align="right" sx={{ backgroundColor: '#FFC107', fontWeight: 'bold', border: '2px solid #000' }}>{r.total}</TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow sx={{ bgcolor: '#666' }}>
-                      <TableCell colSpan={2} align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        Total
-                      </TableCell>
-                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {rows.reduce((s, r) => s + r.employee, 0)}
-                      </TableCell>
-                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', border: '2px solid #000' }}>
-                        {rows.reduce((s, r) => s + r.contractor, 0)}
-                      </TableCell>
-                      <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', bgcolor: '#333', border: '2px solid #000' }}>
-                        {rows.reduce((s, r) => s + r.total, 0)}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Paper>
-
-              {/* Buttons */}
-              <Box display="flex" justifyContent="center" sx={{ mt: 1 }}>
-                <Button
-                  variant="contained"
-                  sx={{ bgcolor: '#FFC107', color: '#000' }}
-                  onClick={() => setShowDetails(v => !v)}
-                >
-                  {showDetails ? 'Hide Details' : 'See Details'}
-                </Button>
-                {showDetails && (
-                  <Button
-                    variant="outlined"
-                    sx={{ ml: 2, borderColor: '#FFC107', color: '#FFC107' }}
-                    onClick={exportExcel}
-                  >
-                    Export to Excel
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          )}
-        </Box>
-
-        {/* Details Table: Still below, only if toggled */}
-        {showDetails && (
-          <Box display="flex" justifyContent="center" mb={2} sx={{ width: '100%' }}>
-            <Paper elevation={1} sx={{ px: '40px', py: 1, width: '100%', border: '3px solid #000', borderRadius: 2 }}>
-              {details.length > 0 ? (
-                <Table sx={{ border: '2px solid #000', borderCollapse: 'collapse' }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: '#000' }}>
-                      {['Sr', 'Date', 'Time', 'Employee ID', 'Name', 'Personnel Type', 'Door', 'Partition'].map(h => (
-                        <TableCell key={h} align="center"
-                          sx={{ color: '#FFC107', fontWeight: 'bold', fontSize: 14, border: '2px solid #000' }}>
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {details.map((r, i) => (
-                      <TableRow key={`${r.PersonGUID}-${i}`}>
-                        <TableCell sx={{ border: '2px solid #000' }}>{i + 1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.SwipeDate.slice(0, 10)}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.LocaleMessageTime.slice(11, 19)}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.EmployeeID}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.ObjectName1}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PersonnelType}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.Door}</TableCell>
-                        <TableCell sx={{ border: '2px solid #000' }}>{r.PartitionName2}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <Typography variant="body2" sx={{ color: '#666', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
-                  No swipe records found for this date.
-                </Typography>
-              )}
-            </Paper>
-          </Box>
-        )}
-      </Container>
-      
-      <Footer />
-    </>
-  );
-}
-
 
