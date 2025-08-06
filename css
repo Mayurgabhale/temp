@@ -1,4 +1,24 @@
 
+
+const name = document.getElementById(`name-${safe}`).innerText;
+const type = document.getElementById(`type-${safe}`).innerText;
+const city = document.getElementById(`remark-${safe}`).dataset.city || 'Unknown';
+
+const title = "⚠️ Device Offline ≥ 3 min";
+const message =
+  `Device Name: ${name}\n` +
+  `Device Type: ${type}\n` +
+  `Device IP: ${ip}\n` +
+  `City: ${city}\n` +
+  `Status: Device is Offline\n` +
+  `Offline Time: ${formatDuration(secs)}`;
+
+notifyWindows(title, message);
+
+
+
+
+
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
 
@@ -7,7 +27,20 @@ let deviceOnlineAlerted = {};
 
 // function notifyWindows(title, message) {
 //   if (Notification.permission === 'granted') {
-//     new Notification(title, { body: message });
+//     new Notification(title, { body: meconst name = document.getElementById(`name-${safe}`).innerText;
+const type = document.getElementById(`type-${safe}`).innerText;
+const city = document.getElementById(`remark-${safe}`).dataset.city || 'Unknown';
+
+const title = "⚠️ Device Offline ≥ 3 min";
+const message =
+  `Device Name: ${name}\n` +
+  `Device Type: ${type}\n` +
+  `Device IP: ${ip}\n` +
+  `City: ${city}\n` +
+  `Status: Device is Offline\n` +
+  `Offline Time: ${formatDuration(secs)}`;
+
+notifyWindows(title, message);ssage });
 //   } else if (Notification.permission !== 'denied') {
 //     Notification.requestPermission().then(permission => {
 //       if (permission === 'granted') {
