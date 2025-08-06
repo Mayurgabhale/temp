@@ -1,3 +1,16 @@
+toast.innerHTML = `
+  <div class="close-btn">×</div>
+  <h4>${title}</h4>
+  <pre>${message}</pre>
+`;
+
+const closeBtn = toast.querySelector('.close-btn');
+closeBtn.addEventListener('click', () => {
+  toast.remove();
+});
+
+
+
 close button not work 
 function showToastAlert(title, message) {
   const container = document.getElementById('alert-toast-container');
