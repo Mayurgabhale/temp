@@ -1,6 +1,3 @@
-notifyWindows('✅ Test Notification', 'This is a test message.');
-
-
 
 
 let deviceUptimeTimers = {};
@@ -20,7 +17,7 @@ function notifyWindows(title, message) {
     });
   }
 }
-
+notifyWindows('✅ Test Notification', 'This is a test message.');
 
 
 function startDowntime(ip, hist) {
@@ -268,19 +265,19 @@ function startUptime(ip, hist) {
   }, 1000);
 }
 
-function startDowntime(ip, hist) {
-  const safe = sanitizeId(ip);
-  clearInterval(deviceUptimeTimers[safe]);
-  const off = hist.filter(e => e.status==='Offline').pop();
-  if (!off) return;
-  const t0 = new Date(off.timestamp).getTime();
-  deviceDowntimeTimers[safe] = setInterval(() => {
-    const secs = Math.floor((Date.now()-t0)/1000);
-    document.getElementById(`downtime-${safe}`).innerText = formatDuration(secs);
-    document.getElementById(`downtime-count-${safe}`).innerText = hist.filter(e => e.status==='Offline').length;
-    updateRemarks(ip, hist, null, null);
-  }, 1000);
-}
+// function startDowntime(ip, hist) {
+//   const safe = sanitizeId(ip);
+//   clearInterval(deviceUptimeTimers[safe]);
+//   const off = hist.filter(e => e.status==='Offline').pop();
+//   if (!off) return;
+//   const t0 = new Date(off.timestamp).getTime();
+//   deviceDowntimeTimers[safe] = setInterval(() => {
+//     const secs = Math.floor((Date.now()-t0)/1000);
+//     document.getElementById(`downtime-${safe}`).innerText = formatDuration(secs);
+//     document.getElementById(`downtime-count-${safe}`).innerText = hist.filter(e => e.status==='Offline').length;
+//     updateRemarks(ip, hist, null, null);
+//   }, 1000);
+// }
 
 function updateRemarks(ip, hist, forcedStatus, forcedCount) {
   const safe = sanitizeId(ip);
