@@ -1,4 +1,15 @@
+now i want ot check device come back online alert message is wokr not not.
 
+if this device now is offline but afte some time is come back online 
+⚠️ Device Offline ≥ 3 min
+Device Name: PNQ-PODIUM GREEN OUTER EMERGENCY EXIT 10.199.10.17 (M26B-6D) - 144
+Device Type: PNQ-PODIUM GREEN OUTER EMERGENCY EXIT 10.199.10.17 (M26B-6D) - 144
+Device IP: 10.199.10.17
+City: Pune Podium
+Status: Device is Offline
+Offline Time: 5h/24m/47s
+
+this device, how to check 
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
