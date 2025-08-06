@@ -49,4 +49,40 @@ function getAlertType(title) {
 
 
 
+.alert-toast-panel {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin: 4px 0;
+  padding: 10px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+
+.alert-toast-panel:hover {
+  transform: scale(1.02);
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.alert-body {
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.alert-window {
+  background-color: rgba(255,255,255,0.9);
+  padding: 5px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+
 
