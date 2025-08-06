@@ -1,4 +1,58 @@
- <div id="alert-toast-container" class="alert-toast-container"></div>
+.alert-toast-container {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none; /* allows click-through if needed */
+}
+
+.alert-toast {
+  position: absolute;
+  background-color: #fefefe;
+  border: 1px solid #ccc;
+  padding: 15px 20px;
+  border-radius: 6px;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
+  width: 300px;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+  transition: top 0.3s, left 0.3s;
+}
+
+.alert-toast h4 {
+  margin: 0 0 5px;
+}
+
+.alert-toast pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+
+
+
+
+
+
+
+let toastCount = 0;
 
 function showToastAlert(title, message) {
   const container = document.getElementById('alert-toast-container');
@@ -7,15 +61,43 @@ function showToastAlert(title, message) {
   toast.className = 'alert-toast';
 
   toast.innerHTML = `
-    <div class="close-btn" onclick="this.parentElement.remove()">×</div>
+    <div class="close-btn" onclick="closeToast(this)">×</div>
     <h4>${title}</h4>
     <pre>${message}</pre>
   `;
 
   container.appendChild(toast);
 
-  // Auto-remove after 10 seconds
+  // Apply cascading offset
+  const offset = toastCount * 15; // you can tweak this
+  toast.style.top = `${offset}px`;
+  toast.style.left = `${offset}px`;
+
+  toast.dataset.index = toastCount;
+  toastCount++;
+
+  // Auto-remove after 180s
   setTimeout(() => {
     toast.remove();
+    rearrangeToasts();
   }, 180000);
+}
+
+function closeToast(btn) {
+  const toast = btn.parentElement;
+  toast.remove();
+  rearrangeToasts();
+}
+
+function rearrangeToasts() {
+  const container = document.getElementById('alert-toast-container');
+  const toasts = Array.from(container.getElementsByClassName('alert-toast'));
+
+  toasts.forEach((toast, i) => {
+    const offset = i * 15;
+    toast.style.top = `${offset}px`;
+    toast.style.left = `${offset}px`;
+  });
+
+  toastCount = toasts.length;
 }
