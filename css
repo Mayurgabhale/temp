@@ -1,20 +1,12 @@
+One other alternative we came up with is to have a Window for each Alert Type (We may have a maximum of 5 Alert types) and display all the alerts of that type as Cascaded panels in that window.
+5
+
+We have a requirement in our WPF desktop based application to alert the user about different types of events happening. The events may or may not be related to the user's current activity. We want user to acknowledge each alert individually.
+
+The current implementation we have is to display a top most non-modal Dialog whenever an event has occurred. And, If there are multiple events that need to be acknowledged by the user then all these top most Dialogs will be cascaded (refer to the below mock-up).
 
 
-const name = document.getElementById(`name-${safe}`).innerText;
-const type = document.getElementById(`type-${safe}`).innerText;
-const city = document.getElementById(`remark-${safe}`).dataset.city || 'Unknown';
-
-const title = "⚠️ Device Offline ≥ 3 min";
-const message =
-  `Device Name: ${name}\n` +
-  `Device Type: ${type}\n` +
-  `Device IP: ${ip}\n` +
-  `City: ${city}\n` +
-  `Status: Device is Offline\n` +
-  `Offline Time: ${formatDuration(secs)}`;
-
-notifyWindows(title, message);
-
+REad above text i want like that my alere message 
 
 
 
@@ -27,20 +19,7 @@ let deviceOnlineAlerted = {};
 
 // function notifyWindows(title, message) {
 //   if (Notification.permission === 'granted') {
-//     new Notification(title, { body: meconst name = document.getElementById(`name-${safe}`).innerText;
-const type = document.getElementById(`type-${safe}`).innerText;
-const city = document.getElementById(`remark-${safe}`).dataset.city || 'Unknown';
-
-const title = "⚠️ Device Offline ≥ 3 min";
-const message =
-  `Device Name: ${name}\n` +
-  `Device Type: ${type}\n` +
-  `Device IP: ${ip}\n` +
-  `City: ${city}\n` +
-  `Status: Device is Offline\n` +
-  `Offline Time: ${formatDuration(secs)}`;
-
-notifyWindows(title, message);ssage });
+//     new Notification(title, { body: message });
 //   } else if (Notification.permission !== 'denied') {
 //     Notification.requestPermission().then(permission => {
 //       if (permission === 'granted') {
