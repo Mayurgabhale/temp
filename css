@@ -1,3 +1,103 @@
+#alert-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert-toast {
+  background: #ffe8a1;
+  border: 1px solid #ffc107;
+  padding: 10px 15px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 300px;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.alert-toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.alert-toast .close-btn {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #900;
+}
+
+
+
+
+
+
+
+
+let toastQueue = [];
+let isDisplayingToast = false;
+
+function showToastAlert(title, message) {
+  toastQueue.push({ title, message });
+  if (!isDisplayingToast) displayNextToast();
+}
+
+function displayNextToast() {
+  if (toastQueue.length === 0) {
+    isDisplayingToast = false;
+    return;
+  }
+
+  isDisplayingToast = true;
+  const { title, message } = toastQueue.shift();
+
+  const container = document.getElementById('alert-toast-container');
+
+  const toast = document.createElement('div');
+  toast.className = 'alert-toast';
+
+  toast.innerHTML = `
+    <div class="close-btn" onclick="this.parentElement.remove()">×</div>
+    <h4>${title}</h4>
+    <pre>${message}</pre>
+  `;
+
+  container.appendChild(toast);
+
+  // Trigger animation
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 50);
+
+  // Auto-remove and show next after 6 seconds
+  setTimeout(() => {
+    toast.remove();
+    displayNextToast();
+  }, 6000); // Adjust time between messages here
+}
+
+
+
+
+
+<div id="alert-toast-container"></div>
+
+
+
+
+
+
+
+
+
 i wanto to dislpmy alerete window message like wpf cascading message boxes style, one behine one 
 
 let deviceUptimeTimers = {};
