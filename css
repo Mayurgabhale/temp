@@ -1,89 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cascading Message Boxes</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <button onclick="addMessage()">Show Message</button>
-  <div id="message-container"></div>
+ <div id="alert-toast-container" class="alert-toast-container"></div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+function showToastAlert(title, message) {
+  const container = document.getElementById('alert-toast-container');
 
+  const toast = document.createElement('div');
+  toast.className = 'alert-toast';
 
+  toast.innerHTML = `
+    <div class="close-btn" onclick="this.parentElement.remove()">×</div>
+    <h4>${title}</h4>
+    <pre>${message}</pre>
+  `;
 
+  container.appendChild(toast);
 
-
-body {
-  font-family: sans-serif;
-  padding: 20px;
-}
-
-#message-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.message-box {
-  background-color: #f0f8ff;
-  border: 1px solid #333;
-  padding: 15px 20px;
-  margin-top: 10px;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-  border-radius: 5px;
-  min-width: 200px;
-  position: absolute;
-  opacity: 0;
-  animation: fadeIn 0.3s forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-
-
-
-
-
-
-let messageCount = 0;
-
-function addMessage() {
-  const container = document.getElementById("message-container");
-  const message = document.createElement("div");
-  message.className = "message-box";
-  message.textContent = `Message #${messageCount + 1}`;
-
-  // Apply cascading offset
-  const offset = messageCount * 10;
-  message.style.top = `${offset}px`;
-  message.style.right = `${offset}px`;
-
-  container.appendChild(message);
-  messageCount++;
-
-  // Remove message after 4 seconds
+  // Auto-remove after 10 seconds
   setTimeout(() => {
-    container.removeChild(message);
-    messageCount--;
-    rearrangeMessages();
-  }, 4000);
-}
-
-function rearrangeMessages() {
-  const messages = document.querySelectorAll(".message-box");
-  messages.forEach((msg, i) => {
-    const offset = i * 10;
-    msg.style.top = `${offset}px`;
-    msg.style.right = `${offset}px`;
-  });
+    toast.remove();
+  }, 180000);
 }
