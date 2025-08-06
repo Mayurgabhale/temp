@@ -1,3 +1,7 @@
+notifyWindows('✅ Test Notification', 'This is a test message.');
+
+
+
 
 let deviceUptimeTimers = {};
 let deviceDowntimeTimers = {};
