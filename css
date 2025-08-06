@@ -7,17 +7,23 @@ function showToastAlert(title, message) {
     container = document.createElement('div');
     container.id = containerId;
     container.className = 'alert-window';
+    container.innerHTML = `<h3>${alertType} Alerts</h3>`;
     container.style.position = 'fixed';
-    container.style.top = '50px';
-    container.style.right = `${20 + Object.keys(document.getElementsByClassName('alert-window')).length * 320}px`;
+    container.style.top = '60px';
+    container.style.right = `${20 + document.querySelectorAll('.alert-window').length * 320}px`;
     container.style.width = '300px';
+    container.style.padding = '10px';
+    container.style.backgroundColor = '#f0f0f0';
+    container.style.border = '1px solid #ccc';
+    container.style.borderRadius = '8px';
     container.style.zIndex = 1000;
+    container.style.maxHeight = '90vh';
+    container.style.overflowY = 'auto';
     document.body.appendChild(container);
   }
 
   const alertPanel = document.createElement('div');
   alertPanel.className = 'alert-toast-panel';
-
   alertPanel.innerHTML = `
     <div class="alert-header">
       <strong>${title}</strong>
@@ -26,16 +32,12 @@ function showToastAlert(title, message) {
     <div class="alert-body"><pre>${message}</pre></div>
   `;
 
-  // Apply cascading position offset
-  const offset = container.children.length * 10;
-  alertPanel.style.marginTop = `${offset}px`;
-  alertPanel.style.position = 'relative';
-  alertPanel.style.boxShadow = '0px 4px 8px rgba(0,0,0,0.2)';
-
   container.appendChild(alertPanel);
 
   // Auto-dismiss after 10 seconds
-  setTimeout(() => alertPanel.remove(), 10000);
+  setTimeout(() => {
+    alertPanel.remove();
+  }, 10000);
 }
 
 function getAlertType(title) {
@@ -49,24 +51,28 @@ function getAlertType(title) {
 
 
 
-.alert-toast-panel {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  margin: 4px 0;
-  padding: 10px;
-  border-radius: 6px;
-  font-family: sans-serif;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
-  transition: transform 0.2s ease;
+
+.alert-window {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  margin-right: 20px;
 }
 
-.alert-toast-panel:hover {
-  transform: scale(1.02);
+.alert-toast-panel {
+  background-color: #ffffff;
+  border: 1px solid #aaa;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  font-family: sans-serif;
+  transition: opacity 0.3s ease;
 }
 
 .alert-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-weight: bold;
   margin-bottom: 4px;
 }
@@ -76,13 +82,8 @@ function getAlertType(title) {
   white-space: pre-wrap;
 }
 
-.alert-window {
-  background-color: rgba(255,255,255,0.9);
-  padding: 5px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 8px;
+.close-btn {
+  cursor: pointer;
+  color: red;
+  font-size: 16px;
 }
-
-
-
