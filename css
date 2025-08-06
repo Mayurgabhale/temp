@@ -16,9 +16,14 @@ function notifyWindows(title, message) {
       }
     });
   }
+
   showToastAlert(title, message);
 }
 
+
+// function notifyWindows(title, message) {
+//   showToastAlert(title, message);
+// }
 
 function showToastAlert(title, message) {
   const container = document.getElementById('alert-toast-container');
@@ -35,7 +40,9 @@ function showToastAlert(title, message) {
   container.appendChild(toast);
 
   // Auto-remove after 10 seconds
- 
+  setTimeout(() => {
+    toast.remove();
+  }, 180000);
 }
 
 
