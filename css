@@ -1,712 +1,133 @@
-issue are not slove see thie repor genret date and and name column
+let deviceOfflineAlerted = {};
+let deviceOnlineAlerted = {};
 
-MY select date is 02/08/2025 To 04/08/2025
-
-But data are get below Date so this is wonrg date data 
-
-Date	Name
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-03-Aug-25	Vainilaitis, Valdas
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-02-Aug-25	Tomasevic, Kazimez
-04-Aug-25	Tomasevic, Kazimez
-04-Aug-25	Tomasevic, Kazimez
-04-Aug-25	Tomasevic, Kazimez
-04-Aug-25	Tomasevic, Kazimez
-04-Aug-25	Tomasevic, Kazimez
-04-Aug-25	Tomasevic, Kazimez
-
-
-
-Date	Name
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-03-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-04-Aug-25	Valiunas, Sigitas
-
-
-
-see this and write correct code 
-
-
-
-
-
-if (tab === 0) {
-  const params = {
-    ...baseParams,
-    from: formatLocalDate(from),
-    to: formatLocalDate(to, true),
-    employees: selectedEmps.join(',')
-  };
-  
-  const resp = await axios.get('/api/reports/daily-access', { params });
-
-  // Create proper date objects for comparison (timezone-safe)
-  const startDate = new Date(from);
-  startDate.setHours(0, 0, 0, 0);
-  
-  const endDate = new Date(to);
-  endDate.setHours(23, 59, 59, 999);
-
-  // Filter the data to ensure it's within the requested range
-  const filtered = resp.data.data.filter(r => {
-    const recordDate = new Date(r.LocaleMessageTime);
-    return recordDate >= startDate && recordDate <= endDate;
-  });
-
-  await generateDailyAccessExcel(filtered);
+function notifyWindows(title, message) {
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body: message });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification(title, { body: message });
+      }
+    });
+  }
 }
 
+
+
+
+
+
+
+
+
+
+function startDowntime(ip, hist) {
+  const safe = sanitizeId(ip);
+  clearInterval(deviceUptimeTimers[safe]);
+
+  const off = hist.filter(e => e.status === 'Offline').pop();
+  if (!off) return;
+
+  const t0 = new Date(off.timestamp).getTime();
+
+  deviceOfflineAlerted[safe] = false;  // Reset per event
+
+  deviceDowntimeTimers[safe] = setInterval(() => {
+    const secs = Math.floor((Date.now() - t0) / 1000);
+    document.getElementById(`downtime-${safe}`).innerText = formatDuration(secs);
+    document.getElementById(`downtime-count-${safe}`).innerText = hist.filter(e => e.status === 'Offline').length;
+    updateRemarks(ip, hist, null, null);
+
+    // 🔔 Notify if offline ≥ 3 min
+    if (secs >= 180 && !deviceOfflineAlerted[safe]) {
+      deviceOfflineAlerted[safe] = true;
+
+      const name = document.getElementById(`name-${safe}`).innerText;
+      const type = document.querySelector(`#ip-${safe}`).parentNode.nextElementSibling.textContent;
+      const city = document.getElementById(`remark-${safe}`).dataset.city || 'Unknown';
+
+      const title = "⚠️ Device Offline ≥ 3 min";
+      const message =
+        `Device Name: ${name}\n` +
+        `Device Type: ${type}\n` +
+        `Device Location: ${ip}\n` +
+        `City: ${city}\n` +
+        `Status: Device is Offline\n` +
+        `Offline Time: ${formatDuration(secs)}`;
+
+      notifyWindows(title, message);
+    }
+  }, 1000);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function startUptime(ip, hist) {
+  const safe = sanitizeId(ip);
+  clearInterval(deviceDowntimeTimers[safe]);
+
+  const on = hist.filter(e => e.status === 'Online').pop();
+  if (!on) return;
+
+  const tOn = new Date(on.timestamp).getTime();
+
+  // Calculate how long it was offline
+  const lastOff = hist.slice().reverse().find(e => e.status === 'Offline');
+  const offlineSecs = lastOff ? Math.floor((tOn - new Date(lastOff.timestamp)) / 1000) : 0;
+
+  deviceOnlineAlerted[safe] = false;
+
+  if (offlineSecs >= 120 && !deviceOnlineAlerted[safe]) {
+    deviceOnlineAlerted[safe] = true;
+
+    const name = document.getElementById(`name-${safe}`).innerText;
+    const type = document.querySelector(`#ip-${safe}`).parentNode.nextElementSibling.textContent;
+    const city = document.getElementById(`remark-${safe}`).dataset.city || 'Unknown';
+
+    const title = "✅ Device is Online after 2+ min";
+    const message =
+      `Device Name: ${name}\n` +
+      `Device Type: ${type}\n` +
+      `Device Location: ${ip}\n` +
+      `City: ${city}`;
+
+    notifyWindows(title, message);
+  }
+
+  const t0 = new Date(on.timestamp).getTime();
+  deviceUptimeTimers[safe] = setInterval(() => {
+    document.getElementById(`uptime-${safe}`).innerText =
+      formatDuration(Math.floor((Date.now() - t0) / 1000));
+  }, 1000);
+}
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (Notification.permission !== 'granted') {
+    Notification.requestPermission();
+  }
+
+  ['region', 'device-type', 'remark-filter'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', id === 'region' ? fetchDeviceData : filterData);
+  });
+
+  document.getElementById('search-input')?.addEventListener('input', filterData);
+  document.getElementById('cityFilter')?.addEventListener('change', filterData);
+
+  fetchDeviceData();
+});
