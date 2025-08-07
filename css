@@ -1,50 +1,170 @@
-// client/src/pages/ErtPage.jsx
+// // client/src/components/ErtOverview.jsx
 
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+// import React, { useMemo, useState } from 'react';
+// import { Card, Row, Col, Badge, Button } from 'react-bootstrap';
+// import { FaUsers, FaEnvelopeOpenText, FaMobileAlt, FaMapMarkerAlt } from 'react-icons/fa';
+// // index.js or App.js
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// const roleIcon = <FaUsers style={{ color: '#16A085' }} />;
+
+// export default function ErtOverview({ ertData }) {
+//   const [showAll, setShowAll] = useState(false);
+
+//   const members = useMemo(() => {
+//     const formatted = ertData['Team Members'].map(m => ({
+//       name: m.name,
+//       email: m.email,
+//       empId: m.emp_id,
+//     }));
+
+//     return showAll ? formatted : formatted.slice(0, 10);
+//   }, [ertData, showAll]);
+
+//   return (
+//     <div className="container-fluid py-3">
+//       <h4 className="mb-4" style={{ color: '#fff', fontWeight: '600' }}>
+//         Costa Rica ERT Team Members
+//       </h4>
+
+//       <Row className="g-3">
+//         <Col xs={12} lg={6} xl={4}>
+//           <Card className="shadow-sm">
+//             <Card.Header style={{
+//               borderBottom: '1px solid #EAECEE',
+//               fontWeight: '600',
+//               display: 'flex',
+//               alignItems: 'center',
+//               gap: '10px'
+//             }}>
+//               {roleIcon}
+//               Emergency Response Team (LACA)
+//             </Card.Header>
+//             <Card.Body style={{ padding: '1rem' }}>
+//               {members.map((m, i) => (
+//                 <div key={i} className="mb-3 pb-2" style={{ borderBottom: '0.5px solid #595959' }}>
+//                   <div style={{ fontWeight: '500' }}>{m.name}</div>
+//                   <div className="mt-2" style={{ fontSize: '0.85rem' }}>
+//                     <div className="d-flex align-items-center mb-1">
+//                       <FaEnvelopeOpenText className="me-2" style={{ color: '#3498DB', minWidth: '16px' }} />
+//                       <a href={`mailto:${m.email}`} style={{ color: '#2980B9', textDecoration: 'none' }}>
+//                         {m.email}
+//                       </a>
+//                     </div>
+//                     <div className="d-flex align-items-center mb-1">
+//                       <FaMobileAlt className="me-2" style={{ color: '#7F8C8D', minWidth: '16px' }} />
+//                       <span style={{ color: '#7F8C8D' }}>Emp ID: {m.empId}</span>
+//                     </div>
+//                     <div className="d-flex align-items-center">
+//                       <FaMapMarkerAlt className="me-2" style={{ color: '#E74C3C', minWidth: '16px' }} />
+//                       <span style={{ color: '#E74C3C' }}>Costa Rica</span>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))}
+//               <div className="text-center mt-3">
+//                 <Button 
+//                   variant="outline-primary" 
+//                   size="sm" 
+//                   onClick={() => setShowAll(prev => !prev)}
+//                   style={{ minWidth: '120px' }}
+//                 >
+//                   {showAll ? 'Show Less' : 'Show More'}
+//                 </Button>
+//               </div>
+//             </Card.Body>
+//           </Card>
+//         </Col>
+//       </Row>
+//     </div>
+//   );
+// }
+
+
+// client/src/components/LACAErtOverview.jsx
+
+import React, { useMemo, useState } from 'react';
+import { Card, Row, Col, Button } from 'react-bootstrap';
+import { FaUsers, FaEnvelopeOpenText, FaMobileAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import Header from '../components/Header';
-import ErtOverview from '../components/ERTOverview';
-import ertData from '../data/lacaErtMembers.json';
-import 'bootstrap/dist/css/bootstrap.min.css';
+const roleIcon = <FaUsers style={{ color: '#16A085' }} />;
 
-function ErtPage() {
+export default function ErtOverview({ ertData }) {
+  const [showAll, setShowAll] = useState(false);
+
+  const members = useMemo(() => {
+    const raw = ertData?.['Team Members'] ?? [];
+    return showAll ? raw : raw.slice(0, 12); // Show only 12 initially
+  }, [ertData, showAll]);
+
+  const splitIntoColumns = (data, columns = 3) => {
+    const perColumn = Math.ceil(data.length / columns);
+    return Array.from({ length: columns }, (_, i) =>
+      data.slice(i * perColumn, (i + 1) * perColumn)
+    );
+  };
+
+  const columns = splitIntoColumns(members, 3);
+
   return (
-    <>
-      <Header />  {/* ✅ Add shared header here */}
+    
+    <div className="container-fluid py-3">
+      <h4 className="mb-4" style={{ color: '#fff', fontWeight: '600' }}>
+        LACA ERT Team Members
+      </h4>
 
-      <Container fluid className="py-1">
-        <Row className="g-1">
-          <Col>
-            <ErtOverview ertData={ertData} />
+      <Row className="g-8">
+        {columns.map((column, colIndex) => (
+          <Col key={colIndex} xs={62} md={16} lg={4}>
+            <Card className="shadow-sm">
+              <Card.Header style={{
+                borderBottom: '1px solid #EAECEE',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}>
+                {roleIcon}
+                Emergency Response Team (LACA)
+              </Card.Header>
+              <Card.Body style={{ padding: '1rem' }}>
+                {column.map((m, i) => (
+                  <div key={i} className="mb-3 pb-12" style={{ borderBottom: '0.5px solid #595959' }}>
+                    <div style={{ fontWeight: '500' }}>{m.name}</div>
+                    <div className="mt-2" style={{ fontSize: '0.85rem' }}>
+                      <div className="d-flex align-items-center mb-1">
+                        <FaEnvelopeOpenText className="me-2" style={{ color: '#3498DB', minWidth: '16px' }} />
+                        <a href={`mailto:${m.email}`} style={{ color: '#2980B9', textDecoration: 'none' }}>
+                          {m.email}
+                        </a>
+                      </div>
+                      <div className="d-flex align-items-center mb-1">
+                        <FaMobileAlt className="me-2" style={{ color: '#7F8C8D', minWidth: '16px' }} />
+                        <span style={{ color: '#7F8C8D' }}>Emp ID: {m['emp_id']}</span>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <FaMapMarkerAlt className="me-2" style={{ color: '#E74C3C', minWidth: '16px' }} />
+                        <span style={{ color: '#E74C3C' }}>Costa Rica</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Card.Body>
+            </Card>
           </Col>
-        </Row>
+        ))}
+      </Row>
 
-        <footer style={{
-          backgroundColor: '#000',
-          color: '#FFC72C',
-          padding: '1.5rem 0',
-          textAlign: 'center',
-          marginTop: '2rem',
-          borderTop: '2px solid #FFC72C',
-          fontSize: '0.95rem',
-          lineHeight: '1.6'
-        }}>
-          <div>
-            <strong>Global Security Operations Center</strong><br />
-            Emergency Response Team members for Western Union LACA Region — Centralized contact and details.
-          </div>
-          <div style={{ marginTop: '0.75rem' }}>
-            Contact us:&nbsp;
-            <a href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
-              style={{ color: '#FFC72C', textDecoration: 'underline' }}>
-              GSOC Mail
-            </a>&nbsp;|&nbsp;
-            Landline:&nbsp;<span style={{ color: '#FFC72C' }}>+91-020-67632394</span>
-          </div>
-        </footer>
-      </Container>
-    </>
+      <div className="text-center mt-4">
+        <Button 
+          variant="outline-primary" 
+          size="sm" 
+          onClick={() => setShowAll(prev => !prev)}
+          style={{ minWidth: '120px' }}
+        >
+          {showAll ? 'Show Less' : 'Show More'}
+        </Button>
+      </div>
+    </div>
   );
 }
 
-export default React.memo(ErtPage);
