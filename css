@@ -1,3 +1,49 @@
+if (loading) {
+  return (
+    <Box
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        bgcolor: 'rgba(0, 0, 0, 0.85)',
+        zIndex: 9999,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <LoadingSpinner />
+    </Box>
+  );
+}
+
+return (
+  <>
+    <Header />
+    <Container maxWidth={false} disableGutters sx={{ px: 2, py: 0, background: '#151515' }}>
+      {/* ... everything else ... */}
+    </Container>
+    <Footer />
+  </>
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <Box display="flex" flexWrap="wrap" gap={1} mb={1}>
           {loading ? (
             <LoadingSpinner />
