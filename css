@@ -1,19 +1,57 @@
-<Box mb={4} sx={{ px: "20px", p: 2, border: "2px solid #FFC107" }}>
-  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-    <Typography variant="h6">Live Floor Headcount against Occupancy</Typography>
-    <Typography variant="body2" color="textSecondary">
-      Last updated: {lastUpdate}
-    </Typography>
-  </Box>
+{/* Floor‐capacity chart + ERT Overview for Costa Rica */}
+{partition === "CR.Costa Rica Partition" ? (
+  <Box
+    display="flex"
+    flexDirection={{ xs: "column", md: "row" }}
+    gap={2}
+    px="20px"
+    mb={4}
+  >
+    {/* Left: Floor Chart */}
+    <Box flex={1} sx={{ p: 2, border: "2px solid #FFC107" }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+        <Typography variant="h6">Live Floor Headcount against Occupancy</Typography>
+        <Typography variant="body2" color="textSecondary">
+          Last updated: {lastUpdate}
+        </Typography>
+      </Box>
 
-  <ChartCard
-    data={floorEntries}
-    dataKey="Headcount"
-    chartHeight={320}
-    colors={{ head: "#28B463", cap: "#FDDA0D" }}
-    axisProps={{
-      xAxis: { angle: -0, textAnchor: "end", tick: { fill: "#fff" } },
-      yAxis: { tick: { fill: "#fff" } },
-    }}
-  />
-</Box>
+      <ChartCard
+        data={floorEntries}
+        dataKey="Headcount"
+        chartHeight={320}
+        colors={{ head: "#28B463", cap: "#FDDA0D" }}
+        axisProps={{
+          xAxis: { angle: -0, textAnchor: "end", tick: { fill: "#fff" } },
+          yAxis: { tick: { fill: "#fff" } },
+        }}
+      />
+    </Box>
+
+    {/* Right: ERT Overview */}
+    <Box flex={1} sx={{ backgroundColor: "#1c1c1c", borderRadius: "8px" }}>
+      <ErtOverview ertData={ertData} />
+    </Box>
+  </Box>
+) : (
+  // For other partitions, just show the chart
+  <Box mb={4} sx={{ px: "20px", p: 2, border: "2px solid #FFC107" }}>
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+      <Typography variant="h6">Live Floor Headcount against Occupancy</Typography>
+      <Typography variant="body2" color="textSecondary">
+        Last updated: {lastUpdate}
+      </Typography>
+    </Box>
+
+    <ChartCard
+      data={floorEntries}
+      dataKey="Headcount"
+      chartHeight={320}
+      colors={{ head: "#28B463", cap: "#FDDA0D" }}
+      axisProps={{
+        xAxis: { angle: -0, textAnchor: "end", tick: { fill: "#fff" } },
+        yAxis: { tick: { fill: "#fff" } },
+      }}
+    />
+  </Box>
+)}
