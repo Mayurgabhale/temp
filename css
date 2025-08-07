@@ -1,16 +1,9 @@
-<Box display="flex" flexWrap="wrap" gap={1} mb={1}>
-  {loading ? (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="100%"
-      minHeight="300px" // Optional: controls vertical centering space
-    >
-      <LoadingSpinner />
-    </Box>
-  ) : (
-    // ✅ Normal content layout here
-    yourActualContentHere
-  )}
-</Box>
+ <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width="100%"
+              minHeight="50vh" 
+              marginBottom="300px"
+            >
+              <LoadingSpinner />
