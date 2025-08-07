@@ -1,11 +1,8 @@
-
-
-// client/src/components/LACAErtOverview.jsx
-
 import React, { useMemo, useState } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
 import { FaUsers, FaEnvelopeOpenText, FaMobileAlt, FaMapMarkerAlt } from 'react-icons/fa';
-import Header from '../components/Header';
+import '../styles/ErtOverview.css'; // optional if you want external styles
+
 const roleIcon = <FaUsers style={{ color: '#16A085' }} />;
 
 export default function ErtOverview({ ertData }) {
@@ -13,7 +10,7 @@ export default function ErtOverview({ ertData }) {
 
   const members = useMemo(() => {
     const raw = ertData?.['Team Members'] ?? [];
-    return showAll ? raw : raw.slice(0, 12); // Show only 12 initially
+    return showAll ? raw : raw.slice(0, 12);
   }, [ertData, showAll]);
 
   const splitIntoColumns = (data, columns = 3) => {
@@ -26,44 +23,37 @@ export default function ErtOverview({ ertData }) {
   const columns = splitIntoColumns(members, 3);
 
   return (
-    
     <div className="container-fluid py-3">
-      <h4 className="mb-4" style={{ color: '#fff', fontWeight: '600' }}>
+      <h4 className="mb-4 text-white fw-bold">
         LACA ERT Team Members
       </h4>
 
-      <Row className="g-8">
+      <Row className="g-4">
         {columns.map((column, colIndex) => (
-          <Col key={colIndex} xs={62} md={16} lg={4}>
-            <Card className="shadow-sm">
-              <Card.Header style={{
-                borderBottom: '1px solid #EAECEE',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}>
+          <Col key={colIndex} md={4}>
+            <Card className="shadow border-0 rounded-4 h-100">
+              <Card.Header className="d-flex align-items-center gap-2 bg-light border-bottom fw-semibold rounded-top">
                 {roleIcon}
-                Emergency Response Team (LACA)
+                <span className="text-dark">Emergency Response Team (LACA)</span>
               </Card.Header>
-              <Card.Body style={{ padding: '1rem' }}>
-                {column.map((m, i) => (
-                  <div key={i} className="mb-3 pb-12" style={{ borderBottom: '0.5px solid #595959' }}>
-                    <div style={{ fontWeight: '500' }}>{m.name}</div>
-                    <div className="mt-2" style={{ fontSize: '0.85rem' }}>
+              <Card.Body className="px-3 py-2">
+                {column.map((member, i) => (
+                  <div key={i} className="mb-3 pb-3 border-bottom border-secondary-subtle">
+                    <div className="fw-medium fs-6 text-primary">{member.name}</div>
+                    <div className="mt-1 small">
                       <div className="d-flex align-items-center mb-1">
-                        <FaEnvelopeOpenText className="me-2" style={{ color: '#3498DB', minWidth: '16px' }} />
-                        <a href={`mailto:${m.email}`} style={{ color: '#2980B9', textDecoration: 'none' }}>
-                          {m.email}
+                        <FaEnvelopeOpenText className="me-2 text-info" />
+                        <a href={`mailto:${member.email}`} className="text-decoration-none text-info">
+                          {member.email}
                         </a>
                       </div>
                       <div className="d-flex align-items-center mb-1">
-                        <FaMobileAlt className="me-2" style={{ color: '#7F8C8D', minWidth: '16px' }} />
-                        <span style={{ color: '#7F8C8D' }}>Emp ID: {m['emp_id']}</span>
+                        <FaMobileAlt className="me-2 text-secondary" />
+                        <span className="text-muted">Emp ID: {member['emp_id']}</span>
                       </div>
                       <div className="d-flex align-items-center">
-                        <FaMapMarkerAlt className="me-2" style={{ color: '#E74C3C', minWidth: '16px' }} />
-                        <span style={{ color: '#E74C3C' }}>Costa Rica</span>
+                        <FaMapMarkerAlt className="me-2 text-danger" />
+                        <span className="text-danger">Costa Rica</span>
                       </div>
                     </div>
                   </div>
@@ -76,10 +66,10 @@ export default function ErtOverview({ ertData }) {
 
       <div className="text-center mt-4">
         <Button 
-          variant="outline-primary" 
+          variant="primary" 
           size="sm" 
+          className="px-4 rounded-pill shadow-sm"
           onClick={() => setShowAll(prev => !prev)}
-          style={{ minWidth: '120px' }}
         >
           {showAll ? 'Show Less' : 'Show More'}
         </Button>
@@ -87,4 +77,3 @@ export default function ErtOverview({ ertData }) {
     </div>
   );
 }
-
