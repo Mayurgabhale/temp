@@ -1,3 +1,12 @@
-<Box display="flex" flexWrap="wrap" gap={1} mb={1}>
-          {loading ? (
-            <LoadingSpinner />
+<Box
+  display="flex"
+  flexWrap="wrap"
+  gap={1}
+  mb={1}
+  justifyContent="center"
+  alignItems="center"
+  minHeight="300px" // or '100vh' for full-screen
+  width="100%"
+>
+  {loading ? <LoadingSpinner /> : /* your loaded content here */}
+</Box>
