@@ -1,10 +1,20 @@
 import React from 'react';
 import { Box, CircularProgress } from '@mui/material';
-import './LoadingSpinner.css'; // Import the CSS here
+import './LoadingSpinner.css'; // Make sure this path is correct
 
 export default function LoadingSpinner() {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4, gap: 2 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh', // Full screen height
+        gap: 3,              // Space between the two spinners
+        backgroundColor: '#121212', // Optional: Dark background for contrast
+      }}
+    >
       <CircularProgress />
       <span className="loader"></span>
     </Box>
@@ -30,7 +40,7 @@ export default function LoadingSpinner() {
 }
 
 .loader::after {
-  content: '';  
+  content: '';
   box-sizing: border-box;
   position: absolute;
   left: 0;
@@ -64,3 +74,4 @@ export default function LoadingSpinner() {
     transform: rotate(-360deg);
   }
 }
+
