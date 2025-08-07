@@ -1,4 +1,21 @@
-// client/src/components/LACAErtOverview.jsx
+Compiled with problems:
+×
+ERROR in ./src/components/ERTOverview.jsx 8:0-64
+Module not found: Error: Can't resolve 'react-bootstrap' in 'C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components'
+ERROR in ./src/components/ERTOverview.jsx 9:0-90
+Module not found: Error: Can't resolve 'react-icons/fa' in 'C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components'
+ERROR in ./src/pages/ErtPage.jsx 7:0-54
+Module not found: Error: Can't resolve 'react-bootstrap' in 'C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\pages'
+
+
+REad above errro and solve with correct
+
+
+REd below all code carefully and correct it 
+
+C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components\ERTOverview.jsx
+
+// client/src/components/ErtOverview.jsx
 
 import React, { useMemo, useState } from 'react';
 import { Card, Row, Col, Badge, Button } from 'react-bootstrap';
@@ -6,7 +23,7 @@ import { FaUsers, FaEnvelopeOpenText, FaMobileAlt, FaMapMarkerAlt } from 'react-
 
 const roleIcon = <FaUsers style={{ color: '#16A085' }} />;
 
-export default function LACAErtOverview({ ertData }) {
+export default function ErtOverview({ ertData }) {
   const [showAll, setShowAll] = useState(false);
 
   const members = useMemo(() => {
@@ -80,20 +97,14 @@ export default function LACAErtOverview({ ertData }) {
 
 
 
-
-
-
-
-
-
-
-
-
+C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\pages\ErtPage.jsx
+                   
 // client/src/pages/LacaErtPage.jsx
 
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import LACAErtOverview from '../components/LACAErtOverview';
+// import ErtOverview from '../components/ErtOverview';
+import ErtOverview from '../components/ERTOverview';
 import ertData from '../data/lacaErtMembers.json';
 
 function LacaErtPage() {
@@ -101,7 +112,7 @@ function LacaErtPage() {
     <Container fluid className="py-1">
       <Row className="g-1">
         <Col>
-          <LACAErtOverview ertData={ertData} />
+          <ErtOverview ertData={ertData} />
         </Col>
       </Row>
 
@@ -134,9 +145,240 @@ function LacaErtPage() {
 export default React.memo(LacaErtPage);
 
 
+C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\routes\AppRoutes.jsx
 
 
 
 
 
-<Route path="/laca-ert" element={<LacaErtPage />} />
+
+
+
+
+//C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\routes\AppRoutes.jsx
+
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const Dashboard              = lazy(() => import('../pages/Dashboard'));
+const History                = lazy(() => import('../pages/History'));
+const PartitionDetail        = lazy(() => import('../pages/PartitionDetail'));
+const PartitionDetailDetails = lazy(() => import('../pages/PartitionDetailDetails'));
+const RealtimeDetails        = lazy(() => import('../pages/RealtimeDetails'));
+const ErtPage        = lazy(() => import('../pages/ErtPage'));
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+
+          {/* Global history */}
+          <Route path="/history" element={<History />} />
+
+          {/* Partition-scoped history */}
+          <Route path="/partition/:partition/history" element={<History />} />
+
+          {/* Real-time detail view */}
+          <Route path="/realtime/:partition" element={<RealtimeDetails />} />
+
+          {/* Partition overview */}
+          <Route path="/partition/:partition" element={<PartitionDetail />} />
+
+          {/* Partition details (floor swipes) */}
+          <Route path="/partition/:partition/details" element={<PartitionDetailDetails />} />
+
+          <Route path="/ErtPage" element={<ErtPage />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+
+
+C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\data\lacaErtMembers.json
+
+
+                                          {
+  "Team Members": [
+    { "name": "Esteban Lopez Villalobos", "email": "Esteban.LopezVillalobos@wu.com", "emp_id": "302566" },
+    { "name": "Melissa Castro", "email": "Melissa.CastroUgalde@wu.com", "emp_id": "308530" },
+    { "name": "Leonardo Escalante", "email": "Leonardo.Escalante@wu.com", "emp_id": "249719" },
+    { "name": "María Gabriela Brenes", "email": "Maria.Brenes@wu.com", "emp_id": "239462" },
+    { "name": "Jose David Hernandez Salazar", "email": "JOSE.HERNANDEZ@wu.com", "emp_id": "315501" },
+    { "name": "Montserrat Sanabria Moreno", "email": "Monserrat.Sanabria@wu.com", "emp_id": "313147" },
+    { "name": "Marcelo Rivera Gutierrez", "email": "Marcelo.Rivera@wu.com", "emp_id": "315354" },
+    { "name": "Leandro Agredo Orozco", "email": "Leandro.AgredoOrozco@wu.com", "emp_id": "328465" },
+    { "name": "Natalia Araya Morera", "email": "NATALIA.ARAYA@wu.com", "emp_id": "81241784" },
+    { "name": "Carolina Flores Reyes", "email": "carolina.floresreyes@wu.com", "emp_id": "73432644" },
+    { "name": "Paula Jimenez", "email": "paula.jimenez@wu.com", "emp_id": "305073" },
+    { "name": "Guido Alberto Ramírez Camacho", "email": "guido.ramirez@westernunion.com", "emp_id": "238287" },
+    { "name": "Jason Chaves Vega", "email": "jason.chaves@westernunion.com", "emp_id": "324949" },
+    { "name": "Anahita Hashemi", "email": "anahita.hashemi@wu.com", "emp_id": "311968" },
+    { "name": "Olga Carvajal Castillo", "email": "olga.carvajal@westernunion.com", "emp_id": "319021" },
+    { "name": "Warner Alberto Granados Ewers", "email": "warner.granados@westernunion.com", "emp_id": "178990" },
+    { "name": "David Arce Calvo", "email": "david.arce@wu.com", "emp_id": "319972" },
+    { "name": "David Briceño", "email": "david.briceno@wu.com", "emp_id": "314240" },
+    { "name": "Jafeth Alexander Morales", "email": "Jafet.Morales@westernunion.com", "emp_id": "326589" },
+    { "name": "Karl Anthony Orozco", "email": "karl.orozcochinchilla@westernunion.com", "emp_id": "306365" },
+    { "name": "Omar Arias", "email": "omar.arias@westernunion.com", "emp_id": "313388" },
+    { "name": "Alfonso Guardia", "email": "alfonso.guardia@westernunion.com", "emp_id": "308280" },
+    { "name": "Ximena Espinoza", "email": "ximena.espinoza@westernunion.com", "emp_id": "327061" },
+    { "name": "Mayer Pereira", "email": "meyer.pereira@westernunion.com", "emp_id": "237998" },
+    { "name": "Steven Alexander Alvarado Fallas", "email": "steven.alvarado@wu.com", "emp_id": "243957" },
+    { "name": "Kevin Alonso Arce", "email": "kevin.arce@wu.com", "emp_id": "314618" },
+    { "name": "Ronald Andrey Garro", "email": "ronald.garro@wu.com", "emp_id": "306147" },
+    { "name": "Carlos Manuel Hernandez", "email": "carlos.hernandezgonzalez@westernunion.com", "emp_id": "304864" },
+    { "name": "Taeseung Josue Yoon", "email": "taeseung.yoon@westernunion.com", "emp_id": "325507" },
+    { "name": "Andrey Molina", "email": "Andrey.Molina@wu.com", "emp_id": "323105" },
+    { "name": "Dra Lillan Marti", "email": "Lillan.Marti@westernunion.com", "emp_id": "11561479" }
+  ]
+}
+
+
+     C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components\Header.jsx
+
+     // src/components/Header.jsx
+
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+import HomeIcon    from '@mui/icons-material/Home';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+
+import WuLogo from '../assets/wu-logo.png';
+import CostaRicaFlag from '../assets/flags/costa-rica.png';
+import ArgentinaFlag  from '../assets/flags/argentina.png';
+import MexicoFlag     from '../assets/flags/mexico.png';
+import PeruFlag       from '../assets/flags/peru.png';
+import BrazilFlag     from '../assets/flags/brazil.png';
+import PanamaFlag     from '../assets/flags/panama.png';
+import LacaFlag       from '../assets/laca-flag.png';
+
+import { partitionList } from '../services/occupancy.service';
+import { useLiveOccupancy } from '../hooks/useLiveOccupancy';
+
+const displayNameMap = {
+  'CR.Costa Rica Partition': 'Costa Rica',
+  'MX.Mexico City':          'Mexico',
+  'AR.Cordoba':               'Cordoba',
+  'PA.Panama City':           'Panama',
+  'PE.Lima':                  'Lima',
+  'BR.Sao Paulo':             'Sao Paulo'
+};
+
+
+export default function Header() {
+  const navigate = useNavigate();
+  const loc = useLocation();
+
+  // live‐update timer in header
+  const { data } = useLiveOccupancy(1000);
+  const [lastUpdate, setLastUpdate] = useState('');
+  useEffect(() => {
+    if (data) setLastUpdate(new Date().toLocaleTimeString());
+  }, [data]);
+
+  const parts = loc.pathname.split('/').filter(Boolean);
+  const isPartitionPath = parts[0] === 'partition' && Boolean(parts[1]);
+  const currentPartition = isPartitionPath ? decodeURIComponent(parts[1]) : '';
+  const suffixSegments = isPartitionPath
+    ? parts.slice(2)
+    : parts[0] === 'history'
+      ? ['history']
+      : [];
+
+  const flagMap = {
+    'CR.Costa Rica Partition': CostaRicaFlag,
+    'AR.Cordoba':               ArgentinaFlag,
+    'MX.Mexico City':           MexicoFlag,
+    'PE.Lima':                  PeruFlag,
+    'BR.Sao Paulo':             BrazilFlag,
+    'PA.Panama City':           PanamaFlag,
+  };
+  const selectedFlag = flagMap[currentPartition] || LacaFlag;
+
+  const makePartitionPath = suffix => {
+    const base = `/partition/${encodeURIComponent(currentPartition)}`;
+    return suffix ? `${base}/${suffix}` : base;
+  };
+
+  const handlePartitionChange = newPartition => {
+    if (!newPartition) return navigate('/');
+    const base = `/partition/${encodeURIComponent(newPartition)}`;
+    const full = suffixSegments.length
+      ? `${base}/${suffixSegments.join('/')}`
+      : base;
+    navigate(full);
+  };
+
+  return (
+    <AppBar position="static" color="primary" sx={{ mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Left: Logo, Title, Nav */}
+        <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+          <Box component="img" src={WuLogo} alt="WU Logo" sx={{ height: 36, mr: 2 }} />
+
+          <Typography variant="h6" sx={{ fontWeight: 600, mr: 3 }}>        
+  Western Union – LACA
+  {currentPartition && <> • {displayNameMap[currentPartition] || currentPartition}</>}
+
+          </Typography>
+
+ {/* Live update timer */}
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#FFC72C',
+              ml: 2,
+              gap:20,
+              fontStyle: 'Aptos Narrow',
+              opacity: data ? 1 : 0,
+              transition: 'opacity 0.8s'
+            }}
+          >
+         {/* {lastUpdate} */}
+          </Typography>
+        
+
+          {/* Home/History/Details icons */}
+          <IconButton size="large" color="inherit"
+            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
+            <HomeIcon sx={{ color: '#4caf50' }} />
+          </IconButton>
+         
+
+          <IconButton size="large" color="inherit"
+            onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
+            <HistoryIcon sx={{ color: '#F88379' }} />
+          </IconButton>
+          {/* Details icon always shown; defaults to Costa Rica if no partition yet */}
+          <IconButton size="large" color="inherit"
+            onClick={() => {
+              const target = currentPartition
+                ? makePartitionPath('details')
+                : '/partition/CR.Costa%20Rica%20Partition/details';
+              navigate(target);
+            }}>
+            <ListAltIcon sx={{ color: '#2196f3' }} />
+          </IconButton>
+
+
+
+
+
+        </Box>
+
+ 
