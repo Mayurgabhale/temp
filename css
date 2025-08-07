@@ -1,47 +1,49 @@
-C:\Users\W0024618\Desktop\laca-occupancy-frontend\src\components\Header.jsx
-
 // client/src/pages/ErtPage.jsx
 
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-// import ErtOverview from '../components/ErtOverview';
+import Header from '../components/Header';
 import ErtOverview from '../components/ERTOverview';
 import ertData from '../data/lacaErtMembers.json';
-// index.js or App.js
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 function ErtPage() {
   return (
-    
-    <Container fluid className="py-1">
-      <Row className="g-1">
-        <Col>
-          <ErtOverview ertData={ertData} />
-        </Col>
-      </Row>
+    <>
+      <Header />  {/* ✅ Add shared header here */}
 
-      <footer style={{
-        backgroundColor: '#000',
-        color: '#FFC72C',
-        padding: '1.5rem 0',
-        textAlign: 'center',
-        marginTop: '2rem',
-        borderTop: '2px solid #FFC72C',
-        fontSize: '0.95rem',
-        lineHeight: '1.6'
-      }}>
-        <div><strong>Global Security Operations Center</strong><br/>
-          Emergency Response Team members for Western Union LACA Region — Centralized contact and details.
-        </div>
-        <div style={{ marginTop: '0.75rem' }}>
-          Contact us:&nbsp;
-          <a href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
-             style={{ color: '#FFC72C', textDecoration: 'underline' }}>
-            GSOC Mail
-          </a>&nbsp;|&nbsp;
-          Landline:&nbsp;<span style={{ color: '#FFC72C' }}>+91-020-67632394</span>
-        </div>
-      </footer>
-    </Container>
+      <Container fluid className="py-1">
+        <Row className="g-1">
+          <Col>
+            <ErtOverview ertData={ertData} />
+          </Col>
+        </Row>
+
+        <footer style={{
+          backgroundColor: '#000',
+          color: '#FFC72C',
+          padding: '1.5rem 0',
+          textAlign: 'center',
+          marginTop: '2rem',
+          borderTop: '2px solid #FFC72C',
+          fontSize: '0.95rem',
+          lineHeight: '1.6'
+        }}>
+          <div>
+            <strong>Global Security Operations Center</strong><br />
+            Emergency Response Team members for Western Union LACA Region — Centralized contact and details.
+          </div>
+          <div style={{ marginTop: '0.75rem' }}>
+            Contact us:&nbsp;
+            <a href="mailto:GSOC-GlobalSecurityOperationCenter.SharedMailbox@westernunion.com"
+              style={{ color: '#FFC72C', textDecoration: 'underline' }}>
+              GSOC Mail
+            </a>&nbsp;|&nbsp;
+            Landline:&nbsp;<span style={{ color: '#FFC72C' }}>+91-020-67632394</span>
+          </div>
+        </footer>
+      </Container>
+    </>
   );
 }
 
