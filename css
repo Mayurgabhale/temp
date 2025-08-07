@@ -1,40 +1,21 @@
-Uncaught runtime errors:
-×
-ERROR
-Nav is not defined
-ReferenceError: Nav is not defined
-    at Header (http://localhost:3000/static/js/src_components_Footer_jsx-src_components_Header_jsx.chunk.js:553:95)
-    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:27547:18)
-    at renderWithHooks (http://localhost:3000/static/js/bundle.js:17757:20)
-    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:19450:17)
-    at beginWork (http://localhost:3000/static/js/bundle.js:20036:16)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:15528:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:22109:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:22002:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:21986:7)
-    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:21750:42)
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton
+} from '@mui/material';
+
+import { Nav } from 'react-bootstrap'; // ✅ Add this
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // ✅ Make sure Link is included
+
+// ... rest of your imports
 
 
-{/* Home/History/Details icons */}
-          <IconButton size="large" color="inherit"
-            onClick={() => navigate(currentPartition ? `/partition/${encodeURIComponent(currentPartition)}` : '/')}>
-            <HomeIcon sx={{ color: '#4caf50' }} />
-          </IconButton>
-         
 
-          <IconButton size="large" color="inherit"
-            onClick={() => navigate(currentPartition ? makePartitionPath('history') : '/history')}>
-            <HistoryIcon sx={{ color: '#F88379' }} />
-          </IconButton>
-          {/* Details icon always shown; defaults to Costa Rica if no partition yet */}
-          <IconButton size="large" color="inherit"
-            onClick={() => {
-              const target = currentPartition
-                ? makePartitionPath('details')
-                : '/partition/CR.Costa%20Rica%20Partition/details';
-              navigate(target);
-            }}>
-            <ListAltIcon sx={{ color: '#2196f3' }} />
-          </IconButton>
-
-          <Nav.Link as={Link} to="/ert" className="nav-item-infographic">ERT Overview</Nav.Link>
+<Nav.Link as={Link} to="/ErtPage" className="nav-item-infographic">
+  ERT Overview
+</Nav.Link>
