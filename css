@@ -1,3 +1,5 @@
+
+
 import React, { useMemo, useState } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
 import {
@@ -6,7 +8,7 @@ import {
   FaMobileAlt,
   FaMapMarkerAlt
 } from 'react-icons/fa';
-import '../styles/ErtOverview.css'; // Optional external styling
+// import '../styles/ErtOverview.css'; // Optional external styling
 
 const roleIcon = <FaUsers className="text-success" />;
 
@@ -31,15 +33,15 @@ export default function ErtOverview({ ertData }) {
 
   return (
     <div className="container-fluid py-3 bg-dark text-white rounded">
-      <h4 className="mb-4 fw-bold border-bottom pb-2">LACA ERT Team Members</h4>
+      <h4 className="mb-4 fw-bold border-bottom pb-2">Costa Rica ERT Team Members</h4>
 
       <Row className="g-4">
         {columns.map((column, colIndex) => (
           <Col key={colIndex} md={4}>
-            <Card className="bg-secondary text-white shadow border-0 rounded-4 h-100">
+            <Card className="bg-black text-white shadow border-0 rounded-4 h-100" >
               <Card.Header className="d-flex align-items-center gap-2 bg-dark text-white fw-semibold rounded-top border-bottom border-secondary">
                 {roleIcon}
-                <span>Emergency Response Team (LACA)</span>
+                <span>Emergency Response Team (Costa Rica)</span>
               </Card.Header>
               <Card.Body className="px-3 py-2">
                 {column.map((member, i) => (
