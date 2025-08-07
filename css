@@ -1,103 +1,35 @@
-
 {
-     "Site Head": [
-    { "name": "Rajeev Mago",      "email": "rajeev.mago@wu.com",      "phone": "xxx-xxx-xxxx" }
-  ],
-
- "BCM Team / Site Operations": [
-    { "name": "Rohit Singla",     "email": "rohit.singla@wu.com",     "phone": "xxx-xxx-xxxx" }
-  ],
-   "HR": [
-    { "name": "Suma Roy",         "email": "suma.roy@wu.com",         "phone": "xxx-xxx-xxxx" }
-  ],
-
-"Incident Controller": [
-     { "name": "Sameer Kanade",   "email": "Sameer.Kanade@wu.com",   "phone": "xxx-xxx-xxxx" },
-     { "name": "Lloyds Dass",      "email": "Lloyds.Dass@wu.com",      "phone": "xxx-xxx-xxxx" },
-      { "name": "Singh, Uday Prakash",      "email": "Uday.Singh@westernunion.com",      "phone": "xxx-xxx-xxxx" }
-  ],
-
-  "ERT Team Leader": [
-    { "name": "Vishal Chaudhari", "email": "Vishal.Chaudhary@wu.com", "phone": "xxx-xxx-xxxx" },
-    { "name": "Vinit Kumar",      "email": "Vinit.Kumar@wu.com",      "phone": "xxx-xxx-xxxx" },
-    { "name": "Sagar Jamdade",    "email": "sagar.jamdade@wu.com",    "phone": "xxx-xxx-xxxx" },
-    { "name": "Satish Bhoyane",   "email": "satishpandurang.bhoyane@westernunion.com",   "phone": "xxx-xxx-xxxx" },
-    { "name": "Sonu Pandey",      "email": "Sonu.Pandey@westernunion.com",      "phone": "xxx-xxx-xxxx" },
-    { "name": "Rangare, Bhupendra Babu","email": "bhupendra.rangare@wu.com","phone": "xxx-xxx-xxxx" }
-  ],
-
-  "ERT Team Members": [
-  { "Name": "Nair, Saurabh",                    "Base Location": "Podium Floor -Yellow Zone",  "Email": "Saurabh.Nair@wu.com" , "phone": "xxx-xxx-xxxx" },
-  { "Name": "Ladva, Hirav",                     "Floor": "Podium Floor- Yellow Zone",  "Email": "Hirav.Ladva@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Ahuja, Charandeep Singh",          "Floor": "Podium Floor-Green Zone - 2", "Email": "CharandeepSingh.Ahuja@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Samrendra, Samar",                 "Floor": "Podium Floor-Green Zone - 2",  "Email": "Samar.Samrendra@wu.com" , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Mahajan, Sachin",               "Floor": "Podium Floor-Green Zone - 2",  "Email": "sachin.mahajan@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Sharma, Rajesh",                  "Floor": "Podium Floor-Green Zone - 2", "Email": "Rajesh.Sharma@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Palve, Vikas",                     "Floor": "2nd Floor",  "Email": "Vikas.Palve@wu.com" , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Nalband, Khushboo",               "Floor": "2nd Floor",  "Email": "Khushboo.Nalband@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Nerella, Srikanth",             "Floor": "2nd Floor",  "Email": "Srikanth.Nerella@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Patle, Mayank",                  "Floor": "2nd Floor",  "Email": "Mayank.Patle@wu.com" , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Kolhe, Vaibhav",                   "Floor": "2nd Floor",  "Email": "Vaibhav.Kolhe@wu.com" , "phone": "xxx-xxx-xxxx"  },
-  { "Name": "Dalal, Vighnesh",                 "Floor": "Podium Floor-Red Zone",  "Email": "Vighnesh.Dalal@wu.com" , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Shah, Bhavik",                    "Floor": "Podium Floor-Red Zone",  "Email": "Bhavik.Shah@wu.com", "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Mulye, Devdatta",                 "Floor": "Podium Floor-Red Zone",   "Email": "devdatta.mulye@wu.com" , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Mishra, Anurag",                   "Floor": "Podium Floor-Yellow Zone", "Email": "Anurag.Mishra@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Bamoriya, Priyank",              "Floor": "Podium Floor-Yellow Zone",  "Email": "Priyank.Bamoriya@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Patil, Sangramsinh",               "Floor": "Podium Floor-Orange Zone",  "Email": "Sangramsinh.Patil@wu.com" , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Pillai, Anurag",                   "Floor": "Podium Floor-Orange Zone", "Email": "Anurag.Pillai@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Yash, Kumar",                   "Floor": "Podium Floor-Red Zone",   "Email": "kumar.yash@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Punde, Deepak",                    "Floor": "Podium Floor-Red Zone",  "Email": "Deepak.Punde@wu.com" , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Barua, Renuka",                   "Floor": "Tower B",  "Email": "Renuka.Barua@wu.com" , "phone": "xxx-xxx-xxxx"  },
-  {  "Name": "Choudhary, Shanker",            "Floor": "Tower B",  "Email": "Shanker.Choudhary@wu.com" , "phone": "xxx-xxx-xxxx" },
-  { "Name": "Ahuja, Ravi",                      "Floor": "Tower B",  "Email": "Ravi.Ahuja@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  { "Name": "Dhavale, Yashraj",                "Floor": "Tower B", "Email": "Yashraj.Dhavale@wu.com"  , "phone": "xxx-xxx-xxxx" },
-  {  "Name": "Bedre, Atharva",                   "Floor": "Tower B",  "Email": "Atharva.Bedre@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Thirumala, Rajesh",             "Floor": "Tower B",   "Email": "Rajesh.Thirumala@wu.com"  , "phone": "xxx-xxx-xxxx"},
-  {  "Name": "Shaikh, Juned Ahmed",             "Floor": "Tower B", "Email": "Juned.Ahmed@wu.com"  , "phone": "xxx-xxx-xxxx"},
-   {  "Name": "Pachimatla, Shiva Prasad",        "Floor": "Tower B", "Email": "Shiva.Pachimatla@wu.com"  , "phone": "xxx-xxx-xxxx"}
-
-
+  "Team Members": [
+    { "name": "Esteban Lopez Villalobos", "email": "Esteban.LopezVillalobos@wu.com", "emp_id": "302566" },
+    { "name": "Melissa Castro", "email": "Melissa.CastroUgalde@wu.com", "emp_id": "308530" },
+    { "name": "Leonardo Escalante", "email": "Leonardo.Escalante@wu.com", "emp_id": "249719" },
+    { "name": "María Gabriela Brenes", "email": "Maria.Brenes@wu.com", "emp_id": "239462" },
+    { "name": "Jose David Hernandez Salazar", "email": "JOSE.HERNANDEZ@wu.com", "emp_id": "315501" },
+    { "name": "Montserrat Sanabria Moreno", "email": "Monserrat.Sanabria@wu.com", "emp_id": "313147" },
+    { "name": "Marcelo Rivera Gutierrez", "email": "Marcelo.Rivera@wu.com", "emp_id": "315354" },
+    { "name": "Leandro Agredo Orozco", "email": "Leandro.AgredoOrozco@wu.com", "emp_id": "328465" },
+    { "name": "Natalia Araya Morera", "email": "NATALIA.ARAYA@wu.com", "emp_id": "81241784" },
+    { "name": "Carolina Flores Reyes", "email": "carolina.floresreyes@wu.com", "emp_id": "73432644" },
+    { "name": "Paula Jimenez", "email": "paula.jimenez@wu.com", "emp_id": "305073" },
+    { "name": "Guido Alberto Ramírez Camacho", "email": "guido.ramirez@westernunion.com", "emp_id": "238287" },
+    { "name": "Jason Chaves Vega", "email": "jason.chaves@westernunion.com", "emp_id": "324949" },
+    { "name": "Anahita Hashemi", "email": "anahita.hashemi@wu.com", "emp_id": "311968" },
+    { "name": "Olga Carvajal Castillo", "email": "olga.carvajal@westernunion.com", "emp_id": "319021" },
+    { "name": "Warner Alberto Granados Ewers", "email": "warner.granados@westernunion.com", "emp_id": "178990" },
+    { "name": "David Arce Calvo", "email": "david.arce@wu.com", "emp_id": "319972" },
+    { "name": "David Briceño", "email": "david.briceno@wu.com", "emp_id": "314240" },
+    { "name": "Jafeth Alexander Morales", "email": "Jafet.Morales@westernunion.com", "emp_id": "326589" },
+    { "name": "Karl Anthony Orozco", "email": "karl.orozcochinchilla@westernunion.com", "emp_id": "306365" },
+    { "name": "Omar Arias", "email": "omar.arias@westernunion.com", "emp_id": "313388" },
+    { "name": "Alfonso Guardia", "email": "alfonso.guardia@westernunion.com", "emp_id": "308280" },
+    { "name": "Ximena Espinoza", "email": "ximena.espinoza@westernunion.com", "emp_id": "327061" },
+    { "name": "Mayer Pereira", "email": "meyer.pereira@westernunion.com", "emp_id": "237998" },
+    { "name": "Steven Alexander Alvarado Fallas", "email": "steven.alvarado@wu.com", "emp_id": "243957" },
+    { "name": "Kevin Alonso Arce", "email": "kevin.arce@wu.com", "emp_id": "314618" },
+    { "name": "Ronald Andrey Garro", "email": "ronald.garro@wu.com", "emp_id": "306147" },
+    { "name": "Carlos Manuel Hernandez", "email": "carlos.hernandezgonzalez@westernunion.com", "emp_id": "304864" },
+    { "name": "Taeseung Josue Yoon", "email": "taeseung.yoon@westernunion.com", "emp_id": "325507" },
+    { "name": "Andrey Molina", "email": "Andrey.Molina@wu.com", "emp_id": "323105" },
+    { "name": "Dra Lillan Marti", "email": "Lillan.Marti@westernunion.com", "emp_id": "11561479" }
   ]
 }
-
-
-
-
-
-
-Make same JSON data using below name
-
-
-
-   Email	Name	Emp ID
-Esteban.LopezVillalobos@wu.com	Esteban Lopez Villalobos	302566
-Melissa.CastroUgalde@wu.com	Melissa Castro	308530
-Leonardo.Escalante@wu.com	Leonardo Escalante	249719
-Maria.Brenes@wu.com	María Gabriela Brenes	239462
-JOSE.HERNANDEZ@wu.com	Jose David Hernandez Salazar	315501
-Monserrat.Sanabria@wu.com	Montserrat Sanabria Moreno	313147
-Marcelo.Rivera@wu.com	Marcelo Rivera Gutierrez	315354
-Leandro.AgredoOrozco@wu.com	Leandro Agredo Orozco	328465
-NATALIA.ARAYA@wu.com	Natalia Araya Morera	81241784
-carolina.floresreyes@wu.com	Carolina Flores Reyes	73432644
-paula.jimenez@wu.com	Paula Jimenez	305073
-guido.ramirez@westernunion.com	Guido Alberto Ramírez Camacho	238287
-jason.chaves@westernunion.com	Jason Chaves Vega	324949
-anahita.hashemi@wu.com	Anahita Hashemi	311968
-olga.carvajal@westernunion.com	Olga Carvajal Castillo	319021
-warner.granados@westernunion.com	Warner Alberto Granados Ewers	178990
-david.arce@wu.com	David Arce Calvo	319972
-david.briceno@wu.com	David Briceño	314240
-Jafet.Morales@westernunion.com	Jafeth Alexander Morales	326589
-karl.orozcochinchilla@westernunion.com	Karl Anthony Orozco	306365
-omar.arias@westernunion.com	Omar Arias	313388
-alfonso.guardia@westernunion.com	Alfonso Guardia	308280
-ximena.espinoza@westernunion.com	Ximena Espinoza	327061
-meyer.pereira@westernunion.com	Mayer Pereira	237998
-steven.alvarado@wu.com	Steven Alexander Alvarado Fallas	243957
-kevin.arce@wu.com	Kevin Alonso Arce	314618
-ronald.garro@wu.com	Ronald Andrey Garro	306147
-carlos.hernandezgonzalez@westernunion.com	Carlos Manuel Hernandez	304864
-taeseung.yoon@westernunion.com	Taeseung Josue Yoon	325507
-Andrey.Molina@wu.com	Andrey Molina	323105
-Lillan.Marti@westernunion.com	Dra Lillan Marti	11561479
