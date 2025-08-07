@@ -1,12 +1,16 @@
-<Box
-  display="flex"
-  flexWrap="wrap"
-  gap={1}
-  mb={1}
-  justifyContent="center"
-  alignItems="center"
-  minHeight="300px" // or '100vh' for full-screen
-  width="100%"
->
-  {loading ? <LoadingSpinner /> : /* your loaded content here */}
+<Box display="flex" flexWrap="wrap" gap={1} mb={1}>
+  {loading ? (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      width="100%"
+      minHeight="300px" // Optional: controls vertical centering space
+    >
+      <LoadingSpinner />
+    </Box>
+  ) : (
+    // ✅ Normal content layout here
+    yourActualContentHere
+  )}
 </Box>
