@@ -1,24 +1,23 @@
 import React from 'react';
 import { Box, CircularProgress } from '@mui/material';
+import './LoadingSpinner.css'; // Import the CSS here
 
 export default function LoadingSpinner() {
   return (
-    <Box sx={{ display:'flex', justifyContent:'center', py:4 }}>
-      <CircularProgress/>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4, gap: 2 }}>
+      <CircularProgress />
+      <span className="loader"></span>
     </Box>
   );
 }
 
 
-this is my loading spiner in the i wanto to add new 
-
-  add this below in this 
 
 
-<span class="loader"></span>
 
 
-  .loader {
+
+.loader {
   width: 48px;
   height: 48px;
   border: 3px dotted #FFF;
@@ -29,6 +28,7 @@ this is my loading spiner in the i wanto to add new
   box-sizing: border-box;
   animation: rotation 2s linear infinite;
 }
+
 .loader::after {
   content: '';  
   box-sizing: border-box;
@@ -46,7 +46,7 @@ this is my loading spiner in the i wanto to add new
   animation: rotationBack 1s linear infinite;
   transform-origin: center center;
 }
-    
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -54,7 +54,8 @@ this is my loading spiner in the i wanto to add new
   100% {
     transform: rotate(360deg);
   }
-} 
+}
+
 @keyframes rotationBack {
   0% {
     transform: rotate(0deg);
@@ -62,4 +63,4 @@ this is my loading spiner in the i wanto to add new
   100% {
     transform: rotate(-360deg);
   }
-} 
+}
